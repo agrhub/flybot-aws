@@ -1,0 +1,388 @@
+{
+  "end2end": {
+    "onnx": "/content/fruitfly_yolo26n.onnx",
+    "conf": 0.25,
+    "status": "ok",
+    "photos": [
+      {
+        "image": "image_01121_jpg.rf.6aea462bf2ca160e7ad814be85d32ed0.jpg",
+        "n_cv": 64,
+        "n_ort": 64,
+        "min_iou": 1.0,
+        "score_diff": 7.62939453125e-06,
+        "raw_max_abs_diff": 0.000244140625,
+        "opencv_forward_ms": 175.2
+      },
+      {
+        "image": "image_01122_jpg.rf.5c351f1ad42c65e9e89c73dd5b8d297d.jpg",
+        "n_cv": 61,
+        "n_ort": 61,
+        "min_iou": 1.0,
+        "score_diff": 1.4424324035644531e-05,
+        "raw_max_abs_diff": 154.21437072753906,
+        "opencv_forward_ms": 176.0
+      },
+      {
+        "image": "image_01123_jpg.rf.067afa5b11f555b3bcb1c64789a5cdc1.jpg",
+        "n_cv": 61,
+        "n_ort": 61,
+        "min_iou": 1.0,
+        "score_diff": 1.1533498764038086e-05,
+        "raw_max_abs_diff": 7.2479248046875e-05,
+        "opencv_forward_ms": 402.0
+      },
+      {
+        "image": "image_01165_jpg.rf.bf8d4b15c386fcd3f569dc1db09ec5b1.jpg",
+        "n_cv": 94,
+        "n_ort": 94,
+        "min_iou": 1.0,
+        "score_diff": 1.8596649169921875e-05,
+        "raw_max_abs_diff": 9.1552734375e-05,
+        "opencv_forward_ms": 179.9
+      },
+      {
+        "image": "image_01180_jpg.rf.b71647652ef71b4cec72b60233318158.jpg",
+        "n_cv": 87,
+        "n_ort": 87,
+        "min_iou": 1.0,
+        "score_diff": 3.775954246520996e-05,
+        "raw_max_abs_diff": 6.103515625e-05,
+        "opencv_forward_ms": 169.3
+      },
+      {
+        "image": "image_01227_jpg.rf.34e450caa81b2a4da3827b7b91d7ace5.jpg",
+        "n_cv": 78,
+        "n_ort": 78,
+        "min_iou": 1.0,
+        "score_diff": 4.410743713378906e-06,
+        "raw_max_abs_diff": 0.0001220703125,
+        "opencv_forward_ms": 173.9
+      },
+      {
+        "image": "image_01389_jpg.rf.fbc9eae95f7bb488b7c15d4e0d56e061.jpg",
+        "n_cv": 47,
+        "n_ort": 47,
+        "min_iou": 1.0,
+        "score_diff": 4.0531158447265625e-06,
+        "raw_max_abs_diff": 7.62939453125e-05,
+        "opencv_forward_ms": 162.9
+      },
+      {
+        "image": "image_01424_jpg.rf.f6e31986ee704f59622559db2a2d1b9f.jpg",
+        "n_cv": 50,
+        "n_ort": 50,
+        "min_iou": 1.0,
+        "score_diff": 4.559755325317383e-06,
+        "raw_max_abs_diff": 6.103515625e-05,
+        "opencv_forward_ms": 195.6
+      },
+      {
+        "image": "image_01437_jpg.rf.574b3b0a10d4851e0b799e4e1b2a10b0.jpg",
+        "n_cv": 47,
+        "n_ort": 47,
+        "min_iou": 1.0,
+        "score_diff": 9.417533874511719e-06,
+        "raw_max_abs_diff": 6.103515625e-05,
+        "opencv_forward_ms": 176.4
+      },
+      {
+        "image": "image_01475_jpg.rf.1874fe25dac7f767dafdf03033a0b7ff.jpg",
+        "n_cv": 46,
+        "n_ort": 46,
+        "min_iou": 1.0,
+        "score_diff": 1.800060272216797e-05,
+        "raw_max_abs_diff": 0.00048828125,
+        "opencv_forward_ms": 197.8
+      },
+      {
+        "image": "image_01484_jpg.rf.02c50bdb2c534d3a144532bb4d7134b5.jpg",
+        "n_cv": 55,
+        "n_ort": 55,
+        "min_iou": 1.0,
+        "score_diff": 1.7285346984863281e-06,
+        "raw_max_abs_diff": 9.1552734375e-05,
+        "opencv_forward_ms": 163.1
+      },
+      {
+        "image": "image_01485_jpg.rf.14e5e1d270d92674d779881194063888.jpg",
+        "n_cv": 49,
+        "n_ort": 49,
+        "min_iou": 1.0,
+        "score_diff": 1.1563301086425781e-05,
+        "raw_max_abs_diff": 20.95264434814453,
+        "opencv_forward_ms": 183.1
+      },
+      {
+        "image": "image_01487_jpg.rf.7a1b4961af24503251e4d66f178d0c29.jpg",
+        "n_cv": 48,
+        "n_ort": 48,
+        "min_iou": 1.0,
+        "score_diff": 2.384185791015625e-06,
+        "raw_max_abs_diff": 421.4285583496094,
+        "opencv_forward_ms": 168.1
+      },
+      {
+        "image": "image_01496_jpg.rf.80a78084c51f163b77c290942eaa5d65.jpg",
+        "n_cv": 53,
+        "n_ort": 53,
+        "min_iou": 1.0,
+        "score_diff": 8.761882781982422e-06,
+        "raw_max_abs_diff": 9.1552734375e-05,
+        "opencv_forward_ms": 160.8
+      },
+      {
+        "image": "image_01500_jpg.rf.8a0af5647fc2329b61310d6dcf31c147.jpg",
+        "n_cv": 44,
+        "n_ort": 44,
+        "min_iou": 1.0,
+        "score_diff": 1.8715858459472656e-05,
+        "raw_max_abs_diff": 12.111763000488281,
+        "opencv_forward_ms": 159.0
+      },
+      {
+        "image": "image_01511_jpg.rf.8d7391397cf4ff0b387b5ae0df29282e.jpg",
+        "n_cv": 51,
+        "n_ort": 51,
+        "min_iou": 1.0,
+        "score_diff": 4.678964614868164e-06,
+        "raw_max_abs_diff": 9.1552734375e-05,
+        "opencv_forward_ms": 163.6
+      },
+      {
+        "image": "image_01523_jpg.rf.c1221608459386cee01f1387e5c90347.jpg",
+        "n_cv": 50,
+        "n_ort": 50,
+        "min_iou": 1.0,
+        "score_diff": 2.9206275939941406e-06,
+        "raw_max_abs_diff": 9.1552734375e-05,
+        "opencv_forward_ms": 170.8
+      },
+      {
+        "image": "image_01540_jpg.rf.e2c7df5667bf95949bc95f213eab197a.jpg",
+        "n_cv": 61,
+        "n_ort": 61,
+        "min_iou": 1.0,
+        "score_diff": 2.2649765014648438e-06,
+        "raw_max_abs_diff": 0.000335693359375,
+        "opencv_forward_ms": 158.1
+      },
+      {
+        "image": "image_02147_jpg.rf.e9b6e66ad6f317718d33d8265cb0adf2.jpg",
+        "n_cv": 27,
+        "n_ort": 27,
+        "min_iou": 1.0,
+        "score_diff": 7.3909759521484375e-06,
+        "raw_max_abs_diff": 6.103515625e-05,
+        "opencv_forward_ms": 155.4
+      },
+      {
+        "image": "image_02157_jpg.rf.8ea34fbd10c190b53ecb96822212c6ca.jpg",
+        "n_cv": 29,
+        "n_ort": 29,
+        "min_iou": 1.0,
+        "score_diff": 1.2814998626708984e-05,
+        "raw_max_abs_diff": 6.103515625e-05,
+        "opencv_forward_ms": 162.4
+      }
+    ],
+    "count_abs_diff_total": 0,
+    "opencv_ms_p50": 170.05
+  },
+  "o2m_shape": [
+    [
+      1,
+      5,
+      8400
+    ]
+  ],
+  "one_to_many": {
+    "onnx": "/content/fruitfly_yolo26n-o2m.onnx",
+    "conf": 0.25,
+    "status": "ok",
+    "photos": [
+      {
+        "image": "image_01121_jpg.rf.6aea462bf2ca160e7ad814be85d32ed0.jpg",
+        "n_cv": 63,
+        "n_ort": 63,
+        "min_iou": 1.0,
+        "score_diff": 1.1920928955078125e-06,
+        "raw_max_abs_diff": 0.0028839111328125,
+        "opencv_forward_ms": 168.9
+      },
+      {
+        "image": "image_01122_jpg.rf.5c351f1ad42c65e9e89c73dd5b8d297d.jpg",
+        "n_cv": 64,
+        "n_ort": 64,
+        "min_iou": 1.0,
+        "score_diff": 4.4405460357666016e-06,
+        "raw_max_abs_diff": 0.0028228759765625,
+        "opencv_forward_ms": 158.6
+      },
+      {
+        "image": "image_01123_jpg.rf.067afa5b11f555b3bcb1c64789a5cdc1.jpg",
+        "n_cv": 60,
+        "n_ort": 60,
+        "min_iou": 1.0,
+        "score_diff": 1.2516975402832031e-06,
+        "raw_max_abs_diff": 0.0024566650390625,
+        "opencv_forward_ms": 156.5
+      },
+      {
+        "image": "image_01165_jpg.rf.bf8d4b15c386fcd3f569dc1db09ec5b1.jpg",
+        "n_cv": 94,
+        "n_ort": 94,
+        "min_iou": 1.0,
+        "score_diff": 1.2814998626708984e-06,
+        "raw_max_abs_diff": 0.0020751953125,
+        "opencv_forward_ms": 161.0
+      },
+      {
+        "image": "image_01180_jpg.rf.b71647652ef71b4cec72b60233318158.jpg",
+        "n_cv": 85,
+        "n_ort": 85,
+        "min_iou": 1.0,
+        "score_diff": 1.7881393432617188e-06,
+        "raw_max_abs_diff": 0.00189208984375,
+        "opencv_forward_ms": 172.0
+      },
+      {
+        "image": "image_01227_jpg.rf.34e450caa81b2a4da3827b7b91d7ace5.jpg",
+        "n_cv": 78,
+        "n_ort": 78,
+        "min_iou": 1.0,
+        "score_diff": 8.940696716308594e-07,
+        "raw_max_abs_diff": 0.00406646728515625,
+        "opencv_forward_ms": 157.6
+      },
+      {
+        "image": "image_01389_jpg.rf.fbc9eae95f7bb488b7c15d4e0d56e061.jpg",
+        "n_cv": 50,
+        "n_ort": 50,
+        "min_iou": 1.0,
+        "score_diff": 1.6987323760986328e-06,
+        "raw_max_abs_diff": 0.001190185546875,
+        "opencv_forward_ms": 158.9
+      },
+      {
+        "image": "image_01424_jpg.rf.f6e31986ee704f59622559db2a2d1b9f.jpg",
+        "n_cv": 55,
+        "n_ort": 55,
+        "min_iou": 1.0,
+        "score_diff": 1.8477439880371094e-06,
+        "raw_max_abs_diff": 0.004673004150390625,
+        "opencv_forward_ms": 157.2
+      },
+      {
+        "image": "image_01437_jpg.rf.574b3b0a10d4851e0b799e4e1b2a10b0.jpg",
+        "n_cv": 47,
+        "n_ort": 47,
+        "min_iou": 1.0,
+        "score_diff": 1.1026859283447266e-06,
+        "raw_max_abs_diff": 0.0068206787109375,
+        "opencv_forward_ms": 444.9
+      },
+      {
+        "image": "image_01475_jpg.rf.1874fe25dac7f767dafdf03033a0b7ff.jpg",
+        "n_cv": 49,
+        "n_ort": 49,
+        "min_iou": 1.0,
+        "score_diff": 1.1920928955078125e-06,
+        "raw_max_abs_diff": 0.01458740234375,
+        "opencv_forward_ms": 167.6
+      },
+      {
+        "image": "image_01484_jpg.rf.02c50bdb2c534d3a144532bb4d7134b5.jpg",
+        "n_cv": 59,
+        "n_ort": 59,
+        "min_iou": 1.0,
+        "score_diff": 2.3543834686279297e-06,
+        "raw_max_abs_diff": 0.00726318359375,
+        "opencv_forward_ms": 174.4
+      },
+      {
+        "image": "image_01485_jpg.rf.14e5e1d270d92674d779881194063888.jpg",
+        "n_cv": 51,
+        "n_ort": 51,
+        "min_iou": 1.0,
+        "score_diff": 1.7583370208740234e-06,
+        "raw_max_abs_diff": 0.01990509033203125,
+        "opencv_forward_ms": 503.4
+      },
+      {
+        "image": "image_01487_jpg.rf.7a1b4961af24503251e4d66f178d0c29.jpg",
+        "n_cv": 53,
+        "n_ort": 53,
+        "min_iou": 1.0,
+        "score_diff": 1.9669532775878906e-06,
+        "raw_max_abs_diff": 0.0126953125,
+        "opencv_forward_ms": 167.0
+      },
+      {
+        "image": "image_01496_jpg.rf.80a78084c51f163b77c290942eaa5d65.jpg",
+        "n_cv": 64,
+        "n_ort": 64,
+        "min_iou": 1.0,
+        "score_diff": 2.1457672119140625e-06,
+        "raw_max_abs_diff": 0.005584716796875,
+        "opencv_forward_ms": 199.9
+      },
+      {
+        "image": "image_01500_jpg.rf.8a0af5647fc2329b61310d6dcf31c147.jpg",
+        "n_cv": 51,
+        "n_ort": 51,
+        "min_iou": 1.0,
+        "score_diff": 3.635883331298828e-06,
+        "raw_max_abs_diff": 0.010955810546875,
+        "opencv_forward_ms": 166.6
+      },
+      {
+        "image": "image_01511_jpg.rf.8d7391397cf4ff0b387b5ae0df29282e.jpg",
+        "n_cv": 57,
+        "n_ort": 57,
+        "min_iou": 1.0,
+        "score_diff": 1.6689300537109375e-06,
+        "raw_max_abs_diff": 0.01483154296875,
+        "opencv_forward_ms": 156.3
+      },
+      {
+        "image": "image_01523_jpg.rf.c1221608459386cee01f1387e5c90347.jpg",
+        "n_cv": 59,
+        "n_ort": 59,
+        "min_iou": 1.0,
+        "score_diff": 1.5497207641601562e-06,
+        "raw_max_abs_diff": 0.0037994384765625,
+        "opencv_forward_ms": 163.5
+      },
+      {
+        "image": "image_01540_jpg.rf.e2c7df5667bf95949bc95f213eab197a.jpg",
+        "n_cv": 67,
+        "n_ort": 67,
+        "min_iou": 1.0,
+        "score_diff": 2.682209014892578e-06,
+        "raw_max_abs_diff": 0.003875732421875,
+        "opencv_forward_ms": 176.7
+      },
+      {
+        "image": "image_02147_jpg.rf.e9b6e66ad6f317718d33d8265cb0adf2.jpg",
+        "n_cv": 28,
+        "n_ort": 28,
+        "min_iou": 1.0,
+        "score_diff": 1.9371509552001953e-06,
+        "raw_max_abs_diff": 0.0213623046875,
+        "opencv_forward_ms": 213.4
+      },
+      {
+        "image": "image_02157_jpg.rf.8ea34fbd10c190b53ecb96822212c6ca.jpg",
+        "n_cv": 29,
+        "n_ort": 29,
+        "min_iou": 1.0,
+        "score_diff": 1.1920928955078125e-06,
+        "raw_max_abs_diff": 0.009246826171875,
+        "opencv_forward_ms": 162.0
+      }
+    ],
+    "count_abs_diff_total": 0,
+    "opencv_ms_p50": 166.8
+  },
+  "o2m_note": null
+}

@@ -1,0 +1,384 @@
+{
+  "WARNING": "SMOKE RUN (T0.4): 1 epoch, imgsz 320, 5% (yolo11n) / 2% (yolov8n) of train, laptop CPU. Pipeline check only. No number here describes model quality; timings are single runs, not benchmarks.",
+  "date": "2026-10-15",
+  "machine": "Intel Core i5-7200U (2 cores / 4 threads), 16 GB RAM, no GPU, Windows 11",
+  "train_yolo11n": {
+    "model_used": "yolo11n.pt",
+    "ultralytics": "8.4.177",
+    "device": "cpu",
+    "epochs": 1,
+    "imgsz": 320,
+    "batch": 16,
+    "fraction": 0.05,
+    "train_seconds": 142.7,
+    "total_seconds": 188.4,
+    "test_metrics": {
+      "split": "test",
+      "weights": "models/runs/smoke-yolo11n/weights/best.pt",
+      "imgsz": 320,
+      "mAP50": 0.3236,
+      "mAP50_95": 0.0763,
+      "precision": 0.1406,
+      "recall": 0.7199,
+      "smoke_run": true,
+      "eval_seconds": 4.4
+    }
+  },
+  "train_fallback_yolov8n": {
+    "model_requested": "yolo11n-missing.pt",
+    "model_used": "yolov8n.pt",
+    "epochs": 1,
+    "imgsz": 320,
+    "fraction": 0.02,
+    "train_seconds": 62.6,
+    "total_seconds": 75.6
+  },
+  "onnx_static": {
+    "onnx": "smoke-yolo11n.onnx",
+    "sha256": "8ddfa0e531e09354dc3243e3c8503df5ffa41359d353342277466c372349ee21",
+    "bytes": 10663473,
+    "from_weights": "models/runs/smoke-yolo11n/weights/best.pt",
+    "weights_sha256": "a03d5d00949d204903a6903f727cf861efe6d8b09fd331326cfa19c950858d58",
+    "opset": 17,
+    "imgsz": 640,
+    "dynamic": false,
+    "simplify": true,
+    "nms_in_graph": false,
+    "inputs": {
+      "images": [
+        1,
+        3,
+        640,
+        640
+      ]
+    },
+    "outputs": {
+      "output0": [
+        1,
+        5,
+        8400
+      ]
+    },
+    "names": {
+      "0": "fruit_fly"
+    },
+    "preprocess": "letterbox to imgsz (pad 114), BGR->RGB, /255, NCHW float32",
+    "output_layout": "[1, 4+nc, anchors]: cx, cy, w, h (input pixels), class scores; NMS not included",
+    "export_seconds": 3.5,
+    "smoke_run": true,
+    "run_dir": "models/runs/smoke-yolo11n"
+  },
+  "onnx_dynamic": {
+    "onnx": "smoke-yolo11n-dynamic.onnx",
+    "sha256": "8219486c89bcf78b7e84199a37eee2ad5107586fd18cb9501987185ce3dcab4c",
+    "bytes": 11189165,
+    "from_weights": "models/runs/smoke-yolo11n/weights/best.pt",
+    "weights_sha256": "a03d5d00949d204903a6903f727cf861efe6d8b09fd331326cfa19c950858d58",
+    "opset": 17,
+    "imgsz": 640,
+    "dynamic": true,
+    "simplify": true,
+    "nms_in_graph": false,
+    "inputs": {
+      "images": [
+        "batch",
+        3,
+        "height",
+        "width"
+      ]
+    },
+    "outputs": {
+      "output0": [
+        "batch",
+        5,
+        "anchors"
+      ]
+    },
+    "names": {
+      "0": "fruit_fly"
+    },
+    "preprocess": "letterbox to imgsz (pad 114), BGR->RGB, /255, NCHW float32",
+    "output_layout": "[1, 4+nc, anchors]: cx, cy, w, h (input pixels), class scores; NMS not included",
+    "export_seconds": 8.2,
+    "smoke_run": null
+  },
+  "onnx_fallback_yolov8n": {
+    "onnx": "smoke-fallback-yolov8n.onnx",
+    "sha256": "b1cfb34550866797e7bbe3b73bed9a997149c3e1aaf84aedf324e5199eb37fe9",
+    "bytes": 12773224,
+    "from_weights": "models/runs/smoke-fallback-yolov8n/weights/best.pt",
+    "weights_sha256": "5ab0bbf3d3028e17c84abeb6f88b434dc587556f385c956562a882d8fb45d06d",
+    "opset": 17,
+    "imgsz": 640,
+    "dynamic": false,
+    "simplify": true,
+    "nms_in_graph": false,
+    "inputs": {
+      "images": [
+        1,
+        3,
+        640,
+        640
+      ]
+    },
+    "outputs": {
+      "output0": [
+        1,
+        5,
+        8400
+      ]
+    },
+    "names": {
+      "0": "fruit_fly"
+    },
+    "preprocess": "letterbox to imgsz (pad 114), BGR->RGB, /255, NCHW float32",
+    "output_layout": "[1, 4+nc, anchors]: cx, cy, w, h (input pixels), class scores; NMS not included",
+    "export_seconds": 2.8,
+    "smoke_run": true,
+    "run_dir": "models/runs/smoke-fallback-yolov8n"
+  },
+  "opencv_dnn": {
+    "opencv": "5.0.0",
+    "image": "../camos-ai-camera/models/fruit-fly-v3/test/images/image_01121_jpg.rf.6aea462bf2ca160e7ad814be85d32ed0.jpg",
+    "runs": {
+      "new": {
+        "opencv": "5.0.0",
+        "engine_requested": "new",
+        "engine_used": "new",
+        "OPENCV_FORCE_DNN_ENGINE": null,
+        "input_shape": [
+          1,
+          3,
+          640,
+          640
+        ],
+        "output_shape": [
+          1,
+          5,
+          8400
+        ],
+        "output_finite": true,
+        "load_ms": 92.6,
+        "forward_ms_first": 129.2,
+        "forward_ms_second": 105.4,
+        "conf": 0.25,
+        "iou": 0.45,
+        "detections": 866,
+        "smoke_run_model": true,
+        "evidence": {
+          "onnx": "models/smoke-yolo11n.onnx",
+          "image": "../camos-ai-camera/models/fruit-fly-v3/test/images/image_01121_jpg.rf.6aea462bf2ca160e7ad814be85d32ed0.jpg"
+        },
+        "note": "single run on a laptop, not a benchmark; detections from a 1-epoch smoke model are meaningless"
+      },
+      "classic": {
+        "opencv": "5.0.0",
+        "engine_requested": "classic",
+        "engine_used": "classic",
+        "OPENCV_FORCE_DNN_ENGINE": null,
+        "input_shape": [
+          1,
+          3,
+          640,
+          640
+        ],
+        "output_shape": [
+          1,
+          5,
+          8400
+        ],
+        "output_finite": true,
+        "load_ms": 64.9,
+        "forward_ms_first": 143.6,
+        "forward_ms_second": 120.9,
+        "conf": 0.25,
+        "iou": 0.45,
+        "detections": 866,
+        "smoke_run_model": true,
+        "evidence": {
+          "onnx": "models/smoke-yolo11n.onnx",
+          "image": "../camos-ai-camera/models/fruit-fly-v3/test/images/image_01121_jpg.rf.6aea462bf2ca160e7ad814be85d32ed0.jpg"
+        },
+        "note": "single run on a laptop, not a benchmark; detections from a 1-epoch smoke model are meaningless"
+      },
+      "auto": {
+        "opencv": "5.0.0",
+        "engine_requested": "auto",
+        "engine_used": "new",
+        "OPENCV_FORCE_DNN_ENGINE": null,
+        "input_shape": [
+          1,
+          3,
+          640,
+          640
+        ],
+        "output_shape": [
+          1,
+          5,
+          8400
+        ],
+        "output_finite": true,
+        "load_ms": 74.3,
+        "forward_ms_first": 112.7,
+        "forward_ms_second": 102.9,
+        "conf": 0.25,
+        "iou": 0.45,
+        "detections": 866,
+        "smoke_run_model": true,
+        "evidence": {
+          "onnx": "models/smoke-yolo11n.onnx",
+          "image": "../camos-ai-camera/models/fruit-fly-v3/test/images/image_01121_jpg.rf.6aea462bf2ca160e7ad814be85d32ed0.jpg"
+        },
+        "note": "single run on a laptop, not a benchmark; detections from a 1-epoch smoke model are meaningless"
+      }
+    },
+    "env_matrix": {
+      "unset": {
+        "default": "new",
+        "NEW": "new",
+        "CLASSIC": "classic",
+        "AUTO": "new"
+      },
+      "''": {
+        "default": "ERROR: invalid stoull argument",
+        "NEW": "ERROR: invalid stoull argument",
+        "CLASSIC": "ERROR: invalid stoull argument",
+        "AUTO": "ERROR: invalid stoull argument"
+      },
+      "'0'": {
+        "default": "ERROR: OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\dnn\\src\\onnx\\onnx_importer.cpp:4225: error: (-5:Bad argument) Invalid DNN engine selected! in func",
+        "NEW": "ERROR: OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\dnn\\src\\onnx\\onnx_importer.cpp:4225: error: (-5:Bad argument) Invalid DNN engine selected! in func",
+        "CLASSIC": "ERROR: OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\dnn\\src\\onnx\\onnx_importer.cpp:4225: error: (-5:Bad argument) Invalid DNN engine selected! in func",
+        "AUTO": "ERROR: OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\dnn\\src\\onnx\\onnx_importer.cpp:4225: error: (-5:Bad argument) Invalid DNN engine selected! in func"
+      },
+      "'1'": {
+        "default": "classic",
+        "NEW": "classic",
+        "CLASSIC": "classic",
+        "AUTO": "classic"
+      },
+      "'2'": {
+        "default": "new",
+        "NEW": "new",
+        "CLASSIC": "new",
+        "AUTO": "new"
+      },
+      "'3'": {
+        "default": "new",
+        "NEW": "new",
+        "CLASSIC": "classic",
+        "AUTO": "new"
+      },
+      "'4'": {
+        "default": "new",
+        "NEW": "new",
+        "CLASSIC": "new",
+        "AUTO": "new"
+      },
+      "'CLASSIC'": {
+        "default": "ERROR: invalid stoull argument",
+        "NEW": "ERROR: invalid stoull argument",
+        "CLASSIC": "ERROR: invalid stoull argument",
+        "AUTO": "ERROR: invalid stoull argument"
+      }
+    },
+    "dynamic_onnx": {
+      "new@640": {
+        "engine_used": "new",
+        "output_shape": [
+          1,
+          5,
+          8400
+        ]
+      },
+      "new@416": {
+        "engine_used": "new",
+        "output_shape": [
+          1,
+          5,
+          3549
+        ]
+      },
+      "new@320": {
+        "engine_used": "new",
+        "output_shape": [
+          1,
+          5,
+          2100
+        ]
+      },
+      "classic@640": {
+        "error": "OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\dnn\\src\\onnx\\onnx_importer.cpp:1114: error: (-2:Unspecified error) in function 'cv::dnn::dnn5_v20260605::ONNXImporter::handleNode' > Node [Shape@ai.onnx]:(onnx_node!/model.10/m/m.0/attn/Shape) parse error: OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\dnn\\src\\onnx\\onnx_importer.cpp:2591: error: (-215:Assertion failed) !i"
+      },
+      "classic@416": {
+        "error": "OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\dnn\\src\\onnx\\onnx_importer.cpp:1114: error: (-2:Unspecified error) in function 'cv::dnn::dnn5_v20260605::ONNXImporter::handleNode' > Node [Shape@ai.onnx]:(onnx_node!/model.10/m/m.0/attn/Shape) parse error: OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\dnn\\src\\onnx\\onnx_importer.cpp:2591: error: (-215:Assertion failed) !i"
+      },
+      "classic@320": {
+        "error": "OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\dnn\\src\\onnx\\onnx_importer.cpp:1114: error: (-2:Unspecified error) in function 'cv::dnn::dnn5_v20260605::ONNXImporter::handleNode' > Node [Shape@ai.onnx]:(onnx_node!/model.10/m/m.0/attn/Shape) parse error: OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\dnn\\src\\onnx\\onnx_importer.cpp:2591: error: (-215:Assertion failed) !i"
+      }
+    }
+  },
+  "parity_vs_onnxruntime": {
+    "onnxruntime": "1.31.0",
+    "onnx": "smoke-yolo11n.onnx",
+    "input": "letterboxed test image (opencv_dnn.image)",
+    "new_vs_onnxruntime": {
+      "max_abs_diff_box_px": 0.00390625,
+      "max_abs_diff_score": 5.4836273193359375e-06,
+      "mean_abs_diff": 2.952908289444167e-05
+    },
+    "classic_vs_onnxruntime": {
+      "max_abs_diff_box_px": 0.0025634765625,
+      "max_abs_diff_score": 7.927417755126953e-06,
+      "mean_abs_diff": 3.666050179162994e-05
+    }
+  },
+  "ultralytics_label_check_all_images": {
+    "original/train": {
+      "found": 1605,
+      "empty": 2,
+      "corrupt": 3,
+      "boxes_kept": 74891,
+      "corrupt_files": [
+        "image_02267_jpg.rf.0051907f238a0d5add158890756e1a14.jpg",
+        "image_02354_jpg.rf.513d5da00e57ea17069dd394bf91c643.jpg",
+        "image_04258_jpg.rf.c13f0c3b1560bf82cd706caea35c7e1d.jpg"
+      ]
+    },
+    "original/valid": {
+      "found": 93,
+      "empty": 0,
+      "corrupt": 0,
+      "boxes_kept": 2838,
+      "corrupt_files": []
+    },
+    "original/test": {
+      "found": 76,
+      "empty": 0,
+      "corrupt": 0,
+      "boxes_kept": 2349,
+      "corrupt_files": []
+    },
+    "staged/train": {
+      "found": 1605,
+      "empty": 2,
+      "corrupt": 0,
+      "boxes_kept": 75016,
+      "corrupt_files": []
+    },
+    "staged/valid": {
+      "found": 93,
+      "empty": 0,
+      "corrupt": 0,
+      "boxes_kept": 2838,
+      "corrupt_files": []
+    },
+    "staged/test": {
+      "found": 76,
+      "empty": 0,
+      "corrupt": 0,
+      "boxes_kept": 2349,
+      "corrupt_files": []
+    }
+  }
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "step": "export",
+    "size": "nano",
+    "opset": 17,
+    "at": "2026-10-15T10:02:21",
+    "rfdetr": "?",
+    "torch": "2.14.1+cpu",
+    "resolution": 384,
+    "ok": true,
+    "onnx": "rfdetr/rfdetr-nano-coco.onnx",
+    "bytes": 107824162,
+    "inputs": {
+      "input": [
+        1,
+        3,
+        384,
+        384
+      ]
+    },
+    "outputs": {
+      "dets": [
+        1,
+        300,
+        4
+      ],
+      "labels": [
+        1,
+        300,
+        91
+      ]
+    },
+    "ops": [
+      "Add",
+      "And",
+      "Cast",
+      "Concat",
+      "Constant",
+      "ConstantOfShape",
+      "Conv",
+      "Cos",
+      "Div",
+      "Equal",
+      "Erf",
+      "Exp",
+      "Expand",
+      "Gather",
+      "GatherElements",
+      "Gemm",
+      "Greater",
+      "GridSample",
+      "LayerNormalization",
+      "Less",
+      "MatMul",
+      "Mul",
+      "Not",
+      "ReduceMax",
+      "ReduceSum",
+      "Relu",
+      "Reshape",
+      "Shape",
+      "Sigmoid",
+      "Sin",
+      "Slice",
+      "Softmax",
+      "Split",
+      "Sqrt",
+      "Sub",
+      "Tile",
+      "TopK",
+      "Transpose",
+      "Unsqueeze",
+      "Where"
+    ],
+    "seconds": 51.7
+  },
+  {
+    "step": "load",
+    "onnx": "models/rfdetr/rfdetr-nano-coco.onnx",
+    "engine_requested": "new",
+    "opencv": "5.0.0",
+    "image": "data/export/images/BE4111159/6abb30ba75e50bc9cc8a8b5c.jpg",
+    "resolution": 384,
+    "load_ms": 4064.7,
+    "forward_ms": 3647.6,
+    "engine_used": "new",
+    "outputs": {
+      "dets": [
+        1,
+        300,
+        4
+      ],
+      "labels": [
+        1,
+        300,
+        91
+      ]
+    },
+    "queries_above_conf": 0,
+    "top_classes": [
+      85,
+      16,
+      34
+    ],
+    "finite": true,
+    "ok": true
+  },
+  {
+    "step": "load",
+    "onnx": "models/rfdetr/rfdetr-nano-coco.onnx",
+    "engine_requested": "classic",
+    "opencv": "5.0.0",
+    "image": "data/export/images/BE4111159/6abb30ba75e50bc9cc8a8b5c.jpg",
+    "resolution": 384,
+    "ok": false,
+    "error": "error: OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\dnn\\src\\onnx\\onnx_importer.cpp:1114: error: (-2:Unspecified error) in function 'cv::dnn::dnn5_v20260605::ONNXImporter::handleNode'\n> Node [Slice@ai.onnx]:(onnx_node!/transformer/decoder/layers.0/cross_attn/Slice_5) parse error: OpenCV(5.0.0) D:\\a\\opencv-python\\opencv-python\\opencv\\modules\\dnn\\src\\layers\\slice_layer.cpp:220: error: (-215:Assertion failed) end < 0 || end > start in function 'cv::dnn::SliceLayerImpl::SliceLayerImpl'\n> "
+  },
+  {
+    "step": "parity_vs_onnxruntime",
+    "onnx": "models/rfdetr/rfdetr-nano-coco.onnx",
+    "engine": "new",
+    "opencv": "5.0.0",
+    "onnxruntime": "1.31.0",
+    "image": "data/export/images/BE4111159\u0006abb30ba75e50bc9cc8a8b5c.jpg",
+    "resolution": 384,
+    "max_abs_diff_dets": 0.00023436546325683594,
+    "max_abs_diff_logits": 0.0005369186401367188,
+    "top_query_same": true
+  }
+]

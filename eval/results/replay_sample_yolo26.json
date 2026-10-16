@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-10-16T11:32:34.677353+00:00",
+  "manifest": "D:\\Workspace\\Gits\\CamHub\\flybot-aws\\data\\samples\\samples_manifest.csv",
+  "photos": 24,
+  "ok": 24,
+  "errors": [],
+  "transport": "in-process",
+  "model": {
+    "name": "yolo26n",
+    "version": "2026-10-16",
+    "engine": "opencv-5.0.0-dnn-new",
+    "onnx": "fruitfly_yolo26n.onnx"
+  },
+  "opencv": "5.0.0",
+  "planner": {
+    "rule": 24
+  },
+  "counts": {
+    "total_flies": 15,
+    "mae_vs_production_ai_count": 2.17,
+    "n_with_production_count": 24,
+    "note": "production ai_count is FlyBot's Roboflow count at capture time, not human ground truth"
+  },
+  "quality_flags": {
+    "overexposed": 10
+  },
+  "proposals": {
+    "capture_now": 10
+  },
+  "proposal_rules": {
+    "quality.recapture": 10
+  },
+  "diff_available": 22,
+  "timings_ms": {
+    "dnn_p50": 133.5,
+    "dnn_p95": 323.8,
+    "total_p50": 992.4,
+    "total_p95": 1484.1,
+    "run_s": 28.2,
+    "note": "this machine (dev laptop), not the Lambda; see bench/results/lambda_latency.json"
+  },
+  "evidence_dir": "D:\\Workspace\\Gits\\CamHub\\flybot-aws\\data\\replay\\sample-yolo26\\evidence"
+}

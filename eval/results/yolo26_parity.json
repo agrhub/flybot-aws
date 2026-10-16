@@ -1,0 +1,566 @@
+{
+  "onnx": "D:\\Workspace\\Gits\\CamHub\\flybot-aws\\models\\yolo26\\fruitfly_yolo26n.onnx",
+  "opencv": "5.0.0",
+  "engine_requested": "new",
+  "imgsz": 640,
+  "conf": 0.25,
+  "iou": 0.45,
+  "photos": [
+    {
+      "image": "6ac327d44c3227d11cfbd084.jpg",
+      "width": 768,
+      "height": 432,
+      "opencv_forward_ms": 153.5,
+      "onnxruntime_forward_ms": 114.9,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 791.723388671875,
+      "count_opencv": 0,
+      "count_onnxruntime": 0,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac32eda4c3227d11cfbd0b4.jpg",
+      "width": 768,
+      "height": 432,
+      "opencv_forward_ms": 144.4,
+      "onnxruntime_forward_ms": 103.3,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 737.8521728515625,
+      "count_opencv": 0,
+      "count_onnxruntime": 0,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac335e34c3227d11cfbd0cb.jpg",
+      "width": 768,
+      "height": 432,
+      "opencv_forward_ms": 153.7,
+      "onnxruntime_forward_ms": 98.9,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 732.9442749023438,
+      "count_opencv": 0,
+      "count_onnxruntime": 0,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac33ceb4c3227d11cfbd0f4.jpg",
+      "width": 768,
+      "height": 432,
+      "opencv_forward_ms": 161.4,
+      "onnxruntime_forward_ms": 185.1,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 724.7133178710938,
+      "count_opencv": 0,
+      "count_onnxruntime": 0,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac343f24c3227d11cfbd13a.jpg",
+      "width": 768,
+      "height": 432,
+      "opencv_forward_ms": 490.8,
+      "onnxruntime_forward_ms": 188.1,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 731.7634887695312,
+      "count_opencv": 0,
+      "count_onnxruntime": 0,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac34afa4c3227d11cfbd154.jpg",
+      "width": 768,
+      "height": 432,
+      "opencv_forward_ms": 443.4,
+      "onnxruntime_forward_ms": 141.5,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 745.7491455078125,
+      "count_opencv": 0,
+      "count_onnxruntime": 0,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac34f1fe2041e0cbbd42bc8.jpg",
+      "width": 768,
+      "height": 432,
+      "opencv_forward_ms": 221.8,
+      "onnxruntime_forward_ms": 127.3,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 770.4378662109375,
+      "count_opencv": 0,
+      "count_onnxruntime": 0,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac350bb85650578c63d7bef.jpg",
+      "width": 768,
+      "height": 432,
+      "opencv_forward_ms": 253.0,
+      "onnxruntime_forward_ms": 132.9,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 706.3320922851562,
+      "count_opencv": 0,
+      "count_onnxruntime": 0,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac351ff85650578c63d7bf2.jpg",
+      "width": 768,
+      "height": 432,
+      "opencv_forward_ms": 176.1,
+      "onnxruntime_forward_ms": 92.3,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 705.0083618164062,
+      "count_opencv": 0,
+      "count_onnxruntime": 0,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac352024c3227d11cfbd183.jpg",
+      "width": 768,
+      "height": 432,
+      "opencv_forward_ms": 154.5,
+      "onnxruntime_forward_ms": 86.2,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 702.5567016601562,
+      "count_opencv": 0,
+      "count_onnxruntime": 0,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac3527e67f733147518e508.jpg",
+      "width": 768,
+      "height": 432,
+      "opencv_forward_ms": 139.5,
+      "onnxruntime_forward_ms": 80.2,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 683.044189453125,
+      "count_opencv": 0,
+      "count_onnxruntime": 0,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac353356c04f29d44631756.jpg",
+      "width": 768,
+      "height": 432,
+      "opencv_forward_ms": 146.3,
+      "onnxruntime_forward_ms": 99.4,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 687.4346923828125,
+      "count_opencv": 0,
+      "count_onnxruntime": 0,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac5cace9d7333beb125be0c.jpg",
+      "width": 2304,
+      "height": 1296,
+      "opencv_forward_ms": 129.7,
+      "onnxruntime_forward_ms": 78.0,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 553.8964233398438,
+      "count_opencv": 1,
+      "count_onnxruntime": 1,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac5d8dd9d7333beb125be10.jpg",
+      "width": 2304,
+      "height": 1296,
+      "opencv_forward_ms": 154.5,
+      "onnxruntime_forward_ms": 102.1,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 332.8462829589844,
+      "count_opencv": 1,
+      "count_onnxruntime": 1,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac5d8de4a6a99588b8c8a05.jpg",
+      "width": 2304,
+      "height": 1296,
+      "opencv_forward_ms": 126.3,
+      "onnxruntime_forward_ms": 85.1,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 429.1917419433594,
+      "count_opencv": 1,
+      "count_onnxruntime": 1,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac5dfe69d7333beb125be13.jpg",
+      "width": 2304,
+      "height": 1296,
+      "opencv_forward_ms": 139.8,
+      "onnxruntime_forward_ms": 82.4,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 552.4987182617188,
+      "count_opencv": 0,
+      "count_onnxruntime": 0,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac5dfe74a6a99588b8c8a08.jpg",
+      "width": 2304,
+      "height": 1296,
+      "opencv_forward_ms": 137.2,
+      "onnxruntime_forward_ms": 86.2,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 632.7640991210938,
+      "count_opencv": 1,
+      "count_onnxruntime": 1,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac5e6ed9d7333beb125be16.jpg",
+      "width": 2304,
+      "height": 1296,
+      "opencv_forward_ms": 141.0,
+      "onnxruntime_forward_ms": 80.7,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 521.6112670898438,
+      "count_opencv": 1,
+      "count_onnxruntime": 1,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac5e6ef4a6a99588b8c8a0b.jpg",
+      "width": 2304,
+      "height": 1296,
+      "opencv_forward_ms": 131.0,
+      "onnxruntime_forward_ms": 94.0,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 449.50390625,
+      "count_opencv": 1,
+      "count_onnxruntime": 1,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    },
+    {
+      "image": "6ac5edfb4a6a99588b8c8a0e.jpg",
+      "width": 2304,
+      "height": 1296,
+      "opencv_forward_ms": 503.4,
+      "onnxruntime_forward_ms": 189.1,
+      "output_shape": {
+        "opencv": [
+          1,
+          300,
+          6
+        ],
+        "onnxruntime": [
+          1,
+          300,
+          6
+        ]
+      },
+      "output_finite": true,
+      "raw_max_abs_diff": 551.9933471679688,
+      "count_opencv": 2,
+      "count_onnxruntime": 2,
+      "box_max_abs_diff_px": 0.0,
+      "score_max_abs_diff": 0.0,
+      "unmatched": 0,
+      "ok": true
+    }
+  ],
+  "status": "ok",
+  "onnxruntime": "1.31.0",
+  "graph_output_shape": [
+    [
+      1,
+      300,
+      6
+    ]
+  ],
+  "opencv_load_ms": 139.9,
+  "engine_used": "new",
+  "photos_checked": 20,
+  "mismatches": 0,
+  "worst_box_diff_px": 0.0,
+  "worst_score_diff": 0.0,
+  "head": "end2end"
+}

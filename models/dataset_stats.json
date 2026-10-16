@@ -1,0 +1,131 @@
+{
+  "data_yaml": {
+    "train": "../train/images",
+    "val": "../valid/images",
+    "test": "../test/images",
+    "nc": 1,
+    "names": [
+      "fruit_fly"
+    ],
+    "roboflow": {
+      "workspace": "camos",
+      "project": "fruit-fly-wmcqi",
+      "version": 3,
+      "license": "CC BY 4.0",
+      "url": "https://universe.roboflow.com/camos/fruit-fly-wmcqi/dataset/3"
+    }
+  },
+  "splits": {
+    "train": {
+      "images": 1605,
+      "labels": 1605,
+      "images_without_label_file": 0,
+      "images_with_zero_boxes": 2,
+      "boxes": 75018,
+      "boxes_per_image": {
+        "mean": 46.74,
+        "median": 47.0,
+        "p95": 90.0,
+        "max": 100,
+        "images_over_300": 0
+      },
+      "class_ids": {
+        "0": 75018
+      },
+      "polygon_label_lines": 1038,
+      "label_files_with_polygons": 31,
+      "label_files_mixing_boxes_and_polygons": 3,
+      "malformed_label_lines": 0,
+      "image_sizes": {
+        "640x640": 1605
+      },
+      "box_px_at_native_size": {
+        "w_median": 33.0,
+        "h_median": 44.0,
+        "w_p5": 14.5,
+        "h_p5": 20.0,
+        "w_p95": 49.5,
+        "h_p95": 69.0
+      },
+      "source_images": 1404
+    },
+    "valid": {
+      "images": 93,
+      "labels": 93,
+      "images_without_label_file": 0,
+      "images_with_zero_boxes": 0,
+      "boxes": 2838,
+      "boxes_per_image": {
+        "mean": 30.52,
+        "median": 14.0,
+        "p95": 80.6,
+        "max": 94,
+        "images_over_300": 0
+      },
+      "class_ids": {
+        "0": 2838
+      },
+      "polygon_label_lines": 0,
+      "label_files_with_polygons": 0,
+      "label_files_mixing_boxes_and_polygons": 0,
+      "malformed_label_lines": 0,
+      "image_sizes": {
+        "640x640": 93
+      },
+      "box_px_at_native_size": {
+        "w_median": 37.5,
+        "h_median": 50.0,
+        "w_p5": 24.5,
+        "h_p5": 32.0,
+        "w_p95": 50.58,
+        "h_p95": 72.0
+      },
+      "source_images": 93
+    },
+    "test": {
+      "images": 76,
+      "labels": 76,
+      "images_without_label_file": 0,
+      "images_with_zero_boxes": 0,
+      "boxes": 2349,
+      "boxes_per_image": {
+        "mean": 30.91,
+        "median": 33.5,
+        "p95": 67.5,
+        "max": 90,
+        "images_over_300": 0
+      },
+      "class_ids": {
+        "0": 2349
+      },
+      "polygon_label_lines": 0,
+      "label_files_with_polygons": 0,
+      "label_files_mixing_boxes_and_polygons": 0,
+      "malformed_label_lines": 0,
+      "image_sizes": {
+        "640x640": 76
+      },
+      "box_px_at_native_size": {
+        "w_median": 35.5,
+        "h_median": 48.5,
+        "w_p5": 14.0,
+        "h_p5": 17.5,
+        "w_p95": 50.0,
+        "h_p95": 73.0
+      },
+      "source_images": 76
+    }
+  },
+  "source_overlap_between_splits": {
+    "train&valid": 0,
+    "train&test": 0,
+    "valid&test": 0
+  },
+  "total_images": 1774,
+  "total_boxes": 80205,
+  "zip": {
+    "name": "fruit-fly.v3i.yolov8.zip",
+    "bytes": 57291462,
+    "sha256": "6372b7a6f7c8f9b74a6c1f4dd3c3c528f3699fbb67e6d2a621e3f8fca8d7b877"
+  }
+}

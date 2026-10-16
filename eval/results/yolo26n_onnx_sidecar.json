@@ -1,0 +1,42 @@
+{
+  "name": "yolo26n",
+  "version": "2026-10-16",
+  "imgsz": 640,
+  "head": "end2end",
+  "classes": [
+    "fruit_fly"
+  ],
+  "opset": 17,
+  "sha256": "fb4da5c0512088b32f447fc8fa14bd0fd4ed164768ed57d5690617ca2be7f176",
+  "bytes": 9863554,
+  "trained": {
+    "model": "yolo26n.pt",
+    "split": "test",
+    "imgsz": 640,
+    "mAP50": 0.9533,
+    "mAP50_95": 0.7001,
+    "precision": 0.913,
+    "recall": 0.8983,
+    "smoke_run": false,
+    "epochs": 60,
+    "ultralytics": "8.4.177",
+    "dataset": "camos/fruit-fly-wmcqi v3 (CC BY 4.0)"
+  },
+  "ultralytics": "8.4.177",
+  "opencv_check": {
+    "end2end": "ok",
+    "one_to_many": "ok",
+    "method": "detections at conf 0.25 matched by IoU on 20 test images (fruitfly_yolo26n-opencv_parity.json); raw-tensor check in -opencv_check.json fails only because TopK orders tied low-score rows differently"
+  },
+  "license": "AGPL-3.0 (Ultralytics YOLO26)",
+  "dataset": "camos/fruit-fly-wmcqi v3, CC BY 4.0",
+  "preprocess": "letterbox 640 pad 114, RGB, /255",
+  "o2m_fallback": {
+    "file": "fruitfly_yolo26n-o2m.onnx",
+    "shape": [
+      1,
+      5,
+      8400
+    ]
+  }
+}

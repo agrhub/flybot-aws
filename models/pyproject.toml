@@ -1,0 +1,18 @@
+# Training tooling for the fruit-fly detector (T0.4 / T1.3).
+# A separate uv project on purpose: the main project (repo root) and CI never install torch/ultralytics.
+#   cd models && uv sync && uv run python train.py --help
+[project]
+name = "flybot-sentinel-train"
+version = "0.1.0"
+description = "YOLO11n/YOLOv8n fruit-fly detector training and ONNX export (not installed by the main project)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "ultralytics==8.4.177",
+    "onnx>=1.17",
+    "onnxslim>=0.1.50",
+    "onnxruntime>=1.20",
+    "pyyaml>=6.0",
+]
+
+[tool.uv]
+package = false

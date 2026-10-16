@@ -1,0 +1,5 @@
+# Large or third-party training artifacts (kept outside git; see MODEL_CARD.md / LICENSE_OPTIONS.md)
+yolov7-tiny/
+rfdetr/
+third_party/
+*.pth
