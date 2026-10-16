@@ -1,0 +1,14 @@
+{
+ "c8g.xlarge": {
+  "usd_hr": 0.2076,
+  "source": "AWS Price List API (2026-10-12T19:39:25Z)"
+ },
+ "c7g.xlarge": {
+  "usd_hr": 0.1887,
+  "source": "AWS Price List API (2026-10-12T19:39:25Z)"
+ },
+ "c7i.xlarge": {
+  "usd_hr": 0.2331,
+  "source": "AWS Price List API (2026-10-12T19:39:25Z)"
+ }
+}

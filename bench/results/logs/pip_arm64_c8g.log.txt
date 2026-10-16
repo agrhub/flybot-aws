@@ -1,0 +1,22 @@
+Shutdown scheduled for Thu 2026-10-15 15:31:07 UTC, use 'shutdown -c' to cancel.
+[ud] 2026-10-15T10:31:07Z start CONFIG=pip_arm64_c8g MODE=pip
+[ud] instance i-0994a17ce967f927b c8g.xlarge ami-0ad88ad11d3502d29 ap-southeast-2c
+
+Running kernel seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+f4c39b7e995da3673f905a8a60cc33f0ebf8746bfdea1b546a4088d54b10c4a1  /opt/bench/bench_inputs.tar
+b7ec2ee67ea00108860e8b48874f7331947f9d41d02f9b68153466e3572d7b7a  /opt/bench/sentinel_src.tar
+0980784e3e288cded92e81d3ea9eeec818b2357e8734637af49da47b7c013fc9  /opt/bench/bench_pipeline.py
+[bench] pip_arm64_c8g: OpenCV 5.0.0 from /opt/bench/venv/lib/python3.12/site-packages/cv2/__init__.py, 500 pairs, threads 4
+[bench] sequential done: p50 418.02 ms, fps 2.3871
+[bench] parallel done: fps 3.3201
+[bench] micro done
+[bench] wrote /opt/bench/result.json in 1415.8 s
+[ud] 2026-10-15T10:55:37Z finish status=done rc=0

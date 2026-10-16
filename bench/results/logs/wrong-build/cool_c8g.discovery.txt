@@ -1,0 +1,731 @@
+== uname / os
+Linux ip-172-31-20-89 6.17.0-1019-aws #19~24.04.1-Ubuntu SMP Tue Jun 23 18:34:05 UTC 2026 aarch64 aarch64 aarch64 GNU/Linux
+PRETTY_NAME="Ubuntu 24.04.3 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.3 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+== motd
+00-header
+10-help-text
+50-landscape-sysinfo
+50-motd-news
+85-fwupd
+90-updates-available
+91-contract-ua-esm-status
+91-release-upgrade
+92-unattended-upgrades
+95-hwe-eol
+97-overlayroot
+98-fsck-at-reboot
+98-reboot-required
+--- /etc/update-motd.d/00-header
+#!/bin/sh
+#
+#    00-header - create the header of the MOTD
+#    Copyright (C) 2009-2010 Canonical Ltd.
+#
+#    Authors: Dustin Kirkland <kirkland@canonical.com>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License along
+#    with this program; if not, write to the Free Software Foundation, Inc.,
+#    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+[ -r /etc/lsb-release ] && . /etc/lsb-release
+
+if [ -z "$DISTRIB_DESCRIPTION" ] && [ -x /usr/bin/lsb_release ]; then
+	# Fall back to using the very slow lsb_release utility
+	DISTRIB_DESCRIPTION=$(lsb_release -s -d)
+fi
+
+printf "Welcome to %s (%s %s %s)\n" "$DISTRIB_DESCRIPTION" "$(uname -o)" "$(uname -r)" "$(uname -m)"
+--- /etc/update-motd.d/10-help-text
+#!/bin/sh
+#
+#    10-help-text - print the help text associated with the distro
+#    Copyright (C) 2009-2010 Canonical Ltd.
+#
+#    Authors: Dustin Kirkland <kirkland@canonical.com>,
+#             Brian Murray <brian@canonical.com>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License along
+#    with this program; if not, write to the Free Software Foundation, Inc.,
+#    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+printf "\n"
+printf " * Documentation:  https://help.ubuntu.com\n"
+printf " * Management:     https://landscape.canonical.com\n"
+printf " * Support:        https://ubuntu.com/pro\n"
+--- /etc/update-motd.d/50-landscape-sysinfo
+#!/bin/sh
+
+# don't try refresh this more than once per minute
+# Due to cpu consumption and login delays (LP: #1893716)
+CACHE="/var/lib/landscape/landscape-sysinfo.cache"
+HAS_CACHE="FALSE"
+CACHE_NEEDS_UPDATE="FALSE"
+
+[ -r "$CACHE" ] && HAS_CACHE="TRUE"
+[ -z "$(find "$CACHE" -newermt 'now-1 minutes' 2> /dev/null)" ] && CACHE_NEEDS_UPDATE="TRUE"
+
+if [ "$HAS_CACHE" = "TRUE" ] && [ "$CACHE_NEEDS_UPDATE" = "FALSE" ]; then
+    cat "$CACHE"
+else
+    SYSINFO=""
+
+    # pam_motd does not carry the environment
+    [ -f /etc/default/locale ] && . /etc/default/locale
+    export LANG
+    CORES=$(grep -c ^processor /proc/cpuinfo 2>/dev/null)
+    [ "$CORES" -eq "0" ] && CORES=1
+    THRESHOLD="${CORES:-1}.0"
+
+    if [ $(echo "`cut -f1 -d ' ' /proc/loadavg` < $THRESHOLD" | bc) -eq 1 ]; then
+        SYSINFO=$(printf "\n System information as of %s\n\n%s\n" \
+            "$(/bin/date)" \
+            "$(/usr/bin/landscape-sysinfo)")
+        echo "$SYSINFO" 2>/dev/null >"$CACHE" || true
+        chmod 0644 "$CACHE" 2>/dev/null || true
+    else
+        SYSINFO=$(printf "\n System information disabled due to load higher than %s\n" "$THRESHOLD")
+
+        if [ "$HAS_CACHE" = "TRUE" ]; then
+            if ! grep -q "System information as of" $CACHE 2>/dev/null; then
+                # do not replace a formerly good result due to load
+                echo "$SYSINFO" 2>/dev/null >"$CACHE" || true
+                chmod 0644 "$CACHE" 2>/dev/null || true
+            else
+                SYSINFO=$(cat "$CACHE")
+            fi
+        fi
+    fi
+
+    printf "%s\n" "$SYSINFO"
+fi
+
+exit 0
+--- /etc/update-motd.d/50-motd-news
+#!/bin/sh
+#
+#    50-motd-news - print the live news from the Ubuntu wire
+#    Copyright (C) 2016-2020 Canonical Ltd.
+#    Copyright (C) 2016-2017 Dustin Kirkland
+#
+#    Authors: Dustin Kirkland <kirkland@canonical.com>
+#             Steve Langasek <steve.langasek@canonical.com>
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License along
+#    with this program; if not, write to the Free Software Foundation, Inc.,
+#    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+##############################################################################
+# This program could be rewritten in C or Golang for faster performance.
+# Or it could be rewritten in Python or another higher level language
+# for more modularity.
+# However, I've insisted on shell here for transparency!
+#                                                                     - Dustin
+##############################################################################
+
+# Source the local configuration
+[ -r /etc/default/motd-news ] && . /etc/default/motd-news
+
+# Exit immediately, unless we're enabled
+# This makes this script very easy to disable in /etc/default/motd-news configuration
+[ "$ENABLED" = "1" ] || exit 0
+
+# Ensure sane defaults
+[ -n "$URLS" ] || URLS="https://motd.ubuntu.com"
+[ -n "$WAIT" ] || WAIT=5
+[ -n "$CACHE" ] || CACHE="/var/cache/motd-news"
+[ "$1" = "--force" ] && FORCED=1
+
+# Ensure we print safely, maximum of the first 10 lines,
+# maximum of the first 80 chars per line, no control chars
+safe_print() {
+	cat "$1" | head -n 10 | tr -d '\000-\011\013\014\016-\037' | cut -c -80
+}
+
+--- /etc/update-motd.d/85-fwupd
+#!/bin/sh
+
+if [ -f /run/motd.d/85-fwupd ]; then
+        cat /run/motd.d/85-fwupd
+fi
+--- /etc/update-motd.d/90-updates-available
+#!/bin/sh
+
+stamp="/var/lib/update-notifier/updates-available"
+
+[ ! -r "$stamp" ] || cat "$stamp"
+
+find $stamp -newermt 'now-7 days' 2> /dev/null | grep -q -m 1 '.' || /usr/share/update-notifier/notify-updates-outdated
+--- /etc/update-motd.d/91-contract-ua-esm-status
+#!/bin/sh
+contract_status_stamp="/var/lib/ubuntu-advantage/messages/motd-contract-status"
+
+[ ! -r "$contract_status_stamp" ] || cat "$contract_status_stamp"
+
+auto_attach_stamp="/var/lib/ubuntu-advantage/messages/motd-auto-attach-status"
+
+[ ! -r "$auto_attach_stamp" ] || cat "$auto_attach_stamp"
+--- /etc/update-motd.d/91-release-upgrade
+#!/bin/sh
+
+# if the current release is under development there won't be a new one
+[ -r /etc/lsb-release ] && . /etc/lsb-release
+if [ -z "$DISTRIB_DESCRIPTION" ] && command -v lsb_release > /dev/null; then
+    DISTRIB_DESCRIPTION=$(lsb_release -s -d)
+fi
+
+if [ "$(echo "$DISTRIB_DESCRIPTION" | cut -d' ' -f4)" = "(development" ]; then
+    exit 0
+fi
+
+# if it is non-root user, skip
+if [ $(id -u) -ne 0 ]; then
+    exit 0
+fi
+
+if [ -x /usr/lib/ubuntu-release-upgrader/release-upgrade-motd ]; then
+    exec /usr/lib/ubuntu-release-upgrader/release-upgrade-motd
+fi
+--- /etc/update-motd.d/92-unattended-upgrades
+#!/bin/sh
+
+if [ -x /usr/share/unattended-upgrades/update-motd-unattended-upgrades ]; then
+    exec /usr/share/unattended-upgrades/update-motd-unattended-upgrades
+fi
+--- /etc/update-motd.d/95-hwe-eol
+#!/bin/sh
+
+# this stamp is created and updated by /usr/lib/update-notifier/update-motd-hwe-eol
+stamp="/var/lib/update-notifier/hwe-eol"
+
+# do not try to refresh this more than once per day
+[ -z "$(find "$stamp" -newermt 'now-1 days' 2> /dev/null)" ] && exit 0
+
+if [ -x /usr/lib/update-notifier/update-motd-hwe-eol ]; then
+    exec /usr/lib/update-notifier/update-motd-hwe-eol
+fi
+--- /etc/update-motd.d/97-overlayroot
+#!/bin/sh
+
+(egrep "overlayroot|/media/root-ro|/media/root-rw" /proc/mounts 2>/dev/null | sort -r) || true
+echo
+--- /etc/update-motd.d/98-fsck-at-reboot
+#!/bin/sh
+
+if [ -x /usr/lib/update-notifier/update-motd-fsck-at-reboot ]; then
+    exec /usr/lib/update-notifier/update-motd-fsck-at-reboot
+fi--- /etc/update-motd.d/98-reboot-required
+#!/bin/sh
+
+if [ -x /usr/lib/update-notifier/update-motd-reboot-required ]; then
+    exec /usr/lib/update-notifier/update-motd-reboot-required
+fi== /opt /usr/local /home
+/home:
+total 12
+drwxr-xr-x  3 root   root   4096 Jan 27  2026 .
+drwxr-xr-x 24 root   root   4096 Oct 15 13:46 ..
+drwxr-xr-x  4 ubuntu ubuntu 4096 Jul 13 13:40 ubuntu
+
+/home/ubuntu:
+total 36
+drwxr-xr-x 4 ubuntu ubuntu 4096 Jul 13 13:40 .
+drwxr-xr-x 3 root   root   4096 Jan 27  2026 ..
+-rw-r--r-- 1 ubuntu ubuntu 6148 Jun 30 10:29 .DS_Store
+-rw-r--r-- 1 ubuntu ubuntu  220 Mar 31  2024 .bash_logout
+-rw-r--r-- 1 ubuntu ubuntu 3771 Mar 31  2024 .bashrc
+drwx------ 3 ubuntu ubuntu 4096 Jun 15 09:20 .config
+-rw-r--r-- 1 ubuntu ubuntu  807 Mar 31  2024 .profile
+drwx------ 2 ubuntu ubuntu 4096 May 18 09:59 .ssh
+
+/opt:
+total 32
+drwxr-xr-x  8 root   root   4096 Oct 15 13:47 .
+drwxr-xr-x 24 root   root   4096 Oct 15 13:46 ..
+drwxr-xr-x  5 root   root   4096 Jan 27  2026 arm
+drwxr-xr-x  2 root   root   4096 Oct 15 13:47 bench
+drwx--x--x  4 root   root   4096 Oct 15 13:46 containerd
+drwxr-xr-x  8 root   root   4096 Jul 13 07:45 cool
+drwxr-xr-x  6 ubuntu root   4096 Jul  6 15:46 ffmpeg
+drwxr-xr-x  3 ubuntu ubuntu 4096 Jan 28  2026 kleidicv_0.7.0
+
+/usr/local:
+total 40
+drwxr-xr-x 10 root root 4096 Dec 12  2025 .
+drwxr-xr-x 11 root root 4096 Dec 12  2025 ..
+drwxr-xr-x  2 root root 4096 Dec 12  2025 bin
+drwxr-xr-x  2 root root 4096 Dec 12  2025 etc
+drwxr-xr-x  2 root root 4096 Dec 12  2025 games
+drwxr-xr-x  2 root root 4096 Dec 12  2025 include
+drwxr-xr-x  6 root root 4096 Mar  3  2026 lib
+lrwxrwxrwx  1 root root    9 Dec 12  2025 man -> share/man
+drwxr-xr-x  2 root root 4096 Dec 12  2025 sbin
+drwxr-xr-x  7 root root 4096 Jan 27  2026 share
+drwxr-xr-x  2 root root 4096 Dec 12  2025 src
+
+/usr/local/lib:
+total 24
+drwxr-xr-x  6 root root 4096 Mar  3  2026 .
+drwxr-xr-x 10 root root 4096 Dec 12  2025 ..
+drwxr-xr-x  3 root root 4096 Feb 19  2026 python3.10
+drwxr-xr-x  3 root root 4096 Feb 19  2026 python3.11
+drwxr-xr-x  3 root root 4096 Dec 12  2025 python3.12
+drwxr-xr-x  3 root root 4096 Mar  3  2026 python3.9
+== README-like files
+/usr/share/cmake-3.28/Modules/readme.txt
+/usr/share/mime/text/x-readme.xml
+/usr/share/vim/vim91/pack/dist/opt/editorconfig/README.md
+/usr/share/vim/vim91/doc/README.Debian
+/usr/share/vim/vim91/tutor/README.ru.utf-8.txt
+/usr/share/X11/xkb/rules/README
+/usr/share/X11/xkb/geometry/README
+/usr/share/X11/xkb/keycodes/README
+/usr/share/X11/xkb/types/README
+/usr/share/X11/xkb/compat/README
+/usr/share/perl/5.38.2/Encode/README.e2x
+/usr/share/icons/Adwaita/symbolic/emotes/face-cool-symbolic.svg
+/usr/share/icons/Humanity/mimes/16/gnome-mime-text-x-readme.svg
+/usr/share/icons/Humanity/mimes/22/gnome-mime-text-x-readme.svg
+/usr/share/icons/Humanity/mimes/22/text-x-readme.svg
+/usr/share/icons/Humanity/mimes/48/gnome-mime-text-x-readme.svg
+/usr/share/icons/Humanity/mimes/48/text-x-readme.svg
+/usr/share/icons/Humanity/mimes/24/gnome-mime-text-x-readme.svg
+/usr/share/icons/Humanity/mimes/24/text-x-readme.svg
+/usr/share/icons/Humanity/mimes/32/gnome-mime-text-x-readme.svg
+/usr/share/icons/Humanity/emblems/16/emblem-cool.icon
+/usr/share/icons/Humanity/emblems/16/emblem-cool.png
+/usr/share/icons/Humanity/emblems/22/emblem-cool.icon
+/usr/share/icons/Humanity/emblems/22/emblem-cool.png
+/usr/share/icons/Humanity/emblems/48/emblem-cool.svg
+/usr/share/icons/Humanity/emblems/48/emblem-cool.icon
+/usr/share/icons/Humanity/emblems/24/emblem-cool.icon
+/usr/share/icons/Humanity/emblems/24/emblem-cool.png
+/usr/share/icons/Humanity/emblems/32/emblem-cool.icon
+/usr/share/icons/Humanity/emblems/32/emblem-cool.png
+/usr/share/fwupd/remotes.d/vendor/firmware/README.md
+/usr/include/aarch64-linux-gnu/libavutil/threadmessage.h
+/usr/lib/aarch64-linux-gnu/perl/debian-config-data-5.38.2/README
+/usr/lib/python3.11/distutils/README
+/usr/lib/python3.10/distutils/README
+/usr/lib/python3.9/distutils/README
+/usr/src/linux-aws-6.17-headers-6.17.0-1019/include/linux/cpu_cooling.h
+/usr/src/linux-aws-6.17-headers-6.17.0-1019/include/linux/devfreq_cooling.h
+/usr/src/linux-aws-6.17-headers-6.17.0-1019/scripts/ksymoops/README
+/usr/src/linux-aws-6.17-headers-6.17.0-1019/scripts/selinux/README
+/usr/src/linux-aws-6.17-headers-6.17.0-1019/tools/testing/selftests/pcie_bwctrl/set_pcie_cooling_state.sh
+/usr/src/linux-headers-6.17.0-1017-aws/scripts/selinux/README
+/usr/src/linux-aws-6.17-headers-6.17.0-1017/include/linux/cpu_cooling.h
+/usr/src/linux-aws-6.17-headers-6.17.0-1017/include/linux/devfreq_cooling.h
+/usr/src/linux-aws-6.17-headers-6.17.0-1017/scripts/ksymoops/README
+/usr/src/linux-aws-6.17-headers-6.17.0-1017/scripts/selinux/README
+/usr/src/linux-aws-6.17-headers-6.17.0-1017/tools/testing/selftests/pcie_bwctrl/set_pcie_cooling_state.sh
+/usr/src/linux-headers-6.17.0-1019-aws/scripts/selinux/README
+/install-4x/share/licenses/opencv4/libjpeg-turbo-README.ijg
+/install-4x/share/licenses/opencv4/libjpeg-turbo-README.md
+/install-4x/share/licenses/opencv4/libpng-README
+/install-4x/share/licenses/opencv4/protobuf-README.md
+/install-4x/share/licenses/opencv4/libopenjp2-README.md
+/opt/ffmpeg/share/ffmpeg/examples/README
+/opt/ffmpeg/include/libavutil/threadmessage.h
+/opt/kleidicv_0.7.0
+/opt/kleidicv_0.7.0/kleidicv
+/opt/kleidicv_0.7.0/kleidicv/conformity/opencv/README.md
+/opt/kleidicv_0.7.0/kleidicv/kleidicv_thread
+/opt/kleidicv_0.7.0/kleidicv/kleidicv_thread/include/kleidicv_thread
+/opt/kleidicv_0.7.0/kleidicv/kleidicv_thread/include/kleidicv_thread/kleidicv_thread.h
+/opt/kleidicv_0.7.0/kleidicv/kleidicv_thread/src/kleidicv_thread.cpp
+/opt/kleidicv_0.7.0/kleidicv/kleidicv
+/opt/kleidicv_0.7.0/kleidicv/kleidicv/include/kleidicv
+/opt/kleidicv_0.7.0/kleidicv/kleidicv/include/kleidicv/kleidicv.h
+/opt/kleidicv_0.7.0/kleidicv/scripts/benchmark/README.md
+/opt/kleidicv_0.7.0/kleidicv/adapters/opencv/kleidicv_hal.h
+/opt/kleidicv_0.7.0/kleidicv/adapters/opencv/kleidicv_hal.cpp
+/opt/kleidicv_0.7.0/kleidicv/.devcontainer/README.md
+/opt/kleidicv_0.7.0/kleidicv/examples/extract_one_operation/kleidicv
+/opt/kleidicv_0.7.0/kleidicv/README.md
+/opt/cool
+/opt/cool/venvs/python_3.11/lib/python3.11/site-packages/numpy/ma/README.rst
+/opt/cool/venvs/python_3.11/lib/python3.11/site-packages/numpy/_core/tests/data/umath-validation-set-README.txt
+/opt/cool/venvs/python_3.10/lib/python3.10/site-packages/numpy/ma/README.rst
+/opt/cool/venvs/python_3.10/lib/python3.10/site-packages/numpy/_core/tests/data/umath-validation-set-README.txt
+/opt/cool/venvs/python_3.12/lib/python3.12/site-packages/numpy/ma/README.rst
+/opt/cool/venvs/python_3.12/lib/python3.12/site-packages/numpy/_core/tests/data/umath-validation-set-README.txt
+/opt/cool/python_3.11/site-packages/numpy/ma/README.rst
+/opt/cool/python_3.11/site-packages/numpy/_core/tests/data/umath-validation-set-README.txt
+/opt/cool/python_3.10/site-packages/numpy/ma/README.rst
+/opt/cool/python_3.10/site-packages/numpy/_core/tests/data/umath-validation-set-README.txt
+/opt/cool/python_3.12/site-packages/numpy/ma/README.rst
+/opt/cool/python_3.12/site-packages/numpy/_core/tests/data/umath-validation-set-README.txt
+/opt/cool/samples/README.md
+/opt/bench/cool_discovery.txt
+/var/log/README
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/cpython-3.15.0b1-nogil/lib/python3.15t/idlelib/Icons/README.txt
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/cpython-3.15.0b1-nogil/lib/python3.15t/idlelib/idle_test/README.txt
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/cpython-3.15.0b1-nogil/lib/python3.15t/idlelib/README.txt
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/cpython-3.15.0b1-nogil/lib/python3.15t/test/xmltestdata/c14n-20/README
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/cpython-3.15.0b1-nogil/lib/python3.15t/test/test_tkinter/README
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/cpython-3.15.0b1-nogil/lib/python3.15t/test/leakers/README.txt
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/cpython-3.15.0b1-nogil/lib/python3.15t/test/data/README
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/cpython-3.15.0b1-nogil/lib/python3.15t/test/test_importlib/namespace_pkgs/foo/README.md
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/cpython-3.15.0b1-nogil/lib/python3.15t/test/crashers/README
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/cpython-3.15.0b1-nogil/lib/python3.15t/test/archivetestdata/README.md
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/cpython-3.15.0b1-nogil/lib/python3.15t/ctypes/macholib/README.ctypes
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/cpython-3.15.0b1-nogil/lib/python3.15t/site-packages/README.txt
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/cpython-3.15.0b1-nogil/lib/python3.15t/site-packages/pip/_vendor/README.rst
+== cv2 packages
+/usr/local/lib/python3.12/dist-packages/cv2
+/usr/local/lib/python3.12/dist-packages/cv2/python-3.12/cv2.cpython-312-aarch64-linux-gnu.so
+/opt/cool/python_3.11/site-packages/cv2
+/opt/cool/python_3.11/site-packages/cv2/python-3.11/cv2.cpython-311-aarch64-linux-gnu.so
+/opt/cool/python_3.10/site-packages/cv2
+/opt/cool/python_3.10/site-packages/cv2/python-3.10/cv2.cpython-310-aarch64-linux-gnu.so
+/opt/cool/python_3.12/site-packages/cv2
+/opt/cool/python_3.12/site-packages/cv2/python-3.12/cv2.cpython-312-aarch64-linux-gnu.so
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/cool_src_kcv070/lib/python3.12/site-packages/cv2
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/cool_src_kcv070/lib/python3.12/site-packages/cv2/python-3.12/cv2.cpython-312-aarch64-linux-gnu.so
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/cool_src/lib/python3.12/site-packages/cv2
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/cool_src/lib/python3.12/site-packages/cv2/python-3.12/cv2.cpython-312-aarch64-linux-gnu.so
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/cool_src_kcv070_notbb/lib/python3.12/site-packages/cv2
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/cool_src_kcv070_notbb/lib/python3.12/site-packages/cv2/python-3.12/cv2.cpython-312-aarch64-linux-gnu.so
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/pip_ref/lib/python3.12/site-packages/cv2
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/pip_ref/lib/python3.12/site-packages/cv2/cv2.abi3.so
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/cool_src_notbb/lib/python3.12/site-packages/cv2
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/cool_src_notbb/lib/python3.12/site-packages/cv2/python-3.12/cv2.cpython-312-aarch64-linux-gnu.so
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/python_loader/cv2
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/CMakeFiles/install/python_loader/cv2
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/lib/python3/cv2.cpython-312-aarch64-linux-gnu.so
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/modules/python_bindings_generator/cv2
+/install-cool/lib/python3.12/site-packages/cv2
+/install-cool/lib/python3.12/site-packages/cv2/python-3.12/cv2.cpython-312-aarch64-linux-gnu.so
+== libopencv
+/install-4x/lib/libopencv_core.so
+/install-4x/lib/libopencv_core.so.4.13.0
+/install-4x/lib/libopencv_core.so.413
+/opt/cool/cpp_sdk/lib/libopencv_core.so
+/opt/cool/cpp_sdk/lib/libopencv_core.so.5.1.0
+/opt/cool/cpp_sdk/lib/libopencv_core.so.501
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_install_kcv070_notbb/lib64/libopencv_core.so
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_install_kcv070_notbb/lib64/libopencv_core.so.5.1.0
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_install_kcv070_notbb/lib64/libopencv_core.so.501
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_install/lib64/libopencv_core.so
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_install/lib64/libopencv_core.so.5.1.0
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_install/lib64/libopencv_core.so.501
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_install_kcv070/lib64/libopencv_core.so
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_install_kcv070/lib64/libopencv_core.so.5.1.0
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_install_kcv070/lib64/libopencv_core.so.501
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/lib/libopencv_core.so
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/lib/libopencv_core.so.5.1.0
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/lib/libopencv_core.so.501
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_install_notbb/lib64/libopencv_core.so
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_install_notbb/lib64/libopencv_core.so.5.1.0
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_install_notbb/lib64/libopencv_core.so.501
+/install-cool/lib/libopencv_core.so.4.14.0
+/install-cool/lib/libopencv_core.so
+/install-cool/lib/libopencv_core.so.414
+== libkleidicv
+/opt/kleidicv_0.7.0
+/opt/kleidicv_0.7.0/kleidicv
+/opt/kleidicv_0.7.0/kleidicv/kleidicv_thread
+/opt/kleidicv_0.7.0/kleidicv/kleidicv_thread/include/kleidicv_thread
+/opt/kleidicv_0.7.0/kleidicv/kleidicv_thread/include/kleidicv_thread/kleidicv_thread.h
+/opt/kleidicv_0.7.0/kleidicv/kleidicv_thread/src/kleidicv_thread.cpp
+/opt/kleidicv_0.7.0/kleidicv/kleidicv
+/opt/kleidicv_0.7.0/kleidicv/kleidicv/include/kleidicv
+/opt/kleidicv_0.7.0/kleidicv/kleidicv/include/kleidicv/kleidicv.h
+/opt/kleidicv_0.7.0/kleidicv/adapters/opencv/kleidicv_hal.h
+/opt/kleidicv_0.7.0/kleidicv/adapters/opencv/kleidicv_hal.cpp
+/opt/kleidicv_0.7.0/kleidicv/examples/extract_one_operation/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/opt/kleidicv_0.7.0
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/opt/kleidicv_0.7.0/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/opt/kleidicv_0.7.0/kleidicv/kleidicv_thread
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/opt/kleidicv_0.7.0/kleidicv/kleidicv_thread/include/kleidicv_thread
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/opt/kleidicv_0.7.0/kleidicv/kleidicv_thread/include/kleidicv_thread/kleidicv_thread.h
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/opt/kleidicv_0.7.0/kleidicv/kleidicv_thread/src/kleidicv_thread.cpp
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/opt/kleidicv_0.7.0/kleidicv/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/opt/kleidicv_0.7.0/kleidicv/kleidicv/include/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/opt/kleidicv_0.7.0/kleidicv/kleidicv/include/kleidicv/kleidicv.h
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/opt/kleidicv_0.7.0/kleidicv/adapters/opencv/kleidicv_hal.h
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/opt/kleidicv_0.7.0/kleidicv/adapters/opencv/kleidicv_hal.cpp
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/opt/kleidicv_0.7.0/kleidicv/examples/extract_one_operation/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/kleidicv/kleidicv-26.03
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/kleidicv/kleidicv-26.03/kleidicv_thread
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/kleidicv/kleidicv-26.03/kleidicv_thread/include/kleidicv_thread
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/kleidicv/kleidicv-26.03/kleidicv_thread/include/kleidicv_thread/kleidicv_thread.h
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/kleidicv/kleidicv-26.03/kleidicv_thread/src/kleidicv_thread.cpp
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/kleidicv/kleidicv-26.03/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/kleidicv/kleidicv-26.03/kleidicv/include/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/kleidicv/kleidicv-26.03/kleidicv/include/kleidicv/kleidicv.h
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/kleidicv/kleidicv-26.03/adapters/opencv/kleidicv_hal.h
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/kleidicv/kleidicv-26.03/adapters/opencv/kleidicv_hal.cpp
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/kleidicv/kleidicv-26.03/examples/extract_one_operation/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/lib/libkleidicv.a
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/lib/libkleidicv_thread.a
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/3rdparty/lib/libkleidicv_hal.a
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/hal/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/hal/kleidicv/include/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/hal/kleidicv/CMakeFiles/kleidicv.dir
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/hal/kleidicv/CMakeFiles/kleidicv.dir/__/__/3rdparty/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/hal/kleidicv/CMakeFiles/kleidicv.dir/__/__/3rdparty/kleidicv/kleidicv-26.03
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/hal/kleidicv/CMakeFiles/kleidicv.dir/__/__/3rdparty/kleidicv/kleidicv-26.03/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/hal/kleidicv/CMakeFiles/kleidicv.dir/opt/kleidicv_0.7.0
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/hal/kleidicv/CMakeFiles/kleidicv.dir/opt/kleidicv_0.7.0/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/hal/kleidicv/CMakeFiles/kleidicv.dir/opt/kleidicv_0.7.0/kleidicv/kleidicv
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/hal/kleidicv/CMakeFiles/kleidicv_hal.dir
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/build/cool_build/hal/kleidicv/CMakeFiles/kleidicv_hal.dir/__/__/3rdparty/kleidicv
+== pythons
+lrwxrwxrwx 1 root root      10 Nov 12  2025 /usr/bin/python3 -> python3.12
+lrwxrwxrwx 1 root root      17 Nov 12  2025 /usr/bin/python3-config -> python3.12-config
+-rwxr-xr-x 1 root root 5237504 Oct 10  2025 /usr/bin/python3.10
+lrwxrwxrwx 1 root root      35 Oct 10  2025 /usr/bin/python3.10-config -> aarch64-linux-gnu-python3.10-config
+-rwxr-xr-x 1 root root 6624392 Oct 10  2025 /usr/bin/python3.11
+lrwxrwxrwx 1 root root      35 Oct 10  2025 /usr/bin/python3.11-config -> aarch64-linux-gnu-python3.11-config
+-rwxr-xr-x 1 root root 7845048 Jun 19 12:46 /usr/bin/python3.12
+lrwxrwxrwx 1 root root      35 Jun 19 12:46 /usr/bin/python3.12-config -> aarch64-linux-gnu-python3.12-config
+-rwxr-xr-x 1 root root 5259616 Nov  7  2025 /usr/bin/python3.9
+/opt/cool/venvs/python_3.11/bin/activate
+/opt/cool/venvs/python_3.10/bin/activate
+/opt/cool/venvs/python_3.12/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/tools/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/pipx/venvs/auditwheel/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/pipx/venvs/patchelf/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/pipx/venvs/abi3audit/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/pipx/venvs/uv/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/pipx/venvs/swig/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/pipx/venvs/cmake/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/25/fs/opt/_internal/pipx/shared/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/39/fs/opt/_internal/pipx/venvs/auditwheel/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/cool_src_kcv070/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/cool_src/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/cool_src_kcv070_notbb/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/pip_ref/bin/activate
+/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/42/fs/home/ci/venvs/cool_src_notbb/bin/activate
+== system python3 import cv2
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/local/lib/python3.12/dist-packages/cv2/__init__.py", line 11, in <module>
+    import numpy
+ModuleNotFoundError: No module named 'numpy'
+OpenCV bindings requires "numpy" package.
+Install it via command:
+    pip install numpy
+== pip list (system)
+Package             Version
+------------------- ---------------
+attrs               23.2.0
+Automat             22.10.0
+Babel               2.10.3
+bcc                 0.29.1
+bcrypt              3.2.2
+blinker             1.7.0
+boto3               1.34.46
+botocore            1.34.46
+certifi             2023.11.17
+chardet             5.2.0
+click               8.1.6
+cloud-init          25.2
+colorama            0.4.6
+command-not-found   0.3
+configobj           5.0.8
+constantly          23.10.4
+cryptography        41.0.7
+dbus-python         1.3.2
+distro              1.9.0
+distro-info         1.7+build1
+ec2-hibinit-agent   1.0.0
+httplib2            0.20.4
+hyperlink           21.0.0
+idna                3.6
+incremental         22.10.0
+Jinja2              3.1.2
+jmespath            1.0.1
+jsonpatch           1.32
+jsonpointer         2.0
+jsonschema          4.10.3
+launchpadlib        1.11.0
+lazr.restfulclient  0.14.6
+lazr.uri            1.0.6
+markdown-it-py      3.0.0
+MarkupSafe          2.1.5
+mdurl               0.1.2
+netaddr             0.8.0
+netifaces           0.11.0
+oauthlib            3.2.2
+packaging           24.0
+pexpect             4.9.0
+pip                 24.0
+ptyprocess          0.7.0
+pyasn1              0.4.8
+pyasn1-modules      0.2.8
+Pygments            2.17.2
+PyGObject           3.48.2
+PyHamcrest          2.1.0
+PyJWT               2.7.0
+pyOpenSSL           23.2.0
+pyparsing           3.1.1
+pyrsistent          0.20.0
+pyserial            3.5
+python-apt          2.7.7+ubuntu5.1
+python-dateutil     2.8.2
+python-debian       0.1.49+ubuntu2
+python-magic        0.4.27
+pytz                2024.1
+PyYAML              6.0.1
+requests            2.31.0
+rich                13.7.1
+s3transfer          0.10.1
+service-identity    24.1.0
+setuptools          68.1.2
+six                 1.16.0
+sos                 4.9.2
+ssh-import-id       5.11
+systemd-python      235
+Twisted             24.3.0
+typing_extensions   4.10.0
+ubuntu-pro-client   8001
+ufw                 0.36.2
+unattended-upgrades 0.1
+urllib3             2.0.7
+wadllib             1.3.6
+wheel               0.42.0
+zope.interface      6.1
+== dpkg opencv
+== env files
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+01-locale-fix.sh
+Z97-byobu.sh
+Z99-cloud-locale-test.sh
+Z99-cloudinit-warnings.sh
+apps-bin-path.sh
+bash_completion.sh
+gawk.csh
+gawk.sh
+# Make sure the locale variables are set to valid values.
+eval $(/usr/bin/locale-check C.UTF-8)
+#    Z97-byobu.sh - allow any user to opt into auto-launching byobu
+#    Copyright (C) 2011 Canonical Ltd.
+#
+#    Authors: Dustin Kirkland <kirkland@byobu.org>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, version 3 of the License.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Allow any user to opt into auto-launching byobu by setting LC_BYOBU=1
+# Apologies for borrowing the LC_BYOBU namespace, but:
+#  a) it's reasonable to assume that no one else is using LC_BYOBU
+#  b) LC_* is sent and receieved by most /etc/ssh/ssh*_config
+
+if [ -r "/usr/bin/byobu-launch" ]; then
+	if [ "$LC_BYOBU" = "0" ]; then
+		true
+	elif [ "$LC_BYOBU" = "1" ]; then
+		. /usr/bin/byobu-launch
+	elif [ -e "/etc/byobu/autolaunch" ]; then
+		. /usr/bin/byobu-launch
+	elif [ "$LC_TERMTYPE" = "byobu" ]; then
+		. /usr/bin/byobu-launch
+	elif [ "$LC_TERMTYPE" = "byobu-screen" ]; then
+		export BYOBU_BACKEND="screen"
+		. /usr/bin/byobu-launch
+	elif [ "$LC_TERMTYPE" = "byobu-tmux" ]; then
+		export BYOBU_BACKEND="tmux"
+		. /usr/bin/byobu-launch
+	fi
+fi
+
+# vi: syntax=sh ts=4 noexpandtab
+#!/bin/sh
+# Copyright (C) 2012, Canonical Group, Ltd.
+#
+# Author: Ben Howard <ben.howard@canonical.com>
+# Author: Scott Moser <scott.moser@ubuntu.com>
+# (c) 2012, Canonical Group, Ltd.
+#
+# This file is part of cloud-init. See LICENSE file for license information.
+ 
+# Purpose: Detect invalid locale settings and inform the user
+#  of how to fix them.
+
+locale_warn() {
+    command -v local >/dev/null && local _local="local" ||
+        typeset _local="typeset"
+
+    $_local bad_names="" bad_lcs="" key="" val="" var="" vars="" bad_kv=""
+    $_local w1 w2 w3 w4 remain
+
+    # if shell is zsh, act like sh only for this function (-L).
+    # The behavior change will not permanently affect user's shell.
+    [ "${ZSH_NAME+zsh}" = "zsh" ] && emulate -L sh
+
+    # locale is expected to output either:
+    # VARIABLE=
+    # VARIABLE="value"
+    # locale: Cannot set LC_SOMETHING to default locale
+    while read -r w1 w2 w3 w4 remain; do
+        case "$w1" in
+            locale:) bad_names="${bad_names} ${w4}";;
+            *)
+                key=${w1%%=*}
+                val=${w1#*=}
+                val=${val#\"}
+                val=${val%\"}
+                vars="${vars} $key=$val";;
+        esac
+== ld.so.conf.d
+# Multiarch support
+/usr/local/lib/aarch64-linux-gnu
+/lib/aarch64-linux-gnu
+/usr/lib/aarch64-linux-gnu
+/usr/lib/aarch64-linux-gnu/libfakeroot
+/opt/ffmpeg/lib
+# libc default configuration
+/usr/local/lib
