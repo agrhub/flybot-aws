@@ -1,0 +1,12 @@
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+tests
+models/features
+models/*.pt
+models/runs
+models/datasets
+models/third_party
+*.part

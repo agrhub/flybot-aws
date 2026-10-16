@@ -1,0 +1,1 @@
+{"snapshot_id": "6ac5e6ed9d7333beb125be16", "sig": "fruitfly_deploy.onnx:24146362:engine=new:resize=letterbox:conf=0.25:iou=0.45", "width": 2304, "height": 1296, "count": 0, "boxes": [], "forward_ms": 2647.1}

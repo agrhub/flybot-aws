@@ -1,0 +1,51 @@
+# Op 2 quality gate thresholds (sentinel/vision/quality.py).
+# Calibration: `uv run python -m sentinel.vision.calibrate_quality` against the FlyBot production
+# flags (data/manifest.csv quality_issues); result in docs/evidence/vision/quality_calibration.json.
+# Absolute rules fire on any photo; relative rules (ratio_*) need the camera's baseline, the
+# median of its last `baseline_size` photos without issues (same idea as FlyBot imageQuality.js).
+
+sample_width: 320          # metrics are measured on a grayscale copy this wide (FlyBot uses 320)
+
+dark:
+  brightness_max: 35       # mean luminance below this is dark ...
+  daylight_only: true      # ... but only in daylight (07-17 farm time) when the hour is known
+overexposed:
+  brightness_min: 235
+  clip_high_max: 0.35      # share of pixels >= 250
+blurry:
+  sharpness_min: 2.0       # variance of Laplacian on the 320-wide copy (absolute floor)
+  ratio_edge: 0.2          # edge ratio (sharpness / contrast^2) below 0.2 x baseline (FlyBot: 0.35; 0.35 flagged 50 sharp
+                           # BE4111159 midday photos whose baseline was noisy night frames, calibration 2026-10-15)
+  card_sharpness_min: 15.0 # variance of Laplacian on the rectified card (800 px long side)
+                           # sticky cards only: on a lure tray floor (smooth white plastic) it measured floor
+                           # texture, not focus, and flagged 180/485 sharp BE4111159 photos (fixed 2026-10-15)
+low_contrast:
+  contrast_min: 6.0        # luminance std (absolute floor)
+  ratio_contrast: 0.5      # contrast below 0.5 x baseline (FlyBot HAZE_RATIO)
+glare:
+  v_min: 250               # specular pixel: V >= v_min and S <= s_max
+  s_max: 40
+  ratio_max: 0.02          # share of the card (or frame without card) that is specular
+dirty:
+  window: 15               # local std window (px on the 320-wide copy)
+  flat_ratio: 0.25         # a pixel is "flat" when its local std < flat_ratio x median local std
+  ratio_max: 0.35          # no baseline: flat share above this = smudge / droplet / condensation
+  delta_baseline: 0.2      # with baseline: flat share above baseline + this
+ir:
+  saturation_max: 8.0      # mean HSV saturation below this = near-grayscale (IR night mode)
+card:
+  min_coverage: 0.04       # card area / frame below this counts as no_card
+  occlusion_max: 0.25      # 1 - fill above this = partial_card (card hidden by something)
+
+baseline_size: 20
+baseline_min: 5
+
+# Op 6 crowd / saturation (sentinel/vision/crowd.py; sticky traps only, lure -> not_applicable).
+# Validation: `uv run python -m sentinel.vision.crowd_eval` -> docs/evidence/vision/crowd_eval.json.
+crowd:
+  card_full_pct: 10.0      # suggest a card change when >= 10 % of the card is covered by dark blobs.
+                           # Not calibrated on card replacements (0 in the 2026-10 export). Rationale: with flies
+                           # landing at random (Boolean disc model), the share of flies touching another is about
+                           # 1 - (1 - coverage)^4 = 34 % at 10 % coverage, where blob counts start to merge flies.
+                           # The camos test split tops out at 7.3 % (90 labelled flies), so 10 % is beyond every
+                           # picture we have: a suggestion for a person, never an automatic action.

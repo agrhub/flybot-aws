@@ -1,0 +1,128 @@
+# FlyBot Sentinel agent policy (MASTER_PLAN 2.5, task T2.3). Loaded by sentinel/agent/policy.py into
+# common.schemas.PolicyConfig; RulePlanner implements it, LLMPlanner gets it verbatim in its system
+# prompt, guardrails enforce the budgets / approvals / kill switch whatever the planner decides.
+# Domain rules mirror FlyBot (ezviz-manager/server/src/services): surgeService.js, sprayPlanService.js,
+# degreeDayService.js. Numbers here are policy choices, not measurements.
+version: "1"
+timezone: Asia/Ho_Chi_Minh          # quiet hours and daily budgets use farm-local time
+
+# FlyBot Camera.trapKind (owner, 2026-10-15). The two orchard EZVIZ cameras are `lure`, the bench AI
+# camera is `sticky`.
+trap_kinds:
+  sticky:                            # yellow sticky card: counts accumulate until the card is changed
+    count_basis: peak                # surge: today's peak vs the peak 3 days ago (surgeService)
+    new_catch: true                  # new catch = diff of consecutive photos (op 4)
+    card_changes: true               # card_full / card change suspected -> propose_card_change
+  lure:                              # bait trap: a photo's count is the flies present now
+    count_basis: daily_average       # FlyBot thresholds use the day's average per photo (total / scans)
+    new_catch: false                 # consecutive diffs are activity, not catches
+    card_changes: false              # no card to change
+
+quality:                             # op 2 issues (sentinel/vision/quality.py ISSUES + FlyBot card_full)
+  recapture_on: [dark, overexposed, glare, low_contrast, blurry]
+  isp_fixes:                         # relative change to video.image (protocol 8, firmware 0.25); AI camera only
+    glare:        {brightness: -16, wdr: 2}
+    overexposed:  {brightness: -16, wdr: 2}
+    dark:         {brightness: 16}
+    low_contrast: {contrast: 10}
+  isp_defaults: {brightness: 0, contrast: 50, wdr: 0, flicker: 3}   # used when reported.video.image is unknown
+  postpone_on: [ir]                  # IR night frame: do not count, no action, wait for the next slot
+  review_on: [dirty]                 # smudge / droplets: ask a person to clean the lens
+  roi_on: [partial_card]             # card partly out of frame: set_detection_roi from the op 1 quad (AI camera)
+  trap_missing_on: [no_card, no_floor]   # sticky: no card; lure: tray floor not found (op 2 reports it as no_card).
+                                         # Never counted; one recapture, then request_human_review
+                                         # "trap missing or camera misaimed" (once a day)
+  max_recaptures_per_event: 1
+  baseline_size: 20                  # op 2 relative rules (blur, haze, dirt) use the camera's rolling baseline:
+  baseline_min: 5                    # median of its last 20 accepted photos, applied from 5 on (FlyBot imageQuality.js)
+  baseline_bootstrap_previous: true  # until then: the camera's previous photo, if op 2 finds nothing wrong with it
+
+motion:                              # op 8 (sentinel/vision/motion.py), needs the previous photo
+  occluded_recapture: true           # large object in front of the trap: photo not counted, one recapture (budget permitting)
+  moved_reviews_per_day: 1           # camera moved / re-aimed: logged, request_human_review once a day per camera
+
+surge:                               # surgeService.js: SURGE_DAYS 3, SURGE_RATIO 1.5, MIN_INCREASE 3, MIN_COUNT 5
+  days: 3
+  ratio: 1.5
+  min_increase: 3
+  min_count: 5
+  card_replaced_skip_days: 4         # sticky: no surge when the card was replaced in the last SURGE_DAYS + 1 days
+  confirm_min_neighbours: 1          # a surge is confirmed when this many neighbour captures agree
+
+card:
+  saturation_full: 0.6               # op 6 saturation share at which the card counts as full
+  on_issue: [card_full]
+  propose_on_card_change_suspected: true
+
+disagreement:                        # NPU / OpenCV 5 / production count spread > max(abs_min, rel x max count)
+  abs_min: 3
+  rel: 0.2
+  closer_look_resolution: max        # capture.resolution "max" (4 MP); then human review if still apart
+
+treatment:                           # sprayPlanService.js
+  min_interval_days: 7               # a treatment less than a week ago -> wait_check, not a new proposal
+  wave_window_days: 10
+  wave_lead_days: 3
+  rain_mm: 10                        # a day with >= 10 mm rain washes a spray off: move to the next dry day
+  post_treatment_check_days: 3       # after an approved treatment, a verification capture
+
+budgets:
+  extra_captures_per_camera_per_day: 4   # agent captures on top of the camera's own schedule
+  neighbour_captures_per_surge: 3
+  isp_changes_per_camera_per_hour: 2
+  quiet_hours: {start: "20:00", end: "05:00"}   # no device actions (capture, ISP, ROI, schedule)
+  battery:                           # battery cameras (ESP32 trap on a 2000 mAh LiPo, EZVIZ CS-EB8); unknown = mains
+    low_percent: 40                  # below 40 %: extra-capture budget halved (4 -> 2)
+    low_factor: 0.5
+    critical_percent: 20             # below 20 %: no extra captures, no ISP changes; the camera's schedule continues
+
+approval:
+  timeout_h: 24                      # a proposal nobody confirms within 24 h expires
+  on_timeout: no_op                  # expiry never triggers an action
+
+schedule:                            # daily loop: denser captures while a fly wave is due
+  wave_soon_days: 3
+  wave_every_min: 60
+  from: "06:00"
+  to: "18:00"
+
+kill_switch:
+  enabled: false                     # true here (or SENTINEL_KILL_SWITCH=1) stops every action
+  table: sentinel-devices            # DynamoDB: item serial=kill_switch {kill_switch: true} stops all cameras,
+  global_serial: kill_switch         # attribute kill_switch=true on a camera's own item stops that camera
+  attribute: kill_switch
+  cache_s: 30
+
+injection:                           # text from image metadata / OSD / device names / user notes
+  max_len: 300
+  patterns:
+    - "(?i)ignore (all |any )?(previous|prior|above) (instructions|rules)"
+    - "(?i)\\b(system|assistant|developer)\\s*:"
+    - "(?i)you are now"
+    - "(?i)\\b(call|invoke|run|use) (the )?(tool|function)"
+    - "(?i)\\b(propose_treatment|propose_card_change|set_image|request_human_review|set_detection_roi|set_capture_schedule|schedule_followup)\\b"
+    - "(?i)(approve|approved|pre-?authori[sz]ed|override|kill.?switch|disable guard)"
+    - "<\\s*/?\\s*(tool|function|system|untrusted)"
+
+llm_max_turns: 12
+llm_ground_proposals: true           # an LLM proposal must cite evidence of an observation of those traps AND be supported
+                                     # by it (surge / count >= threshold; card full / changed), else -> request_human_review
+
+# FlyBot proposals (docs/CONTRACTS.md section 1; sentinel/agent/proposals.py). Policy choices, not measurements.
+proposal_approval:                   # requiresApproval per proposal action
+  capture_now: false                 # one extra photo, within the capture budget the guardrails checked
+  notify: false                      # information only
+  review_request: false              # the proposal IS the request for a person
+  set_interval: true                 # changes the camera's schedule (battery)
+  set_isp: true                      # changes the camera's image settings
+proposal_confidence:                 # per decision rule prefix (longest match), used as `confidence`
+  default: 0.7
+  quality: 0.9                       # op 2 thresholds, deterministic
+  trap_missing: 0.85
+  occlusion: 0.8
+  motion: 0.8
+  disagreement: 0.7
+  surge: 0.7                         # surge rule on counts, before neighbour confirmation
+  treatment: 0.6
+  llm: 0.6                           # LLM-initiated proposals (grounding checked by the guardrails)
+  guardrail: 0.5

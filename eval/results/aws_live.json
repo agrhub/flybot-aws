@@ -1,0 +1,180 @@
+{
+  "status": "measured",
+  "source": "data/eval/aws_traces.jsonl (git-ignored; pulled read-only from DynamoDB sentinel-traces)",
+  "excluded_serials": [
+    "AICSIM*",
+    "FBSIM*",
+    "AICTEST*"
+  ],
+  "photos": 76,
+  "window": {
+    "from": "2026-10-15T09:03:44Z",
+    "to": "2026-10-15T09:38:40Z"
+  },
+  "photos_per_day": {
+    "2026-10-15": 76
+  },
+  "by_camera": {
+    "BE4089629": {
+      "photos": 39
+    },
+    "BE4111159": {
+      "photos": 37,
+      "recapture_decisions": 18
+    }
+  },
+  "by_source": {
+    "ezviz": 76
+  },
+  "state": {
+    "FOLLOWUP": 18,
+    "DECIDED": 58
+  },
+  "decisions_by_action": {
+    "no_op": 58,
+    "capture": 18
+  },
+  "decisions_by_rule": {
+    "no_op": 58,
+    "quality.recapture": 18
+  },
+  "first_decision_rule": {
+    "no_op": 58,
+    "quality.recapture": 18
+  },
+  "outcomes": {
+    "no_op": 58,
+    "quality.recapture; blocked: capture(unknown_camera)": 18
+  },
+  "photos_with_quality_issue": {
+    "blurry": 15,
+    "glare": 3,
+    "no_card": 1
+  },
+  "blurry_flag_vs_laplacian_sharpness": {
+    "BE4089629": {
+      "flagged_n": 0,
+      "flagged_median": null,
+      "unflagged_n": 39,
+      "unflagged_median": 224.8
+    },
+    "BE4111159": {
+      "flagged_n": 15,
+      "flagged_median": 475.7,
+      "unflagged_n": 22,
+      "unflagged_median": 337.9
+    }
+  },
+  "recapture": {
+    "decisions": 18,
+    "by_rule": {
+      "quality.recapture": 18
+    },
+    "by_reason": {
+      "blurry": 15,
+      "glare": 2,
+      "no_card, glare": 1
+    },
+    "by_camera": {
+      "BE4111159": 18
+    },
+    "capture_tool_calls": {
+      "capture:blocked": 18
+    }
+  },
+  "followups": {
+    "scheduled_tool_calls_ok": 18,
+    "traces_with_followup": 18,
+    "by_kind": {
+      "capture": 18
+    }
+  },
+  "guardrails": {
+    "blocked_tool_calls": {
+      "capture(no device for camera 'BE4111159')": 18
+    },
+    "guardrail_block_events": {
+      "no device for camera 'BE4111159'": 18
+    }
+  },
+  "tool_calls": {
+    "analyze_trap_photo:ok": 76,
+    "capture:blocked": 18,
+    "get_trap_history:ok": 58,
+    "schedule_followup:ok": 18
+  },
+  "proposals_created": 0,
+  "kill_switch_traces": 0,
+  "planner": {
+    "mode": {
+      "rule": 76
+    },
+    "fallbacks": 0,
+    "llm_usage": "no LLM call in these traces"
+  },
+  "latency": {
+    "agent_s": {
+      "n": 76,
+      "p50": 1.75,
+      "p90": 1.82,
+      "p95": 1.85,
+      "max": 2.64,
+      "mean": 1.76,
+      "def": "trace finished_at - created_at"
+    },
+    "vision_ms": {
+      "n": 76,
+      "p50": 1392.6,
+      "p90": 1424.5,
+      "p95": 1443.1,
+      "max": 2002.5,
+      "mean": 1390.2,
+      "def": "op pipeline time per photo (observation vision_ms)"
+    },
+    "tool_call_ms": {
+      "n": 170,
+      "p50": 7.1,
+      "p90": 1773.9,
+      "p95": 1804.3,
+      "max": 2584.1,
+      "mean": 782.1,
+      "def": "per tool call"
+    },
+    "ingest_delay_s": {
+      "live_le_1h": {
+        "n": 6,
+        "p50": 240.8,
+        "p90": 1942.8,
+        "p95": 2004.2,
+        "max": 2065.6,
+        "mean": 798.8
+      },
+      "backfill_gt_1h": {
+        "n": 70,
+        "p50": 38951.6,
+        "p90": 77405.6,
+        "p95": 80278.0,
+        "max": 84819.9,
+        "mean": 42570.7
+      },
+      "def": "trace created_at - photo captured_at; > 1 h = photos the poller found already old on its first sweeps (backfill), not a steady-state latency"
+    },
+    "note": "Lambda duration and cold starts are not in the trace (CloudWatch, not read here)."
+  },
+  "fields_missing": {},
+  "pull": {
+    "scanned": 88,
+    "by_loop_all": {
+      "per_photo": 83,
+      "daily_per_plot": 5
+    },
+    "skipped": {
+      "excluded_serial": 7
+    },
+    "written": 76,
+    "other_loops_after_exclusion": {
+      "daily_per_plot": 5
+    },
+    "pulled_at": "2026-10-15T09:47:21Z"
+  }
+}

@@ -1,0 +1,30 @@
+[project]
+name = "flybot-vision"
+version = "0.1.0"
+description = "FlyBot vision Lambda: OpenCV 5 detection + agent for fruit-fly traps (OpenCV AI Competition 2026)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "opencv-python>=5.0,<6",
+    "numpy>=2.0",
+    "pydantic>=2.8",
+    "boto3>=1.40",
+    "pyyaml>=6.0",
+    "scipy>=1.14",
+    "anthropic>=1.14.0",
+    "httpx>=0.28.1",
+    "tzdata>=2026.5",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.6",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

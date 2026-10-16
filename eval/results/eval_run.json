@@ -1,0 +1,13 @@
+{
+  "started": "2026-10-15 09:50 UTC",
+  "quick": false,
+  "sections": [
+    "agent",
+    "detection",
+    "failure",
+    "vision"
+  ],
+  "opencv": "5.0.0",
+  "machine": "Windows 11 Intel64 Family 6 Model 142 Stepping 9, GenuineIntel, 4 CPUs",
+  "seconds": 609.7
+}

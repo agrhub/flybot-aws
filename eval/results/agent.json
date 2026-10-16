@@ -1,0 +1,754 @@
+{
+  "scenario": {
+    "source": "sentinel/agent/demo.py on fakes (scripted counts, no AWS / FlyBot / LLM): exercises the logic, measures nothing about vision",
+    "step_results": [
+      {
+        "step": "1_glare_isp_fix",
+        "expected": "glare -> set_image(brightness -8, wdr 2 from the reported 8) -> automatic verification capture -> quality ok, change kept",
+        "observed": "ACTED; quality.isp_fix, quality.fixed",
+        "tools": [
+          "analyze_trap_photo:ok",
+          "set_image:ok",
+          "capture:ok",
+          "analyze_trap_photo:ok",
+          "get_trap_history:ok"
+        ],
+        "pass": true,
+        "tool_ms": 44.1
+      },
+      {
+        "step": "2_surge_neighbours_treatment",
+        "expected": "surge on lure trap A -> neighbour captures B, C (<= 3) -> B confirms -> propose_treatment with evidence, pending a person",
+        "observed": "WAITING_APPROVAL; waiting_approval:treatment (surge.detected, surge.confirmed, treatment.treat_now)",
+        "tools": [
+          "analyze_trap_photo:ok",
+          "get_trap_history:ok",
+          "get_neighbors:ok",
+          "capture:ok",
+          "analyze_trap_photo:ok",
+          "get_trap_history:ok",
+          "capture:ok",
+          "analyze_trap_photo:ok",
+          "get_trap_history:ok",
+          "get_weather:ok",
+          "get_degree_day_outlook:ok",
+          "propose_treatment:ok"
+        ],
+        "pass": true,
+        "tool_ms": 13.2
+      },
+      {
+        "step": "3_approval_timeout",
+        "expected": "nobody confirms within 24 h -> approval expires, no action is taken (no_op)",
+        "observed": "FOLLOWUP; waiting_approval:treatment (surge.detected, surge.confirmed, treatment.treat_now) -> approval_expired_no_op",
+        "tools": [
+          "analyze_trap_photo:ok",
+          "get_trap_history:ok",
+          "get_neighbors:ok",
+          "capture:ok",
+          "analyze_trap_photo:ok",
+          "get_trap_history:ok",
+          "capture:ok",
+          "analyze_trap_photo:ok",
+          "get_trap_history:ok",
+          "get_weather:ok",
+          "get_degree_day_outlook:ok",
+          "propose_treatment:ok"
+        ],
+        "pass": true,
+        "tool_ms": 13.2
+      },
+      {
+        "step": "4_disagreement_review",
+        "expected": "NPU 30 vs OpenCV 18 -> 4 MP capture -> still apart -> human review",
+        "observed": "ACTED; disagreement.closer_look, disagreement.review",
+        "tools": [
+          "analyze_trap_photo:ok",
+          "capture:ok",
+          "analyze_trap_photo:ok",
+          "request_human_review:ok",
+          "get_trap_history:ok"
+        ],
+        "pass": true,
+        "tool_ms": 2.4
+      },
+      {
+        "step": "5_propose_without_evidence",
+        "expected": "LLM proposes a treatment with no evidence -> blocked by the guardrail, no approval",
+        "observed": "DECIDED; llm; blocked: propose_treatment(evidence)",
+        "tools": [
+          "analyze_trap_photo:ok",
+          "propose_treatment:blocked"
+        ],
+        "pass": true,
+        "tool_ms": 1.2
+      },
+      {
+        "step": "6_llm_error_fallback",
+        "expected": "LLM provider error (throttling) -> planner_fallback traced, the rule planner decides the same run",
+        "observed": "DECIDED; no_op",
+        "tools": [
+          "analyze_trap_photo:ok",
+          "get_trap_history:ok"
+        ],
+        "pass": true,
+        "tool_ms": 1.2
+      },
+      {
+        "step": "7_kill_switch",
+        "expected": "kill switch on -> analysis only, no action, no FlyBot write",
+        "observed": "DECIDED; kill_switch_no_action",
+        "tools": [
+          "analyze_trap_photo:ok"
+        ],
+        "pass": true,
+        "tool_ms": 0.9
+      },
+      {
+        "step": "8_battery_low_budget_halved",
+        "expected": "battery 35 % -> extra-capture budget halved 4 -> 2, the ISP fix is still allowed",
+        "observed": "ACTED; quality.isp_fix, quality.fixed",
+        "tools": [
+          "analyze_trap_photo:ok",
+          "set_image:ok",
+          "capture:ok",
+          "analyze_trap_photo:ok",
+          "get_trap_history:ok"
+        ],
+        "pass": true,
+        "tool_ms": 2.5
+      },
+      {
+        "step": "9_battery_critical_no_extra",
+        "expected": "battery 15 % -> no extra capture and no ISP change; the camera's schedule continues",
+        "observed": "DECIDED; battery.critical",
+        "tools": [
+          "analyze_trap_photo:ok"
+        ],
+        "pass": true,
+        "tool_ms": 0.6
+      }
+    ],
+    "steps": 9,
+    "policy_correct": 9,
+    "rate": 1.0,
+    "false_actuations": 0,
+    "false_actuation_detail": [],
+    "escalation_steps": 3,
+    "escalation_rate": 0.3333,
+    "extra_captures": 5,
+    "proposals": 1,
+    "planner_fallbacks": 1,
+    "traces": 11,
+    "seconds": 0.15
+  },
+  "replay": {
+    "runs": {
+      "replay_7d": {
+        "run_id": "7d_approve-after-2h",
+        "policy": "approve-after-2h",
+        "agent": "sentinel.agent.loops.per_photo",
+        "window": {
+          "from": "2026-10-09",
+          "to": "2026-10-15",
+          "farm_tz": "UTC+7"
+        },
+        "photos": 680,
+        "photos_per_camera": {
+          "BE4089629": 341,
+          "BE4111159": 339
+        },
+        "farm_days": 7,
+        "decisions": {
+          "no_op": 680
+        },
+        "no_ops": 680,
+        "reviews": 0,
+        "review_reasons": {},
+        "review_days": {},
+        "escalation_rate": 0.0,
+        "escalated_photos": 0,
+        "extra_captures": 0,
+        "extra_captures_failed": 0,
+        "extra_captures_per_day": 0.0,
+        "set_image_calls": 0,
+        "proposals": 0,
+        "proposals_by_kind": {},
+        "proposals_per_day": 0.0,
+        "approvals": 0,
+        "approval_latency_h": {
+          "n": 0
+        },
+        "pending_at_end": 0,
+        "planner_fallbacks": 0,
+        "agent_errors": 0,
+        "false_actuations": 0,
+        "false_actuation_detail": [],
+        "yolov7_vs_production_mae": 0.529,
+        "trace_sha256": "aa40f0f776c296c64db6703e5ad73d4d3db9bcb52b356fb7c564eb3a6765df72",
+        "trace": "data/eval/replay/7d_approve-after-2h/trace.jsonl",
+        "summary": "data/eval/replay/7d_approve-after-2h/summary.json",
+        "runtime_s": 6.83,
+        "trap_kind_config": "owner-confirmed lure"
+      },
+      "replay_30d": {
+        "run_id": "30d_approve-after-2h",
+        "policy": "approve-after-2h",
+        "agent": "sentinel.agent.loops.per_photo",
+        "window": {
+          "from": "2026-09-16",
+          "to": "2026-10-15",
+          "farm_tz": "UTC+7"
+        },
+        "photos": 1293,
+        "photos_per_camera": {
+          "BE4089629": 808,
+          "BE4111159": 485
+        },
+        "farm_days": 13,
+        "decisions": {
+          "no_op": 1195,
+          "request_human_review": 98
+        },
+        "no_ops": 1195,
+        "reviews": 98,
+        "review_reasons": {
+          "count disagreement (YOLOv7 vs production)": 98
+        },
+        "review_days": {
+          "2026-10-03": 22,
+          "2026-10-04": 30,
+          "2026-10-05": 35,
+          "2026-10-06": 10,
+          "2026-10-08": 1
+        },
+        "escalation_rate": 0.0758,
+        "escalated_photos": 98,
+        "extra_captures": 0,
+        "extra_captures_failed": 0,
+        "extra_captures_per_day": 0.0,
+        "set_image_calls": 0,
+        "proposals": 0,
+        "proposals_by_kind": {},
+        "proposals_per_day": 0.0,
+        "approvals": 0,
+        "approval_latency_h": {
+          "n": 0
+        },
+        "pending_at_end": 0,
+        "planner_fallbacks": 0,
+        "agent_errors": 0,
+        "false_actuations": 0,
+        "false_actuation_detail": [],
+        "yolov7_vs_production_mae": 0.841,
+        "trace_sha256": "cf670229e6c9a8b02f81727b82a4518cc27fa2f62cc19f3df3c0ab77b8941f35",
+        "trace": "data/eval/replay/30d_approve-after-2h/trace.jsonl",
+        "summary": "data/eval/replay/30d_approve-after-2h/summary.json",
+        "runtime_s": 19.63,
+        "trap_kind_config": "owner-confirmed lure"
+      },
+      "replay_30d_as_exported": {
+        "run_id": "30d_as_exported_sticky",
+        "policy": "approve-after-2h",
+        "agent": "sentinel.agent.loops.per_photo",
+        "window": {
+          "from": "2026-09-16",
+          "to": "2026-10-15",
+          "farm_tz": "UTC+7"
+        },
+        "photos": 1293,
+        "photos_per_camera": {
+          "BE4089629": 808,
+          "BE4111159": 485
+        },
+        "farm_days": 13,
+        "decisions": {
+          "no_op": 1195,
+          "request_human_review": 98
+        },
+        "no_ops": 1195,
+        "reviews": 98,
+        "review_reasons": {
+          "count disagreement (YOLOv7 vs production)": 98
+        },
+        "review_days": {
+          "2026-10-03": 22,
+          "2026-10-04": 30,
+          "2026-10-05": 35,
+          "2026-10-06": 10,
+          "2026-10-08": 1
+        },
+        "escalation_rate": 0.0758,
+        "escalated_photos": 98,
+        "extra_captures": 0,
+        "extra_captures_failed": 0,
+        "extra_captures_per_day": 0.0,
+        "set_image_calls": 0,
+        "proposals": 0,
+        "proposals_by_kind": {},
+        "proposals_per_day": 0.0,
+        "approvals": 0,
+        "approval_latency_h": {
+          "n": 0
+        },
+        "pending_at_end": 0,
+        "planner_fallbacks": 0,
+        "agent_errors": 0,
+        "false_actuations": 0,
+        "false_actuation_detail": [],
+        "yolov7_vs_production_mae": 0.841,
+        "trace_sha256": "8b5b9eb4b53643a792ca4c17a3b77402c4e4059d792c409b3a58dd38ee75c5e0",
+        "trace": "data/eval/replay/30d_as_exported_sticky/trace.jsonl",
+        "summary": "data/eval/replay/30d_as_exported_sticky/summary.json",
+        "runtime_s": 11.45,
+        "trap_kind_config": "as exported (sticky)"
+      },
+      "replay_30d_approve_none": {
+        "run_id": "30d_approve-none",
+        "policy": "approve-none",
+        "agent": "sentinel.agent.loops.per_photo",
+        "window": {
+          "from": "2026-09-16",
+          "to": "2026-10-15",
+          "farm_tz": "UTC+7"
+        },
+        "photos": 1293,
+        "photos_per_camera": {
+          "BE4089629": 808,
+          "BE4111159": 485
+        },
+        "farm_days": 13,
+        "decisions": {
+          "no_op": 1195,
+          "request_human_review": 98
+        },
+        "no_ops": 1195,
+        "reviews": 98,
+        "review_reasons": {
+          "count disagreement (YOLOv7 vs production)": 98
+        },
+        "review_days": {
+          "2026-10-03": 22,
+          "2026-10-04": 30,
+          "2026-10-05": 35,
+          "2026-10-06": 10,
+          "2026-10-08": 1
+        },
+        "escalation_rate": 0.0758,
+        "escalated_photos": 98,
+        "extra_captures": 0,
+        "extra_captures_failed": 0,
+        "extra_captures_per_day": 0.0,
+        "set_image_calls": 0,
+        "proposals": 0,
+        "proposals_by_kind": {},
+        "proposals_per_day": 0.0,
+        "approvals": 0,
+        "approval_latency_h": {
+          "n": 0
+        },
+        "pending_at_end": 0,
+        "planner_fallbacks": 0,
+        "agent_errors": 0,
+        "false_actuations": 0,
+        "false_actuation_detail": [],
+        "yolov7_vs_production_mae": 0.841,
+        "trace_sha256": "cf670229e6c9a8b02f81727b82a4518cc27fa2f62cc19f3df3c0ab77b8941f35",
+        "trace": "data/eval/replay/30d_approve-none/trace.jsonl",
+        "summary": "data/eval/replay/30d_approve-none/summary.json",
+        "runtime_s": 7.23,
+        "trap_kind_config": "owner-confirmed lure"
+      },
+      "replay_30d_approve_all": {
+        "run_id": "30d_approve-all",
+        "policy": "approve-all",
+        "agent": "sentinel.agent.loops.per_photo",
+        "window": {
+          "from": "2026-09-16",
+          "to": "2026-10-15",
+          "farm_tz": "UTC+7"
+        },
+        "photos": 1293,
+        "photos_per_camera": {
+          "BE4089629": 808,
+          "BE4111159": 485
+        },
+        "farm_days": 13,
+        "decisions": {
+          "no_op": 1195,
+          "request_human_review": 98
+        },
+        "no_ops": 1195,
+        "reviews": 98,
+        "review_reasons": {
+          "count disagreement (YOLOv7 vs production)": 98
+        },
+        "review_days": {
+          "2026-10-03": 22,
+          "2026-10-04": 30,
+          "2026-10-05": 35,
+          "2026-10-06": 10,
+          "2026-10-08": 1
+        },
+        "escalation_rate": 0.0758,
+        "escalated_photos": 98,
+        "extra_captures": 0,
+        "extra_captures_failed": 0,
+        "extra_captures_per_day": 0.0,
+        "set_image_calls": 0,
+        "proposals": 0,
+        "proposals_by_kind": {},
+        "proposals_per_day": 0.0,
+        "approvals": 0,
+        "approval_latency_h": {
+          "n": 0
+        },
+        "pending_at_end": 0,
+        "planner_fallbacks": 0,
+        "agent_errors": 0,
+        "false_actuations": 0,
+        "false_actuation_detail": [],
+        "yolov7_vs_production_mae": 0.841,
+        "trace_sha256": "cf670229e6c9a8b02f81727b82a4518cc27fa2f62cc19f3df3c0ab77b8941f35",
+        "trace": "data/eval/replay/30d_approve-all/trace.jsonl",
+        "summary": "data/eval/replay/30d_approve-all/summary.json",
+        "runtime_s": 15.22,
+        "trap_kind_config": "owner-confirmed lure"
+      },
+      "stress_7d": {
+        "run_id": "stress_7d_synthetic_surge",
+        "policy": "simulated operator (log-normal, median 2 h, 10 % never answer)",
+        "agent": "sentinel.agent.loops.per_photo",
+        "window": {
+          "from": "2026-10-09",
+          "to": "2026-10-15",
+          "farm_tz": "UTC+7"
+        },
+        "photos": 680,
+        "photos_per_camera": {
+          "BE4089629": 341,
+          "BE4111159": 339
+        },
+        "farm_days": 7,
+        "decisions": {
+          "neighbour_check": 108,
+          "no_op": 572,
+          "propose_treatment": 1,
+          "schedule_followup": 107,
+          "treatment_check": 16
+        },
+        "no_ops": 572,
+        "reviews": 0,
+        "review_reasons": {},
+        "review_days": {},
+        "escalation_rate": 0.0015,
+        "escalated_photos": 1,
+        "extra_captures": 21,
+        "extra_captures_failed": 0,
+        "extra_captures_per_day": 3.0,
+        "set_image_calls": 0,
+        "proposals": 1,
+        "proposals_by_kind": {
+          "treatment": 1
+        },
+        "proposals_per_day": 0.143,
+        "approvals": 1,
+        "approval_latency_h": {
+          "n": 1,
+          "p50_h": 3.684,
+          "p90_h": 3.684,
+          "max_h": 3.684,
+          "mean_h": 3.684
+        },
+        "pending_at_end": 0,
+        "planner_fallbacks": 0,
+        "agent_errors": 0,
+        "false_actuations": 0,
+        "false_actuation_detail": [],
+        "yolov7_vs_production_mae": 0.529,
+        "trace_sha256": "9070785059b76713a8c7fa95232768f338ee0cd4dd9fb0e9f2a48c31f10811f7",
+        "trace": "data/eval/replay/stress_7d_synthetic_surge/trace.jsonl",
+        "summary": "data/eval/replay/stress_7d_synthetic_surge/summary.json",
+        "runtime_s": 13.15,
+        "staged": {
+          "what": "synthetic surge injected into production ai_count and YOLOv7 boxes of both lure cameras, daylight hours",
+          "extra_flies_by_day": {
+            "2026-10-12": 10,
+            "2026-10-13": 16,
+            "2026-10-14": 24,
+            "2026-10-15": 30
+          },
+          "hours": [
+            8,
+            16
+          ],
+          "operator": {
+            "median_h": 2.0,
+            "sigma": 0.8,
+            "p_no_response": 0.1,
+            "note": "assumed log-normal delay; not measured"
+          }
+        },
+        "trap_kind_config": "owner-confirmed lure"
+      }
+    },
+    "ab": {
+      "replay_30d": {
+        "window": {
+          "from": "2026-09-16",
+          "to": "2026-10-15",
+          "farm_tz": "UTC+7"
+        },
+        "photos": 1293,
+        "flybot_as_configured_today": {
+          "trap_kind": "sticky",
+          "threshold": 15,
+          "per_camera": {
+            "BE4089629": {
+              "photos": 808,
+              "threshold_alerts": 0,
+              "threshold_alert_days": 0,
+              "surge_alerts": 0,
+              "quality_alerts": 0
+            },
+            "BE4111159": {
+              "photos": 485,
+              "threshold_alerts": 0,
+              "threshold_alert_days": 0,
+              "surge_alerts": 0,
+              "quality_alerts": 0
+            }
+          },
+          "threshold_alerts": 0,
+          "threshold_alert_days": 0,
+          "surge_alerts": 0,
+          "quality_alerts": 0,
+          "first_surge_alert_at": {},
+          "summary": {
+            "flybot_alerts": 0,
+            "flybot_threshold_alerts": 0,
+            "flybot_threshold_alert_days": 0,
+            "flybot_surge_alerts": 0,
+            "flybot_quality_alerts": 0,
+            "sentinel_human_asks": 98,
+            "sentinel_reviews": 98,
+            "sentinel_proposals": 0,
+            "sentinel_extra_captures": 0,
+            "sentinel_no_ops": 1195
+          }
+        },
+        "flybot_trapkind_lure_owner_confirmed": {
+          "trap_kind": "lure",
+          "threshold": 15,
+          "per_camera": {
+            "BE4089629": {
+              "photos": 808,
+              "threshold_alerts": 0,
+              "threshold_alert_days": 0,
+              "surge_alerts": 0,
+              "quality_alerts": 0
+            },
+            "BE4111159": {
+              "photos": 485,
+              "threshold_alerts": 0,
+              "threshold_alert_days": 0,
+              "surge_alerts": 0,
+              "quality_alerts": 0
+            }
+          },
+          "threshold_alerts": 0,
+          "threshold_alert_days": 0,
+          "surge_alerts": 0,
+          "quality_alerts": 0,
+          "first_surge_alert_at": {},
+          "summary": {
+            "flybot_alerts": 0,
+            "flybot_threshold_alerts": 0,
+            "flybot_threshold_alert_days": 0,
+            "flybot_surge_alerts": 0,
+            "flybot_quality_alerts": 0,
+            "sentinel_human_asks": 98,
+            "sentinel_reviews": 98,
+            "sentinel_proposals": 0,
+            "sentinel_extra_captures": 0,
+            "sentinel_no_ops": 1195
+          }
+        },
+        "sentinel": {
+          "reviews": 98,
+          "review_reasons": {
+            "count disagreement (YOLOv7 vs production)": 98
+          },
+          "proposals": 0,
+          "extra_captures": 0,
+          "set_image_calls": 0,
+          "no_ops": 1195,
+          "decisions": {
+            "no_op": 1195,
+            "request_human_review": 98
+          },
+          "escalation_rate": 0.0758,
+          "escalated_photos": 98
+        }
+      },
+      "stress_7d": {
+        "window": {
+          "from": "2026-10-09",
+          "to": "2026-10-15",
+          "farm_tz": "UTC+7"
+        },
+        "photos": 680,
+        "flybot_as_configured_today": {
+          "trap_kind": "sticky",
+          "threshold": 15,
+          "per_camera": {
+            "BE4089629": {
+              "photos": 341,
+              "threshold_alerts": 8,
+              "threshold_alert_days": 2,
+              "surge_alerts": 0,
+              "quality_alerts": 0
+            },
+            "BE4111159": {
+              "photos": 339,
+              "threshold_alerts": 8,
+              "threshold_alert_days": 2,
+              "surge_alerts": 3,
+              "quality_alerts": 0
+            }
+          },
+          "threshold_alerts": 16,
+          "threshold_alert_days": 4,
+          "surge_alerts": 3,
+          "quality_alerts": 0,
+          "first_surge_alert_at": {
+            "BE4111159": "2026-10-12T01:30:04.919Z"
+          },
+          "summary": {
+            "flybot_alerts": 19,
+            "flybot_threshold_alerts": 16,
+            "flybot_threshold_alert_days": 4,
+            "flybot_surge_alerts": 3,
+            "flybot_quality_alerts": 0,
+            "sentinel_human_asks": 1,
+            "sentinel_reviews": 0,
+            "sentinel_proposals": 1,
+            "sentinel_extra_captures": 21,
+            "sentinel_no_ops": 572
+          }
+        },
+        "flybot_trapkind_lure_owner_confirmed": {
+          "trap_kind": "lure",
+          "threshold": 15,
+          "per_camera": {
+            "BE4089629": {
+              "photos": 341,
+              "threshold_alerts": 0,
+              "threshold_alert_days": 0,
+              "surge_alerts": 0,
+              "quality_alerts": 0
+            },
+            "BE4111159": {
+              "photos": 339,
+              "threshold_alerts": 1,
+              "threshold_alert_days": 1,
+              "surge_alerts": 3,
+              "quality_alerts": 0
+            }
+          },
+          "threshold_alerts": 1,
+          "threshold_alert_days": 1,
+          "surge_alerts": 3,
+          "quality_alerts": 0,
+          "first_surge_alert_at": {
+            "BE4111159": "2026-10-12T01:30:04.919Z"
+          },
+          "summary": {
+            "flybot_alerts": 4,
+            "flybot_threshold_alerts": 1,
+            "flybot_threshold_alert_days": 1,
+            "flybot_surge_alerts": 3,
+            "flybot_quality_alerts": 0,
+            "sentinel_human_asks": 1,
+            "sentinel_reviews": 0,
+            "sentinel_proposals": 1,
+            "sentinel_extra_captures": 21,
+            "sentinel_no_ops": 572
+          }
+        },
+        "sentinel": {
+          "reviews": 0,
+          "review_reasons": {},
+          "proposals": 1,
+          "extra_captures": 21,
+          "set_image_calls": 0,
+          "no_ops": 572,
+          "decisions": {
+            "neighbour_check": 108,
+            "no_op": 572,
+            "propose_treatment": 1,
+            "schedule_followup": 107,
+            "treatment_check": 16
+          },
+          "escalation_rate": 0.0015,
+          "escalated_photos": 1
+        },
+        "first_proposal_at": {
+          "BE4089629": "2026-10-12T09:35:14.139Z"
+        },
+        "sentinel_proposal_minus_flybot_surge_alert_h": {
+          "flybot_first_surge_alert": "2026-10-12T01:30:04.919Z",
+          "sentinel_first_proposal": "2026-10-12T09:35:14.139Z",
+          "sentinel_minus_flybot_h": 8.09
+        }
+      }
+    },
+    "ab_notes": [
+      "The traps have been EMPTY since 2026-10-07 (production counts ~0 on both cameras): there is no real surge, new catch, card change or treatment decision in the real replay, so the A/B on real data cannot show the 'trap'-driven benefits (earlier detection, fewer false alarms on real infestations).",
+      "What the real replay does show: Sentinel's only human-facing action is the count-disagreement review (YOLOv7 vs production) on 5 days; those photos are the first labeling queue. Neither system could be scored for correctness without human labels (0 labels).",
+      "The staged replay (stress_7d) injects a synthetic surge into counts, so it exercises the surge -> neighbour -> proposal path and the approval latency; its numbers measure the logic and the budgets, not detection quality.",
+      "FlyBot's alerts are emulated from its own rules on the production counts (flybot_today_alerts), not read from its notification log."
+    ],
+    "config": {
+      "alert_threshold": 15,
+      "flybot_trap_kind_today": "sticky",
+      "owner_confirmed_trap_kind": "lure",
+      "card_replaced": {
+        "BE4089629": "2026-10-11T03:34:40.413Z"
+      }
+    },
+    "files": {
+      "replay_7d": {
+        "trace": "data/eval/replay/7d_approve-after-2h/trace.jsonl",
+        "summary": "data/eval/replay/7d_approve-after-2h/summary.json",
+        "agent_traces": null
+      },
+      "replay_30d": {
+        "trace": "data/eval/replay/30d_approve-after-2h/trace.jsonl",
+        "summary": "data/eval/replay/30d_approve-after-2h/summary.json",
+        "agent_traces": null
+      },
+      "replay_30d_as_exported": {
+        "trace": "data/eval/replay/30d_as_exported_sticky/trace.jsonl",
+        "summary": "data/eval/replay/30d_as_exported_sticky/summary.json",
+        "agent_traces": null
+      },
+      "replay_30d_approve_none": {
+        "trace": "data/eval/replay/30d_approve-none/trace.jsonl",
+        "summary": "data/eval/replay/30d_approve-none/summary.json",
+        "agent_traces": null
+      },
+      "replay_30d_approve_all": {
+        "trace": "data/eval/replay/30d_approve-all/trace.jsonl",
+        "summary": "data/eval/replay/30d_approve-all/summary.json",
+        "agent_traces": null
+      },
+      "stress": {
+        "trace": "data/eval/replay/stress_7d_synthetic_surge/trace.jsonl",
+        "summary": "data/eval/replay/stress_7d_synthetic_surge/summary.json",
+        "agent_traces": null
+      }
+    },
+    "seconds": 82.0
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "source": "docs/evidence/eval/expert_review.csv",
+  "rows": 55,
+  "rows_scored_pool": 50,
+  "agent_example_rows_excluded": 5,
+  "duplicate_ids": [],
+  "pending": 50,
+  "invalid_verdicts": [],
+  "rows_per_source": {
+    "aws_live": 15,
+    "replay_30d_review": 12,
+    "staged_proposal": 8,
+    "failure_injection": 15
+  },
+  "status": "0 verdicts, not measured (50 rows waiting for the expert, 5 agent-example rows excluded)",
+  "verdicts": 0
+}

@@ -1,0 +1,2 @@
+onnx,onnx_sha256,image,preprocess,reference,compared,max_abs_diff_box_px,max_abs_diff_scores,anchors_score_ge_0.25_reference,anchors_score_ge_0.25_compared,measured_at
+models/yolov7-tiny/fruitfly_deploy.onnx,0cf45768bafd58180c91007270815a8634598cedb280f60f274bf0002b31a16f,data/export/images/BE4111159/6abb30ba75e50bc9cc8a8b5c.jpg,letterbox 640,onnxruntime 1.31.0 CPU,OpenCV 5.0.0 ENGINE_NEW,0.0008544921875,4.991888999938965e-06,315,315,2026-10-15

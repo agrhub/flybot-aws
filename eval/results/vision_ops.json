@@ -1,0 +1,235 @@
+{
+  "rows": [
+    {
+      "op": "1 card (sticky)",
+      "metric": "hit rate, normal",
+      "value": 0.975,
+      "n": 40,
+      "dataset": "synthetic cards pasted on real frames",
+      "source": "docs/evidence/vision/card_synth.json",
+      "note": "corner error p50/p95 px: 1.83/3.26"
+    },
+    {
+      "op": "1 card (sticky)",
+      "metric": "hit rate, angled",
+      "value": 1.0,
+      "n": 40,
+      "dataset": "synthetic cards pasted on real frames",
+      "source": "docs/evidence/vision/card_synth.json",
+      "note": "corner error p50/p95 px: 1.92/4.13"
+    },
+    {
+      "op": "1 card (sticky)",
+      "metric": "hit rate, partial",
+      "value": 1.0,
+      "n": 40,
+      "dataset": "synthetic cards pasted on real frames",
+      "source": "docs/evidence/vision/card_synth.json",
+      "note": "no corner reference for this case"
+    },
+    {
+      "op": "1 card (sticky)",
+      "metric": "hit rate, two_cards",
+      "value": 0.825,
+      "n": 40,
+      "dataset": "synthetic cards pasted on real frames",
+      "source": "docs/evidence/vision/card_synth.json",
+      "note": "corner error p50/p95 px: 2.46/997.74"
+    },
+    {
+      "op": "1 card (sticky)",
+      "metric": "hit rate, no_card",
+      "value": 1.0,
+      "n": 40,
+      "dataset": "synthetic cards pasted on real frames",
+      "source": "docs/evidence/vision/card_synth.json",
+      "note": "no corner reference for this case"
+    },
+    {
+      "op": "1 card (sticky)",
+      "metric": "real photos with a yellow card",
+      "value": "0",
+      "n": 3000,
+      "dataset": "real export",
+      "source": "docs/evidence/vision/card_check.md",
+      "note": "no real sticky card photo exists: sticky profile only measured on synthetic composites"
+    },
+    {
+      "op": "1 floor (lure)",
+      "metric": "floor found",
+      "value": "50/50",
+      "n": 50,
+      "dataset": "real lure photos (tuning set)",
+      "source": "docs/evidence/vision/card_check_lure/results.json",
+      "note": "roi_source: {\"floor_polygon\": 12, \"floor_quad\": 38}"
+    },
+    {
+      "op": "1 floor (lure)",
+      "metric": "floor_quad kept (held out)",
+      "value": "45/50",
+      "n": 50,
+      "dataset": "real lure photos (hold-out, seed 20261015)",
+      "source": "docs/evidence/vision/card_check_lure/holdout_results.json",
+      "note": "roi_source: {\"floor_quad\": 45, \"floor_polygon\": 5}"
+    },
+    {
+      "op": "1 floor (lure)",
+      "metric": "floor polygon ROI correct (hand verdict)",
+      "value": "49 / 50",
+      "n": 50,
+      "dataset": "real lure photos (tuning set)",
+      "source": "docs/evidence/vision/card_check_lure.md",
+      "note": "verdicts by eye, not machine-readable; hold-out: all 50 polygons correct by eye (same file)"
+    },
+    {
+      "op": "2 quality",
+      "metric": "exact agreement with FlyBot imageQuality flags",
+      "value": 0.903,
+      "n": 3000,
+      "dataset": "all export photos",
+      "source": "docs/evidence/vision/quality_calibration.json",
+      "note": "FlyBot flags only `low_contrast` in this export"
+    },
+    {
+      "op": "2 quality",
+      "metric": "exact agreement (photos since 2026-10-11)",
+      "value": 0.9143,
+      "n": 537,
+      "dataset": "export, 2026-10-11 onward",
+      "source": "docs/evidence/vision/quality_calibration.json",
+      "note": ""
+    },
+    {
+      "op": "2 quality",
+      "metric": "low_contrast precision / recall vs FlyBot",
+      "value": "0.0446 / 0.4615",
+      "n": 3000,
+      "dataset": "all export photos",
+      "source": "docs/evidence/vision/quality_calibration.json",
+      "note": "no human labels: FlyBot flags are the reference, not ground truth"
+    },
+    {
+      "op": "4 diff",
+      "metric": "card-change recall (events)",
+      "value": "1.0 (1 event)",
+      "n": 2376,
+      "dataset": "native-resolution consecutive pairs",
+      "source": "docs/evidence/vision/diff_eval.json",
+      "note": "false flags 129 (interim blob boxes, not YOLO boxes)"
+    },
+    {
+      "op": "3 register",
+      "metric": "inliers p50 ALIKED+LightGlue vs SIFT",
+      "value": "348.5 vs 105.5",
+      "n": 6,
+      "dataset": "6 real pairs",
+      "source": "docs/evidence/vision/diff_eval.json",
+      "note": "ms/pair p50 5749 vs 174"
+    },
+    {
+      "op": "4 diff",
+      "metric": "card-change recall with YOLOv7 boxes",
+      "value": "0.0 (1 event)",
+      "n": 988,
+      "dataset": "pairs since 2026-10-07",
+      "source": "eval/results/diff_with_yolo_boxes.json",
+      "note": "false flags 7"
+    },
+    {
+      "op": "4 diff",
+      "metric": "new catches vs FlyBot daily rise, MAE (BE4089629)",
+      "value": 4.38,
+      "n": 8,
+      "dataset": "days since 2026-10-07 (traps empty; production rise = 0)",
+      "source": "eval/results/diff_with_yolo_boxes.json",
+      "note": "sum new 35 vs sum daily rise 0: no ground truth"
+    },
+    {
+      "op": "4 diff",
+      "metric": "new catches vs FlyBot daily rise, MAE (BE4111159)",
+      "value": 18.33,
+      "n": 9,
+      "dataset": "days since 2026-10-07 (traps empty; production rise = 0)",
+      "source": "eval/results/diff_with_yolo_boxes.json",
+      "note": "sum new 165 vs sum daily rise 0: no ground truth"
+    },
+    {
+      "op": "6 crowd",
+      "metric": "Pearson r blob count vs labels (test split)",
+      "value": 0.9307,
+      "n": 76,
+      "dataset": "camos fruit-fly v3 (white-disc pictures, not sticky cards)",
+      "source": "docs/evidence/vision/crowd_eval.json",
+      "note": "saturation r 0.9129; blob MAE 5.684, bias -2.079"
+    },
+    {
+      "op": "6 crowd",
+      "metric": "Pearson r blob count vs labels (valid split)",
+      "value": 0.9865,
+      "n": 93,
+      "dataset": "camos fruit-fly v3 (white-disc pictures, not sticky cards)",
+      "source": "docs/evidence/vision/crowd_eval_valid.json",
+      "note": "saturation r 0.9859; blob MAE 4.688, bias 0.688"
+    },
+    {
+      "op": "7 density",
+      "metric": "validation",
+      "value": "not measured",
+      "n": null,
+      "dataset": "synthetic trap layouts only",
+      "source": "docs/evidence/vision/density/density_synthetic.json",
+      "note": "no real multi-trap data: the map is shown on synthetic layouts"
+    },
+    {
+      "op": "8 motion",
+      "metric": "occluder recall (synthetic, held-out pairs)",
+      "value": 0.94,
+      "n": 100,
+      "dataset": "real pairs 201-400 + pasted occluders",
+      "source": "docs/evidence/vision/motion_eval.json",
+      "note": "by kind {\"hand\": \"27/30\", \"animal\": \"36/38\", \"cloth\": \"31/32\"}; box IoU 0.9077"
+    },
+    {
+      "op": "8 motion",
+      "metric": "camera-moved recall (synthetic)",
+      "value": 1.0,
+      "n": 100,
+      "dataset": "same pairs, shifted + rotated",
+      "source": "docs/evidence/vision/motion_eval.json",
+      "note": ""
+    },
+    {
+      "op": "8 motion",
+      "metric": "false occluder flags on real pairs",
+      "value": "0/200",
+      "n": 200,
+      "dataset": "real consecutive lure pairs (nobody touched the traps)",
+      "source": "docs/evidence/vision/motion_eval.json",
+      "note": "false camera-moved 0"
+    },
+    {
+      "op": "8 motion",
+      "metric": "time per pair p50 / p95 ms",
+      "value": "702.8 / 1811.5",
+      "n": 200,
+      "dataset": "640x360 working size",
+      "source": "docs/evidence/vision/motion_eval.json",
+      "note": ""
+    },
+    {
+      "op": "pipeline",
+      "metric": "wall time per lure pair p50 / p95 ms",
+      "value": "1113.1 / 1359.5",
+      "n": 20,
+      "dataset": "real lure pairs, ops 1,2,3,4,6,8",
+      "source": "docs/evidence/vision/pipeline_timings.json",
+      "note": "4-core laptop shared with other jobs; image decode excluded"
+    }
+  ],
+  "not_measured": [
+    "Op 1/6 on real sticky yellow cards (none exist in the export).",
+    "Op 7 density map on a real multi-trap farm (synthetic layouts only).",
+    "Op 8 on real people / hands (no such photo in the export; occluders are synthetic composites).",
+    "Face detection accuracy (no photo with a person)."
+  ]
+}

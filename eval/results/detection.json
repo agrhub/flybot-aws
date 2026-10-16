@@ -1,0 +1,182 @@
+{
+  "opencv_engine": "ENGINE_NEW",
+  "model": "models/yolov7-tiny/fruitfly_deploy.onnx",
+  "roboflow_test": {
+    "status": "measured",
+    "dataset": "camos/fruit-fly-wmcqi v3 test split (Roboflow Universe, CC BY 4.0)",
+    "dataset_path": "D:\\Workspace\\Gits\\CamHub\\camos-ai-camera\\models\\fruit-fly-v3\\test",
+    "onnx": "models/yolov7-tiny/fruitfly_deploy.onnx",
+    "resize": "stretch (as the training export)",
+    "floor_conf": 0.001,
+    "nms_iou": 0.65,
+    "match_iou": 0.5,
+    "n_images": 76,
+    "n_gt_boxes": 2349,
+    "n_detections_at_floor": 9655,
+    "ap50": 0.9585,
+    "ap50_95": 0.686,
+    "at_conf_0.25": {
+      "conf": 0.25,
+      "precision": 0.855,
+      "recall": 0.9417,
+      "f1": 0.8963,
+      "tp": 2212,
+      "fp": 375,
+      "fn": 137
+    },
+    "best_f1": {
+      "conf": 0.47,
+      "precision": 0.9186,
+      "recall": 0.9132,
+      "f1": 0.9159,
+      "tp": 2145,
+      "fp": 190,
+      "fn": 204
+    },
+    "engine_used": "new",
+    "opencv": "5.0.0",
+    "seconds": 73.6,
+    "forward_ms_median": 809.8,
+    "note": "forward time measured on a shared dev laptop while other jobs ran; not a benchmark",
+    "cache": "hit",
+    "reference_pytorch": {
+      "model": "yolov7-tiny (owner's fruitfly_deploy.pt)",
+      "weights_sha256": "487516c7896b4471a2e1e49f12e463b5d467c66352a0893718fd89d8ff942a45",
+      "split": "test",
+      "images": "76",
+      "boxes": "2349",
+      "precision": "0.928",
+      "recall": "0.908",
+      "mAP50": "0.958",
+      "mAP50_95": "0.67",
+      "conf": "0.001",
+      "iou": "0.65",
+      "device": "cpu",
+      "tool": "WongKinYiu/yolov7 test.py @a207844b (numpy2 patch)",
+      "source": "eval/results/yolov7_tiny_test_metrics.csv"
+    }
+  },
+  "production_counts": {
+    "source": "data/eval/replay/30d_approve-after-2h/trace.jsonl",
+    "reference": "FlyBot production ai_count (Roboflow RF-DETR at capture time), not human ground truth",
+    "all": {
+      "n": 1293,
+      "mae": 0.841,
+      "bias": -0.024,
+      "median_abs_err": 0,
+      "max_abs_err": 10,
+      "within_2": 1179,
+      "sum_pred": 627,
+      "sum_ref": 658
+    },
+    "by_camera": {
+      "BE4089629": {
+        "n": 808,
+        "mae": 0.793,
+        "bias": -0.59,
+        "median_abs_err": 0.0,
+        "max_abs_err": 10,
+        "within_2": 702,
+        "sum_pred": 181,
+        "sum_ref": 658
+      },
+      "BE4111159": {
+        "n": 485,
+        "mae": 0.92,
+        "bias": 0.92,
+        "median_abs_err": 1,
+        "max_abs_err": 5,
+        "within_2": 477,
+        "sum_pred": 446,
+        "sum_ref": 0
+      }
+    },
+    "window": {
+      "from": "2026-09-16",
+      "to": "2026-10-15",
+      "farm_tz": "UTC+7"
+    }
+  },
+  "production_counts_sample": {
+    "source": "eval/results/count_vs_production__fruitfly_deploy__trap-cameras.json",
+    "n": 93,
+    "engine_used": "new",
+    "conf": 0.25,
+    "all": {
+      "n": 93,
+      "mae": 1.91,
+      "bias_mean_ours_minus_prod": 1.01,
+      "median_abs_err": 2,
+      "max_abs_err": 7,
+      "within_2": 76,
+      "sum_ours": 1500,
+      "sum_prod": 1406
+    },
+    "by_camera": {
+      "BE4089629": {
+        "n": 48,
+        "mae": 2.08,
+        "bias_mean_ours_minus_prod": 0.33,
+        "median_abs_err": 1.0,
+        "max_abs_err": 7,
+        "within_2": 35,
+        "sum_ours": 723,
+        "sum_prod": 707
+      },
+      "BE4111159": {
+        "n": 45,
+        "mae": 1.73,
+        "bias_mean_ours_minus_prod": 1.73,
+        "median_abs_err": 2,
+        "max_abs_err": 5,
+        "within_2": 41,
+        "sum_ours": 777,
+        "sum_prod": 699
+      }
+    },
+    "by_count_bucket": {
+      "0-5": {
+        "n": 31,
+        "mae": 0.84,
+        "bias_mean_ours_minus_prod": 0.39,
+        "median_abs_err": 1,
+        "max_abs_err": 4,
+        "within_2": 29,
+        "sum_ours": 20,
+        "sum_prod": 8
+      },
+      "21-50": {
+        "n": 31,
+        "mae": 2.16,
+        "bias_mean_ours_minus_prod": 2.16,
+        "median_abs_err": 1,
+        "max_abs_err": 5,
+        "within_2": 22,
+        "sum_ours": 1102,
+        "sum_prod": 1035
+      },
+      "6-20": {
+        "n": 31,
+        "mae": 2.74,
+        "bias_mean_ours_minus_prod": 0.48,
+        "median_abs_err": 2,
+        "max_abs_err": 7,
+        "within_2": 25,
+        "sum_ours": 378,
+        "sum_prod": 363
+      }
+    }
+  },
+  "human_counts": {
+    "source": "data/labels/counts.csv",
+    "rows_in_file": 5,
+    "ignored_agent_test_rows": 5,
+    "ignored_unusable": 0,
+    "n_labels": 0,
+    "status": "0 labels, not measured"
+  },
+  "not_measured": [
+    "Detection accuracy on real yellow-sticky-card photos: none exist yet (all real photos are lure traps).",
+    "Detection accuracy on real lure-trap photos against human counts: 0 labels, not measured."
+  ]
+}

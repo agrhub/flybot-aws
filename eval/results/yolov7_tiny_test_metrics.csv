@@ -1,0 +1,2 @@
+model,weights_sha256,split,images,boxes,precision,recall,mAP50,mAP50_95,imgsz,conf,iou,device,tool,command,log
+yolov7-tiny (owner's fruitfly_deploy.pt),487516c7896b4471a2e1e49f12e463b5d467c66352a0893718fd89d8ff942a45,test,76,2349,0.928,0.908,0.958,0.67,640,0.001,0.65,cpu,WongKinYiu/yolov7 test.py @a207844b (numpy2 patch),"cd models/third_party/yolov7 && python test.py --weights ../../yolov7-tiny/fruitfly_deploy.pt --data ../../runs/yolov7_data.yaml --img 640 --batch 8 --task test --conf 0.001 --iou 0.65 --device cpu --no-trace",models/runs/yolov7-tiny-test.log (git-ignored)

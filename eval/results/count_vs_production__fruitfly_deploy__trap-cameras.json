@@ -1,0 +1,172 @@
+{
+  "what": "our detector count vs production ai_count (Roboflow RF-DETR Small); NOT human ground truth",
+  "onnx": "models\\yolov7-tiny\\fruitfly_deploy.onnx",
+  "onnx_meta": "0cf45768bafd58180c91007270815a8634598cedb280f60f274bf0002b31a16f",
+  "opencv": "5.0.0",
+  "engine_requested": "new",
+  "engine_used": "new",
+  "conf": 0.25,
+  "iou": 0.45,
+  "sample": "D:\\Workspace\\Gits\\CamHub\\flybot-sentinel\\data\\labels\\gt_sample.csv",
+  "n": 93,
+  "excluded_cameras": [
+    "AC6527557"
+  ],
+  "seconds": 480.8,
+  "forward_ms_median": {
+    "letterbox": 1573.4,
+    "stretch": 1505.7
+  },
+  "forward_ms_note": "measured on a shared dev laptop while other jobs ran; not a benchmark",
+  "new_vs_classic_parity": [
+    {
+      "snapshot_id": "6ac4b992750eeecb90f9ca66",
+      "max_abs_diff_box_px": 0.003509521484375,
+      "max_abs_diff_scores": 2.5331974029541016e-06
+    },
+    {
+      "snapshot_id": "6abcba7dc11d5ca72cfc0015",
+      "max_abs_diff_box_px": 0.0025634765625,
+      "max_abs_diff_scores": 8.52346420288086e-06
+    },
+    {
+      "snapshot_id": "6ac36e224c3227d11cfbd2e0",
+      "max_abs_diff_box_px": 0.003662109375,
+      "max_abs_diff_scores": 3.248453140258789e-06
+    }
+  ],
+  "by_resize": {
+    "letterbox": {
+      "all": {
+        "n": 93,
+        "mae": 1.91,
+        "bias_mean_ours_minus_prod": 1.01,
+        "median_abs_err": 2,
+        "max_abs_err": 7,
+        "within_2": 76,
+        "sum_ours": 1500,
+        "sum_prod": 1406
+      },
+      "by_count_bucket": {
+        "0-5": {
+          "n": 31,
+          "mae": 0.84,
+          "bias_mean_ours_minus_prod": 0.39,
+          "median_abs_err": 1,
+          "max_abs_err": 4,
+          "within_2": 29,
+          "sum_ours": 20,
+          "sum_prod": 8
+        },
+        "21-50": {
+          "n": 31,
+          "mae": 2.16,
+          "bias_mean_ours_minus_prod": 2.16,
+          "median_abs_err": 1,
+          "max_abs_err": 5,
+          "within_2": 22,
+          "sum_ours": 1102,
+          "sum_prod": 1035
+        },
+        "6-20": {
+          "n": 31,
+          "mae": 2.74,
+          "bias_mean_ours_minus_prod": 0.48,
+          "median_abs_err": 2,
+          "max_abs_err": 7,
+          "within_2": 25,
+          "sum_ours": 378,
+          "sum_prod": 363
+        }
+      },
+      "by_camera": {
+        "BE4089629": {
+          "n": 48,
+          "mae": 2.08,
+          "bias_mean_ours_minus_prod": 0.33,
+          "median_abs_err": 1.0,
+          "max_abs_err": 7,
+          "within_2": 35,
+          "sum_ours": 723,
+          "sum_prod": 707
+        },
+        "BE4111159": {
+          "n": 45,
+          "mae": 1.73,
+          "bias_mean_ours_minus_prod": 1.73,
+          "median_abs_err": 2,
+          "max_abs_err": 5,
+          "within_2": 41,
+          "sum_ours": 777,
+          "sum_prod": 699
+        }
+      }
+    },
+    "stretch": {
+      "all": {
+        "n": 93,
+        "mae": 1.86,
+        "bias_mean_ours_minus_prod": 1.19,
+        "median_abs_err": 1,
+        "max_abs_err": 7,
+        "within_2": 74,
+        "sum_ours": 1517,
+        "sum_prod": 1406
+      },
+      "by_count_bucket": {
+        "0-5": {
+          "n": 31,
+          "mae": 1.0,
+          "bias_mean_ours_minus_prod": 0.61,
+          "median_abs_err": 0,
+          "max_abs_err": 7,
+          "within_2": 26,
+          "sum_ours": 27,
+          "sum_prod": 8
+        },
+        "21-50": {
+          "n": 31,
+          "mae": 2.16,
+          "bias_mean_ours_minus_prod": 2.16,
+          "median_abs_err": 1,
+          "max_abs_err": 5,
+          "within_2": 22,
+          "sum_ours": 1102,
+          "sum_prod": 1035
+        },
+        "6-20": {
+          "n": 31,
+          "mae": 2.42,
+          "bias_mean_ours_minus_prod": 0.81,
+          "median_abs_err": 2,
+          "max_abs_err": 6,
+          "within_2": 26,
+          "sum_ours": 388,
+          "sum_prod": 363
+        }
+      },
+      "by_camera": {
+        "BE4089629": {
+          "n": 48,
+          "mae": 2.12,
+          "bias_mean_ours_minus_prod": 0.83,
+          "median_abs_err": 1.5,
+          "max_abs_err": 7,
+          "within_2": 35,
+          "sum_ours": 747,
+          "sum_prod": 707
+        },
+        "BE4111159": {
+          "n": 45,
+          "mae": 1.58,
+          "bias_mean_ours_minus_prod": 1.58,
+          "median_abs_err": 1,
+          "max_abs_err": 5,
+          "within_2": 39,
+          "sum_ours": 770,
+          "sum_prod": 699
+        }
+      }
+    }
+  }
+}
