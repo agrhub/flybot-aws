@@ -1,0 +1,54 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "iot:Connect",
+      "Resource": "arn:aws:iot:${REGION}:${ACCOUNT}:client/${iot:Connection.Thing.ThingName}",
+      "Condition": {
+        "Bool": {
+          "iot:Connection.Thing.IsAttached": "true"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": "iot:Publish",
+      "Resource": [
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/state",
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/event",
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/ai",
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/telemetry",
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/shadow/reported",
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/rpc/res",
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/up/req"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "iot:Subscribe",
+      "Resource": [
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topicfilter/camos/${iot:Connection.Thing.ThingName}/shadow/desired",
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topicfilter/camos/${iot:Connection.Thing.ThingName}/rpc/req",
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topicfilter/camos/${iot:Connection.Thing.ThingName}/up/res"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "iot:Receive",
+      "Resource": [
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/shadow/desired",
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/rpc/req",
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/up/res"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "iot:RetainPublish",
+      "Resource": [
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/state",
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/shadow/reported"
+      ]
+    }
+  ]
+}

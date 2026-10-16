@@ -1,0 +1,130 @@
+# FlyBot on AWS (and the same file for a laptop): FlyBot (Node + the built Vue client), MongoDB,
+# Caddy with automatic TLS for ${DOMAIN_NAME}. Values come from .env in this folder (see
+# .env.example, "FlyBot" section); the EC2 user-data of infra/template.yaml writes the ones the
+# stack knows (DOMAIN_NAME, ACME_EMAIL, APP_BASE_URL, AWS_REGION, PHOTOS_BUCKET, VISION_LAMBDA_NAME,
+# AI_PROVIDER, IOT_ENDPOINT, IOT_EVENTS, KVS_VIEWER_ROLE_ARN, FLYBOT_SECRETS, ...) and re-writes them on
+# every bootstrap run; other lines in .env are left alone. The flybot/ build context is the git submodule
+# (git submodule update --init on a laptop).
+#
+#   AWS (EC2 t4g.small, arm64):  docker compose up -d --build            (user-data does this)
+#   Laptop, no TLS:               docker compose up -d --build mongo flybot   -> http://localhost:8080
+#   Laptop + local Lambda:        VISION_LAMBDA_URL=http://host.docker.internal:9001/invoke in .env
+#
+# Credentials on AWS come from the instance role (S3, Lambda invoke, IoT data plane, KVS, STS,
+# Secrets Manager); on a laptop put AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_SESSION_TOKEN
+# (from `aws login --profile sentinel` + `aws configure export-credentials --profile sentinel --format env`) in .env.
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    command: ["mongod", "--quiet", "--wiredTigerCacheSizeGB", "0.25"]
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  flybot:
+    build:
+      # The agrhub/flybot submodule (branch feat/aws): multi-stage, arm64 and amd64
+      context: ./flybot
+      args:
+        VITE_GOOGLE_MAP_KEY: ${VITE_GOOGLE_MAP_KEY:-}
+    image: flybot:aws
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: "8080"
+      MONGO_URI: mongodb://mongo:27017/flybot
+      # Behind Caddy (one proxy hop), served over https
+      TRUST_PROXY: "1"
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      APP_BASE_URL: ${APP_BASE_URL:-https://${DOMAIN_NAME:-localhost}}
+      # What the cameras call; empty = APP_BASE_URL
+      DEVICE_API_BASE_URL: ${DEVICE_API_BASE_URL:-}
+      ENABLE_CRON: ${ENABLE_CRON:-true}
+      # Photos: the stack's S3 bucket, read by the instance role (no keys); the vision Lambda gets bucket/key
+      AWS_REGION: ${AWS_REGION:-ap-southeast-2}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME:-${PHOTOS_BUCKET:-}}
+      S3_REGION: ${S3_REGION:-${AWS_REGION:-ap-southeast-2}}
+      S3_ENDPOINT: ${S3_ENDPOINT:-}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-}
+      PHOTOS_BY_REFERENCE: ${PHOTOS_BY_REFERENCE:-true}
+      # Vision: AI_PROVIDER=opencv-lambda with the Lambda name (AWS) or the local URL (laptop)
+      AI_PROVIDER: ${AI_PROVIDER:-opencv-lambda}
+      VISION_LAMBDA_NAME: ${VISION_LAMBDA_NAME:-}
+      VISION_LAMBDA_URL: ${VISION_LAMBDA_URL:-}
+      # Cameras: IoT Core endpoint, live view role, secrets
+      IOT_ENDPOINT: ${IOT_ENDPOINT:-}
+      IOT_EVENTS: ${IOT_EVENTS:-mqtt}
+      IOT_RULE_SECRET: ${IOT_RULE_SECRET:-}
+      KVS_VIEWER_ROLE_ARN: ${KVS_VIEWER_ROLE_ARN:-}
+      FLYBOT_SECRETS: ${FLYBOT_SECRETS:-}
+      # Gemini (the chatbot) and Vertex: the service-account file mounted below, if any
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-}
+    volumes:
+      # Optional files: the Google service-account key for the chatbot (Vertex AI / Gemini) goes in
+      # ./secrets/gcp-service-account.json with GOOGLE_APPLICATION_CREDENTIALS=/app/secrets/gcp-service-account.json
+      - ./secrets:/app/secrets:ro
+    extra_hosts:
+      # A vision Lambda running on the host (uv run python -m sentinel.lambda_local)
+      - "host.docker.internal:host-gateway"
+    ports:
+      # Direct access without Caddy (laptop: http://localhost:8080); Caddy proxies 443 -> flybot:8080 on AWS.
+      # Bound to loopback so the EC2 never serves plain HTTP on 8080 (the security group only opens 80/443 anyway)
+      - "${FLYBOT_BIND:-127.0.0.1}:${FLYBOT_HOST_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - flybot
+    environment:
+      # flybot.agrhub.com on AWS (Let's Encrypt, the A record must point at the Elastic IP);
+      # "localhost" gives a self-signed certificate on a laptop
+      DOMAIN_NAME: ${DOMAIN_NAME:-localhost}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  mongo-data:
+  caddy-data:
+  caddy-config:

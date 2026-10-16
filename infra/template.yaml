@@ -1,0 +1,827 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >-
+  FlyBot on AWS (OpenCV AI Competition 2026): photos bucket, OpenCV 5 vision Lambda (ECR image, arm64), IoT Core
+  thing type + device policy for the CamOS/ESP32 trap cameras, the FlyBot EC2 (t4g.small, docker compose, Elastic IP)
+  with its instance role (IoT data plane, KVS WebRTC, S3, Lambda invoke, Secrets Manager), CloudWatch alarms.
+  Deploy with ./deploy.sh (deploy.env; stack flybot-<stage>, ap-southeast-2 only). Secrets flybot-<stage>-app/-gcp are
+  created by the script, not by this stack.
+
+Parameters:
+  Stage:
+    Type: String
+    Default: dev
+    AllowedPattern: '^[a-z0-9-]{1,16}$'
+  DomainName:
+    Type: String
+    Default: flybot.agrhub.com
+    Description: Caddy obtains the TLS certificate for this name; the owner points its A record at the Elastic IP
+  OwnerCidr:
+    Type: String
+    Default: 0.0.0.0/32
+    AllowedPattern: '^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/\d{1,2}$'
+    Description: Source CIDR allowed on SSH (22). Default blocks everyone (use SSM Session Manager instead)
+  ImageUri:
+    Type: String
+    Default: ''
+    Description: ECR image URI (with digest or tag) of the vision Lambda. Empty on the first deploy (no Lambda yet) so the ECR repository and the builder host exist before the image
+  Detector:
+    Type: String
+    Default: yolov7
+    AllowedValues: [yolov7, yolo26]
+  Yolo26Url:
+    Type: String
+    Default: ''
+    Description: https URL of the YOLO26 ONNX on the public model bucket (fetched at cold start unless baked in)
+  Yolo26Sha256:
+    Type: String
+    Default: ''
+  AnthropicSecretName:
+    Type: String
+    Default: sentinel-dev-anthropic
+    Description: Secrets Manager secret holding the Anthropic API key (created outside the stack; read at cold start)
+  AnthropicModel:
+    Type: String
+    Default: claude-haiku-5-5
+  PlannerMode:
+    Type: String
+    Default: rule
+    AllowedValues: [rule, llm]
+    Description: planner for detect mode (deep mode always uses the LLM when the key is readable)
+  AlarmEmail:
+    Type: String
+    Default: ''
+    Description: email for the alarm topic (the owner confirms the subscription); empty = topic without subscription
+  ExistingAlarmTopicArn:
+    Type: String
+    Default: ''
+    Description: reuse an existing SNS topic (e.g. sentinel-dev-alarms, whose email is already confirmed) instead of creating one
+  InstanceType:
+    Type: String
+    Default: t4g.small
+  KeyName:
+    Type: String
+    Default: ''
+    Description: EC2 key pair for SSH (optional; SSM Session Manager works without it)
+  RepoUrl:
+    Type: String
+    Default: https://github.com/agrhub/flybot-aws.git
+  RepoRef:
+    Type: String
+    Default: main
+  DeviceEventsWebhookUrl:
+    Type: String
+    Default: ''
+    Description: >-
+      Optional FlyBot HTTPS endpoint (e.g. https://flybot.agrhub.com/api/device/events) for the IoT rules that forward
+      camos/<serial>/{state,event,telemetry,rpc/res} and the lifecycle events as {topic, payload} (FlyBot IOT_EVENTS=rule).
+      Empty = no rule: FlyBot subscribes over MQTT/WSS itself (IOT_EVENTS=mqtt, the default). The topic rule
+      destination must be confirmed once (FlyBot answers the confirmation request on that URL).
+  DeviceEventsSecret:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: shared secret of the rule webhook (header X-IoT-Rule-Secret; FlyBot env IOT_RULE_SECRET), only with the URL
+  IotEndpoint:
+    Type: String
+    Default: ''
+    Description: >-
+      The account's IoT Core Data-ATS endpoint (xxx-ats.iot.<region>.amazonaws.com), FlyBot's IOT_ENDPOINT. deploy.sh
+      fills it from `aws iot describe-endpoint --endpoint-type iot:Data-ATS`; empty = FlyBot runs without IoT Core
+  AcmeEmail:
+    Type: String
+    Default: ''
+    Description: Let's Encrypt contact email for Caddy (ACME_EMAIL); empty = the Caddyfile's default
+  AmiId:
+    Type: AWS::EC2::Image::Id
+    Default: ami-0aead5967405f8372
+    Description: >-
+      Amazon Linux 2023 arm64 AMI (default: al2023-ami-2023.12.20261014.0-kernel-6.12-arm64, ap-southeast-2). deploy.sh
+      passes the newest one from `aws ec2 describe-images`; the public SSM alias is not readable in this account
+  DemoMaxCamerasPerUser:
+    Type: Number
+    Default: 3
+    Description: FlyBot DEMO_MAX_CAMERAS_PER_USER (self-registered cameras one user may claim, CONTRACTS 2a)
+  DemoMaxSnapshotsPerDay:
+    Type: Number
+    Default: 48
+    Description: FlyBot DEMO_MAX_SNAPSHOTS_PER_DAY per self-registered camera
+  DemoMaxUnclaimed:
+    Type: Number
+    Default: 200
+    Description: FlyBot DEMO_MAX_UNCLAIMED (unclaimed self-registered cameras in total)
+  PhotosBucketExists:
+    Type: String
+    Default: 'false'
+    AllowedValues: ['true', 'false']
+    Description: true when flybot-photos-<account>-<stage> survives an earlier stack (destroy --keep-photos); deploy.sh sets it
+  LogRetentionDays:
+    Type: Number
+    Default: 30
+
+Conditions:
+  HasImage: !Not [!Equals [!Ref ImageUri, '']]
+  HasAlarmEmail: !Not [!Equals [!Ref AlarmEmail, '']]
+  CreateTopic: !Equals [!Ref ExistingAlarmTopicArn, '']
+  HasKey: !Not [!Equals [!Ref KeyName, '']]
+  HasWebhook: !Not [!Equals [!Ref DeviceEventsWebhookUrl, '']]
+  CreatePhotosBucket: !Equals [!Ref PhotosBucketExists, 'false']
+
+Mappings:
+  Config:
+    Lambda:
+      MemoryMb: 2048
+      TimeoutS: 120
+
+Resources:
+  # ---------------------------------------------------------------- S3: photos + evidence
+  # Retained on stack deletion: infra/destroy.sh empties and deletes it unless --keep-photos. A kept bucket is reused
+  # by the next deploy (PhotosBucketExists=true, detected by deploy.sh), so every reference below uses the name.
+  PhotosBucket:
+    Type: AWS::S3::Bucket
+    Condition: CreatePhotosBucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Sub 'flybot-photos-${AWS::AccountId}-${Stage}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault: {SSEAlgorithm: AES256}
+      OwnershipControls:
+        Rules: [{ObjectOwnership: BucketOwnerEnforced}]
+      LifecycleConfiguration:
+        Rules:
+          - Id: evidence-90d
+            Status: Enabled
+            Prefix: evidence/
+            ExpirationInDays: 90
+          - Id: build-context-7d
+            Status: Enabled
+            Prefix: build/
+            ExpirationInDays: 7
+          - Id: abort-multipart
+            Status: Enabled
+            AbortIncompleteMultipartUpload: {DaysAfterInitiation: 2}
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods: [GET, HEAD]
+            AllowedOrigins: [!Sub 'https://${DomainName}', 'http://localhost:3000', 'http://localhost:5173']
+            AllowedHeaders: ['*']
+            MaxAge: 3600
+      Tags:
+        - {Key: project, Value: flybot-aws}
+        - {Key: stage, Value: !Ref Stage}
+
+  PhotosBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Sub 'flybot-photos-${AWS::AccountId}-${Stage}'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: HttpsOnly
+            Effect: Deny
+            Principal: '*'
+            Action: s3:*
+            Resource: [!Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}', !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}/*']
+            Condition: {Bool: {'aws:SecureTransport': 'false'}}
+
+  # ---------------------------------------------------------------- ECR: the vision Lambda image
+  VisionRepository:
+    Type: AWS::ECR::Repository
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      RepositoryName: !Sub 'flybot-vision-${Stage}'
+      ImageTagMutability: MUTABLE
+      EmptyOnDelete: true
+      ImageScanningConfiguration: {ScanOnPush: true}
+      LifecyclePolicy:
+        LifecyclePolicyText: '{"rules":[{"rulePriority":1,"description":"keep 5 images","selection":{"tagStatus":"any","countType":"imageCountMoreThan","countNumber":5},"action":{"type":"expire"}}]}'
+      Tags:
+        - {Key: project, Value: flybot-aws}
+
+  # ---------------------------------------------------------------- Lambda: OpenCV 5 vision + agent
+  VisionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Condition: HasImage
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/flybot-vision-${Stage}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  VisionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'flybot-vision-${Stage}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: lambda.amazonaws.com}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Policies:
+        - PolicyName: photos
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [s3:GetObject, s3:HeadObject]
+                Resource: !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}/*'
+              - Effect: Allow
+                Action: s3:PutObject
+                Resource: !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}/evidence/*'
+              - Effect: Allow
+                Action: s3:ListBucket
+                Resource: !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}'
+        - PolicyName: anthropic-secret
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: secretsmanager:GetSecretValue
+                Resource: !Sub 'arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${AnthropicSecretName}-*'
+
+  VisionFunction:
+    Type: AWS::Serverless::Function
+    Condition: HasImage
+    DependsOn: VisionLogGroup
+    Properties:
+      FunctionName: !Sub 'flybot-vision-${Stage}'
+      Description: FlyBot vision Lambda (OpenCV 5 DNN, YOLO26n / YOLOv7-tiny, agent) per docs/CONTRACTS.md section 1
+      PackageType: Image
+      ImageUri: !Ref ImageUri
+      Architectures: [arm64]
+      MemorySize: !FindInMap [Config, Lambda, MemoryMb]
+      Timeout: !FindInMap [Config, Lambda, TimeoutS]
+      EphemeralStorage: {Size: 1024}
+      Role: !GetAtt VisionRole.Arn
+      Environment:
+        Variables:
+          STAGE: !Ref Stage
+          PHOTOS_BUCKET: !Sub 'flybot-photos-${AWS::AccountId}-${Stage}'
+          DETECTOR: !Ref Detector
+          YOLO26_URL: !Ref Yolo26Url
+          YOLO26_SHA256: !Ref Yolo26Sha256
+          MODEL_DIR: /opt/models
+          MODEL_CACHE_DIR: /tmp/models
+          OPENCV_FORCE_DNN_ENGINE: new
+          SENTINEL_PLANNER: !Ref PlannerMode
+          SENTINEL_LLM_BACKEND: anthropic
+          SENTINEL_ANTHROPIC_MODEL: !Ref AnthropicModel
+          ANTHROPIC_SECRET_NAME: !Ref AnthropicSecretName
+          SENTINEL_ANTHROPIC_TIMEOUT_S: '30'
+          SENTINEL_WEATHER: 'off'
+      Tags:
+        project: flybot-aws
+        stage: !Ref Stage
+
+  # ---------------------------------------------------------------- IoT Core: thing type + device policy
+  CameraThingType:
+    Type: AWS::IoT::ThingType
+    Properties:
+      ThingTypeName: camos-camera
+      ThingTypeProperties:
+        ThingTypeDescription: CamOS protocol v1 trap camera (ESP32-S3 or AMB82) paired by FlyBot
+        SearchableAttributes: [model, protocol]
+
+  CameraPolicy:
+    Type: AWS::IoT::Policy
+    Properties:
+      PolicyName: !Sub 'camos-camera-${Stage}'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: iot:Connect
+            Resource: !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:client/${!iot:Connection.Thing.ThingName}'
+            Condition:
+              Bool: {'iot:Connection.Thing.IsAttached': 'true'}
+          - Effect: Allow
+            Action: iot:Publish
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/state'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/event'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/ai'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/telemetry'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/shadow/reported'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/rpc/res'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/up/req'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/$aws/things/${!iot:Connection.Thing.ThingName}/shadow/*'
+          - Effect: Allow
+            Action: iot:Subscribe
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/camos/${!iot:Connection.Thing.ThingName}/shadow/desired'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/camos/${!iot:Connection.Thing.ThingName}/rpc/req'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/camos/${!iot:Connection.Thing.ThingName}/up/res'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/$aws/things/${!iot:Connection.Thing.ThingName}/shadow/*'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/$aws/things/${!iot:Connection.Thing.ThingName}/jobs/*'
+          - Effect: Allow
+            Action: iot:Receive
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/shadow/desired'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/rpc/req'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/up/res'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/$aws/things/${!iot:Connection.Thing.ThingName}/shadow/*'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/$aws/things/${!iot:Connection.Thing.ThingName}/jobs/*'
+          - Effect: Allow
+            Action: iot:RetainPublish
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/state'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/shadow/reported'
+
+  # Optional: camera messages -> FlyBot HTTPS (fallback when the MQTT/WSS client is not used)
+  DeviceEventsDestination:
+    Type: AWS::IoT::TopicRuleDestination
+    Condition: HasWebhook
+    Properties:
+      Status: ENABLED
+      HttpUrlProperties:
+        ConfirmationUrl: !Ref DeviceEventsWebhookUrl
+
+  # Body {topic, payload} and header X-IoT-Rule-Secret: what FlyBot's POST /api/device/events expects (deviceRoutes.js).
+  # One rule per topic family: IoT SQL FROM takes a single topic filter.
+  DeviceEventsRuleState:
+    Type: AWS::IoT::TopicRule
+    Condition: HasWebhook
+    Properties:
+      RuleName: !Sub 'flybot_${Stage}_camos_state'
+      TopicRulePayload:
+        AwsIotSqlVersion: '2016-03-23'
+        Sql: "SELECT * AS payload, topic() AS topic FROM 'camos/+/state'"
+        RuleDisabled: false
+        Actions:
+          - Http:
+              Url: !Ref DeviceEventsWebhookUrl
+              ConfirmationUrl: !Ref DeviceEventsWebhookUrl
+              Headers:
+                - {Key: X-IoT-Rule-Secret, Value: !Ref DeviceEventsSecret}
+                - {Key: Content-Type, Value: application/json}
+
+  DeviceEventsRuleEvent:
+    Type: AWS::IoT::TopicRule
+    Condition: HasWebhook
+    Properties:
+      RuleName: !Sub 'flybot_${Stage}_camos_event'
+      TopicRulePayload:
+        AwsIotSqlVersion: '2016-03-23'
+        Sql: "SELECT * AS payload, topic() AS topic FROM 'camos/+/event'"
+        RuleDisabled: false
+        Actions:
+          - Http:
+              Url: !Ref DeviceEventsWebhookUrl
+              ConfirmationUrl: !Ref DeviceEventsWebhookUrl
+              Headers:
+                - {Key: X-IoT-Rule-Secret, Value: !Ref DeviceEventsSecret}
+                - {Key: Content-Type, Value: application/json}
+
+  DeviceEventsRuleTelemetry:
+    Type: AWS::IoT::TopicRule
+    Condition: HasWebhook
+    Properties:
+      RuleName: !Sub 'flybot_${Stage}_camos_telemetry'
+      TopicRulePayload:
+        AwsIotSqlVersion: '2016-03-23'
+        Sql: "SELECT * AS payload, topic() AS topic FROM 'camos/+/telemetry'"
+        RuleDisabled: false
+        Actions:
+          - Http:
+              Url: !Ref DeviceEventsWebhookUrl
+              ConfirmationUrl: !Ref DeviceEventsWebhookUrl
+              Headers:
+                - {Key: X-IoT-Rule-Secret, Value: !Ref DeviceEventsSecret}
+                - {Key: Content-Type, Value: application/json}
+
+  DeviceEventsRuleRpc:
+    Type: AWS::IoT::TopicRule
+    Condition: HasWebhook
+    Properties:
+      RuleName: !Sub 'flybot_${Stage}_camos_rpc_res'
+      TopicRulePayload:
+        AwsIotSqlVersion: '2016-03-23'
+        Sql: "SELECT * AS payload, topic() AS topic FROM 'camos/+/rpc/res'"
+        RuleDisabled: false
+        Actions:
+          - Http:
+              Url: !Ref DeviceEventsWebhookUrl
+              ConfirmationUrl: !Ref DeviceEventsWebhookUrl
+              Headers:
+                - {Key: X-IoT-Rule-Secret, Value: !Ref DeviceEventsSecret}
+                - {Key: Content-Type, Value: application/json}
+
+  DeviceEventsRulePresence:
+    Type: AWS::IoT::TopicRule
+    Condition: HasWebhook
+    Properties:
+      RuleName: !Sub 'flybot_${Stage}_device_presence'
+      TopicRulePayload:
+        AwsIotSqlVersion: '2016-03-23'
+        Sql: "SELECT * AS payload, topic() AS topic FROM '$aws/events/presence/#'"
+        RuleDisabled: false
+        Actions:
+          - Http:
+              Url: !Ref DeviceEventsWebhookUrl
+              ConfirmationUrl: !Ref DeviceEventsWebhookUrl
+              Headers:
+                - {Key: X-IoT-Rule-Secret, Value: !Ref DeviceEventsSecret}
+                - {Key: Content-Type, Value: application/json}
+
+  # ---------------------------------------------------------------- FlyBot EC2: role, network, instance
+  FlyBotRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'flybot-ec2-${Stage}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: ec2.amazonaws.com}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore'   # Session Manager + Run Command (image build)
+      Policies:
+        - PolicyName: flybot-iot
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: IotData
+                Effect: Allow
+                Action: [iot:Publish, iot:GetThingShadow, iot:UpdateThingShadow, iot:DeleteThingShadow, iot:GetRetainedMessage, iot:ListRetainedMessages]
+                Resource: '*'
+              - Sid: IotWebSocket
+                Effect: Allow
+                Action: [iot:Connect, iot:Subscribe, iot:Receive]
+                Resource: '*'
+              - Sid: IotRegistryGeneral
+                Effect: Allow
+                Action: [iot:DescribeEndpoint, iot:ListThings, iot:DescribeThingType, iot:CreateCertificateFromCsr,
+                         iot:CreateKeysAndCertificate, iot:RegisterCertificateWithoutCA, iot:CreateProvisioningClaim,
+                         iot:CreateJob, iot:DescribeJob, iot:CancelJob, iot:ListJobs]
+                Resource: '*'   # CreateCertificateFromCsr / CreateKeysAndCertificate have no resource-level scoping
+              # Zero-touch self-registration (CONTRACTS 2a) and the owner pairing path: things, their certificates and
+              # the camos-camera-<stage> device policy only
+              - Sid: IotCameraThings
+                Effect: Allow
+                Action: [iot:CreateThing, iot:DescribeThing, iot:UpdateThing, iot:DeleteThing, iot:AttachThingPrincipal,
+                         iot:DetachThingPrincipal, iot:ListThingPrincipals]
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:thing/*'
+                  - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:thingtype/camos-camera'
+              - Sid: IotCameraCertificates
+                Effect: Allow
+                Action: [iot:DescribeCertificate, iot:UpdateCertificate, iot:DeleteCertificate, iot:AttachPolicy, iot:DetachPolicy,
+                         iot:ListPrincipalPolicies, iot:ListAttachedPolicies]
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:cert/*'
+                  - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:policy/camos-camera-${Stage}'
+        - PolicyName: flybot-kvs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: KvsList
+                Effect: Allow
+                Action: kinesisvideo:ListSignalingChannels
+                Resource: '*'
+              - Sid: KvsCameraChannels   # one channel cam-<serial> per CamOS camera (created at registration / pairing)
+                Effect: Allow
+                Action: [kinesisvideo:CreateSignalingChannel, kinesisvideo:DeleteSignalingChannel, kinesisvideo:DescribeSignalingChannel,
+                         kinesisvideo:UpdateSignalingChannel, kinesisvideo:GetSignalingChannelEndpoint, kinesisvideo:GetIceServerConfig,
+                         kinesisvideo:ConnectAsViewer, kinesisvideo:TagResource, kinesisvideo:ListTagsForResource]
+                Resource: !Sub 'arn:${AWS::Partition}:kinesisvideo:${AWS::Region}:${AWS::AccountId}:channel/cam-*/*'
+        - PolicyName: flybot-photos
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [s3:GetObject, s3:PutObject, s3:DeleteObject, s3:HeadObject, s3:AbortMultipartUpload]
+                Resource: !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}/*'
+              - Effect: Allow
+                Action: [s3:ListBucket, s3:GetBucketLocation]
+                Resource: !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}'
+        - PolicyName: flybot-lambda
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: !Sub 'arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:flybot-vision-${Stage}'
+        - PolicyName: flybot-secrets
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: secretsmanager:GetSecretValue
+                Resource: !Sub 'arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:flybot-*'
+        - PolicyName: flybot-build   # infra/build-image.sh: build the Lambda image on this host and push it to ECR
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: ecr:GetAuthorizationToken
+                Resource: '*'
+              - Effect: Allow
+                Action: [ecr:BatchCheckLayerAvailability, ecr:CompleteLayerUpload, ecr:InitiateLayerUpload, ecr:PutImage,
+                         ecr:UploadLayerPart, ecr:BatchGetImage, ecr:GetDownloadUrlForLayer, ecr:DescribeImages]
+                Resource: !GetAtt VisionRepository.Arn
+              - Effect: Allow
+                Action: [ecr-public:GetAuthorizationToken, sts:GetServiceBearerToken]
+                Resource: '*'
+        - PolicyName: flybot-sts
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: sts:GetCallerIdentity
+                Resource: '*'
+              - Sid: KvsViewerCredentials   # platforms/kinesis.js: 15-min viewer credentials per browser session
+                Effect: Allow
+                Action: sts:AssumeRole
+                Resource: !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/flybot-kvs-viewer-${Stage}'
+
+  # Assumed by FlyBot (the instance role) for each browser live-view session (DurationSeconds 900, with a session
+  # policy that narrows it further to the one channel cam-<serial>). Never used by the instance itself.
+  KvsViewerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'flybot-kvs-viewer-${Stage}'
+      Description: KVS WebRTC viewer credentials handed to FlyBot's browser clients (scoped to cam-* channels)
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {AWS: !GetAtt FlyBotRole.Arn}
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: kvs-viewer
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [kinesisvideo:ConnectAsViewer, kinesisvideo:GetIceServerConfig, kinesisvideo:GetSignalingChannelEndpoint,
+                         kinesisvideo:DescribeSignalingChannel]
+                Resource: !Sub 'arn:${AWS::Partition}:kinesisvideo:${AWS::Region}:${AWS::AccountId}:channel/cam-*/*'
+      Tags:
+        - {Key: project, Value: flybot-aws}
+
+  FlyBotInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub 'flybot-ec2-${Stage}'
+      Roles: [!Ref FlyBotRole]
+
+  FlyBotSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub 'flybot-${Stage}'
+      GroupDescription: FlyBot web (80/443 public) + SSH from the owner
+      SecurityGroupIngress:
+        - {IpProtocol: tcp, FromPort: 80, ToPort: 80, CidrIp: 0.0.0.0/0, Description: HTTP (Caddy redirect + ACME)}
+        - {IpProtocol: tcp, FromPort: 443, ToPort: 443, CidrIp: 0.0.0.0/0, Description: HTTPS}
+        - {IpProtocol: tcp, FromPort: 22, ToPort: 22, CidrIp: !Ref OwnerCidr, Description: SSH from the owner}
+      Tags:
+        - {Key: Name, Value: !Sub 'flybot-${Stage}'}
+
+  FlyBotInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !Ref AmiId
+      IamInstanceProfile: !Ref FlyBotInstanceProfile
+      SecurityGroupIds: [!Ref FlyBotSecurityGroup]
+      KeyName: !If [HasKey, !Ref KeyName, !Ref 'AWS::NoValue']
+      Monitoring: false
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs: {VolumeSize: 30, VolumeType: gp3, DeleteOnTermination: true, Encrypted: true}
+      MetadataOptions: {HttpTokens: required, HttpPutResponseHopLimit: 2}   # hop limit 2: containers reach the instance role
+      Tags:
+        - {Key: Name, Value: !Sub 'flybot-${Stage}'}
+        - {Key: project, Value: flybot-aws}
+      UserData:
+        Fn::Base64: !Sub
+          - |
+            #!/bin/bash
+            # FlyBot host bootstrap (Amazon Linux 2023, arm64): swap, docker + compose plugin, clone flybot-aws with its
+            # submodules, write the environment docker-compose.yml needs into .env, start. Re-runs are idempotent
+            # (install guarded, pull + up): `bash /var/lib/cloud/instance/scripts/part-001` or infra/DEPLOY_CHECKLIST.md.
+            set -euxo pipefail
+            exec > >(tee -a /var/log/flybot-bootstrap.log) 2>&1
+            export AWS_DEFAULT_REGION=${AWS::Region}
+            # 2 GB swap: the FlyBot image build (Vue client + server bundle, npm ci) needs more than the 2 GB RAM of a t4g.small
+            if [ ! -f /swapfile ]; then
+              fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
+              echo '/swapfile none swap sw 0 0' >> /etc/fstab
+            fi
+            dnf install -y docker git
+            systemctl enable --now docker
+            usermod -aG docker ec2-user || true
+            mkdir -p /usr/local/lib/docker/cli-plugins
+            if [ ! -x /usr/local/lib/docker/cli-plugins/docker-compose ]; then
+              curl -fsSL "https://github.com/docker/compose/releases/download/v2.40.0/docker-compose-linux-aarch64" -o /usr/local/lib/docker/cli-plugins/docker-compose
+              chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+            fi
+            docker compose version
+            mkdir -p /opt/flybot && cd /opt/flybot
+            if [ ! -d flybot-aws/.git ]; then
+              git clone --branch "${RepoRef}" "${RepoUrl}" flybot-aws
+            else
+              git -C flybot-aws fetch --all && git -C flybot-aws checkout "${RepoRef}" && git -C flybot-aws pull --ff-only
+            fi
+            cd flybot-aws
+            git submodule update --init firmware-esp32 || echo "firmware-esp32 submodule not fetched (not needed on the host)"
+            # flybot/ is a PRIVATE submodule (agrhub/flybot). Read access from Secrets Manager, written by deploy.sh:
+            # flybot-${Stage}-deploykey (read-only GitHub deploy key, used over ssh) or flybot-${Stage}-repotoken (fine-grained
+            # PAT, contents read-only, over https). The key lives in /root/.flybot-git (700/600) only during the update and
+            # is deleted afterwards; .gitmodules stays https, the ssh rewrite is passed with -c (never written to a config).
+            set +x
+            G=/root/.flybot-git; rm -rf $G; mkdir -m 700 $G
+            echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' > $G/known_hosts
+            sub_ok=0
+            for attempt in $(seq 1 60); do   # up to 30 min: the owner may still be adding the deploy key on GitHub
+              if aws secretsmanager get-secret-value --secret-id "flybot-${Stage}-deploykey" --query SecretString --output text > $G/id 2>/dev/null && grep -q 'PRIVATE KEY' $G/id; then
+                chmod 600 $G/id
+                export GIT_SSH_COMMAND="ssh -i $G/id -o IdentitiesOnly=yes -o UserKnownHostsFile=$G/known_hosts -o StrictHostKeyChecking=yes"
+                git -c url."git@github.com:agrhub/".insteadOf=https://github.com/agrhub/ submodule update --init flybot && sub_ok=1
+                unset GIT_SSH_COMMAND
+              elif aws secretsmanager get-secret-value --secret-id "flybot-${Stage}-repotoken" --query SecretString --output text > $G/token 2>/dev/null && [ -s $G/token ]; then
+                chmod 600 $G/token
+                # the helper reads the token from the file at call time: it never appears in a command line or a config
+                git -c credential.helper= -c "credential.helper=!f() { echo username=x-access-token; echo password=$(cat $G/token); }; f" submodule update --init flybot && sub_ok=1
+              else
+                git -c credential.helper= submodule update --init flybot && sub_ok=1   # public repo, or no access configured
+              fi
+              [ $sub_ok = 1 ] && break
+              echo "flybot submodule not readable yet (attempt $attempt/60): add the deploy key deploy.sh printed"; sleep 30
+            done
+            rm -rf $G
+            set -x
+            [ $sub_ok = 1 ] || { echo "flybot submodule unavailable: FlyBot not started"; exit 1; }
+            # .env for docker-compose.yml: the stack-managed keys below are (re)written on every run, other lines the
+            # owner adds to .env stay. Secrets are NOT here: FlyBot reads Secrets Manager flybot-${Stage}-app at start-up
+            # with the instance role (FLYBOT_SECRETS); IOT_RULE_SECRET is the one exception (only with the IoT rule webhook).
+            umask 077
+            set +x   # no tracing while .env values are handled (IOT_RULE_SECRET, the gcp key)
+            cat > /opt/flybot/stack.env <<EOF
+            STAGE=${Stage}
+            DOMAIN_NAME=${DomainName}
+            ACME_EMAIL=${AcmeEmail}
+            APP_BASE_URL=https://${DomainName}
+            DEVICE_API_BASE_URL=https://${DomainName}
+            COOKIE_SECURE=true
+            TRUST_PROXY=1
+            ENABLE_CRON=true
+            AWS_REGION=${AWS::Region}
+            PHOTOS_BUCKET=flybot-photos-${AWS::AccountId}-${Stage}
+            S3_BUCKET_NAME=flybot-photos-${AWS::AccountId}-${Stage}
+            S3_REGION=${AWS::Region}
+            PHOTOS_BY_REFERENCE=true
+            AI_PROVIDER=opencv-lambda
+            VISION_LAMBDA_NAME=flybot-vision-${Stage}
+            IOT_ENDPOINT=${IotEndpoint}
+            IOT_EVENTS=${IotEventsMode}
+            IOT_RULE_SECRET=${DeviceEventsSecret}
+            IOT_THING_TYPE=camos-camera
+            IOT_POLICY_NAME=${CameraPolicy}
+            KVS_VIEWER_ROLE_ARN=${KvsViewerRole.Arn}
+            FLYBOT_SECRETS=flybot-${Stage}-app
+            DEMO_MAX_CAMERAS_PER_USER=${DemoMaxCamerasPerUser}
+            DEMO_MAX_SNAPSHOTS_PER_DAY=${DemoMaxSnapshotsPerDay}
+            DEMO_MAX_UNCLAIMED=${DemoMaxUnclaimed}
+            EOF
+            touch .env && chmod 600 .env
+            while IFS= read -r line; do
+              case "$line" in ''|'#'*) continue;; esac
+              k="${!line%%=*}"; sed -i "/^$k=/d" .env; echo "$line" >> .env
+            done < /opt/flybot/stack.env
+            # Google service-account JSON for the chatbot (secret flybot-${Stage}-gcp), only when the owner replaced the placeholder
+            mkdir -p secrets && chmod 755 secrets
+            if aws secretsmanager get-secret-value --secret-id "flybot-${Stage}-gcp" --query SecretString --output text > /opt/flybot/gcp.json 2>/dev/null && grep -q '"private_key"' /opt/flybot/gcp.json; then
+              install -m 600 -o 1000 -g 1000 /opt/flybot/gcp.json secrets/gcp-service-account.json
+              sed -i '/^GOOGLE_APPLICATION_CREDENTIALS=/d' .env; echo 'GOOGLE_APPLICATION_CREDENTIALS=/app/secrets/gcp-service-account.json' >> .env
+            else
+              echo "no Google service account in flybot-${Stage}-gcp: chatbot off"
+            fi
+            rm -f /opt/flybot/gcp.json
+            set -x
+            docker compose pull --ignore-pull-failures || true
+            docker compose up -d --build
+            docker compose ps
+            echo "bootstrap done $(date -u +%FT%TZ)"
+          - IotEventsMode: !If [HasWebhook, rule, mqtt]
+
+  FlyBotEip:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref FlyBotInstance
+      Tags:
+        - {Key: Name, Value: !Sub 'flybot-${Stage}'}
+
+  # ---------------------------------------------------------------- alarms
+  AlarmTopic:
+    Type: AWS::SNS::Topic
+    Condition: CreateTopic
+    Properties:
+      TopicName: !Sub 'flybot-${Stage}-alarms'
+
+  AlarmSubscription:
+    Type: AWS::SNS::Subscription
+    Condition: HasAlarmEmail
+    Properties:
+      TopicArn: !If [CreateTopic, !Ref AlarmTopic, !Ref ExistingAlarmTopicArn]
+      Protocol: email
+      Endpoint: !Ref AlarmEmail
+
+  VisionErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasImage
+    Properties:
+      AlarmName: !Sub 'flybot-${Stage}-vision-errors'
+      AlarmDescription: vision Lambda returned errors (FunctionError) in the last 5 minutes
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions: [{Name: FunctionName, Value: !Ref VisionFunction}]
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 3
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      AlarmActions: [!If [CreateTopic, !Ref AlarmTopic, !Ref ExistingAlarmTopicArn]]
+
+  VisionDurationAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasImage
+    Properties:
+      AlarmName: !Sub 'flybot-${Stage}-vision-slow'
+      AlarmDescription: vision Lambda p90 duration above 30 s (cold starts + model fetch should stay far below)
+      Namespace: AWS/Lambda
+      MetricName: Duration
+      Dimensions: [{Name: FunctionName, Value: !Ref VisionFunction}]
+      ExtendedStatistic: p90
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 30000
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions: [!If [CreateTopic, !Ref AlarmTopic, !Ref ExistingAlarmTopicArn]]
+
+  FlyBotStatusAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub 'flybot-${Stage}-ec2-status'
+      AlarmDescription: FlyBot EC2 instance or system status check failed
+      Namespace: AWS/EC2
+      MetricName: StatusCheckFailed
+      Dimensions: [{Name: InstanceId, Value: !Ref FlyBotInstance}]
+      Statistic: Maximum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: breaching
+      AlarmActions: [!If [CreateTopic, !Ref AlarmTopic, !Ref ExistingAlarmTopicArn]]
+
+Outputs:
+  ElasticIp:
+    Value: !Ref FlyBotEip
+    Description: Point the A record of DomainName here
+  DnsRecord:
+    Value: !Sub '${DomainName}. A ${FlyBotEip}'
+  InstanceId:
+    Value: !Ref FlyBotInstance
+  PhotosBucket:
+    Value: !Sub 'flybot-photos-${AWS::AccountId}-${Stage}'
+  VisionFunctionName:
+    Value: !If [HasImage, !Ref VisionFunction, '(not deployed yet: run infra/build-image.sh then deploy again)']
+  VisionRepositoryUri:
+    Value: !GetAtt VisionRepository.RepositoryUri
+  IotEndpoint:
+    Value: !Ref IotEndpoint
+    Description: account Data-ATS endpoint written to FlyBot's IOT_ENDPOINT (`aws iot describe-endpoint --endpoint-type iot:Data-ATS`)
+  CameraPolicyName:
+    Value: !Ref CameraPolicy
+  ThingTypeName:
+    Value: !Ref CameraThingType
+  AlarmTopicArn:
+    Value: !If [CreateTopic, !Ref AlarmTopic, !Ref ExistingAlarmTopicArn]
+  InstanceRoleArn:
+    Value: !GetAtt FlyBotRole.Arn
+  KvsViewerRoleArn:
+    Value: !GetAtt KvsViewerRole.Arn
+    Description: FlyBot's KVS_VIEWER_ROLE_ARN (written to .env by the user-data)
+  AppSecretName:
+    Value: !Sub 'flybot-${Stage}-app'
+    Description: FLYBOT_SECRETS (created and updated by infra/deploy.sh from deploy.env, not by this stack)
+  GcpSecretName:
+    Value: !Sub 'flybot-${Stage}-gcp'
+    Description: Google service-account JSON for the chatbot (infra/deploy.sh, from GCP_SERVICE_ACCOUNT_FILE)
+  AmiId:
+    Value: !Ref AmiId

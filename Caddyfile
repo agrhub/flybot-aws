@@ -1,0 +1,30 @@
+# Caddy in front of FlyBot (docker-compose.yml). TLS is automatic for DOMAIN_NAME (Let's Encrypt
+# over HTTP-01/TLS-ALPN on ports 80/443); "localhost" gets Caddy's own self-signed certificate.
+# ACME_EMAIL: the Let's Encrypt contact (expiry notices); an empty value would be a Caddyfile parse
+# error ("email" takes exactly one argument), hence the default.
+{
+	email {$ACME_EMAIL:admin@agrhub.com}
+}
+
+{$DOMAIN_NAME} {
+	encode gzip zstd
+	# Photos and OTA images may be a few MB; CamOS cameras post 2 MB JPEGs
+	request_body {
+		max_size 20MB
+	}
+	reverse_proxy flybot:8080 {
+		# The SSE notification stream and long captures must not be cut short
+		flush_interval -1
+		transport http {
+			read_timeout 180s
+		}
+	}
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+	log {
+		output stdout
+		format console
+	}
+}
