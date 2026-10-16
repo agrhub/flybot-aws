@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Secrets scan of the whole git history, for machines without gitleaks (A9, T4.6 / T5.6).
+# Secrets scan of the whole git history, for machines without gitleaks .
 #
 #   bash infra/ops/secrets-scan.sh            scan; exit 1 on any finding (and on any scan error)
 #   bash infra/ops/secrets-scan.sh --staged   pre-commit check of the staged changes only (make hooks installs it):

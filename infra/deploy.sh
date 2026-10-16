@@ -5,11 +5,13 @@
 #   ./deploy.sh --dry-run            preflight + discovery for real (read-only AWS calls), then the plan; changes nothing
 #   ./deploy.sh --only <step>        one step (preflight and discovery always run first)
 #   ./deploy.sh --show-ip            the Elastic IP and the DNS record of the existing stack
+#   ./deploy.sh --rollback           put the host back on the previous FlyBot release
+#   ./deploy.sh --allow-dirty        build FlyBot from a checkout with uncommitted changes (the release is marked dirty)
+#   ./deploy.sh --npm-ci             force `npm ci` in the FlyBot checkout before the build
 #   ./deploy.sh --yes                allow destructive recoveries (delete a stack stuck in ROLLBACK_COMPLETE)
-#   ./deploy.sh --skip-wait          do not wait for the GitHub deploy key (the EC2 retries for 30 min itself)
 #   ./deploy.sh --env-file F         another settings file (default: deploy.env)
 #
-# Steps: preflight, discover, models, secrets, repoaccess, stack, image, lambda, bootstrap, health, smoke, coldstart, summary.
+# Steps: preflight, discover, models, secrets, stack, flybot, image, lambda, bootstrap, health, smoke, coldstart, summary.
 # Log: infra/.build/deploy-<stage>.log (no secret value is ever printed). Exit 2 = AWS session expired (aws login).
 set -euo pipefail
 
@@ -19,19 +21,21 @@ cd "$ROOT"
 . infra/lib.sh
 find_tools
 
-STEPS=(models secrets repoaccess stack image lambda bootstrap health smoke coldstart summary)
-ENV_FILE=deploy.env DRY=0 ONLY="" YES=0 SHOW_IP=0 SKIP_WAIT=0
+STEPS=(models secrets stack flybot image lambda bootstrap health smoke coldstart summary)
+ENV_FILE=deploy.env DRY=0 ONLY="" YES=0 SHOW_IP=0 ROLLBACK=0 ALLOW_DIRTY=0 NPM_CI=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) DRY=1 ;;
     --only) ONLY="${2:?--only needs a step: ${STEPS[*]}}"; shift ;;
     --only=*) ONLY="${1#--only=}" ;;
     --yes|-y) YES=1 ;;
-    --skip-wait) SKIP_WAIT=1 ;;
     --show-ip) SHOW_IP=1 ;;
+    --rollback) ROLLBACK=1 ;;
+    --allow-dirty) ALLOW_DIRTY=1 ;;
+    --npm-ci) NPM_CI=1 ;;
     --env-file) ENV_FILE="${2:?}"; shift ;;
     --env-file=*) ENV_FILE="${1#--env-file=}" ;;
-    -h|--help) sed -n '2,15p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,16p' "$0"; exit 0 ;;
     *) die "unknown option $1 (see --help)" ;;
   esac
   shift
@@ -62,23 +66,33 @@ ACME_EMAIL="$(cfg ACME_EMAIL "$ALARM_EMAIL")"
 OWNER_CIDR="$(cfg OWNER_CIDR)"
 DETECTOR="$(cfg DETECTOR yolo26)"
 PLANNER_MODE="$(cfg PLANNER_MODE rule)"
-INSTANCE_TYPE="$(cfg INSTANCE_TYPE t4g.small)"
+INSTANCE_TYPE="$(cfg INSTANCE_TYPE t4g.micro)"
 KEY_NAME="$(cfg KEY_NAME)"
-REPO_URL="$(cfg REPO_URL https://github.com/agrhub/flybot-aws.git)"
-REPO_REF="$(cfg REPO_REF main)"
 AMI_ID="$(cfg AMI_ID)"
 ANTHROPIC_SECRET_NAME="$(cfg ANTHROPIC_SECRET_NAME sentinel-dev-anthropic)"
 ANTHROPIC_MODEL="$(cfg ANTHROPIC_MODEL claude-haiku-5-5)"
 GCP_FILE="$(cfg GCP_SERVICE_ACCOUNT_FILE)"
-DNS_WAIT_MIN="$(cfg DNS_WAIT_MIN 30)"
 MODELS_BUCKET="$(cfg MODELS_BUCKET)"
 DEMO_CAMS="$(cfg DEMO_MAX_CAMERAS_PER_USER 3)"
 DEMO_SNAPS="$(cfg DEMO_MAX_SNAPSHOTS_PER_DAY 48)"
 DEMO_UNCLAIMED="$(cfg DEMO_MAX_UNCLAIMED 200)"
+APP_MODE="$(cfg APP_MODE hybrid)"
+case "$APP_MODE" in b2c|b2b|hybrid) ;; *) die "deploy.env: APP_MODE must be b2c, b2b or hybrid (got $APP_MODE)" ;; esac
 DEVICE_EVENTS_URL="$(cfg DEVICE_EVENTS_URL)"
 SKIP_COLDSTART="$(cfg SKIP_COLDSTART 0)"
-FLYBOT_REPO="$(cfg FLYBOT_REPO agrhub/flybot)"
-REPO_WAIT_MIN="$(cfg REPO_WAIT_MIN 30)"
+FLYBOT_SRC="$(cfg FLYBOT_SRC ../ezviz-manager)"
+VITE_GOOGLE_MAP_KEY="$(cfg VITE_GOOGLE_MAP_KEY)"
+S3_BUCKET_NAME="$(cfg S3_BUCKET_NAME)"
+S3_REGION="$(cfg S3_REGION)"
+S3_ENDPOINT="$(cfg S3_ENDPOINT)"
+NODE_VERSION="$(cfg NODE_VERSION)"
+CADDY_VERSION="$(cfg CADDY_VERSION 2.10.2)"
+# photos: stack bucket (empty S3_BUCKET_NAME), an AWS bucket by name, or S3-compatible storage at S3_ENDPOINT
+if [ -z "$S3_BUCKET_NAME" ]; then STORAGE_MODE=stack
+elif [ -n "$S3_ENDPOINT" ] && [[ "$S3_ENDPOINT" != *amazonaws.com* ]]; then STORAGE_MODE=external
+else STORAGE_MODE=aws; S3_ENDPOINT=""; fi
+# MongoDB: MONGO_URI (secret, deploy.env) = an external database; empty = MongoDB 7 on the instance
+if has MONGO_URI; then LOCAL_MONGO=false; else LOCAL_MONGO=true; fi
 STACK="flybot-$STAGE"
 APP_SECRET="flybot-$STAGE-app"
 GCP_SECRET="flybot-$STAGE-gcp"
@@ -90,7 +104,7 @@ exec > >(tee -a "$LOG") 2>&1
 TMP="$(mktemp -d)"; chmod 700 "$TMP"
 trap 'rm -rf "$TMP"' EXIT
 printf '\n######## %s  ./deploy.sh %s  (stage %s, %s)\n' "$(date -u +%FT%TZ)" \
-  "$([ "$DRY" = 1 ] && echo '--dry-run ')$([ -n "$ONLY" ] && echo "--only $ONLY")" "$STAGE" "$ENV_FILE"
+  "$([ "$DRY" = 1 ] && echo '--dry-run ')$([ -n "$ONLY" ] && echo "--only $ONLY")$([ "$ROLLBACK" = 1 ] && echo '--rollback')" "$STAGE" "$ENV_FILE"
 
 SUMMARY=()
 row() { SUMMARY+=("$(printf '%-22s %s' "$1" "$2")"); }
@@ -104,7 +118,7 @@ dns_parts() {  # HOST and PARENT of DOMAIN_NAME (flybot / agrhub.com)
   local n; n="$(printf '%s' "$DOMAIN_NAME" | tr -cd '.' | wc -c)"
   if [ "$n" -ge 2 ]; then DNS_HOST="${DOMAIN_NAME%%.*}"; DNS_PARENT="${DOMAIN_NAME#*.}"; else DNS_HOST="@"; DNS_PARENT="$DOMAIN_NAME"; fi
 }
-box() {  # box TITLE LINE...: a highlighted block the owner must act on
+box() {  # box TITLE LINE...: a highlighted block that asks for a manual action
   local l w=76 bar
   for l in "$@"; do [ ${#l} -gt "$w" ] && w=${#l}; done
   bar="$(printf '%*s' $((w + 2)) '' | tr ' ' '=')"
@@ -116,13 +130,8 @@ dns_box() {  # $1 = EIP
   dns_parts
   local where="your DNS provider for $DNS_PARENT"
   [ "$DNS_PARENT" = agrhub.com ] && where="Namecheap: Domain List > agrhub.com > Manage > Advanced DNS > Add New Record"
-  printf '\n'
-  printf '  +==========================================================================+\n'
-  printf '  |  DNS RECORD TO ADD NOW (the build keeps running; the health step waits)  |\n'
-  printf '  |  %-72s|\n' "$where"
-  printf '  |  %-72s|\n' "Type: A Record    Host: $DNS_HOST    Value: $1    TTL: Automatic (300)"
-  printf '  |  %-72s|\n' "= $DOMAIN_NAME.  A  $1"
-  printf '  +==========================================================================+\n\n'
+  box "DNS RECORD TO ADD (the deploy does not wait for it)" "$where" \
+      "Type: A Record    Host: $DNS_HOST    Value: $1    TTL: Automatic (300)" "= $DOMAIN_NAME.  A  $1"
 }
 doh_a() {  # public resolver ($1 = 1.1.1.1 | 8.8.8.8) -> the A records of DOMAIN_NAME, space separated
   local body=""
@@ -135,23 +144,23 @@ doh_a() {  # public resolver ($1 = 1.1.1.1 | 8.8.8.8) -> the A records of DOMAIN
 
 # ================================================================ preflight
 preflight() {
-  step preflight "tools, session, account, region, service limits"
+  step preflight "tools, session, account, region, service limits, FlyBot checkout"
   [ -n "$AWS_BIN" ] || die "AWS CLI v2 not found (install: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)"
-  [ -n "$SAM" ] || [ "$SHOW_IP" = 1 ] || die "SAM CLI not found (install: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)"
+  if [ -z "$SAM" ] && [ "$SHOW_IP" != 1 ] && [ "$ROLLBACK" != 1 ]; then
+    printf 'SAM CLI candidates that did not run:\n%s' "$SAM_TRIED" >&2
+    die "no working SAM CLI; install it from your own terminal (not from an app sandbox): uv tool install --force aws-sam-cli, or the MSI from https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html"
+  fi
   ok "aws  $("$AWS" --version 2>&1 | head -1 | cut -d' ' -f1)  ($AWS_BIN)"
-  [ -n "$SAM" ] && ok "sam  $("$SAM" --version 2>&1 | tr -d '\r' | head -1)"
+  [ -n "$SAM" ] && ok "sam  $("$SAM" --version 2>&1 | tr -d '\r' | head -1)  ($SAM)"
   py -c 1 || die "no usable Python 3.9+"
   ok "python $(py -c 'import sys;print(sys.version.split()[0])')  (${PY_CMD[*]})"
   command -v curl >/dev/null || die "curl not found"
   command -v openssl >/dev/null || warn "openssl not found: VAPID keys cannot be generated (web push off)"
-  if ! has FLYBOT_REPO_TOKEN; then
-    { command -v ssh-keygen && command -v ssh; } >/dev/null || die "ssh / ssh-keygen not found (needed for the GitHub deploy key; or set FLYBOT_REPO_TOKEN)"
-  fi
   [ "$REGION" = ap-southeast-2 ] || die "AWS_REGION=$REGION refused: the account's SCP allows ap-southeast-2 only"
   aws_or_die
   ACCOUNT="$(awsx sts get-caller-identity --query Account --output text)"
   ok "session ok: account $ACCOUNT ($(awsx sts get-caller-identity --query Arn --output text | sed 's#.*:assumed-role/##; s#/.*##'), profile $PROFILE)"
-  [ "$SHOW_IP" = 1 ] && return 0
+  [ "$SHOW_IP" = 1 ] || [ "$ROLLBACK" = 1 ] && return 0
 
   # deploy.env must never reach git
   if git ls-files --error-unmatch "$ENV_FILE" >/dev/null 2>&1; then die "$ENV_FILE is tracked by git: git rm --cached $ENV_FILE (and rotate its secrets)"; fi
@@ -168,6 +177,25 @@ preflight() {
     [[ "$DEVICE_EVENTS_SECRET" =~ ^[A-Za-z0-9]{32,}$ ]] || die "DEVICE_EVENTS_SECRET: letters and digits only, 32+ characters"
   fi
 
+  # the FlyBot checkout this laptop builds (want flybot / --only flybot)
+  if want flybot; then
+    find_node
+    [ -n "$NODE_BIN" ] || { printf 'node candidates rejected:\n%s' "$NODE_TRIED" >&2; die "Node.js 22.12+ with npm not found (nvm install 22, or https://nodejs.org)"; }
+    ok "node $("$NODE_BIN" --version | tr -d '\r'), npm $("$NPM_BIN" --version 2>/dev/null | tr -d '\r')  ($NODE_BIN)"
+    case "$FLYBOT_SRC" in /*|[A-Za-z]:*) ;; *) FLYBOT_SRC="$ROOT/$FLYBOT_SRC" ;; esac
+    [ -d "$FLYBOT_SRC" ] && FLYBOT_SRC="$(cd "$FLYBOT_SRC" && pwd)"
+    [ -f "$FLYBOT_SRC/package.json" ] && grep -q '"name": *"flybot"' "$FLYBOT_SRC/package.json" \
+      || die "FLYBOT_SRC=$FLYBOT_SRC is not a FlyBot checkout (package.json name flybot)"
+    FB_COMMIT="$(git -C "$FLYBOT_SRC" rev-parse --short=12 HEAD)"; FB_BRANCH="$(git -C "$FLYBOT_SRC" rev-parse --abbrev-ref HEAD)"
+    FB_DIRTY="$(git -C "$FLYBOT_SRC" status --porcelain --untracked-files=no | head -20)"
+    if [ -n "$FB_DIRTY" ] && [ "$ALLOW_DIRTY" != 1 ]; then
+      printf '%s\n' "$FB_DIRTY" | sed 's/^/      /' >&2
+      die "FlyBot checkout $FLYBOT_SRC has uncommitted changes (above): commit them, or --allow-dirty for a test release"
+    fi
+    FB_ID="$FB_COMMIT"; [ -n "$FB_DIRTY" ] && FB_ID="$FB_COMMIT-dirty-$(git -C "$FLYBOT_SRC" diff HEAD | sha256sum | cut -c1-8)"
+    ok "FlyBot checkout $FLYBOT_SRC: $FB_BRANCH@$FB_COMMIT$([ -n "$FB_DIRTY" ] && echo ' (DIRTY, --allow-dirty)')"
+  fi
+
   local azs; azs="$(awsx ec2 describe-availability-zones --query 'AvailabilityZones[].ZoneName' --output text 2>&1)" \
     || die "EC2 refused in $REGION (SCP?): $(printf '%s' "$azs" | head -1)"
   ok "region $REGION allowed (AZs: $azs)"
@@ -181,6 +209,7 @@ IoT Core|iot describe-endpoint --endpoint-type iot:Data-ATS
 Kinesis Video|kinesisvideo list-signaling-channels --max-results 1
 Lambda|lambda list-functions --max-items 1
 ECR|ecr describe-repositories --max-items 1
+CodeBuild|codebuild list-projects
 SSM|ssm describe-instance-information --max-results 5
 Secrets Manager|secretsmanager list-secrets --max-results 1
 SNS|sns list-topics
@@ -207,13 +236,21 @@ EOF
     if [ "${vq%.*}" -gt 0 ] && [ $((vu + 2)) -gt "${vq%.*}" ]; then die "On-Demand vCPU quota: $vu of ${vq%.*} used, $INSTANCE_TYPE needs 2"; fi
     ok "quotas: Elastic IPs $eu of ${eq%.*} used; On-Demand vCPUs $vu of ${vq%.*} used (needs 2)"
   fi
-  # what the EC2 will run: it clones REPO_REF from GitHub, not this folder
-  if [ -z "${SKIP_GIT_CHECK:-}" ]; then
-    local remote head; remote="$(git ls-remote "$REPO_URL" "refs/heads/$REPO_REF" 2>/dev/null | cut -c1-12 || true)"; head="$(git rev-parse HEAD | cut -c1-12)"
-    if [ -z "$remote" ]; then warn "cannot read $REPO_URL $REPO_REF (the EC2 clones it: is it public?)"
-    elif [ "$remote" != "$head" ]; then warn "the EC2 deploys $REPO_REF@$remote but local HEAD is $head: push first if you changed FlyBot or the compose file"
-    else ok "GitHub $REPO_REF = local HEAD $head"; fi
-  fi
+  # photo storage given in deploy.env
+  case "$STORAGE_MODE" in
+    aws)
+      awsx s3api head-bucket --bucket "$S3_BUCKET_NAME" >/dev/null 2>&1 || die "S3_BUCKET_NAME=$S3_BUCKET_NAME: not found or not accessible with profile $PROFILE"
+      local loc; loc="$(awsx s3api get-bucket-location --bucket "$S3_BUCKET_NAME" --query LocationConstraint --output text 2>/dev/null || true)"
+      [ "$loc" = None ] && loc=us-east-1
+      [ -z "$S3_REGION" ] && S3_REGION="$loc"
+      [ "$loc" = "$REGION" ] || warn "bucket $S3_BUCKET_NAME is in $loc, the Lambda in $REGION: cross-region reads add latency and transfer cost"
+      ok "photos: AWS bucket $S3_BUCKET_NAME ($loc), read/write granted to the instance role and the Lambda" ;;
+    external)
+      { has S3_ACCESS_KEY && has S3_SECRET_KEY; } || die "S3_ENDPOINT=$S3_ENDPOINT needs S3_ACCESS_KEY and S3_SECRET_KEY in deploy.env"
+      [ -n "$S3_REGION" ] || S3_REGION=auto
+      ok "photos: S3-compatible $S3_ENDPOINT bucket $S3_BUCKET_NAME (the Lambda gets presigned URLs; evidence in the stack bucket)" ;;
+    *) ok "photos: the stack bucket flybot-photos-$ACCOUNT-$STAGE" ;;
+  esac
   local free; free="$(df -Pk . | awk 'NR==2 {print int($4/1024)}')"
   [ "$free" -ge 1024 ] || warn "only $free MB free on this drive"
 }
@@ -226,6 +263,10 @@ discover() {
   STACK_STATUS="$(awsx cloudformation describe-stacks --stack-name "$STACK" --query 'Stacks[0].StackStatus' --output text 2>/dev/null || echo NONE)"
   CUR_IMAGE="$(param ImageUri)"; CUR_INSTANCE="$(out InstanceId)"; CUR_EIP="$(out ElasticIp)"
   ok "stack $STACK: $STACK_STATUS${CUR_INSTANCE:+, instance $CUR_INSTANCE}${CUR_EIP:+, EIP $CUR_EIP}${CUR_IMAGE:+, Lambda image ${CUR_IMAGE##*@}}"
+  local cur_type; cur_type="$(param InstanceType)"
+  if [ -n "$cur_type" ] && [ "$cur_type" != "$INSTANCE_TYPE" ]; then
+    warn "instance type $cur_type -> $INSTANCE_TYPE: CloudFormation stops and starts the instance (Elastic IP and disk stay); the bootstrap step re-runs afterwards"
+  fi
 
   if [ -n "$AMI_ID" ]; then ok "AMI $AMI_ID (deploy.env)"
   elif [ -n "$(param AmiId)" ]; then AMI_ID="$(param AmiId)"; ok "AMI $AMI_ID (pinned by the stack: a new AMI would replace the instance and its MongoDB)"
@@ -263,11 +304,17 @@ discover() {
   ok "alarms: $ALARM_NOTE"
 
   PHOTOS="flybot-photos-$ACCOUNT-$STAGE"; PHOTOS_EXISTS=false
-  if awsx cloudformation describe-stack-resource --stack-name "$STACK" --logical-resource-id PhotosBucket >/dev/null 2>&1; then
-    ok "photos bucket $PHOTOS (owned by the stack)"
+  ARTIFACTS="flybot-artifacts-$ACCOUNT-$STAGE"
+  if [ "$STORAGE_MODE" = aws ]; then
+    ok "photos bucket $S3_BUCKET_NAME (yours; the stack creates no photo bucket)"
+  elif awsx cloudformation describe-stack-resource --stack-name "$STACK" --logical-resource-id PhotosBucket >/dev/null 2>&1; then
+    ok "stack bucket $PHOTOS (owned by the stack$([ "$STORAGE_MODE" = external ] && echo ', evidence only'))"
   elif awsx s3api head-bucket --bucket "$PHOTOS" >/dev/null 2>&1; then
-    PHOTOS_EXISTS=true; ok "photos bucket $PHOTOS exists outside the stack (kept by destroy --keep-photos): reused"
-  else ok "photos bucket $PHOTOS: will be created"; fi
+    PHOTOS_EXISTS=true; ok "stack bucket $PHOTOS exists outside the stack (kept by destroy --keep-photos): reused"
+  else ok "stack bucket $PHOTOS: will be created$([ "$STORAGE_MODE" = external ] && echo ' (evidence only)')"; fi
+  if [ "$LOCAL_MONGO" = true ]; then MONGO_NOTE="MongoDB 7 on the instance (cache 0.25 GB, data on its EBS volume)"
+  else MONGO_NOTE="external (MONGO_URI in $APP_SECRET); no MongoDB on the instance"; fi
+  ok "database: $MONGO_NOTE"
 
   APP_STATE="$(secret_state "$APP_SECRET")"; GCP_STATE="$(secret_state "$GCP_SECRET")"
   if [ "$(secret_state "$ANTHROPIC_SECRET_NAME")" = active ]; then ANTHROPIC_NOTE="reuse $ANTHROPIC_SECRET_NAME"
@@ -379,84 +426,31 @@ for k in ("set","generated","kept","default","empty"):
   rm -f "$TMP"/app.* "$TMP"/gcp.* "$TMP"/ak.*
 }
 
-# ================================================================ repoaccess (private submodule agrhub/flybot)
-GH_KNOWN_HOSTS='github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl'
-git_anon() { GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never git -c credential.helper= ls-remote "https://github.com/$FLYBOT_REPO.git" HEAD >/dev/null 2>&1; }
-git_key() {  # $1 = private key file
-  GIT_TERMINAL_PROMPT=0 GIT_SSH_COMMAND="ssh -i $1 -o IdentitiesOnly=yes -o BatchMode=yes -o UserKnownHostsFile=$TMP/gh_known_hosts -o StrictHostKeyChecking=yes" \
-    git ls-remote "git@github.com:$FLYBOT_REPO.git" HEAD >/dev/null 2>&1
-}
-git_token() {  # $1 = token file; the helper reads it at call time, the token is never on a command line
-  # shellcheck disable=SC2016
-  GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never git -c credential.helper= \
-    -c "credential.helper=!f() { echo username=x-access-token; echo password=\$(cat '$1'); }; f" \
-    ls-remote "https://github.com/$FLYBOT_REPO.git" HEAD >/dev/null 2>&1
-}
-step_repoaccess() {
-  step repoaccess "read access for the EC2 to the private submodule $FLYBOT_REPO"
-  local ks="flybot-$STAGE-deploykey" ts="flybot-$STAGE-repotoken" t=0 pub
-  printf '%s\n' "$GH_KNOWN_HOSTS" > "$TMP/gh_known_hosts"
-  if has FLYBOT_REPO_TOKEN; then
-    py infra/deploy_helpers.py get "$ENV_FILE" FLYBOT_REPO_TOKEN --out "$TMP/tok"
-    git_token "$TMP/tok" || die "FLYBOT_REPO_TOKEN cannot read $FLYBOT_REPO (fine-grained PAT: repository $FLYBOT_REPO, Contents read-only)"
-    ok "FLYBOT_REPO_TOKEN reads $FLYBOT_REPO"
-    secret_read "$ts" "$TMP/tok.cur"
-    if cmp -s "$TMP/tok" "$TMP/tok.cur"; then ok "$ts unchanged"
-    elif [ "$DRY" = 1 ]; then plan "write $ts"
-    else secret_write "$ts" "$TMP/tok" "GitHub fine-grained token (contents read-only) for the private FlyBot submodule, managed by infra/deploy.sh" "$(secret_state "$ts")"
-         ok "$ts written (read by the host at bootstrap, never kept in its .env)"; fi
-    rm -f "$TMP"/tok*; REPO_ACCESS="token ($ts)"; return 0
-  fi
-  if [ "$(secret_state "$ks")" = active ]; then
-    secret_read "$ks" "$TMP/dk"; chmod 600 "$TMP/dk"; ok "deploy key in $ks (reused)"
-  elif [ "$DRY" = 1 ]; then
-    plan "generate an ed25519 deploy key, store the private half in $ks, print the public half to add on GitHub"
-    REPO_ACCESS="deploy key $ks (to create, NOT ADDED YET)"; return 0
-  else
-    ssh-keygen -q -t ed25519 -N "" -C "flybot-$STAGE-ec2" -f "$TMP/dk" || die "ssh-keygen failed"
-    secret_write "$ks" "$TMP/dk" "Read-only GitHub deploy key of the FlyBot EC2 for $FLYBOT_REPO, managed by infra/deploy.sh" "$(secret_state "$ks")"
-    ok "new deploy key stored in $ks"
-  fi
-  pub="$(ssh-keygen -y -f "$TMP/dk" 2>/dev/null | cut -d' ' -f1,2) flybot-$STAGE-ec2"
-  if git_key "$TMP/dk"; then ok "deploy key reads $FLYBOT_REPO"; REPO_ACCESS="deploy key $ks (ok)"; rm -f "$TMP/dk"; return 0; fi
-  box "ADD THIS READ-ONLY DEPLOY KEY ON GITHUB (the EC2 clones the private submodule with it)" \
-      "github.com/$FLYBOT_REPO > Settings > Deploy keys > Add deploy key" \
-      "Title: flybot-$STAGE-ec2      Allow write access: leave UNCHECKED" \
-      "Key:" "$pub"
-  if git_anon; then
-    ok "$FLYBOT_REPO is still public: the EC2 clones it anonymously now; add the key before making the repo private"
-    REPO_ACCESS="public repo; deploy key $ks NOT ADDED YET"; rm -f "$TMP/dk"; return 0
-  fi
-  if [ "$SKIP_WAIT" = 1 ]; then
-    warn "deploy key not accepted yet (--skip-wait): the EC2 retries for 30 min at boot"
-    REPO_ACCESS="deploy key $ks (NOT ADDED YET)"; rm -f "$TMP/dk"; return 0
-  fi
-  while ! git_key "$TMP/dk"; do
-    if [ "$t" -ge $((REPO_WAIT_MIN * 60)) ]; then rm -f "$TMP/dk"; die "deploy key not accepted after $REPO_WAIT_MIN min: add it, then ./deploy.sh again (or --skip-wait)"; fi
-    log "waiting for the deploy key on github.com/$FLYBOT_REPO ($((t / 60))/$REPO_WAIT_MIN min; --skip-wait to go on without)"
-    sleep 20; t=$((t + 20))
-  done
-  ok "deploy key reads $FLYBOT_REPO"; REPO_ACCESS="deploy key $ks (ok)"; rm -f "$TMP/dk"
-}
-
 # ================================================================ stack
 stack_params() {  # $1 = ImageUri
   local alarm_email=""
   if [ -z "$ALARM_TOPIC_ARN" ]; then alarm_email="$ALARM_EMAIL"; fi
   PARAMS=("Stage=$STAGE" "DomainName=$DOMAIN_NAME" "OwnerCidr=$OWNER_CIDR" "ImageUri=$1" "Detector=$DETECTOR"
-          "PlannerMode=$PLANNER_MODE" "RepoUrl=$REPO_URL" "RepoRef=$REPO_REF" "AnthropicSecretName=$ANTHROPIC_SECRET_NAME"
+          "PlannerMode=$PLANNER_MODE" "AnthropicSecretName=$ANTHROPIC_SECRET_NAME"
           "AnthropicModel=$ANTHROPIC_MODEL" "IotEndpoint=$IOT_ENDPOINT" "AmiId=$AMI_ID" "AcmeEmail=$ACME_EMAIL"
           "InstanceType=$INSTANCE_TYPE" "KeyName=$KEY_NAME" "PhotosBucketExists=$PHOTOS_EXISTS"
+          "StorageMode=$STORAGE_MODE" "S3BucketName=$S3_BUCKET_NAME" "S3Region=$S3_REGION" "S3Endpoint=$S3_ENDPOINT"
+          "LocalMongo=$LOCAL_MONGO" "NodeVersion=$NODE_VERSION" "CaddyVersion=$CADDY_VERSION"
           "AlarmEmail=$alarm_email" "ExistingAlarmTopicArn=$ALARM_TOPIC_ARN"
           "Yolo26Url=$YOLO26_URL" "Yolo26Sha256=$YOLO26_SHA"
-          "DemoMaxCamerasPerUser=$DEMO_CAMS" "DemoMaxSnapshotsPerDay=$DEMO_SNAPS" "DemoMaxUnclaimed=$DEMO_UNCLAIMED"
+          "DemoMaxCamerasPerUser=$DEMO_CAMS" "DemoMaxSnapshotsPerDay=$DEMO_SNAPS" "DemoMaxUnclaimed=$DEMO_UNCLAIMED" "AppMode=$APP_MODE"
           "DeviceEventsWebhookUrl=$DEVICE_EVENTS_URL" "DeviceEventsSecret=${DEVICE_EVENTS_SECRET:-}")
+  # SAM CLI rejects "Key=" with an empty value; an omitted parameter takes the template default ("").
+  local p kept=()
+  for p in "${PARAMS[@]}"; do [ -n "${p#*=}" ] && kept+=("$p"); done
+  PARAMS=("${kept[@]}")
 }
 sam_deploy() {  # $1 = ImageUri
   stack_params "$1"
   local mask="${DEVICE_EVENTS_SECRET:-__none__}"
   "$SAM" deploy --template-file infra/template.yaml --stack-name "$STACK" --resolve-s3 --s3-prefix "$STACK" \
     --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND --parameter-overrides "${PARAMS[@]}" \
+    --image-repository "$ACCOUNT.dkr.ecr.$REGION.amazonaws.com/flybot-vision-$STAGE" \
     --tags project=flybot-aws "stage=$STAGE" --no-confirm-changeset --no-fail-on-empty-changeset --no-progressbar \
     --profile "$PROFILE" --region "$REGION" 2>&1 | tr -d '\r' | sed "s/$mask/********/g"
   return "${PIPESTATUS[0]}"
@@ -469,14 +463,16 @@ stack_wait_idle() {
   done
 }
 step_stack() {
-  step stack "CloudFormation $STACK: bucket, ECR, IoT, roles, EC2 + EIP (Lambda kept as is)"
+  step stack "CloudFormation $STACK: buckets, ECR, CodeBuild, IoT, roles, EC2 + EIP (Lambda kept as is)"
   stack_wait_idle
   case "$STACK_STATUS" in
     NONE|CREATE_COMPLETE|UPDATE_COMPLETE|UPDATE_ROLLBACK_COMPLETE|IMPORT_COMPLETE) ;;
     ROLLBACK_COMPLETE|ROLLBACK_FAILED|CREATE_FAILED|DELETE_FAILED)
       [ "$YES" = 1 ] || die "stack $STACK is $STACK_STATUS (a failed first create): it must be deleted. Re-run with --yes to delete and recreate it (the photos bucket is retained)"
       if [ "$DRY" = 1 ]; then plan "delete $STACK ($STACK_STATUS) and create it again"
-      else log "deleting $STACK ($STACK_STATUS)"; awsx cloudformation delete-stack --stack-name "$STACK"
+      else log "deleting $STACK ($STACK_STATUS)"
+           awsx s3 rm "s3://$ARTIFACTS" --recursive --only-show-errors 2>/dev/null || true
+           awsx cloudformation delete-stack --stack-name "$STACK"
            awsx cloudformation wait stack-delete-complete --stack-name "$STACK"; STACK_STATUS=NONE; CUR_IMAGE=""; CUR_INSTANCE=""; fi ;;
     *) die "stack $STACK is $STACK_STATUS: fix it in the CloudFormation console (events tab), then re-run" ;;
   esac
@@ -489,8 +485,55 @@ step_stack() {
   sam_deploy "$CUR_IMAGE" || die "sam deploy failed (CloudFormation console > $STACK > Events)"
   EIP="$(out ElasticIp)"; INSTANCE_ID="$(out InstanceId)"
   [ -n "$CUR_INSTANCE" ] && [ "$CUR_INSTANCE" = "$INSTANCE_ID" ] && INSTANCE_NEW=0 || INSTANCE_NEW=1
-  ok "stack ready: instance $INSTANCE_ID ($([ "$INSTANCE_NEW" = 1 ] && echo new || echo existing)), EIP $EIP"
+  ok "stack ready: instance $INSTANCE_ID ($([ "$INSTANCE_NEW" = 1 ] && echo new || echo existing), $INSTANCE_TYPE), EIP $EIP"
   if [ "$(doh_a 1.1.1.1)" = "$EIP" ]; then ok "$DOMAIN_NAME already resolves to $EIP"; else dns_box "$EIP"; fi
+}
+
+# ================================================================ flybot (prebuilt release, built on this laptop)
+flybot_current() {  # the release the host is told to run: "key sha256" or empty
+  awsx s3 cp "s3://$ARTIFACTS/flybot/current.json" - 2>/dev/null \
+    | py -c 'import json,sys
+try:
+    d=json.load(sys.stdin); print(d["key"], d["sha256"])
+except Exception:
+    pass' 2>/dev/null || true
+}
+step_flybot() {
+  step flybot "FlyBot $FB_BRANCH@$FB_ID: npm build here, release tarball to s3://$ARTIFACTS/flybot/ (no GitHub, no build on the host)"
+  local key="flybot/flybot-$FB_ID.tgz" sha="" tgz="infra/.build/flybot-$FB_ID.tgz"
+  if awsx s3api head-bucket --bucket "$ARTIFACTS" >/dev/null 2>&1; then
+    sha="$(awsx s3api head-object --bucket "$ARTIFACTS" --key "$key" --query 'Metadata.sha256' --output text 2>/dev/null | grep -v '^None$' || true)"
+  elif [ "$DRY" != 1 ]; then die "artifacts bucket $ARTIFACTS missing: ./deploy.sh --only stack first"; fi
+  if [ -n "$sha" ]; then
+    ok "release $key already in S3 (sha256 ${sha:0:12}): no build"
+  elif [ "$DRY" = 1 ]; then
+    plan "npm $( { [ "$NPM_CI" = 1 ] || [ ! -f "$FLYBOT_SRC/node_modules/.package-lock.json" ] || [ "$FLYBOT_SRC/package-lock.json" -nt "$FLYBOT_SRC/node_modules/.package-lock.json" ]; } && echo 'ci + ')run build in $FLYBOT_SRC, upload $key"
+  else
+    local free; free="$(df -Pk "$FLYBOT_SRC" | awk 'NR==2 {print int($4/1024)}')"
+    [ "$free" -ge 1500 ] || warn "only $free MB free on the FlyBot checkout's drive (npm ci needs ~1.5 GB)"
+    if [ "$NPM_CI" = 1 ] || [ ! -f "$FLYBOT_SRC/node_modules/.package-lock.json" ] || [ "$FLYBOT_SRC/package-lock.json" -nt "$FLYBOT_SRC/node_modules/.package-lock.json" ]; then
+      log "npm ci in $FLYBOT_SRC (package-lock.json changed or node_modules missing)"
+      (cd "$FLYBOT_SRC" && "$NPM_BIN" ci --no-audit --no-fund --loglevel=error) || die "npm ci failed in $FLYBOT_SRC"
+    fi
+    log "npm run build (Vue client + server bundle)"
+    (cd "$FLYBOT_SRC" && VITE_GOOGLE_MAP_KEY="$VITE_GOOGLE_MAP_KEY" NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=4096}" "$NPM_BIN" run build) \
+      > "infra/.build/flybot-build-$STAGE.log" 2>&1 || { tail -30 "infra/.build/flybot-build-$STAGE.log" >&2; die "FlyBot build failed (infra/.build/flybot-build-$STAGE.log)"; }
+    printf '{"commit":"%s","branch":"%s","dirty":%s,"built_at":"%s","node":"%s"}\n' "$FB_COMMIT" "$FB_BRANCH" \
+      "$([ -n "$FB_DIRTY" ] && echo true || echo false)" "$(date -u +%FT%TZ)" "$("$NODE_BIN" --version | tr -d '\r')" > "$TMP/release.json"
+    sha="$(py infra/deploy_helpers.py pack-flybot --src "$FLYBOT_SRC" --out "$tgz" --meta "$TMP/release.json")" || die "packing the release failed"
+    awsx s3 cp "$tgz" "s3://$ARTIFACTS/$key" --metadata "sha256=$sha,commit=$FB_COMMIT" --only-show-errors
+    ok "uploaded $key ($(( $(wc -c < "$tgz") / 1048576 )) MB, sha256 ${sha:0:12})"
+    rm -f "$tgz"
+  fi
+  local cur; cur="$(flybot_current)"
+  if [ "$cur" = "$key ${sha}" ]; then ok "host release pointer already on $FB_ID"; RELEASE_CHANGED=0
+  elif [ "$DRY" = 1 ]; then plan "point s3://$ARTIFACTS/flybot/current.json at $key (the host switches at the bootstrap step)"; RELEASE_CHANGED=1
+  else
+    printf '{"key":"%s","sha256":"%s","commit":"%s","branch":"%s","set_at":"%s"}\n' "$key" "$sha" "$FB_ID" "$FB_BRANCH" "$(date -u +%FT%TZ)" > "$TMP/current.json"
+    awsx s3 cp "$TMP/current.json" "s3://$ARTIFACTS/flybot/current.json" --content-type application/json --only-show-errors
+    ok "release pointer -> $FB_ID (was ${cur:-none})"; RELEASE_CHANGED=1
+  fi
+  row "FlyBot release" "$FB_BRANCH@$FB_ID (sha256 ${sha:0:12})"
 }
 
 # ================================================================ image
@@ -503,10 +546,10 @@ image_lookup() {  # sets REPO and IMAGE_URI when the image of CTX_TAG is in ECR
   return 0
 }
 step_image() {
-  step image "vision Lambda image $CTX_TAG (built on the FlyBot EC2 through SSM when not in ECR)"
+  step image "vision Lambda image $CTX_TAG (AWS CodeBuild, only when not in ECR)"
   image_lookup
   if [ -n "$IMAGE_URI" ]; then ok "in ECR already: $IMAGE_URI"; return 0; fi
-  if [ "$DRY" = 1 ]; then plan "build + push $CTX_TAG on the instance (10-15 min the first time; waits for the host bootstrap)"; return 0; fi
+  if [ "$DRY" = 1 ]; then plan "CodeBuild flybot-vision-build-$STAGE (ARM small): build + push $CTX_TAG, 6-12 min"; return 0; fi
   [ -n "$REPO" ] || die "no ECR repository output: run the stack step first"
   TAG="$CTX_TAG" STAGE="$STAGE" bash infra/build-image.sh || die "image build failed: infra/.build/build-log-$STAGE.txt, ./deploy.sh --only image to retry"
   image_lookup
@@ -530,68 +573,79 @@ step_lambda() {
 }
 
 # ================================================================ bootstrap
+host_status() {  # one line: services + release on the host
+  ssm_run 'printf "flybot=%s caddy=%s mongod=%s release=%s" "$(systemctl is-active flybot)" "$(systemctl is-active caddy)" "$(systemctl is-active mongod 2>/dev/null || true)" "$(python3 -c "import json;print(json.load(open(\"/opt/flybot/current/.pointer.json\"))[\"commit\"])" 2>/dev/null || echo none)"' 120 2>/dev/null | tr -d '\r' | tail -1 || true
+}
 step_bootstrap() {
-  step bootstrap "FlyBot on the EC2: docker compose up with the current .env and secrets"
+  step bootstrap "the host: Node, Caddy, MongoDB, the FlyBot release under systemd (current user-data through SSM)"
   INSTANCE_ID="${INSTANCE_ID:-$(out InstanceId)}"
-  if [ -z "$INSTANCE_ID" ]; then [ "$DRY" = 1 ] && { plan "wait for the first-boot bootstrap of the new instance"; return 0; }; die "no instance"; fi
-  if [ "$DRY" = 1 ]; then plan "re-run the current user-data on $INSTANCE_ID through SSM (git pull, .env, secrets, compose up -d --build)"; return 0; fi
+  if [ -z "$INSTANCE_ID" ]; then [ "$DRY" = 1 ] && { plan "wait for the first-boot bootstrap of the new instance, then install the release"; return 0; }; die "no instance"; fi
+  if [ "$DRY" = 1 ]; then plan "re-run the current user-data on $INSTANCE_ID through SSM (migrates a Docker host once; installs the release if it changed)"; return 0; fi
   ssm_wait_online 900 || die "SSM agent on $INSTANCE_ID not online after 15 min"
   if [ "${INSTANCE_NEW:-0}" = 1 ]; then
-    log "first boot: waiting for 'bootstrap done' (docker install + FlyBot image build, ~10 min)"
-    ssm_run "$BOOTSTRAP_WAIT" 1800 || die "first-boot bootstrap did not finish: ./deploy.sh --only bootstrap, or make host CMD='tail -50 /var/log/flybot-bootstrap.log'"
-  else
-    log "re-running the bootstrap (picks up secrets${SECRETS_CHANGED:+ (changed)}, template and git changes)"
-    ssm_run "$BOOTSTRAP_RERUN" 1800 || die "bootstrap failed: make host CMD='tail -50 /var/log/flybot-bootstrap.log'"
+    log "first boot: waiting for 'bootstrap done' (Node, Caddy, MongoDB install, ~5 min)"
+    ssm_run "$BOOTSTRAP_WAIT" 1800 || warn "first-boot bootstrap not finished yet; running it again now"
   fi
-  ok "FlyBot containers up: $(ssm_run 'cd /opt/flybot/flybot-aws && docker compose ps --format "{{.Service}}={{.State}}" | tr "\n" " "' 120 || echo '?')"
-  if ssm_run 'test -f /opt/flybot/flybot-aws/flybot/package.json && git -C /opt/flybot/flybot-aws/flybot log -1 --format=%h' 120 > "$TMP/sub" 2>/dev/null; then
-    ok "private submodule $FLYBOT_REPO checked out on the host at $(tr -d '\n' < "$TMP/sub")"
-  else warn "no $FLYBOT_REPO checkout on the host: make host CMD='grep -i submodule /var/log/flybot-bootstrap.log | tail'"; fi
+  local force=0; [ "${SECRETS_CHANGED:-0}" = 1 ] && force=1
+  log "running the bootstrap (release ${RELEASE_CHANGED:-?}, secrets changed $force)"
+  ssm_run "export FORCE_RESTART=$force; $BOOTSTRAP_RERUN" 1800 || die "bootstrap failed: make host CMD='tail -60 /var/log/flybot-bootstrap.log'"
+  local st; st="$(host_status)"
+  ok "host: $st"
+  case "$st" in *flybot=active*) ;; *) warn "flybot is not active: make host CMD='journalctl -u flybot -n 60 --no-pager'" ;; esac
 }
 
 # ================================================================ health
 step_health() {
-  step health "DNS -> $DOMAIN_NAME, HTTPS certificate, FlyBot answering"
+  step health "FlyBot answering on the host; DNS and HTTPS checked once, never waited for"
   EIP="${EIP:-$(out ElasticIp)}"
-  if [ "$DRY" = 1 ]; then plan "poll 1.1.1.1 and 8.8.8.8 for $DOMAIN_NAME = ${EIP:-<EIP>} (up to $DNS_WAIT_MIN min), then https://$DOMAIN_NAME/health = 200"; return 0; fi
+  INSTANCE_ID="${INSTANCE_ID:-$(out InstanceId)}"
+  if [ "$DRY" = 1 ]; then plan "GET http://127.0.0.1:8080/health on the host (SSM); one DNS lookup of $DOMAIN_NAME; https only when it resolves to ${EIP:-<EIP>}"; return 0; fi
   [ -n "$EIP" ] || die "no Elastic IP output"
-  local t=0 a b
-  DNS_OK=0
-  while [ "$t" -le $((DNS_WAIT_MIN * 60)) ]; do
-    a="$(doh_a 1.1.1.1)"; b="$(doh_a 8.8.8.8)"
-    if [ "$a" = "$EIP" ] && [ "$b" = "$EIP" ]; then DNS_OK=1; break; fi
-    [ "$t" = 0 ] && dns_box "$EIP"
-    log "DNS $DOMAIN_NAME: 1.1.1.1=${a:-none} 8.8.8.8=${b:-none}, want $EIP ($((t / 60))/$DNS_WAIT_MIN min)"
-    sleep 30; t=$((t + 30))
-  done
-  if [ "$DNS_OK" = 0 ]; then warn "DNS not resolving to $EIP after $DNS_WAIT_MIN min: add the record, then ./deploy.sh --only health"
-    row "DNS" "PENDING: $DOMAIN_NAME. A $EIP"; row "HTTPS" "not checked (DNS)"; return 0; fi
-  ok "DNS $DOMAIN_NAME = $EIP on 1.1.1.1 and 8.8.8.8"; row "DNS" "$DOMAIN_NAME. A $EIP (ok)"
+  # 1. The app itself, from inside the instance (no DNS or certificate involved)
   local code="" i
-  for i in $(seq 1 60); do   # Caddy asks Let's Encrypt on the first request once the name resolves
-    code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 --resolve "$DOMAIN_NAME:443:$EIP" "https://$DOMAIN_NAME/health" || true)"
+  for i in $(seq 1 20); do
+    code="$(ssm_run 'curl -s -o /dev/null -w "%{http_code}" --max-time 10 http://127.0.0.1:8080/health' 60 2>/dev/null | tr -d '\r' | tail -1 || true)"
     [ "$code" = 200 ] && break
-    [ $((i % 4)) = 1 ] && log "https://$DOMAIN_NAME/health -> ${code:-no answer} (certificate / FlyBot starting), retrying"
+    [ $((i % 4)) = 1 ] && log "FlyBot /health on the host -> ${code:-no answer} (starting), retrying"
     sleep 15
   done
-  if [ "$code" != 200 ]; then warn "https://$DOMAIN_NAME/health -> $code after 15 min: make host CMD='cd /opt/flybot/flybot-aws && docker compose logs --tail 50 caddy flybot'"
-    row "HTTPS" "FAILED ($code)"; return 0; fi
-  local home dev; home="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "https://$DOMAIN_NAME/" || true)"
-  dev="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "https://$DOMAIN_NAME/api/device/time" || true)"
-  ok "https://$DOMAIN_NAME valid certificate, /health 200, / $home, /api/device/time $dev (401 = device API on)"
-  row "HTTPS" "https://$DOMAIN_NAME (certificate ok, /health 200, / $home)"
+  if [ "$code" = 200 ]; then ok "FlyBot answers on the host: /health 200"; row "FlyBot" "running on $INSTANCE_ID (/health 200)"
+  else warn "FlyBot /health on the host -> ${code:-no answer}: make host CMD='journalctl -u flybot -n 60 --no-pager'"
+       row "FlyBot" "NOT answering (${code:-no answer})"; fi
+  # 2. DNS + HTTPS: one look, no waiting (the record is added by hand; Caddy gets the certificate on its own afterwards)
+  local a b; a="$(doh_a 1.1.1.1 || true)"; b="$(doh_a 8.8.8.8 || true)"
+  if [ "$a" != "$EIP" ] || [ "$b" != "$EIP" ]; then
+    dns_box "$EIP"
+    row "DNS" "to add: $DOMAIN_NAME. A $EIP (HTTPS follows by itself; check later with ./deploy.sh --only health)"
+    return 0
+  fi
+  ok "DNS $DOMAIN_NAME = $EIP"; row "DNS" "$DOMAIN_NAME. A $EIP (ok)"
+  for i in 1 2 3 4; do
+    code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 --resolve "$DOMAIN_NAME:443:$EIP" "https://$DOMAIN_NAME/health" || true)"
+    [ "$code" = 200 ] && break
+    sleep 15
+  done
+  if [ "$code" = 200 ]; then ok "https://$DOMAIN_NAME/health 200 (valid certificate)"; row "HTTPS" "https://$DOMAIN_NAME (ok)"
+  else log "https://$DOMAIN_NAME -> ${code:-no answer}: Caddy is still getting the certificate; ./deploy.sh --only health later"
+       row "HTTPS" "pending (certificate)"; fi
 }
 
 # ================================================================ smoke
 step_smoke() {
   step smoke "one contract call to the Lambda with a sample trap photo"
-  local fn bucket photo=data/samples/images/BE4089629/6ac327d44c3227d11cfbd084.jpg fe
+  local fn bucket photo=data/samples/images/BE4089629/6ac327d44c3227d11cfbd084.jpg fe ref
   fn="$(out VisionFunctionName)"; bucket="$(out PhotosBucket)"
-  if [ "$DRY" = 1 ]; then plan "upload $photo to s3://${bucket:-$PHOTOS}/samples/, invoke ${fn:-flybot-vision-$STAGE}, check the response contract"; return 0; fi
+  if [ "$DRY" = 1 ]; then plan "sample photo by $([ "$STORAGE_MODE" = stack ] && echo "s3://${bucket:-$PHOTOS}/samples/" || echo "presigned URL from s3://$ARTIFACTS/lambda/"), invoke ${fn:-flybot-vision-$STAGE}, check the response contract"; return 0; fi
   [[ "$fn" == flybot-vision-* ]] || die "no Lambda yet: ./deploy.sh --only lambda"
-  awsx s3 cp "$photo" "s3://$bucket/samples/smoke.jpg" --only-show-errors
-  printf '{"v":1,"mode":"detect","photo":{"s3Bucket":"%s","s3Key":"samples/smoke.jpg"},"camera":{"id":"SMOKE","trapKind":"lure","platform":"ezviz"},"capturedAt":"2026-10-16T08:00:00Z","locale":"en"}' \
-    "$bucket" > "infra/.build/smoke-req-$STAGE.json"
+  if [ "$STORAGE_MODE" = stack ]; then
+    awsx s3 cp "$photo" "s3://$bucket/samples/smoke.jpg" --only-show-errors
+    ref="{\"s3Bucket\":\"$bucket\",\"s3Key\":\"samples/smoke.jpg\"}"
+  else   # never write test files into a bucket you bring: a presigned URL of the artifacts bucket (CONTRACTS 1 photo.url)
+    awsx s3 cp "$photo" "s3://$ARTIFACTS/lambda/smoke.jpg" --only-show-errors
+    ref="{\"url\":\"$(awsx s3 presign "s3://$ARTIFACTS/lambda/smoke.jpg" --expires-in 900)\"}"
+  fi
+  printf '{"v":1,"mode":"detect","photo":%s,"camera":{"id":"SMOKE","trapKind":"lure","platform":"ezviz"},"capturedAt":"2026-10-16T08:00:00Z","locale":"en"}' \
+    "$ref" > "infra/.build/smoke-req-$STAGE.json"
   fe="$(awsx lambda invoke --function-name "$fn" --payload "file://$(winpath "infra/.build/smoke-req-$STAGE.json")" \
         --cli-binary-format raw-in-base64-out --cli-read-timeout 180 --query FunctionError --output text "infra/.build/smoke-out-$STAGE.json")"
   local res; res="$(py infra/deploy_helpers.py contract "infra/.build/smoke-out-$STAGE.json" --detector "$DETECTOR")" || {
@@ -611,38 +665,57 @@ step_summary() {
   step summary ""
   local eip fn; eip="$(out ElasticIp)"; fn="$(out VisionFunctionName)"
   local sha=""; [ "$DETECTOR" = yolo26 ] && sha=" ${YOLO26_SHA:0:12}"
+  local storage="stack bucket $PHOTOS"
+  [ "$STORAGE_MODE" = aws ] && storage="your AWS bucket $S3_BUCKET_NAME"
+  [ "$STORAGE_MODE" = external ] && storage="$S3_ENDPOINT bucket $S3_BUCKET_NAME (evidence in $PHOTOS)"
   {
     printf '%-22s %s\n' "URL" "https://$DOMAIN_NAME"
     printf '%-22s %s\n' "Elastic IP" "${eip:-<not created>}"
-    printf '%-22s %s\n' "Instance" "$(out InstanceId) ($INSTANCE_TYPE, AMI $AMI_ID)"
-    printf '%-22s %s\n' "Lambda" "${fn:-<not deployed>} (image $CTX_TAG)"
+    printf '%-22s %s\n' "Instance" "$(out InstanceId) ($INSTANCE_TYPE, AMI $AMI_ID; no Docker)"
+    printf '%-22s %s\n' "Lambda" "${fn:-<not deployed>} (image $CTX_TAG, built by CodeBuild)"
     printf '%-22s %s\n' "Detector" "$DETECTOR$sha"
     printf '%-22s %s\n' "IoT endpoint" "$IOT_ENDPOINT"
     printf '%-22s %s\n' "KVS viewer role" "$(out KvsViewerRoleArn)"
-    printf '%-22s %s\n' "Photos bucket" "$PHOTOS"
+    printf '%-22s %s\n' "Photos" "$storage"
+    printf '%-22s %s\n' "Database" "$MONGO_NOTE"
+    printf '%-22s %s\n' "Artifacts" "s3://$ARTIFACTS (FlyBot releases, Lambda build context)"
     printf '%-22s %s\n' "Secrets" "$APP_SECRET, $GCP_SECRET (chatbot ${CHATBOT:-?}), Anthropic: $ANTHROPIC_NOTE"
     printf '%-22s %s\n' "Alarms" "$ALARM_NOTE"
-    printf '%-22s %s\n' "FlyBot repo access" "${REPO_ACCESS:-?}"
     [ ${#SUMMARY[@]} -gt 0 ] && printf '%s\n' "${SUMMARY[@]}"
-    printf '%-22s %s\n' "Cost" "~24 USD/month at demo scale, EC2-dominated (infra/COST.md)"
+    printf '%-22s %s\n' "Cost" "~17 USD/month at demo scale with t4g.micro (infra/COST.md)"
     printf '%-22s %s\n' "Log" "$LOG"
     printf '\nLeft for a human:\n'
     printf '  - Register the first account at https://%s/auth/login: it becomes the admin (do it before sharing the URL).\n' "$DOMAIN_NAME"
-    case " ${SUMMARY[*]:-} " in *PENDING*) printf '  - DNS: add  %s. A %s  (Namecheap > Advanced DNS), then ./deploy.sh --only health\n' "$DOMAIN_NAME" "$eip" ;; esac
-    case "${REPO_ACCESS:-}" in *"NOT ADDED"*) printf '  - Add the deploy key printed above: github.com/%s > Settings > Deploy keys (read-only).\n' "$FLYBOT_REPO" ;; esac
+    case " ${SUMMARY[*]:-} " in *"to add:"*) printf '  - DNS: add  %s. A %s  (Namecheap > Advanced DNS), then ./deploy.sh --only health\n' "$DOMAIN_NAME" "$eip" ;; esac
+    [ "$LOCAL_MONGO" = false ] && printf '  - MongoDB Atlas (or any firewalled database): allow %s/32 in its IP access list.\n' "${eip:-<EIP>}"
     case "$ALARM_NOTE" in *CONFIRM*) printf '  - Click the confirmation link AWS SNS emailed to the alarm address.\n' ;; esac
   } | tee "infra/.build/deploy-$STAGE-summary.txt"
+}
+
+# ================================================================ rollback
+rollback() {
+  step rollback "the host back on its previous FlyBot release"
+  INSTANCE_ID="$(out InstanceId)"; ARTIFACTS="flybot-artifacts-$ACCOUNT-$STAGE"
+  [ -n "$INSTANCE_ID" ] || die "stack $STACK has no instance"
+  ssm_wait_online 300 || die "SSM agent on $INSTANCE_ID not online"
+  ssm_run 'cat /opt/flybot/previous/.pointer.json' 60 > "$TMP/prev.json" 2>/dev/null || die "no previous release on the host (only one was ever installed)"
+  py -c 'import json,sys;d=json.load(open(sys.argv[1]));print("previous:", d["commit"], d["key"])' "$TMP/prev.json" || die "unreadable previous release pointer"
+  if [ "$DRY" = 1 ]; then plan "write it to s3://$ARTIFACTS/flybot/current.json and re-run the bootstrap"; return 0; fi
+  awsx s3 cp "$TMP/prev.json" "s3://$ARTIFACTS/flybot/current.json" --content-type application/json --only-show-errors
+  ssm_run "export FORCE_RESTART=0; $BOOTSTRAP_RERUN" 1800 || die "bootstrap failed: make host CMD='tail -60 /var/log/flybot-bootstrap.log'"
+  ok "host: $(host_status)"
 }
 
 # ================================================================ main
 preflight
 if [ "$SHOW_IP" = 1 ]; then
   EIP="$(out ElasticIp)"; [ -n "$EIP" ] || die "stack $STACK has no Elastic IP (not deployed yet)"
-  dns_box "$EIP"; a="$(doh_a 1.1.1.1)"; b="$(doh_a 8.8.8.8)"
+  dns_box "$EIP"; a="$(doh_a 1.1.1.1 || true)"; b="$(doh_a 8.8.8.8 || true)"
   log "now: 1.1.1.1=${a:-none} 8.8.8.8=${b:-none}"; exit 0
 fi
+if [ "$ROLLBACK" = 1 ]; then rollback; exit 0; fi
 discover
-INSTANCE_ID="$CUR_INSTANCE"; EIP="$CUR_EIP"; INSTANCE_NEW=0; SECRETS_CHANGED=0; CHATBOT=""
+INSTANCE_ID="$CUR_INSTANCE"; EIP="$CUR_EIP"; INSTANCE_NEW=0; SECRETS_CHANGED=0; RELEASE_CHANGED=0; CHATBOT=""
 for s in "${STEPS[@]}"; do
   want "$s" || continue
   "step_$s"

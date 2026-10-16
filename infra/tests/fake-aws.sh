@@ -22,7 +22,9 @@ case "$a" in
   *" sns list-topics "*"--query "*) printf 'arn:aws:sns:ap-southeast-2:123456789012:sentinel-dev-alarms\tarn:aws:sns:ap-southeast-2:123456789012:other\n' ;;
   *" sns list-subscriptions-by-topic "*"sentinel-dev-alarms"*) echo owner@example.com ;;
   *" sns list-subscriptions-by-topic "*) echo "" ;;
-  *" s3api head-bucket "*"models-public"*) exit 0 ;;
+  *" s3api head-bucket "*"models-public"*|*" s3api head-bucket "*"my-own-photos"*) exit 0 ;;
+  *" s3api get-bucket-location "*) echo ap-southeast-2 ;;
+  *" s3 cp s3://"*"current.json"*) echo "fatal error: An error occurred (404)" >&2; exit 1 ;;
   *" s3api head-bucket "*) echo "An error occurred (404) when calling the HeadBucket operation: Not Found" >&2; exit 254 ;;
   *" s3api head-object "*) echo "An error occurred (404)" >&2; exit 254 ;;
   *" secretsmanager describe-secret "*"sentinel-dev-anthropic"*) echo None ;;

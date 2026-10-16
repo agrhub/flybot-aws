@@ -31,7 +31,8 @@ invoke() {  # -> "init_ms duration_ms billed_ms memory_mb count"
     --query 'LogResult' --output text --profile "$PROFILE" --region "$REGION" infra/.build/invoke-out.json | base64 -d)"
   local init dur billed mem count
   init="$(printf '%s' "$log" | grep -o 'Init Duration: [0-9.]*' | grep -o '[0-9.]*' || echo 0)"
-  dur="$(printf '%s' "$log" | grep -o 'REPORT.*Duration: [0-9.]*' | head -1 | sed 's/.*Duration: //' | grep -o '^[0-9.]*')"
+  # the first "Duration:" after RequestId (a greedy match would pick "Init Duration:" at the end of the REPORT line)
+  dur="$(printf '%s' "$log" | grep -o 'REPORT RequestId: [0-9a-f-]*[[:space:]]*Duration: [0-9.]*' | head -1 | grep -o '[0-9.]*$')"
   billed="$(printf '%s' "$log" | grep -o 'Billed Duration: [0-9]*' | grep -o '[0-9]*')"
   mem="$(printf '%s' "$log" | grep -o 'Max Memory Used: [0-9]*' | grep -o '[0-9]*')"
   count="$(py -c 'import json;print(json.load(open("infra/.build/invoke-out.json")).get("counts",{}).get("total","err"))')"

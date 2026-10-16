@@ -1,11 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >-
-  FlyBot on AWS (OpenCV AI Competition 2026): photos bucket, OpenCV 5 vision Lambda (ECR image, arm64), IoT Core
-  thing type + device policy for the CamOS/ESP32 trap cameras, the FlyBot EC2 (t4g.small, docker compose, Elastic IP)
-  with its instance role (IoT data plane, KVS WebRTC, S3, Lambda invoke, Secrets Manager), CloudWatch alarms.
+  FlyBot on AWS (OpenCV AI Competition 2026): photos and artifacts buckets, OpenCV 5 vision Lambda (ECR image, arm64,
+  built by CodeBuild), IoT Core thing type + device policy for the CamOS/ESP32 trap cameras, the FlyBot server (EC2
+  t4g.micro, systemd, Elastic IP) with its instance role (IoT, KVS WebRTC, S3, Lambda invoke, Secrets Manager), alarms.
   Deploy with ./deploy.sh (deploy.env; stack flybot-<stage>, ap-southeast-2 only). Secrets flybot-<stage>-app/-gcp are
-  created by the script, not by this stack.
+  created by the script, not by this stack. The host runs a prebuilt FlyBot release from the artifacts bucket (no
+  Docker, no git); the Lambda image is built by CodeBuild.
 
 Parameters:
   Stage:
@@ -15,7 +16,7 @@ Parameters:
   DomainName:
     Type: String
     Default: flybot.agrhub.com
-    Description: Caddy obtains the TLS certificate for this name; the owner points its A record at the Elastic IP
+    Description: Caddy obtains the TLS certificate for this name; point its A record at the Elastic IP
   OwnerCidr:
     Type: String
     Default: 0.0.0.0/32
@@ -51,24 +52,52 @@ Parameters:
   AlarmEmail:
     Type: String
     Default: ''
-    Description: email for the alarm topic (the owner confirms the subscription); empty = topic without subscription
+    Description: email for the alarm topic (the recipient confirms the subscription); empty = topic without subscription
   ExistingAlarmTopicArn:
     Type: String
     Default: ''
     Description: reuse an existing SNS topic (e.g. sentinel-dev-alarms, whose email is already confirmed) instead of creating one
   InstanceType:
     Type: String
-    Default: t4g.small
+    Default: t4g.micro
+    Description: t4g.micro (1 GB) is enough now that nothing is built on the host; changing it stops/starts the instance
   KeyName:
     Type: String
     Default: ''
     Description: EC2 key pair for SSH (optional; SSM Session Manager works without it)
-  RepoUrl:
+  StorageMode:
     Type: String
-    Default: https://github.com/agrhub/flybot-aws.git
-  RepoRef:
+    Default: stack
+    AllowedValues: [stack, aws, external]
+    Description: >-
+      Where FlyBot keeps photos. stack = the bucket flybot-photos-<account>-<stage> of this stack; aws = an existing AWS
+      bucket named S3BucketName (the roles get access, no bucket resource); external = an S3-compatible service at
+      S3Endpoint (MinIO, R2...): FlyBot sends the Lambda presigned URLs and the evidence JPEGs go to the stack bucket
+  S3BucketName:
     Type: String
-    Default: main
+    Default: ''
+    Description: the photo bucket for StorageMode aws / external (FlyBot S3_BUCKET_NAME)
+  S3Region:
+    Type: String
+    Default: ''
+    Description: FlyBot S3_REGION (empty = the stack region)
+  S3Endpoint:
+    Type: String
+    Default: ''
+    Description: FlyBot S3_ENDPOINT for StorageMode external (https URL of the S3-compatible service)
+  LocalMongo:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+    Description: true = MongoDB 7 on the instance (data on its EBS volume); false = MONGO_URI from the app secret
+  NodeVersion:
+    Type: String
+    Default: ''
+    Description: Node.js version on the host (empty = the newest 22.x from nodejs.org at each bootstrap)
+  CaddyVersion:
+    Type: String
+    Default: 2.10.2
+    Description: Caddy release installed on the host (GitHub release binary, sha512 checked)
   DeviceEventsWebhookUrl:
     Type: String
     Default: ''
@@ -98,6 +127,11 @@ Parameters:
     Description: >-
       Amazon Linux 2023 arm64 AMI (default: al2023-ami-2023.12.20261014.0-kernel-6.12-arm64, ap-southeast-2). deploy.sh
       passes the newest one from `aws ec2 describe-images`; the public SSM alias is not readable in this account
+  AppMode:
+    Type: String
+    Default: hybrid
+    AllowedValues: [b2c, b2b, hybrid]
+    Description: FlyBot APP_MODE (b2c personal workspaces, b2b organizations only, hybrid both)
   DemoMaxCamerasPerUser:
     Type: Number
     Default: 3
@@ -125,7 +159,14 @@ Conditions:
   CreateTopic: !Equals [!Ref ExistingAlarmTopicArn, '']
   HasKey: !Not [!Equals [!Ref KeyName, '']]
   HasWebhook: !Not [!Equals [!Ref DeviceEventsWebhookUrl, '']]
-  CreatePhotosBucket: !Equals [!Ref PhotosBucketExists, 'false']
+  AwsStorage: !Equals [!Ref StorageMode, aws]
+  StackStorage: !Equals [!Ref StorageMode, stack]
+  ExternalStorage: !Equals [!Ref StorageMode, external]
+  HasS3Region: !Not [!Equals [!Ref S3Region, '']]
+  HasAcme: !Not [!Equals [!Ref AcmeEmail, '']]
+  # the stack bucket holds the photos (stack) or only the Lambda's evidence JPEGs (external); never with an AWS bucket
+  CreatePhotosBucket: !And [!Not [!Condition AwsStorage], !Equals [!Ref PhotosBucketExists, 'false']]
+  StackBucketPolicy: !Not [!Condition AwsStorage]
 
 Mappings:
   Config:
@@ -160,10 +201,6 @@ Resources:
             Status: Enabled
             Prefix: evidence/
             ExpirationInDays: 90
-          - Id: build-context-7d
-            Status: Enabled
-            Prefix: build/
-            ExpirationInDays: 7
           - Id: abort-multipart
             Status: Enabled
             AbortIncompleteMultipartUpload: {DaysAfterInitiation: 2}
@@ -179,6 +216,7 @@ Resources:
 
   PhotosBucketPolicy:
     Type: AWS::S3::BucketPolicy
+    Condition: StackBucketPolicy   # never touch the policy of a bucket you bring
     Properties:
       Bucket: !Sub 'flybot-photos-${AWS::AccountId}-${Stage}'
       PolicyDocument:
@@ -189,6 +227,51 @@ Resources:
             Principal: '*'
             Action: s3:*
             Resource: [!Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}', !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}/*']
+            Condition: {Bool: {'aws:SecureTransport': 'false'}}
+
+  # Private deploy artifacts: flybot/flybot-<commit>.tgz + flybot/current.json (the release the host runs, read by the
+  # instance role) and lambda/context-<tag>.zip (the Lambda build context, read by CodeBuild). Emptied by destroy.sh.
+  ArtifactsBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      BucketName: !Sub 'flybot-artifacts-${AWS::AccountId}-${Stage}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault: {SSEAlgorithm: AES256}
+      OwnershipControls:
+        Rules: [{ObjectOwnership: BucketOwnerEnforced}]
+      LifecycleConfiguration:
+        Rules:
+          - Id: lambda-context-14d
+            Status: Enabled
+            Prefix: lambda/
+            ExpirationInDays: 14
+          - Id: abort-multipart
+            Status: Enabled
+            AbortIncompleteMultipartUpload: {DaysAfterInitiation: 2}
+      Tags:
+        - {Key: project, Value: flybot-aws}
+        - {Key: stage, Value: !Ref Stage}
+
+  ArtifactsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ArtifactsBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: HttpsOnly
+            Effect: Deny
+            Principal: '*'
+            Action: s3:*
+            Resource: [!GetAtt ArtifactsBucket.Arn, !Sub '${ArtifactsBucket.Arn}/*']
             Condition: {Bool: {'aws:SecureTransport': 'false'}}
 
   # ---------------------------------------------------------------- ECR: the vision Lambda image
@@ -206,6 +289,82 @@ Resources:
       Tags:
         - {Key: project, Value: flybot-aws}
 
+  # ---------------------------------------------------------------- CodeBuild: the Lambda image (no Docker anywhere else)
+  VisionBuildLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/codebuild/flybot-vision-build-${Stage}'
+      RetentionInDays: 14
+
+  VisionBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'flybot-vision-build-${Stage}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: codebuild.amazonaws.com}
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: build
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [logs:CreateLogStream, logs:PutLogEvents]
+                Resource: !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/flybot-vision-build-${Stage}:*'
+              - Effect: Allow
+                Action: [s3:GetObject, s3:GetObjectVersion]
+                Resource: !Sub '${ArtifactsBucket.Arn}/lambda/*'
+              - Effect: Allow
+                Action: [s3:GetBucketLocation, s3:GetBucketAcl, s3:ListBucket]
+                Resource: !GetAtt ArtifactsBucket.Arn
+              - Effect: Allow
+                Action: ecr:GetAuthorizationToken
+                Resource: '*'
+              - Effect: Allow
+                Action: [ecr:BatchCheckLayerAvailability, ecr:CompleteLayerUpload, ecr:InitiateLayerUpload, ecr:PutImage,
+                         ecr:UploadLayerPart, ecr:BatchGetImage, ecr:GetDownloadUrlForLayer, ecr:DescribeImages]
+                Resource: !GetAtt VisionRepository.Arn
+
+  # infra/build-image.sh starts it with the source override s3://<artifacts>/lambda/context-<tag>.zip and IMAGE_TAG=<tag>
+  VisionBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub 'flybot-vision-build-${Stage}'
+      Description: Builds and pushes the arm64 vision Lambda image (lambda/vision/Dockerfile)
+      ServiceRole: !GetAtt VisionBuildRole.Arn
+      TimeoutInMinutes: 30
+      Source:
+        Type: S3
+        Location: !Sub '${ArtifactsBucket}/lambda/context.zip'
+        BuildSpec: |
+          version: 0.2
+          phases:
+            pre_build:
+              commands:
+                - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$REPO_HOST"
+            build:
+              commands:
+                - docker build -t "$REPO_URI:$IMAGE_TAG" .
+                - docker image inspect "$REPO_URI:$IMAGE_TAG" --format 'IMAGE_SIZE_BYTES={{.Size}}'
+                - docker push "$REPO_URI:$IMAGE_TAG"
+      Artifacts: {Type: NO_ARTIFACTS}
+      Environment:
+        Type: ARM_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux-aarch64-standard:3.0
+        PrivilegedMode: true   # docker build
+        EnvironmentVariables:
+          - {Name: REPO_URI, Value: !GetAtt VisionRepository.RepositoryUri}
+          - {Name: REPO_HOST, Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com'}
+          - {Name: IMAGE_TAG, Value: latest}
+      LogsConfig:
+        CloudWatchLogs: {Status: ENABLED, GroupName: !Ref VisionBuildLogGroup}
+      Tags:
+        - {Key: project, Value: flybot-aws}
+
   # ---------------------------------------------------------------- Lambda: OpenCV 5 vision + agent
   VisionLogGroup:
     Type: AWS::Logs::LogGroup
@@ -216,6 +375,10 @@ Resources:
 
   VisionRole:
     Type: AWS::IAM::Role
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks: [W1031]   # S3BucketName is empty unless StorageMode=aws (then the ARN is used)
     Properties:
       RoleName: !Sub 'flybot-vision-${Stage}'
       AssumeRolePolicyDocument:
@@ -233,13 +396,13 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: [s3:GetObject, s3:HeadObject]
-                Resource: !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}/*'
+                Resource: !If [AwsStorage, !Sub 'arn:${AWS::Partition}:s3:::${S3BucketName}/*', !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}/*']
               - Effect: Allow
                 Action: s3:PutObject
-                Resource: !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}/evidence/*'
+                Resource: !If [AwsStorage, !Sub 'arn:${AWS::Partition}:s3:::${S3BucketName}/evidence/*', !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}/evidence/*']
               - Effect: Allow
                 Action: s3:ListBucket
-                Resource: !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}'
+                Resource: !If [AwsStorage, !Sub 'arn:${AWS::Partition}:s3:::${S3BucketName}', !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}']
         - PolicyName: anthropic-secret
           PolicyDocument:
             Version: '2012-10-17'
@@ -265,13 +428,12 @@ Resources:
       Environment:
         Variables:
           STAGE: !Ref Stage
-          PHOTOS_BUCKET: !Sub 'flybot-photos-${AWS::AccountId}-${Stage}'
+          PHOTOS_BUCKET: !If [AwsStorage, !Ref S3BucketName, !Sub 'flybot-photos-${AWS::AccountId}-${Stage}']
           DETECTOR: !Ref Detector
           YOLO26_URL: !Ref Yolo26Url
           YOLO26_SHA256: !Ref Yolo26Sha256
           MODEL_DIR: /opt/models
           MODEL_CACHE_DIR: /tmp/models
-          OPENCV_FORCE_DNN_ENGINE: new
           SENTINEL_PLANNER: !Ref PlannerMode
           SENTINEL_LLM_BACKEND: anthropic
           SENTINEL_ANTHROPIC_MODEL: !Ref AnthropicModel
@@ -295,6 +457,7 @@ Resources:
     Type: AWS::IoT::Policy
     Properties:
       PolicyName: !Sub 'camos-camera-${Stage}'
+      # IoT Core caps a policy at 2,048 characters: one wildcard per topic tree, still scoped to the camera's own thing
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -304,37 +467,15 @@ Resources:
             Condition:
               Bool: {'iot:Connection.Thing.IsAttached': 'true'}
           - Effect: Allow
-            Action: iot:Publish
+            Action: [iot:Publish, iot:Receive, iot:RetainPublish]
             Resource:
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/state'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/event'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/ai'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/telemetry'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/shadow/reported'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/rpc/res'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/up/req'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/$aws/things/${!iot:Connection.Thing.ThingName}/shadow/*'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/*'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/$aws/things/${!iot:Connection.Thing.ThingName}/*'
           - Effect: Allow
             Action: iot:Subscribe
             Resource:
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/camos/${!iot:Connection.Thing.ThingName}/shadow/desired'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/camos/${!iot:Connection.Thing.ThingName}/rpc/req'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/camos/${!iot:Connection.Thing.ThingName}/up/res'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/$aws/things/${!iot:Connection.Thing.ThingName}/shadow/*'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/$aws/things/${!iot:Connection.Thing.ThingName}/jobs/*'
-          - Effect: Allow
-            Action: iot:Receive
-            Resource:
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/shadow/desired'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/rpc/req'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/up/res'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/$aws/things/${!iot:Connection.Thing.ThingName}/shadow/*'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/$aws/things/${!iot:Connection.Thing.ThingName}/jobs/*'
-          - Effect: Allow
-            Action: iot:RetainPublish
-            Resource:
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/state'
-              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/camos/${!iot:Connection.Thing.ThingName}/shadow/reported'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/camos/${!iot:Connection.Thing.ThingName}/*'
+              - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/$aws/things/${!iot:Connection.Thing.ThingName}/*'
 
   # Optional: camera messages -> FlyBot HTTPS (fallback when the MQTT/WSS client is not used)
   DeviceEventsDestination:
@@ -435,6 +576,10 @@ Resources:
   # ---------------------------------------------------------------- FlyBot EC2: role, network, instance
   FlyBotRole:
     Type: AWS::IAM::Role
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks: [W1031]   # S3BucketName is empty unless StorageMode=aws (then the ARN is used)
     Properties:
       RoleName: !Sub 'flybot-ec2-${Stage}'
       AssumeRolePolicyDocument:
@@ -444,7 +589,7 @@ Resources:
             Principal: {Service: ec2.amazonaws.com}
             Action: sts:AssumeRole
       ManagedPolicyArns:
-        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore'   # Session Manager + Run Command (image build)
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore'   # Session Manager + Run Command (bootstrap)
       Policies:
         - PolicyName: flybot-iot
           PolicyDocument:
@@ -464,7 +609,7 @@ Resources:
                          iot:CreateKeysAndCertificate, iot:RegisterCertificateWithoutCA, iot:CreateProvisioningClaim,
                          iot:CreateJob, iot:DescribeJob, iot:CancelJob, iot:ListJobs]
                 Resource: '*'   # CreateCertificateFromCsr / CreateKeysAndCertificate have no resource-level scoping
-              # Zero-touch self-registration (CONTRACTS 2a) and the owner pairing path: things, their certificates and
+              # Zero-touch self-registration (CONTRACTS 2a) and the provisioning-token pairing path: things, their certificates and
               # the camos-camera-<stage> device policy only
               - Sid: IotCameraThings
                 Effect: Allow
@@ -494,16 +639,23 @@ Resources:
                          kinesisvideo:UpdateSignalingChannel, kinesisvideo:GetSignalingChannelEndpoint, kinesisvideo:GetIceServerConfig,
                          kinesisvideo:ConnectAsViewer, kinesisvideo:TagResource, kinesisvideo:ListTagsForResource]
                 Resource: !Sub 'arn:${AWS::Partition}:kinesisvideo:${AWS::Region}:${AWS::AccountId}:channel/cam-*/*'
-        - PolicyName: flybot-photos
+        - PolicyName: flybot-photos   # the stack bucket, or your own AWS bucket (StorageMode aws); external: keys in the secret
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
               - Effect: Allow
                 Action: [s3:GetObject, s3:PutObject, s3:DeleteObject, s3:HeadObject, s3:AbortMultipartUpload]
-                Resource: !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}/*'
+                Resource: !If [AwsStorage, !Sub 'arn:${AWS::Partition}:s3:::${S3BucketName}/*', !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}/*']
               - Effect: Allow
                 Action: [s3:ListBucket, s3:GetBucketLocation]
-                Resource: !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}'
+                Resource: !If [AwsStorage, !Sub 'arn:${AWS::Partition}:s3:::${S3BucketName}', !Sub 'arn:${AWS::Partition}:s3:::flybot-photos-${AWS::AccountId}-${Stage}']
+        - PolicyName: flybot-release   # the prebuilt FlyBot release only (read)
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: s3:GetObject
+                Resource: !Sub '${ArtifactsBucket.Arn}/flybot/*'
         - PolicyName: flybot-lambda
           PolicyDocument:
             Version: '2012-10-17'
@@ -518,20 +670,6 @@ Resources:
               - Effect: Allow
                 Action: secretsmanager:GetSecretValue
                 Resource: !Sub 'arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:flybot-*'
-        - PolicyName: flybot-build   # infra/build-image.sh: build the Lambda image on this host and push it to ECR
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action: ecr:GetAuthorizationToken
-                Resource: '*'
-              - Effect: Allow
-                Action: [ecr:BatchCheckLayerAvailability, ecr:CompleteLayerUpload, ecr:InitiateLayerUpload, ecr:PutImage,
-                         ecr:UploadLayerPart, ecr:BatchGetImage, ecr:GetDownloadUrlForLayer, ecr:DescribeImages]
-                Resource: !GetAtt VisionRepository.Arn
-              - Effect: Allow
-                Action: [ecr-public:GetAuthorizationToken, sts:GetServiceBearerToken]
-                Resource: '*'
         - PolicyName: flybot-sts
           PolicyDocument:
             Version: '2012-10-17'
@@ -600,7 +738,7 @@ Resources:
       BlockDeviceMappings:
         - DeviceName: /dev/xvda
           Ebs: {VolumeSize: 30, VolumeType: gp3, DeleteOnTermination: true, Encrypted: true}
-      MetadataOptions: {HttpTokens: required, HttpPutResponseHopLimit: 2}   # hop limit 2: containers reach the instance role
+      MetadataOptions: {HttpTokens: required, HttpPutResponseHopLimit: 2}
       Tags:
         - {Key: Name, Value: !Sub 'flybot-${Stage}'}
         - {Key: project, Value: flybot-aws}
@@ -608,80 +746,164 @@ Resources:
         Fn::Base64: !Sub
           - |
             #!/bin/bash
-            # FlyBot host bootstrap (Amazon Linux 2023, arm64): swap, docker + compose plugin, clone flybot-aws with its
-            # submodules, write the environment docker-compose.yml needs into .env, start. Re-runs are idempotent
-            # (install guarded, pull + up): `bash /var/lib/cloud/instance/scripts/part-001` or infra/DEPLOY_CHECKLIST.md.
-            set -euxo pipefail
+            # FlyBot host bootstrap (Amazon Linux 2023 arm64; a t4g.micro is enough: nothing is built here). No Docker, no git:
+            # Node 22 (nodejs.org, SHASUMS256 checked), Caddy (GitHub release, sha512 checked), MongoDB 7 when LocalMongo=true
+            # (repo.mongodb.org), then the FlyBot release named by s3://<artifacts>/flybot/current.json (sha256 checked; the
+            # previous release is kept for ./deploy.sh --rollback) under systemd. Idempotent: deploy.sh re-runs the current
+            # version of this script through SSM after every deploy (cloud-init runs it once). Log: /var/log/flybot-bootstrap.log
+            set -euo pipefail
             exec > >(tee -a /var/log/flybot-bootstrap.log) 2>&1
-            export AWS_DEFAULT_REGION=${AWS::Region}
-            # 2 GB swap: the FlyBot image build (Vue client + server bundle, npm ci) needs more than the 2 GB RAM of a t4g.small
+            echo "bootstrap start $(date -u +%FT%TZ)"
+            export AWS_DEFAULT_REGION=${AWS::Region} PATH=/usr/local/bin:$PATH HOME=/root
+            FORCE=${!FORCE_RESTART:-0}
             if [ ! -f /swapfile ]; then
               fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
               echo '/swapfile none swap sw 0 0' >> /etc/fstab
             fi
-            dnf install -y docker git
-            systemctl enable --now docker
-            usermod -aG docker ec2-user || true
-            mkdir -p /usr/local/lib/docker/cli-plugins
-            if [ ! -x /usr/local/lib/docker/cli-plugins/docker-compose ]; then
-              curl -fsSL "https://github.com/docker/compose/releases/download/v2.40.0/docker-compose-linux-aarch64" -o /usr/local/lib/docker/cli-plugins/docker-compose
-              chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
-            fi
-            docker compose version
-            mkdir -p /opt/flybot && cd /opt/flybot
-            if [ ! -d flybot-aws/.git ]; then
-              git clone --branch "${RepoRef}" "${RepoUrl}" flybot-aws
-            else
-              git -C flybot-aws fetch --all && git -C flybot-aws checkout "${RepoRef}" && git -C flybot-aws pull --ff-only
-            fi
-            cd flybot-aws
-            git submodule update --init firmware-esp32 || echo "firmware-esp32 submodule not fetched (not needed on the host)"
-            # flybot/ is a PRIVATE submodule (agrhub/flybot). Read access from Secrets Manager, written by deploy.sh:
-            # flybot-${Stage}-deploykey (read-only GitHub deploy key, used over ssh) or flybot-${Stage}-repotoken (fine-grained
-            # PAT, contents read-only, over https). The key lives in /root/.flybot-git (700/600) only during the update and
-            # is deleted afterwards; .gitmodules stays https, the ssh rewrite is passed with -c (never written to a config).
-            set +x
-            G=/root/.flybot-git; rm -rf $G; mkdir -m 700 $G
-            echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' > $G/known_hosts
-            sub_ok=0
-            for attempt in $(seq 1 60); do   # up to 30 min: the owner may still be adding the deploy key on GitHub
-              if aws secretsmanager get-secret-value --secret-id "flybot-${Stage}-deploykey" --query SecretString --output text > $G/id 2>/dev/null && grep -q 'PRIVATE KEY' $G/id; then
-                chmod 600 $G/id
-                export GIT_SSH_COMMAND="ssh -i $G/id -o IdentitiesOnly=yes -o UserKnownHostsFile=$G/known_hosts -o StrictHostKeyChecking=yes"
-                git -c url."git@github.com:agrhub/".insteadOf=https://github.com/agrhub/ submodule update --init flybot && sub_ok=1
-                unset GIT_SSH_COMMAND
-              elif aws secretsmanager get-secret-value --secret-id "flybot-${Stage}-repotoken" --query SecretString --output text > $G/token 2>/dev/null && [ -s $G/token ]; then
-                chmod 600 $G/token
-                # the helper reads the token from the file at call time: it never appears in a command line or a config
-                git -c credential.helper= -c "credential.helper=!f() { echo username=x-access-token; echo password=$(cat $G/token); }; f" submodule update --init flybot && sub_ok=1
-              else
-                git -c credential.helper= submodule update --init flybot && sub_ok=1   # public repo, or no access configured
+            dnf install -y -q tar xz python3 >/dev/null
+            mkdir -p /opt/flybot/releases /etc/flybot /etc/caddy /var/backups/flybot
+
+            # 1. Migration from the docker compose host of the first deploys: dump its MongoDB, stop and disable Docker
+            if systemctl list-unit-files docker.service >/dev/null 2>&1 && systemctl is-enabled -q docker.service 2>/dev/null; then
+              systemctl start docker || true
+              M=$(docker ps -a --format '{{.Names}}' | grep -m1 -- '-mongo-' || true)
+              if [ -n "$M" ] && [ ! -s /var/backups/flybot/compose-mongo.archive ]; then
+                docker start "$M" >/dev/null && sleep 8
+                docker exec "$M" mongodump --quiet --archive --db flybot > /var/backups/flybot/compose-mongo.archive \
+                  && echo "compose MongoDB dumped" || rm -f /var/backups/flybot/compose-mongo.archive
               fi
-              [ $sub_ok = 1 ] && break
-              echo "flybot submodule not readable yet (attempt $attempt/60): add the deploy key deploy.sh printed"; sleep 30
-            done
-            rm -rf $G
-            set -x
-            [ $sub_ok = 1 ] || { echo "flybot submodule unavailable: FlyBot not started"; exit 1; }
-            # .env for docker-compose.yml: the stack-managed keys below are (re)written on every run, other lines the
-            # owner adds to .env stay. Secrets are NOT here: FlyBot reads Secrets Manager flybot-${Stage}-app at start-up
-            # with the instance role (FLYBOT_SECRETS); IOT_RULE_SECRET is the one exception (only with the IoT rule webhook).
+              docker ps -q | xargs -r docker stop >/dev/null || true
+              systemctl disable --now docker.service docker.socket || true
+              echo "Docker stopped and disabled (its volumes are kept; dnf remove -y docker to drop it)"
+            fi
+
+            # 2. Node.js 22
+            NODE_V="${NodeVersion}"
+            if [ -z "$NODE_V" ]; then
+              NODE_V=$(curl -fsSL https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt | grep -o 'node-v22\.[0-9.]*-linux-arm64\.tar\.xz' | head -1 | sed 's/^node-v//; s/-linux-arm64\.tar\.xz$//')
+            fi
+            if [ "$(node --version 2>/dev/null || true)" != "v$NODE_V" ]; then
+              f=node-v$NODE_V-linux-arm64.tar.xz
+              curl -fsSL -o /tmp/$f https://nodejs.org/dist/v$NODE_V/$f
+              (cd /tmp && curl -fsSL https://nodejs.org/dist/v$NODE_V/SHASUMS256.txt | grep " $f\$" | sha256sum -c -)
+              rm -rf /usr/local/lib/nodejs && mkdir -p /usr/local/lib/nodejs
+              tar -xJf /tmp/$f -C /usr/local/lib/nodejs --strip-components=1 && rm -f /tmp/$f
+              ln -sf /usr/local/lib/nodejs/bin/node /usr/local/bin/node
+              ln -sf /usr/local/lib/nodejs/bin/npm /usr/local/bin/npm
+            fi
+            echo "node $(node --version)"
+
+            # 3. Caddy (TLS for ${DomainName}); certificates in /var/lib/caddy
+            CV="${CaddyVersion}"
+            if [ "$(caddy version 2>/dev/null | cut -d' ' -f1 || true)" != "v$CV" ]; then
+              f=caddy_"$CV"_linux_arm64.tar.gz; base=https://github.com/caddyserver/caddy/releases/download/v$CV
+              curl -fsSL -o /tmp/$f $base/$f
+              (cd /tmp && curl -fsSL $base/caddy_"$CV"_checksums.txt | grep " $f\$" | sha512sum -c -)
+              tar -xzf /tmp/$f -C /usr/local/bin caddy && rm -f /tmp/$f
+            fi
+            id caddy >/dev/null 2>&1 || useradd --system --home-dir /var/lib/caddy --create-home --shell /sbin/nologin caddy
+            cat > /etc/caddy/Caddyfile.new <<EOF
+            {
+              email ${AcmeEmailEff}
+            }
+            ${DomainName} {
+              encode gzip zstd
+              request_body {
+                max_size 20MB
+              }
+              reverse_proxy 127.0.0.1:8080 {
+                flush_interval -1
+                transport http {
+                  read_timeout 180s
+                }
+              }
+              header {
+                Strict-Transport-Security "max-age=31536000; includeSubDomains"
+                -Server
+              }
+            }
+            EOF
+            CADDY_CHANGED=0; cmp -s /etc/caddy/Caddyfile.new /etc/caddy/Caddyfile || CADDY_CHANGED=1
+            mv /etc/caddy/Caddyfile.new /etc/caddy/Caddyfile
+            cat > /etc/systemd/system/caddy.service <<'EOF'
+            [Unit]
+            Description=Caddy (TLS reverse proxy for FlyBot)
+            After=network-online.target
+            Wants=network-online.target
+            [Service]
+            User=caddy
+            Group=caddy
+            Environment=XDG_DATA_HOME=/var/lib XDG_CONFIG_HOME=/var/lib/caddy/.config
+            ExecStart=/usr/local/bin/caddy run --config /etc/caddy/Caddyfile
+            ExecReload=/usr/local/bin/caddy reload --config /etc/caddy/Caddyfile --force
+            AmbientCapabilities=CAP_NET_BIND_SERVICE
+            CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+            NoNewPrivileges=true
+            LimitNOFILE=1048576
+            Restart=always
+            RestartSec=5
+            [Install]
+            WantedBy=multi-user.target
+            EOF
+
+            # 4. MongoDB 7 on this instance (LocalMongo=${LocalMongo}); otherwise MONGO_URI comes from the app secret
+            MONGO_LINE=""
+            if [ "${LocalMongo}" = true ]; then
+              if ! rpm -q mongodb-org-server >/dev/null 2>&1; then
+                cat > /etc/yum.repos.d/mongodb-org-7.0.repo <<'EOF'
+            [mongodb-org-7.0]
+            name=MongoDB 7.0
+            baseurl=https://repo.mongodb.org/yum/amazon/2023/mongodb-org/7.0/aarch64/
+            gpgcheck=1
+            enabled=1
+            gpgkey=https://pgp.mongodb.com/server-7.0.asc
+            EOF
+                dnf install -y -q mongodb-org-server mongodb-database-tools >/dev/null
+              fi
+              cat > /etc/mongod.conf <<'EOF'
+            storage:
+              dbPath: /var/lib/mongo
+              wiredTiger:
+                engineConfig:
+                  cacheSizeGB: 0.25
+            systemLog:
+              destination: file
+              logAppend: true
+              path: /var/log/mongodb/mongod.log
+            net:
+              port: 27017
+              bindIp: 127.0.0.1
+            processManagement:
+              timeZoneInfo: /usr/share/zoneinfo
+            EOF
+              systemctl enable -q mongod && systemctl start mongod
+              for i in $(seq 1 30); do (echo > /dev/tcp/127.0.0.1/27017) 2>/dev/null && break; sleep 2; done
+              if [ -s /var/backups/flybot/compose-mongo.archive ] && [ ! -f /var/backups/flybot/.restored ]; then
+                mongorestore --quiet --archive=/var/backups/flybot/compose-mongo.archive && touch /var/backups/flybot/.restored \
+                  && echo "compose MongoDB restored into the local mongod"
+              fi
+              MONGO_LINE="MONGO_URI=mongodb://127.0.0.1:27017/flybot"
+            else
+              systemctl disable --now mongod 2>/dev/null || true
+            fi
+
+            # 5. FlyBot environment (secrets stay in Secrets Manager flybot-${Stage}-app: FLYBOT_SECRETS, read at start-up)
+            id flybot >/dev/null 2>&1 || useradd --system --home-dir /opt/flybot --shell /sbin/nologin flybot
             umask 077
-            set +x   # no tracing while .env values are handled (IOT_RULE_SECRET, the gcp key)
-            cat > /opt/flybot/stack.env <<EOF
-            STAGE=${Stage}
-            DOMAIN_NAME=${DomainName}
-            ACME_EMAIL=${AcmeEmail}
+            cat > /etc/flybot/env.new <<EOF
+            NODE_ENV=production
+            PORT=8080
+            NODE_OPTIONS=--max-old-space-size=512
+            TRUST_PROXY=1
+            COOKIE_SECURE=true
             APP_BASE_URL=https://${DomainName}
             DEVICE_API_BASE_URL=https://${DomainName}
-            COOKIE_SECURE=true
-            TRUST_PROXY=1
             ENABLE_CRON=true
             AWS_REGION=${AWS::Region}
-            PHOTOS_BUCKET=flybot-photos-${AWS::AccountId}-${Stage}
-            S3_BUCKET_NAME=flybot-photos-${AWS::AccountId}-${Stage}
-            S3_REGION=${AWS::Region}
-            PHOTOS_BY_REFERENCE=true
+            S3_BUCKET_NAME=${FlyBotBucket}
+            S3_REGION=${S3RegionEff}
+            S3_ENDPOINT=${S3Endpoint}
+            PHOTOS_BY_REFERENCE=${PhotosByRef}
             AI_PROVIDER=opencv-lambda
             VISION_LAMBDA_NAME=flybot-vision-${Stage}
             IOT_ENDPOINT=${IotEndpoint}
@@ -691,30 +913,80 @@ Resources:
             IOT_POLICY_NAME=${CameraPolicy}
             KVS_VIEWER_ROLE_ARN=${KvsViewerRole.Arn}
             FLYBOT_SECRETS=flybot-${Stage}-app
+            APP_MODE=${AppMode}
             DEMO_MAX_CAMERAS_PER_USER=${DemoMaxCamerasPerUser}
             DEMO_MAX_SNAPSHOTS_PER_DAY=${DemoMaxSnapshotsPerDay}
             DEMO_MAX_UNCLAIMED=${DemoMaxUnclaimed}
             EOF
-            touch .env && chmod 600 .env
-            while IFS= read -r line; do
-              case "$line" in ''|'#'*) continue;; esac
-              k="${!line%%=*}"; sed -i "/^$k=/d" .env; echo "$line" >> .env
-            done < /opt/flybot/stack.env
-            # Google service-account JSON for the chatbot (secret flybot-${Stage}-gcp), only when the owner replaced the placeholder
-            mkdir -p secrets && chmod 755 secrets
-            if aws secretsmanager get-secret-value --secret-id "flybot-${Stage}-gcp" --query SecretString --output text > /opt/flybot/gcp.json 2>/dev/null && grep -q '"private_key"' /opt/flybot/gcp.json; then
-              install -m 600 -o 1000 -g 1000 /opt/flybot/gcp.json secrets/gcp-service-account.json
-              sed -i '/^GOOGLE_APPLICATION_CREDENTIALS=/d' .env; echo 'GOOGLE_APPLICATION_CREDENTIALS=/app/secrets/gcp-service-account.json' >> .env
-            else
-              echo "no Google service account in flybot-${Stage}-gcp: chatbot off"
+            [ -n "$MONGO_LINE" ] && echo "$MONGO_LINE" >> /etc/flybot/env.new
+            if aws secretsmanager get-secret-value --secret-id "flybot-${Stage}-gcp" --query SecretString --output text > /etc/flybot/gcp.tmp 2>/dev/null \
+               && grep -q '"private_key"' /etc/flybot/gcp.tmp; then
+              install -m 600 -o flybot -g flybot /etc/flybot/gcp.tmp /etc/flybot/gcp-service-account.json
+              echo "GOOGLE_APPLICATION_CREDENTIALS=/etc/flybot/gcp-service-account.json" >> /etc/flybot/env.new
             fi
-            rm -f /opt/flybot/gcp.json
-            set -x
-            docker compose pull --ignore-pull-failures || true
-            docker compose up -d --build
-            docker compose ps
+            rm -f /etc/flybot/gcp.tmp
+            ENV_CHANGED=0; cmp -s /etc/flybot/env.new /etc/flybot/env || ENV_CHANGED=1
+            mv /etc/flybot/env.new /etc/flybot/env
+            umask 022
+
+            # 6. The FlyBot release from S3 (switch atomically, keep the previous one)
+            RELEASED=0
+            if aws s3 cp s3://${ArtifactsBucket}/flybot/current.json /opt/flybot/current.json --only-show-errors 2>/dev/null; then
+              KEY=$(python3 -c 'import json;print(json.load(open("/opt/flybot/current.json"))["key"])')
+              SHA=$(python3 -c 'import json;print(json.load(open("/opt/flybot/current.json"))["sha256"])')
+              R=/opt/flybot/releases/$(echo "$SHA" | cut -c1-16)
+              if [ ! -f "$R/.ok" ]; then
+                rm -rf "$R.tmp" && mkdir -p "$R.tmp"
+                aws s3 cp "s3://${ArtifactsBucket}/$KEY" /tmp/flybot.tgz --only-show-errors
+                echo "$SHA  /tmp/flybot.tgz" | sha256sum -c -
+                tar -xzf /tmp/flybot.tgz -C "$R.tmp" && rm -f /tmp/flybot.tgz
+                (cd "$R.tmp" && npm ci --omit=dev --workspace=server --no-audit --no-fund --loglevel=error)
+                cp /opt/flybot/current.json "$R.tmp/.pointer.json" && touch "$R.tmp/.ok" && mv "$R.tmp" "$R"
+              fi
+              CUR=$(readlink -f /opt/flybot/current 2>/dev/null || true)
+              if [ "$CUR" != "$R" ]; then
+                [ -n "$CUR" ] && [ -d "$CUR" ] && ln -sfn "$CUR" /opt/flybot/previous
+                ln -sfn "$R" /opt/flybot/current.new && mv -T /opt/flybot/current.new /opt/flybot/current
+                RELEASED=1
+              fi
+              PREV=$(readlink -f /opt/flybot/previous 2>/dev/null || true)
+              for d in /opt/flybot/releases/*; do
+                [ "$d" = "$R" ] || [ "$d" = "$PREV" ] || rm -rf "$d"
+              done
+            else
+              echo "no FlyBot release published yet (./deploy.sh uploads it)"
+            fi
+            cat > /etc/systemd/system/flybot.service <<'EOF'
+            [Unit]
+            Description=FlyBot (prebuilt release from S3)
+            After=network-online.target mongod.service
+            Wants=network-online.target
+            [Service]
+            User=flybot
+            Group=flybot
+            WorkingDirectory=/opt/flybot/current
+            EnvironmentFile=/etc/flybot/env
+            ExecStart=/usr/local/bin/node server/dist/app.js
+            NoNewPrivileges=true
+            Restart=always
+            RestartSec=5
+            [Install]
+            WantedBy=multi-user.target
+            EOF
+            systemctl daemon-reload
+            systemctl enable -q caddy flybot
+            if [ "$CADDY_CHANGED" = 1 ]; then systemctl restart caddy; else systemctl start caddy; fi
+            if [ -e /opt/flybot/current ]; then
+              if [ "$RELEASED" = 1 ] || [ "$ENV_CHANGED" = 1 ] || [ "$FORCE" != 0 ]; then systemctl restart flybot; else systemctl start flybot; fi
+              for i in $(seq 1 45); do curl -sf -o /dev/null http://127.0.0.1:8080/health && break; sleep 2; done
+              echo "release $(python3 -c 'import json;d=json.load(open("/opt/flybot/current/.pointer.json"));print(d.get("commit"), d.get("branch"), d["sha256"][:12])')"
+            fi
             echo "bootstrap done $(date -u +%FT%TZ)"
           - IotEventsMode: !If [HasWebhook, rule, mqtt]
+            FlyBotBucket: !If [StackStorage, !Sub 'flybot-photos-${AWS::AccountId}-${Stage}', !Ref S3BucketName]
+            S3RegionEff: !If [HasS3Region, !Ref S3Region, !Ref 'AWS::Region']
+            PhotosByRef: !If [ExternalStorage, 'false', 'true']
+            AcmeEmailEff: !If [HasAcme, !Ref AcmeEmail, admin@agrhub.com]
 
   FlyBotEip:
     Type: AWS::EC2::EIP
@@ -798,7 +1070,14 @@ Outputs:
   InstanceId:
     Value: !Ref FlyBotInstance
   PhotosBucket:
-    Value: !Sub 'flybot-photos-${AWS::AccountId}-${Stage}'
+    Value: !If [AwsStorage, !Ref S3BucketName, !Sub 'flybot-photos-${AWS::AccountId}-${Stage}']
+    Description: the bucket the Lambda reads photos from and writes evidence to (external storage = evidence only)
+  ArtifactsBucket:
+    Value: !Ref ArtifactsBucket
+  VisionBuildProject:
+    Value: !Ref VisionBuildProject
+  StorageMode:
+    Value: !Ref StorageMode
   VisionFunctionName:
     Value: !If [HasImage, !Ref VisionFunction, '(not deployed yet: run infra/build-image.sh then deploy again)']
   VisionRepositoryUri:

@@ -10,6 +10,9 @@
 #   ssm_wait_online / ssm_run CMD     SSM Run Command on the FlyBot instance (INSTANCE_ID)
 
 PROFILE="${PROFILE:-${AWS_PROFILE:-sentinel}}"
+export SAM_CLI_TELEMETRY="${SAM_CLI_TELEMETRY:-0}"
+# aws.exe on Windows prints with the console code page (cp1252) and crashes on docker build output; force UTF-8
+export PYTHONUTF8=1 PYTHONIOENCODING=utf-8
 REGION="${REGION:-${AWS_REGION:-ap-southeast-2}}"
 
 log()  { printf '%s  %s\n' "$(date +%H:%M:%S)" "$*"; }
@@ -32,8 +35,69 @@ find_tools() {
   fi
   export AWS_BIN
   AWS=aws_cr
-  SAM="${SAM:-$(command -v sam || command -v sam.exe || command -v sam.cmd || true)}"
+  find_sam; SAM="$SAM_FOUND"
   UV="${UV:-$(command -v uv || command -v uv.exe || true)}"
+}
+
+# Node 22.12+ and npm for the FlyBot build on this laptop: PATH first, then nvm-windows (NVM_SYMLINK, NVM_HOME,
+# D:/Tools/nvm-noinstall), Program Files, nvm on Linux/macOS. Sets NODE_BIN / NPM_BIN and puts the folder on PATH
+# (npm runs `node`). NODE_TRIED lists what was rejected, for the preflight message.
+# shellcheck disable=SC2034  # NODE_BIN / NPM_BIN are read by deploy.sh
+NODE_BIN="" NPM_BIN="" NODE_TRIED=""
+find_node() {
+  local d c v nvm_home="" sym=""
+  [ -n "${NVM_HOME:-}" ] && nvm_home="$(cygpath -u "$NVM_HOME" 2>/dev/null || printf '%s' "$NVM_HOME")"
+  [ -n "${NVM_SYMLINK:-}" ] && sym="$(cygpath -u "$NVM_SYMLINK" 2>/dev/null || printf '%s' "$NVM_SYMLINK")"
+  local cands=("$(dirname "$(command -v node 2>/dev/null || echo /nonexistent/node)")" "$sym" \
+               "/d/Tools/nvm-noinstall/nodejs" "/c/Program Files/nodejs")
+  for d in "$nvm_home"/v22* /d/Tools/nvm-noinstall/v22* "$HOME"/.nvm/versions/node/v22*/bin; do [ -d "$d" ] && cands+=("$d"); done
+  NODE_BIN="" NPM_BIN="" NODE_TRIED=""
+  for d in "${cands[@]}"; do
+    [ -n "$d" ] && [ -d "$d" ] || continue
+    for c in "$d/node" "$d/node.exe"; do
+      [ -x "$c" ] || continue
+      v="$("$c" --version 2>/dev/null | tr -d '\r')" || v=""
+      if [[ "$v" =~ ^v([0-9]+)\.([0-9]+) ]] && { [ "${BASH_REMATCH[1]}" -gt 22 ] || { [ "${BASH_REMATCH[1]}" = 22 ] && [ "${BASH_REMATCH[2]}" -ge 12 ]; }; } \
+         && { [ -f "$d/npm" ] || [ -f "$d/npm.cmd" ]; }; then
+        # shellcheck disable=SC2034  # read by deploy.sh
+        NODE_BIN="$c"; NPM_BIN="$d/npm"; [ -f "$NPM_BIN" ] || NPM_BIN="$d/npm.cmd"
+        case ":$PATH:" in *":$d:"*) ;; *) PATH="$d:$PATH"; export PATH ;; esac
+        return 0
+      fi
+      NODE_TRIED="${NODE_TRIED}    $c -> ${v:-no output}"$'\n'
+    done
+  done
+  return 0
+}
+
+# The first SAM CLI that really runs (prints "SAM CLI ..."). On Windows every uv-made sam.exe is a "trampoline" that
+# can fail with "uv trampoline failed to canonicalize script path"; the last resort runs `python -m samcli` with the
+# uv tool venv's own python.exe (not a trampoline) through a small shim. SAM_TRIED keeps each failure for preflight.
+SAM_TRIED="" SAM_FOUND=""
+find_sam() {
+  local appdata="" c out venv shim
+  if [ -n "${APPDATA:-}" ]; then appdata="$(cygpath -u "$APPDATA" 2>/dev/null || printf '%s' "$APPDATA")"; fi
+  venv="${appdata:+$appdata/uv/tools/aws-sam-cli}"
+  shim=""
+  if [ -n "$venv" ] && [ -x "$venv/Scripts/python.exe" ]; then
+    shim="${ROOT:-.}/infra/.build/sam-python.sh"
+    mkdir -p "$(dirname "$shim")"
+    printf '#!/usr/bin/env bash\nexec "%s" -m samcli "$@"\n' "$venv/Scripts/python.exe" > "$shim" && chmod +x "$shim"
+  fi
+  SAM_TRIED="" SAM_FOUND=""
+  for c in "${SAM:-}" \
+           "$(command -v sam 2>/dev/null || true)" "$(command -v sam.exe 2>/dev/null || true)" \
+           "$(command -v sam.cmd 2>/dev/null || true)" \
+           "${venv:+$venv/Scripts/sam.exe}" \
+           "${HOME:+$HOME/.local/share/uv/tools/aws-sam-cli/bin/sam}" \
+           "/c/Program Files/Amazon/AWSSAMCLI/bin/sam.cmd" "/c/Program Files/Amazon/AWSSAMCLI/bin/sam.exe" \
+           "$shim"; do
+    [ -n "$c" ] || continue
+    out="$("$c" --version 2>&1 | tr -d '\r' | head -1)" || true   # deploy.sh runs with set -e -o pipefail
+    case "$out" in "SAM CLI"*) SAM_FOUND="$c"; return 0 ;; esac
+    SAM_TRIED="${SAM_TRIED}    $c -> ${out:-no output}"$'\n'
+  done
+  return 0
 }
 
 # A Python that really runs (on Windows `python` may be the Store stub, exit 9009; a uv trampoline may be stale).
@@ -114,7 +178,7 @@ rc=0; bash /opt/flybot/bootstrap.sh >/dev/null 2>&1 || rc=$?
 tail -4 /var/log/flybot-bootstrap.log | cut -c1-200
 exit $rc'
 
-# Wait (up to 25 min) until the first boot printed "bootstrap done" (docker installed, FlyBot built and started).
+# Wait (up to 25 min) until the first boot printed "bootstrap done" (Node, Caddy, MongoDB installed; FlyBot started).
 # shellcheck disable=SC2016,SC2034
 BOOTSTRAP_WAIT='for i in $(seq 1 150); do grep -qs "bootstrap done" /var/log/flybot-bootstrap.log && break; sleep 10; done
 tail -3 /var/log/flybot-bootstrap.log | cut -c1-200; grep -qs "bootstrap done" /var/log/flybot-bootstrap.log'

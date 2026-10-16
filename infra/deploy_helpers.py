@@ -7,6 +7,8 @@
     python infra/deploy_helpers.py ctx-hash                       hash of the vision Lambda build inputs
     python infra/deploy_helpers.py contract response.json --detector yolo26
     python infra/deploy_helpers.py latency bench/results/lambda_latency.json
+    python infra/deploy_helpers.py ctx-zip out.zip                the vision Lambda build context for CodeBuild
+    python infra/deploy_helpers.py pack-flybot --src ../ezviz-manager --out flybot.tgz   the prebuilt FlyBot release
 
 deploy.env format: KEY=VALUE per line, `#` comments. Values are taken literally (no $ expansion, nothing is executed);
 quote a value with "..." or '...' when it contains `#` or leading/trailing spaces. CRLF files are fine.
@@ -34,7 +36,8 @@ SETTINGS = {
     "STAGE", "AWS_PROFILE", "AWS_REGION", "DOMAIN_NAME", "ACME_EMAIL", "ALARM_EMAIL", "OWNER_CIDR", "DETECTOR",
     "PLANNER_MODE", "INSTANCE_TYPE", "KEY_NAME", "REPO_URL", "REPO_REF", "AMI_ID", "ANTHROPIC_SECRET_NAME",
     "ANTHROPIC_MODEL", "GCP_SERVICE_ACCOUNT_FILE", "DNS_WAIT_MIN", "MODELS_BUCKET", "DEMO_MAX_CAMERAS_PER_USER",
-    "DEMO_MAX_SNAPSHOTS_PER_DAY", "DEMO_MAX_UNCLAIMED", "DEVICE_EVENTS_URL", "SKIP_COLDSTART", "FLYBOT_REPO", "REPO_WAIT_MIN",
+    "DEMO_MAX_SNAPSHOTS_PER_DAY", "DEMO_MAX_UNCLAIMED", "APP_MODE", "DEVICE_EVENTS_URL", "SKIP_COLDSTART",
+    "FLYBOT_SRC", "VITE_GOOGLE_MAP_KEY", "S3_BUCKET_NAME", "S3_REGION", "S3_ENDPOINT", "NODE_VERSION", "CADDY_VERSION",
 }
 # FlyBot application values stored in Secrets Manager flybot-<stage>-app (FLYBOT_SECRETS)
 APP_KEYS = [
@@ -43,8 +46,13 @@ APP_KEYS = [
     "TELEGRAM_BOT_TOKEN", "TELEGRAM_BOT_USERNAME",
     "VERTEX_PROJECT_ID", "VERTEX_LOCATION", "VERTEX_MODEL",
     "VAPID_PUBLIC_KEY", "VAPID_PRIVATE_KEY", "VAPID_SUBJECT",
+    "MONGO_URI", "S3_ACCESS_KEY", "S3_SECRET_KEY",
 ]
-OTHER_SECRETS = {"ANTHROPIC_API_KEY", "DEVICE_EVENTS_SECRET", "FLYBOT_REPO_TOKEN"}
+# deploy.env decides these alone: empty there = removed from the secret (a local MongoDB / the instance role is used)
+AUTHORITATIVE = {"MONGO_URI", "S3_ACCESS_KEY", "S3_SECRET_KEY"}
+OTHER_SECRETS = {"ANTHROPIC_API_KEY", "DEVICE_EVENTS_SECRET"}
+# files of the prebuilt FlyBot release (what the FlyBot Dockerfile's runtime stage copies)
+FLYBOT_FILES = ["package.json", "package-lock.json", "client/package.json", "server/package.json"]
 DEFAULTS = {"VERTEX_LOCATION": "global", "VERTEX_MODEL": "gemini-2.5-flash"}
 KEY_RE = re.compile(r"^[A-Z][A-Z0-9_]*$")
 
@@ -137,13 +145,16 @@ def vapid_pair() -> tuple[str, str] | None:
 def cmd_merge_app(a) -> int:
     env = parse_env(a.env)
     cur = load_json(a.current)
-    new = dict(cur)  # keys the owner added by hand (console) are kept
+    new = dict(cur)  # keys added by hand in the console are kept
     report = {"set": [], "kept": [], "generated": [], "default": [], "empty": []}
     for k in APP_KEYS:
         v = env.get(k, "")
         if v:
             new[k] = v
             report["set" if cur.get(k) != v else "kept"].append(k)
+        elif k in AUTHORITATIVE:
+            if new.pop(k, None):
+                report["set"].append(k + " (removed)")
         elif cur.get(k):
             report["kept"].append(k)
         elif k in DEFAULTS:
@@ -231,6 +242,50 @@ def cmd_ctx_hash(a) -> int:
     return 0
 
 
+def ctx_arcname(f: Path) -> str:
+    rel = f.relative_to(ROOT).as_posix()
+    return rel.removeprefix("lambda/vision/")
+
+
+def cmd_ctx_zip(a) -> int:
+    """Dockerfile at the root, sentinel/, requirements-lambda.txt, models/ (what lambda/vision/Dockerfile COPYs)."""
+    import zipfile
+
+    out = Path(a.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as z:
+        for f in ctx_files():
+            z.write(f, ctx_arcname(f))
+    print(f"{out.stat().st_size} bytes, {len(ctx_files())} files")
+    return 0
+
+
+def cmd_pack_flybot(a) -> int:
+    """server/dist (with the built client inside) + the package manifests, as a .tgz; prints the sha256."""
+    import tarfile
+
+    src = Path(a.src)
+    dist = src / "server" / "dist"
+    if not (dist / "app.js").is_file():
+        print(f"{dist}/app.js missing: run npm run build in {src}", file=sys.stderr)
+        return 4
+    missing = [f for f in FLYBOT_FILES if not (src / f).is_file()]
+    if missing:
+        print(f"missing in {src}: {missing}", file=sys.stderr)
+        return 4
+    out = Path(a.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with tarfile.open(out, "w:gz", compresslevel=6) as tar:
+        for f in FLYBOT_FILES:
+            tar.add(src / f, arcname=f)
+        tar.add(dist, arcname="server/dist")
+        if a.meta:
+            tar.add(a.meta, arcname="RELEASE.json")
+    h = hashlib.sha256(out.read_bytes()).hexdigest()
+    print(h)
+    return 0
+
+
 def cmd_contract(a) -> int:
     d = load_json(a.file)
     problems = []
@@ -282,6 +337,9 @@ def main(argv=None) -> int:
     s = sub.add_parser("contract"); s.add_argument("file"); s.add_argument("--detector", default="")
     s.set_defaults(fn=cmd_contract)
     s = sub.add_parser("latency"); s.add_argument("file"); s.set_defaults(fn=cmd_latency)
+    s = sub.add_parser("ctx-zip"); s.add_argument("out"); s.set_defaults(fn=cmd_ctx_zip)
+    s = sub.add_parser("pack-flybot"); s.add_argument("--src", required=True); s.add_argument("--out", required=True)
+    s.add_argument("--meta"); s.set_defaults(fn=cmd_pack_flybot)
     a = ap.parse_args(argv)
     return a.fn(a)
 

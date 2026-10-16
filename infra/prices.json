@@ -1,0 +1,10 @@
+{
+  "source": "AWS Price List API (aws pricing get-products --region us-east-1), on-demand, ap-southeast-2",
+  "read_at": "2026-10-17",
+  "ec2_t4g_micro_usd_per_hour": 0.0106,
+  "codebuild_arm1_small_usd_per_minute": 0.0045,
+  "usage_types": {
+    "ec2_t4g_micro": "APS2-BoxUsage:t4g.micro",
+    "codebuild_arm1_small": "APS2-Build-Min:ARM:g1.small"
+  }
+}

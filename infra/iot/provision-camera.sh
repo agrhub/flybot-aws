@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Register one CamOS AI camera in AWS IoT Core (spike T0.5 / task T1.6).
+# Register one CamOS AI camera in AWS IoT Core .
 #
 #   bash infra/iot/provision-camera.sh <SERIAL> <device-cert.pem> [profile] [region]
 #   STAGE=dev (default) picks the stack sentinel-<stage> for the Device API token; ROTATE_TOKEN=1 issues a new one
@@ -7,9 +7,9 @@
 # The camera keeps its private key; only its certificate (PEM, CN = serial) is registered, without a CA
 # (aws iot register-certificate-without-ca). A thing named <SERIAL>, the policy "camos-camera" (scoped to
 # camos/<thing>/… topics through ${iot:Connection.Thing.ThingName}) and the certificate are tied together.
-# Then (task T1.6) a Device API token: random, printed once, only its SHA-256 is stored in sentinel-devices
+# Then a Device API token: random, printed once, only its SHA-256 is stored in sentinel-devices
 # (token_sha256). Idempotent: re-running updates nothing destructive and keeps an issued token.
-# Then (task T2.4) the label verify code for the Open API activation: set-verify-code.sh (VERIFY_CODE=… to
+# Then the label verify code for the Open API activation: set-verify-code.sh (VERIFY_CODE=… to
 # reuse a printed one); the code goes to data/secrets/<SERIAL>-verify-code.txt, only its hash to the table.
 set -euo pipefail
 
@@ -80,7 +80,7 @@ else
   fi
 fi
 
-# 6. Label verify code for the Open API activation (task T2.4); keeps an existing one
+# 6. Label verify code for the Open API activation; keeps an existing one
 if [ -n "$DEVICES_TABLE" ] && [ "$DEVICES_TABLE" != "None" ]; then
   bash "$HERE/set-verify-code.sh" "$SERIAL" "$PROFILE" "$REGION"
 fi

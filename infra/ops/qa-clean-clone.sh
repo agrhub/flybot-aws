@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Clean-clone reproducibility run (A9, T4.6 / T5.6): clones this repo (local clone, no network for git), runs
+# Clean-clone reproducibility run : clones this repo (local clone, no network for git), runs
 # what a judge without hardware, AWS or the git-ignored models can run, and prints a markdown table
 # (command, wall time, exit code). Never deploys and never calls AWS.
 #

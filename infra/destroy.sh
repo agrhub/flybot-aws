@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Remove what ./deploy.sh created for one stage, the mirror of infra/deploy.sh.
 #
-#   ./destroy.sh --yes                       stack flybot-<stage> (EC2 + EIP, Lambda, ECR images, IoT policy and rules,
-#                                            roles, alarms), the photos bucket and the flybot-<stage>-* secrets
+#   ./destroy.sh --yes                       stack flybot-<stage> (EC2 + EIP, Lambda, ECR images, CodeBuild project,
+#                                            artifacts bucket, IoT policy and rules, roles, alarms), the stack photos
+#                                            bucket and the flybot-<stage>-* secrets (a bucket of your own is never touched)
 #   ./destroy.sh --yes --keep-photos         keep s3://flybot-photos-<account>-<stage> (a later deploy reuses it)
 #   ./destroy.sh --yes --keep-secrets        keep flybot-<stage>-app/-gcp/-anthropic/-deploykey/-repotoken (JWT stays valid, no re-entry)
 #   ./destroy.sh --dry-run                   what would be removed
@@ -41,7 +42,8 @@ STACK="flybot-$STAGE"
 [ "$REGION" = ap-southeast-2 ] || die "region $REGION refused (Sydney only)"
 aws_or_die
 ACCOUNT="$(awsx sts get-caller-identity --query Account --output text)"
-PHOTOS="flybot-photos-$ACCOUNT-$STAGE"
+PHOTOS="flybot-photos-$ACCOUNT-$STAGE"          # the stack bucket only: a bucket of your own (S3_BUCKET_NAME) is never touched
+ARTIFACTS="flybot-artifacts-$ACCOUNT-$STAGE"    # FlyBot releases + Lambda build contexts, emptied so the stack can delete it
 mkdir -p infra/.build
 exec > >(tee -a "infra/.build/destroy-$STAGE.log") 2>&1
 
@@ -56,11 +58,15 @@ printf '\nAccount %s, stage %s:\n' "$ACCOUNT" "$STAGE"
 printf '  stack       %s (%s)%s\n' "$STACK" "$STATUS" "$([ "$STATUS" = NONE ] && echo ': nothing to delete')"
 printf '  photos      s3://%s %s\n' "$PHOTOS" "$([ $BUCKET_EXISTS = 0 ] && echo '(absent)' || { [ $KEEP_PHOTOS = 1 ] && echo KEPT || echo 'emptied and DELETED (every photo)'; })"
 printf '  secrets     %s %s\n' "${SECRETS[*]:-(none)}" "$([ ${#SECRETS[@]} = 0 ] && echo '' || { [ $KEEP_SECRETS = 1 ] && echo KEPT || echo 'scheduled for deletion (7-day recovery)'; })"
+printf '  artifacts   s3://%s emptied and deleted with the stack
+' "$ARTIFACTS"
 printf '  kept        model bucket sentinel-%s-models-public, stack sentinel-dev, IoT things/certificates\n\n' "$ACCOUNT"
 if [ "$DRY" = 1 ]; then echo "dry run: nothing deleted"; exit 0; fi
 [ "$YES" = 1 ] || die "add --yes to delete the above (no prompt: this script also runs unattended)"
 
 if [ "$STATUS" != NONE ]; then
+  log "emptying s3://$ARTIFACTS (FlyBot releases, build contexts)"
+  awsx s3 rm "s3://$ARTIFACTS" --recursive --only-show-errors 2>/dev/null || true
   log "deleting stack $STACK"
   awsx cloudformation delete-stack --stack-name "$STACK"
   awsx cloudformation wait stack-delete-complete --stack-name "$STACK" || die "stack deletion failed: CloudFormation console > $STACK > Events"
@@ -77,7 +83,7 @@ if [ $KEEP_SECRETS = 0 ]; then
   done
 fi
 rm -f "infra/.build/image-uri-$STAGE"
-if [ $KEEP_SECRETS = 0 ]; then
-  log "also remove the deploy key flybot-$STAGE-ec2 at github.com/agrhub/flybot > Settings > Deploy keys (no host uses it now)"
-fi
+case " ${SECRETS[*]:-} " in *"flybot-$STAGE-deploykey"*)
+  [ $KEEP_SECRETS = 1 ] || log "a GitHub deploy key flybot-$STAGE-ec2 from an earlier layout may still exist: remove it at github.com/agrhub/flybot > Settings > Deploy keys" ;;
+esac
 ok "done"

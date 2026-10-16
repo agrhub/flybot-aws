@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Give a camera its label verify code for the Open API (POST /devices/activate, task T2.4).
+# Give a camera its label verify code for the Open API (POST /devices/activate).
 #
 #   bash infra/iot/set-verify-code.sh <SERIAL> [profile] [region]
 #   VERIFY_CODE=K7P4QX   use this code (e.g. the one already printed on the label) instead of a random one

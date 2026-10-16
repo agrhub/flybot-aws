@@ -9,3 +9,4 @@ docker-compose.yml text eol=lf
 infra/template.yaml text eol=lf
 *.onnx             binary
 *.jpg              binary
+*.bat              text eol=crlf

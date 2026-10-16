@@ -11,13 +11,14 @@
 # YOLO26_URL into /tmp (sentinel/vision/detector.py). Image target: <= 600 MB (measured by infra/build-image.sh).
 FROM public.ecr.aws/lambda/python:3.12-arm64
 
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 OPENCV_FORCE_DNN_ENGINE=new MODEL_DIR=/opt/models
+# OPENCV_FORCE_DNN_ENGINE takes a number (1 classic, 2 new, 3 per call), never "new": the code passes ENGINE_NEW itself
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 MODEL_DIR=/opt/models
 
 COPY requirements-lambda.txt /tmp/requirements.txt
+# No `find` in the AL2023 minimal Lambda base image; --no-compile already avoids .pyc files.
 RUN pip install --no-cache-dir --no-compile -r /tmp/requirements.txt && rm -rf /tmp/requirements.txt /root/.cache \
-    && find /var/lang/lib/python3.12/site-packages -name "*.pyc" -delete \
     && rm -rf /var/lang/lib/python3.12/site-packages/cv2/qt /var/lang/lib/python3.12/site-packages/numpy/tests \
-              /var/lang/lib/python3.12/site-packages/scipy/*/tests /var/lang/lib/python3.12/site-packages/scipy/**/tests
+              /var/lang/lib/python3.12/site-packages/scipy/*/tests
 
 # Detector weights. The build context (staged by infra/build-image.sh) carries models/fetch_models.py plus any
 # fetched models/yolov7-tiny/*.onnx and models/yolo26/*.onnx(.json); whatever is missing for the baseline detector

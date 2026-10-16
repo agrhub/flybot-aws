@@ -1,12 +1,12 @@
-# FlyBot on AWS: one entry point for the judge and the owner. Python lives in lambda/vision (uv), infra in infra/.
+# FlyBot on AWS: one entry point for users and judges. Python lives in lambda/vision (uv), infra in infra/.
 #   make setup test lint            Python env, tests, ruff (lambda/vision)
 #   make models                     fetch the detector ONNX (SHA-256 checked) into models/
 #   make lambda-local               POST http://localhost:9001/invoke (CONTRACTS.md section 1) for FlyBot local dev
 #   make replay-sample              24 bundled trap photos through the handler -> data/replay/sample/
-#   make build-lambda               build + push the arm64 image (on the FlyBot EC2 via SSM, see infra/build-image.sh)
+#   make build-lambda               build + push the arm64 Lambda image with AWS CodeBuild (infra/build-image.sh)
 #   make deploy / make destroy      ./deploy.sh / ./destroy.sh, settings in deploy.env (infra/DEPLOY_CHECKLIST.md)
 #   make hooks                      git pre-commit hook: infra/ops/secrets-scan.sh --staged
-#   make host CMD='...'             run a command on the FlyBot EC2 through SSM (logs, compose, bootstrap re-run)
+#   make host CMD='...'             run a command on the FlyBot server through SSM (logs, systemctl, bootstrap re-run)
 #   make bench                      bench matrix (bench/run_matrix.sh)
 .PHONY: setup test test-fast lint lock-lambda models lambda-local replay-sample build-lambda deploy destroy provision-camera bench cold-start host hooks
 PROFILE ?= sentinel

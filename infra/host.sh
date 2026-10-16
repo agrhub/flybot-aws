@@ -2,8 +2,8 @@
 # Run one shell command on the FlyBot EC2 host through SSM Run Command and print its output (no SSH, no key pair).
 #
 #   make host CMD='tail -20 /var/log/flybot-bootstrap.log' [STAGE=dev]
-#   bash infra/host.sh 'cd /opt/flybot/flybot-aws && docker compose ps'
-#   bash infra/host.sh bootstrap        # re-run the CURRENT user-data (git pull, .env, gcp file, compose up -d --build)
+#   bash infra/host.sh 'systemctl status flybot caddy mongod --no-pager'
+#   bash infra/host.sh bootstrap        # re-run the CURRENT user-data (env file, gcp file, FlyBot release, services)
 #
 # Interactive shell instead: aws ssm start-session --target <InstanceId> --profile sentinel (Session Manager plugin).
 set -euo pipefail
