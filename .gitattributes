@@ -1,0 +1,11 @@
+# Shell scripts, the compose file, Caddyfile and the env templates must keep LF on every checkout (core.autocrlf=true
+# on Windows would turn them into CRLF and bash fails with $'\r': command not found).
+*.sh               text eol=lf
+Makefile           text eol=lf
+Caddyfile          text eol=lf
+docker-compose.yml text eol=lf
+*.env.example      text eol=lf
+.env.example       text eol=lf
+infra/template.yaml text eol=lf
+*.onnx             binary
+*.jpg              binary

@@ -1,0 +1,7 @@
+[submodule "flybot"]
+	path = flybot
+	url = https://github.com/agrhub/flybot.git
+	branch = feat/aws
+[submodule "firmware-esp32"]
+	url = https://github.com/agrhub/camos-esp32-trap.git
+	path = firmware-esp32

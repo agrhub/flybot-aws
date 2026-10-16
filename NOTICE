@@ -1,0 +1,55 @@
+FlyBot on AWS (agrhub/flybot-aws)
+Copyright (C) 2026 AGRHUB
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
+Public License as published by the Free Software Foundation, version 3 (see LICENSE). AGPL-3.0 is required by the
+YOLO26n detector (Ultralytics, AGPL-3.0) and is compatible with the GPL-3.0 YOLOv7-tiny baseline
+(models/LICENSE_OPTIONS.md).
+
+Not covered by this license
+  flybot/ is a git submodule pointing at agrhub/flybot, AGRHUB's private, proprietary FlyBot web application.
+  Its code is not part of this repository and is not licensed under AGPL-3.0, MIT or any open license.
+  The AMB82 camera firmware, AGRHUB's production datasets and production model weights are private as well.
+  firmware-esp32/ (agrhub/camos-esp32-trap) is public under its own license.
+
+Third-party works used or redistributed
+---------------------------------------
+
+Dataset
+  camos/fruit-fly-wmcqi (Roboflow Universe, https://universe.roboflow.com/camos/fruit-fly-wmcqi), v3,
+  CC BY 4.0. Used to train and evaluate the detector. Credit: CamOS / AGRHUB, hosted by Roboflow.
+
+Detector
+  Ultralytics YOLO26 (https://github.com/ultralytics/ultralytics), AGPL-3.0. The fine-tuned YOLO26n fruit-fly weights
+  (models/yolo26/fruitfly_yolo26n.onnx, git-ignored, published on the public model bucket under models/yolo26/) are a
+  derivative work distributed under AGPL-3.0; trained on the camos/fruit-fly-wmcqi v3 dataset (CC BY 4.0).
+  WongKinYiu/yolov7 (https://github.com/WongKinYiu/yolov7), GPL-3.0. YOLOv7-tiny architecture, training code and
+  the yolov7-tiny.pt starting weights. The fine-tuned fruit-fly weights (models/yolov7-tiny/fruitfly_deploy.pt) and
+  their ONNX export are derivative works distributed under GPL-3.0. The yolov7 source is not vendored:
+  models/export_yolov7.py clones a pinned commit (a207844b) into the git-ignored models/third_party/.
+  Realtek's reparameterization script for the AMB82 NPU (reparam_yolov7-tiny.py) was used by the model owner.
+
+Computer vision
+  OpenCV 5 (https://opencv.org), Apache-2.0, through the opencv-python / opencv-python-headless wheels
+  (https://github.com/opencv/opencv-python), and the COOL (Cloud-Optimized OpenCV Library) AWS Marketplace AMI
+  for the benchmark only.
+  KleidiCV (Arm, https://gitlab.arm.com/kleidi/kleidicv), Apache-2.0, as the HAL inside those builds.
+  YuNet face detector face_detection_yunet_2023mar.onnx from opencv_zoo (https://github.com/opencv/opencv_zoo), MIT.
+  ALIKED and LightGlue ONNX models (aliked-n16rot-top1k-640.onnx, aliked_lightglue.onnx) from
+  https://github.com/YangGuanyuhan/lightglue_opencv_project, the files OpenCV's own tests download
+  (opencv_extra testdata/dnn/download_models.py). Downloaded at run time into the git-ignored models/features/,
+  not redistributed here; the upstream licenses of ALIKED, LightGlue and that project apply (not re-checked here).
+
+Production context (not redistributed)
+  FlyBot's production counts come from a Roboflow RF-DETR Small model run by Roboflow (https://roboflow.com);
+  RF-DETR (https://github.com/roboflow/rf-detr) is Apache-2.0. Only its counts and boxes appear in the evaluation.
+
+Agent and cloud
+  Anthropic Python SDK, boto3, pydantic, numpy, scipy, httpx, PyYAML,
+  tzdata: the versions pinned in uv.lock, each under its own license (MIT, Apache-2.0 or BSD).
+  AWS SAM CLI and the AWS SDK for JavaScript v3 (Apache-2.0) to build and run the stack.
+
+Photos
+  data/samples/ contains 24 photos from AGRHUB's own orchard trap cameras (FlyBot), included to let judges run
+  the replay without hardware. No person appears in them. AGRHUB owns them; they are provided for evaluating this
+  entry.
