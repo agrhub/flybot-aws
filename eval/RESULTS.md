@@ -242,7 +242,7 @@ Recapture decisions 18 (rules: quality.recapture: 18); capture tool calls: captu
 
 Lambda duration and cold starts are not in the trace (CloudWatch, not read here). Source: `eval/results/aws_live.json` (`latency`).
 
-## 6. Expert review of agent decisions (T4.3)
+## 6. Expert review of agent decisions
 
 **0 verdicts, not measured (50 rows waiting for the expert, 5 agent-example rows excluded).** Sheet: 55 rows ({"aws_live": 15, "replay_30d_review": 12, "staged_proposal": 8, "failure_injection": 15} to review + 5 worked examples written by the agent, excluded from scoring). Instructions: `eval/EXPERT_REVIEW.md`. Source: `eval/results/expert_review.json` (from `docs/evidence/eval/expert_review.csv` via `eval/score_expert_review.py`).
 
@@ -262,10 +262,10 @@ Lambda duration and cold starts are not in the trace (CloudWatch, not read here)
 - Real ISP fix on a real AI camera (waits for firmware 0.25.0 OTA): not measured.
 - Live AI-camera loop (IoT Core -> worker -> trace) with a physical camera: only a simulated thing was verified.
 - The LLM planner (Bedrock) on real photos: no live trace uses it (planner mode `rule`); LLM behaviour is exercised only with scripted fake models.
-- Cost per 1,000 photos: see bench/ (T4.1), not part of this run. Lambda duration, cold starts and queue delay: not in the traces, not measured here (CloudWatch).
+- Cost per 1,000 photos: see bench/REPORT_COOL.md, not part of this run. Lambda duration, cold starts and queue delay: not in the traces, not measured here (CloudWatch).
 - Failure injection perturbs 3 photo pairs from one camera (BE4089629) with synthetic effects: ISP effects are not simulated in pixels, a recapture returns an unperturbed frame, devices are fakes; it shows how the code reacts, not how a real camera or a real person behaves.
 - Op 2 `blurry` on the agent path: flag rate by blur strength is in section 4; whether the live `blurry` flags in section 5 are real blur or false alarms is not measured (no human looked at all of them; some are in the expert sheet).
 - Live AWS traces: 76 photos (traces created within one 35-minute poller sweep on 15 Oct, photos captured 14-15 Oct), 2 EZVIZ cameras, rule planner, FlyBot actions not wired (every recapture blocked `unknown_camera`): no live proposal, approval, ISP change or surge; the sample says the loop runs and how fast, not that its decisions are right.
-- Policy-correct decision rate judged by an AgriHub agronomist on 50 cases (T4.3): the sheet is ready (`docs/evidence/eval/expert_review.csv`, `eval/EXPERT_REVIEW.md`), 0 verdicts, not measured.
+- Policy-correct decision rate judged by an AgriHub agronomist on 50 cases: the sheet is ready (`docs/evidence/eval/expert_review.csv`, `eval/EXPERT_REVIEW.md`), 0 verdicts, not measured.
 - Sample sizes and scope: 2 cameras, 1 region, 30 days, traps empty since 2026-10-07; no seasonal or multi-farm variation; no yellow sticky cards.
 - Timings come from a shared 4-core dev laptop and a dev stack: they are not benchmarks (see bench/).

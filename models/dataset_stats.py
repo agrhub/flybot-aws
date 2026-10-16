@@ -1,4 +1,4 @@
-"""Count the fruit-fly dataset per split (T0.4). Main project env, no torch.
+"""Count the fruit-fly dataset per split. Main project env, no torch.
 
     uv run python models/dataset_stats.py ../camos-ai-camera/models/fruit-fly-v3 --out models/dataset_stats.json
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# T4.1 benchmark matrix on EC2: COOL AMI vs pip arm64 vs pip x86, same inputs, same script.
+# benchmark matrix on EC2: COOL AMI vs pip arm64 vs pip x86, same inputs, same script.
 #
 #   bash bench/run_matrix.sh [--only LIST] [--profile P] [--region R] [--bucket B] [--smoke] [--dry-run]
 #
@@ -85,7 +85,7 @@ for c in "${SEL[@]}"; do set -- ${CFG[$c]}; dry_ok "$2" "$3" || { log "cannot la
 # ---------------------------------------------------------------- IAM + SG
 if ! aws iam get-role --role-name $ROLE >/dev/null 2>&1; then
   log "creating role $ROLE"
-  aws iam create-role --role-name $ROLE --description "T4.1 bench instances: S3 bench/ prefix only" \
+  aws iam create-role --role-name $ROLE --description "bench instances: S3 bench/ prefix only" \
     --assume-role-policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"ec2.amazonaws.com"},"Action":"sts:AssumeRole"}]}' \
     --tags Key=Project,Value=sentinel Key=Purpose,Value=bench-t41 >/dev/null
 fi
@@ -100,7 +100,7 @@ fi
 VPC=$(aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query 'Vpcs[0].VpcId' --output text)
 SG=$(aws ec2 describe-security-groups --filters Name=group-name,Values=$SG_NAME Name=vpc-id,Values=$VPC --query 'SecurityGroups[0].GroupId' --output text)
 if [ "$SG" = None ]; then
-  SG=$(aws ec2 create-security-group --group-name $SG_NAME --description "T4.1 bench: no ingress" --vpc-id "$VPC" --query GroupId --output text)
+  SG=$(aws ec2 create-security-group --group-name $SG_NAME --description "bench: no ingress" --vpc-id "$VPC" --query GroupId --output text)
 fi
 log "role $ROLE, sg $SG (no ingress), vpc $VPC"
 

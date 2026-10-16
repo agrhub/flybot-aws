@@ -126,7 +126,7 @@ class ProposalDevice(Device):
 
 
 class ProposalFlyBot:
-    """Stands in for the first build's FlyBotClient: proposals and review requests are returned to FlyBot in
+    """Stands in for a FlyBot HTTP client: proposals and review requests are returned to FlyBot in
     the response instead of being POSTed to it."""
 
     def __init__(self):

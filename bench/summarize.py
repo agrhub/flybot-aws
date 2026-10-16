@@ -1,4 +1,4 @@
-"""T4.1: merge bench/results/<config>.json into the Bench-page summary, add $/1000 photos, dump build info.
+"""merge bench/results/<config>.json into the Bench-page summary, add $/1000 photos, dump build info.
 
     uv run python bench/summarize.py [--region ap-southeast-2] [--bucket B] [--upload] [--cool-fee-usd-hr X]
 
@@ -121,7 +121,7 @@ def main() -> int:
     micro = {cfg: {th: {op: s["p50"] for op, s in ops.items()} for th, ops in d["micro"]["threads"].items()}
              for cfg, d in docs.items() if d.get("micro")}
     summary = {
-        "schema": "sentinel.bench.summary/1", "title": "T4.1 COOL vs pip OpenCV 5: real per-photo pipeline",
+        "schema": "sentinel.bench.summary/1", "title": "COOL vs pip OpenCV 5: real per-photo pipeline",
         "note": "500 real lure-trap photo pairs (BE4089629/BE4111159), decode + YOLOv7-tiny on both + analyze(lure, "
                 "sift), 5 sequential runs after a warm-up; usd_per_1000 = on-demand $/h / parallel throughput "
                 "(1 process per vCPU). COOL arms: pending subscription (Free Plan account cannot buy the paid "

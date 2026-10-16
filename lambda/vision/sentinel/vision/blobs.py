@@ -1,7 +1,7 @@
 """Interim box source: dark compact blobs on a bright trap surface (classic, no model).
 
 The 2026-10 FlyBot export carries counts only, not the production model's boxes, and op 5
-(`detect.py`, T1.4) is not built yet. Op 4 needs boxes to match, so until then this black-hat
+(`detect_yolov7.py`) is not available. Op 4 needs boxes to match, so until then this black-hat
 blob finder stands in. It is a stand-in, not a detector: it finds any small dark thing (flies,
 debris, stain specks) and is never reported as an insect count.
 """

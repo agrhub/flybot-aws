@@ -48,8 +48,8 @@ notebook write a new `data.yaml` with `path:` set to the absolute staged folder.
 - "Distinct source images" = distinct file-name prefixes before `.rf.` (Roboflow names augmented copies
   `<source>_jpg.rf.<hash>.jpg`). No source image appears in two splits (overlap train/valid,
   train/test, valid/test = 0), so the test split has no augmented twin of a training image.
-- The 1,573 distinct sources match the "1,573 images" in MASTER_PLAN. The plan's 85,307 boxes do not
-  match this export (80,205 counted here); the plan number is from another source and was not checked.
+- The 1,573 distinct sources match the dataset page's "1,573 images". Its 85,307 boxes do not
+  match this export (80,205 counted here); that number comes from another source and was not checked.
 - No image has more than 300 boxes (max 100), so ultralytics' default `max_det=300` does not clip.
 
 ## Box sizes (pixels on the 640x640 images)

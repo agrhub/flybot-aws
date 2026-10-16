@@ -1,4 +1,4 @@
-# FlyBot Sentinel agent policy (MASTER_PLAN 2.5, task T2.3). Loaded by sentinel/agent/policy.py into
+# Sentinel agent policy . Loaded by sentinel/agent/policy.py into
 # common.schemas.PolicyConfig; RulePlanner implements it, LLMPlanner gets it verbatim in its system
 # prompt, guardrails enforce the budgets / approvals / kill switch whatever the planner decides.
 # Domain rules mirror FlyBot (ezviz-manager/server/src/services): surgeService.js, sprayPlanService.js,

@@ -1,4 +1,4 @@
-"""Failure injection (T3.5): perturb real photos and events, run the pipeline + agent, record expected vs observed.
+"""Failure injection: perturb real photos and events, run the pipeline + agent, record expected vs observed.
 
     uv run python -m eval.failure_injection                 # 1 real photo pair, writes eval/results/failure_injection.json
     uv run python -m eval.failure_injection --photos 3 --sweep 40

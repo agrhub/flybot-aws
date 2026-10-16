@@ -1,4 +1,4 @@
-"""Evaluation run (T3.5): detection, vision ops, agent task success, failure injection -> eval/results/*.json + eval/RESULTS.md.
+"""Evaluation run: detection, vision ops, agent task success, failure injection -> eval/results/*.json + eval/RESULTS.md.
 
     uv run python -m eval.run_eval --quick         # a few minutes on a laptop (warm caches): every section, small N
     uv run python -m eval.run_eval                 # full: 3 photo pairs per image perturbation, 40-photo op 2 sweep,
@@ -822,7 +822,7 @@ STRESS = {"cameras": ["BE4089629", "BE4111159"], "from": "2026-10-12", "hours": 
 
 
 def owner_lure_serials() -> set[str]:
-    """Cameras the owner confirmed as lure traps (sentinel/agent/cameras.json, trap_kind_authoritative)."""
+    """Cameras confirmed on site as lure traps (sentinel/agent/cameras.json, trap_kind_authoritative)."""
     from sentinel.agent.data import AgentData
 
     return {c["serial"] for c in AgentData.seed_from_env() if c.get("trap_kind") == "lure" and c.get("trap_kind_authoritative")}
@@ -830,8 +830,8 @@ def owner_lure_serials() -> set[str]:
 
 def build_patches(*, lure: bool, inject: bool, operator: bool) -> list:
     """Module patches for eval.replay.main.
-    lure:     the export still says trapKind=sticky for both orchard cameras (FlyBot not yet corrected); apply the owner-confirmed
-              `lure` to the manifest rows and the camera list, as FlyBot will report after the owner's fix. (replay_adapter only
+    lure:     the export still says trapKind=sticky for both orchard cameras (FlyBot not yet corrected); apply the confirmed
+              `lure` to the manifest rows and the camera list, as FlyBot reports once corrected. (replay_adapter only
               trusts the event/export trap kind, so without this the agent runs the sticky rules on lure traps.)
     inject:   synthetic surge in the count fields (production ai_count + YOLOv7 boxes) of the two lure cameras, daylight hours,
               last days. Pixels untouched (the replay agent never reads pixels). STAGED, not real.
@@ -1074,7 +1074,7 @@ def render_aws(aws: dict, results_dir: Path) -> list[str]:
 
 
 def render_expert(ex: dict | None) -> list[str]:
-    L = ["## 6. Expert review of agent decisions (T4.3)", ""]
+    L = ["## 6. Expert review of agent decisions", ""]
     if ex is None:
         return L + ["not measured: `docs/evidence/eval/expert_review.csv` does not exist yet.", ""]
     src = f"`{rel(RESULTS / 'expert_review.json')}` (from `{ex.get('source')}` via `eval/score_expert_review.py`)"
@@ -1250,7 +1250,7 @@ def render_results_md(meta: dict, det: dict | None, vis: dict | None, agent: dic
                "Real ISP fix on a real AI camera (waits for firmware 0.25.0 OTA): not measured.",
                "Live AI-camera loop (IoT Core -> worker -> trace) with a physical camera: only a simulated thing was verified.",
                "The LLM planner (Bedrock) on real photos: no live trace uses it (planner mode `rule`); LLM behaviour is exercised only with scripted fake models.",
-               ("Cost per 1,000 photos: see bench/ (T4.1), not part of this run. Lambda duration, cold starts and queue delay: not in the traces, not measured here "
+               ("Cost per 1,000 photos: see bench/REPORT_COOL.md, not part of this run. Lambda duration, cold starts and queue delay: not in the traces, not measured here "
                "(CloudWatch).")]
     if fail:
         nm += [("Failure injection perturbs 3 photo pairs from one camera (BE4089629) with synthetic effects: ISP effects are not simulated in pixels, a recapture "
@@ -1261,7 +1261,7 @@ def render_results_md(meta: dict, det: dict | None, vis: dict | None, agent: dic
         nm += [(f"Live AWS traces: {aws.get('photos')} photos (traces created within one 35-minute poller sweep on 15 Oct, photos captured 14-15 Oct), 2 EZVIZ cameras, rule planner, FlyBot actions not wired (every recapture blocked `unknown_camera`): "
                "no live proposal, approval, ISP change or surge; the sample says the loop runs and how fast, not that its decisions are right.")]
     if expert is None or expert.get("status") != "measured":
-        nm += [("Policy-correct decision rate judged by an AgriHub agronomist on 50 cases (T4.3): the sheet is ready (`docs/evidence/eval/expert_review.csv`, "
+        nm += [("Policy-correct decision rate judged by an AgriHub agronomist on 50 cases: the sheet is ready (`docs/evidence/eval/expert_review.csv`, "
                "`eval/EXPERT_REVIEW.md`), 0 verdicts, not measured.")]
     else:
         nm += [f"Expert review: one reviewer panel, {expert['verdicts']} verdicts; confidence interval in section 6; inter-rater agreement not measured."]

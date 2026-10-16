@@ -1,10 +1,10 @@
-"""Load the fruit-fly YOLO ONNX with OpenCV 5 DNN and run one forward pass (T0.4 smoke check).
+"""Load the fruit-fly YOLO ONNX with OpenCV 5 DNN and run one forward pass (smoke check).
 
 Main project env only (OpenCV 5 + numpy, no torch):
 
     uv run python -m sentinel.vision.detect_smoke models/smoke-yolo11n.onnx IMAGE [--engine new]
 
-This is a loader/pipeline check, not the detector (T1.4 `detect.py`). Detection counts from a
+This is a loader/pipeline check, not the detector (`detect_yolov7.py`). Detection counts from a
 smoke-run model say nothing about model quality.
 """
 

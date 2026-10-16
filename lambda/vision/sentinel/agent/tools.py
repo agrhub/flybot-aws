@@ -1,4 +1,4 @@
-"""The 14 Sentinel tools (MASTER_PLAN 2.5). One definition serves three callers:
+"""The 14 Sentinel tools. One definition serves three callers:
 
 - RulePlanner and LLMPlanner call them through `RunContext.call(name, args)` (guardrails + trace);
 - `TOOL_SPECS` gives name / description / JSON schema to the LLM backends (Bedrock Converse toolSpec,

@@ -1,4 +1,4 @@
-"""Deterministic replay of the FlyBot export through the Sentinel agent loop (T2.6).
+"""Deterministic replay of the FlyBot export through the Sentinel agent loop.
 
     uv run python -m eval.replay --days 30 --approve-after-hours 2
     uv run python -m eval.replay --from 2026-10-07 --to 2026-10-14 --cameras BE4089629 --approve-none
@@ -731,7 +731,7 @@ def replay(rows: list[dict], *, data_dir: Path, detector, agent: Callable, agent
             seq += 1
             line = json.dumps({"seq": seq, **rec}, ensure_ascii=False, sort_keys=False, separators=(",", ":")) + "\n"
             # Keep the trace independent of the checkout location: file:// URIs become repo-relative,
-            # so the same inputs give the same trace hash on every machine (QA round 1, m1).
+            # so the same inputs give the same trace hash on every machine .
             line = line.replace(ROOT.as_uri() + "/", "")
             tf.write(line)
             sha.update(line.encode("utf-8"))

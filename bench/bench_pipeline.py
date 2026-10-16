@@ -1,4 +1,4 @@
-"""T4.1 benchmark: the real per-photo pipeline + an OpenCV op micro-benchmark, on whatever machine runs it.
+"""benchmark: the real per-photo pipeline + an OpenCV op micro-benchmark, on whatever machine runs it.
 
     python bench/bench_pipeline.py --inputs DIR --config NAME --out RESULT.json
         [--runs 5] [--warmup 20] [--micro-iters 200] [--parallel N] [--limit N] [--skip-micro]
@@ -347,7 +347,7 @@ def main(argv: list[str] | None = None) -> int:
         "usd_per_1000": None, "per_op": per_op,
     }
     doc = {
-        "schema": SCHEMA, "title": f"T4.1 pipeline benchmark, {a.config}", "config": a.config,
+        "schema": SCHEMA, "title": f"pipeline benchmark, {a.config}", "config": a.config,
         "note": "per-photo latency = decode prev+cur + YOLOv7-tiny on both + analyze(lure, sift); fps = sequential "
                 "(OpenCV default threads); fps_parallel = one process per vCPU, 1 OpenCV thread each; "
                 "usd_per_1000 is filled by bench/summarize.py from the on-demand price",

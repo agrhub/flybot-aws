@@ -1,12 +1,8 @@
-# FlyBot on AWS (and the same file for a laptop): FlyBot (Node + the built Vue client), MongoDB,
-# Caddy with automatic TLS for ${DOMAIN_NAME}. Values come from .env in this folder (see
-# .env.example, "FlyBot" section); the EC2 user-data of infra/template.yaml writes the ones the
-# stack knows (DOMAIN_NAME, ACME_EMAIL, APP_BASE_URL, AWS_REGION, PHOTOS_BUCKET, VISION_LAMBDA_NAME,
-# AI_PROVIDER, IOT_ENDPOINT, IOT_EVENTS, KVS_VIEWER_ROLE_ARN, FLYBOT_SECRETS, ...) and re-writes them on
-# every bootstrap run; other lines in .env are left alone. The flybot/ build context is the git submodule
-# (git submodule update --init on a laptop).
+# FlyBot on a laptop (local development): FlyBot (Node + the built Vue client), MongoDB, and Caddy with
+# automatic TLS for ${DOMAIN_NAME}. Values come from .env in this folder (see .env.example, "FlyBot" section).
+# The flybot/ build context is the private FlyBot submodule (git submodule update --init flybot).
+# The AWS deployment does not use this file: ./deploy.sh runs a prebuilt FlyBot release under systemd.
 #
-#   AWS (EC2 t4g.small, arm64):  docker compose up -d --build            (user-data does this)
 #   Laptop, no TLS:               docker compose up -d --build mongo flybot   -> http://localhost:8080
 #   Laptop + local Lambda:        VISION_LAMBDA_URL=http://host.docker.internal:9001/invoke in .env
 #

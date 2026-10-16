@@ -1,4 +1,4 @@
-"""RF-DETR (Apache-2.0) export + OpenCV 5 DNN load probe (T0.9 license alternative).
+"""RF-DETR (Apache-2.0) export + OpenCV 5 DNN load probe (license alternative).
 
 Two steps, two environments:
 

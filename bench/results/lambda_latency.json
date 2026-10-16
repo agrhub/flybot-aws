@@ -1,0 +1,20 @@
+{
+  "function": "flybot-vision-dev",
+  "measured_at": "2026-10-16T23:58:05Z",
+  "memory_mb_configured": 2048,
+  "cold": {
+    "init_ms": 205.04,
+    "duration_ms": 3734.57,
+    "billed_ms": 3940,
+    "max_memory_mb": 417,
+    "count": "0"
+  },
+  "warm": {
+    "n": 5,
+    "duration_ms_p50": 1090.97,
+    "duration_ms_max": 1121.26,
+    "max_memory_mb": 442
+  },
+  "request": "data/samples BE4089629 cur+prev (lure), detect mode, S3 photo",
+  "source": "CloudWatch REPORT lines via lambda invoke --log-type Tail"
+}

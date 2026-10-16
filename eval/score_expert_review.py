@@ -1,4 +1,4 @@
-"""Score the expert review (T4.3): policy-correct rate once an AgriHub agronomist has filled `expert_verdict`.
+"""Score the expert review: policy-correct rate once an AgriHub agronomist has filled `expert_verdict`.
 
     uv run python -m eval.score_expert_review                       # docs/evidence/eval/expert_review.csv -> eval/results/expert_review.json
     uv run python -m eval.score_expert_review path/to/filled.csv --out /tmp/x.json

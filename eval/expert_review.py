@@ -1,4 +1,4 @@
-"""Build the expert-review sheet (T4.3): 50 agent decisions + 5 worked examples, for an AgriHub agronomist.
+"""Build the expert-review sheet: 50 agent decisions + 5 worked examples, for an AgriHub agronomist.
 
     uv run python -m eval.expert_review                    # writes docs/evidence/eval/expert_review.csv (+ images, index.html)
     uv run --with awscrt python -m eval.expert_review --fetch-s3     # also downloads the live frames (read-only S3 GET)

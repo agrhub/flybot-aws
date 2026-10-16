@@ -6,11 +6,11 @@ Public License as published by the Free Software Foundation, version 3 (see LICE
 YOLO26n detector (Ultralytics, AGPL-3.0) and is compatible with the GPL-3.0 YOLOv7-tiny baseline
 (models/LICENSE_OPTIONS.md).
 
-Not covered by this license
-  flybot/ is a git submodule pointing at agrhub/flybot, AGRHUB's private, proprietary FlyBot web application.
-  Its code is not part of this repository and is not licensed under AGPL-3.0, MIT or any open license.
-  The AMB82 camera firmware, AGRHUB's production datasets and production model weights are private as well.
-  firmware-esp32/ (agrhub/camos-esp32-trap) is public under its own license.
+Submodules and related parts (separate repositories, each under its own LICENSE file)
+  flybot/ points at agrhub/flybot, the FlyBot web application: AGPL-3.0-only (releases up to 1.5.0 were MIT).
+  The repository is private for now; access on request. Its code is not part of this repository.
+  firmware-esp32/ points at agrhub/camos-esp32-trap, the ESP32-S3 trap camera firmware: AGPL-3.0, public.
+  Not published: the AMB82 camera firmware, AGRHUB's production datasets and production model weights.
 
 Third-party works used or redistributed
 ---------------------------------------

@@ -1,4 +1,4 @@
-"""YOLOv7(-tiny) ONNX on OpenCV 5 DNN: load, forward, decode, NMS (fruit-fly detector, T1.3/T1.4).
+"""YOLOv7(-tiny) ONNX on OpenCV 5 DNN: load, forward, decode, NMS (fruit-fly detector).
 
 Main project env only (OpenCV 5 + numpy, no torch). The ONNX comes from `models/export_yolov7.py`:
 input `images` [1, 3, S, S] RGB /255, output [1, N, 5 + nc] = cx, cy, w, h (input pixels), objectness,

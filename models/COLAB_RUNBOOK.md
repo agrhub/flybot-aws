@@ -1,4 +1,4 @@
-# Colab runbook: YOLO26n fruit-fly detector (owner)
+# Colab runbook: YOLO26n fruit-fly detector
 
 The vision Lambda runs **YOLO26n** (Ultralytics, NMS-free end-to-end head) on OpenCV 5 DNN. Until its weights
 exist the Lambda runs the **YOLOv7-tiny** baseline (`DETECTOR=yolov7`, the AMB82 NPU model converted by
@@ -50,7 +50,7 @@ was built while `models/yolo26/` existed (`make build-lambda` bakes it in). If `
 - `docs/DECISIONS.md`: one line "YOLO26 end-to-end head on OpenCV 5 DNN: ok | fallback one-to-many (reason)".
 - `bench/`: add the YOLO26 column with `make bench`.
 
-## Fallback notebooks (kept from the first build)
+## Other notebooks
 
 `colab_train.ipynb` (YOLO11n) and `colab_train_rfdetr.ipynb` (RF-DETR Nano) take the same dataset zip; their
 outputs are not wired to the Lambda.

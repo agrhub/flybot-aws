@@ -1,4 +1,4 @@
-"""Ops 3+4 new-catch check with YOLOv7-tiny boxes instead of the interim blob boxes (T2.6 part 7).
+"""Ops 3+4 new-catch check with YOLOv7-tiny boxes instead of the interim blob boxes .
 
     uv run python -m eval.diff_with_yolo_boxes [--out eval/results/diff_with_yolo_boxes.json]
 

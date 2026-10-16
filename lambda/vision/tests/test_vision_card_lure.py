@@ -51,7 +51,7 @@ def test_sticky_default_unchanged(seed):
     img = _sticky_scene(seed)
     a, b = find_card(img), find_card(img, trap_kind="sticky")
     assert {k: v for k, v in a.items() if k not in VOLATILE} == {k: v for k, v in b.items() if k not in VOLATILE}
-    # values recorded before the trap profiles were added (T1.1 code, 2026-10-15)
+    # values recorded before the trap profiles were added (2026-10-15)
     expected = {0: ([[229.24, 96.0], [892.29, 294.9], [786.01, 702.95], [127.17, 411.45]], 0.2872, 0.9985),
                 7: ([[367.07, 30.91], [1116.98, 149.23], [1047.78, 695.56], [320.64, 505.98]], 0.4189, 0.9982)}[seed]
     assert a["quad"] == expected[0] and a["coverage"] == expected[1] and a["fill"] == expected[2]

@@ -24,7 +24,7 @@ Returned JSON-serializable dict (both kinds):
 
 `found` semantics:
 * sticky: a plausible yellow card quad was found; when False, `roi` is `[]` and ops 3-4 work on the
-  whole frame (unchanged from T1.1).
+  whole frame .
 * lure: a plausible tray floor region was found (coverage 0.15-0.97, solidity >= 0.85, bright and
   unsaturated); `quad` is set only when the floor also fits 4 corners (region fills >= 0.9 of the
   quad), so `warped_path` exists only then. When False, `roi` is the whole frame

@@ -1,7 +1,7 @@
 """Normalize whatever arrives into a PhotoEvent: a PhotoEvent, or a dict with PhotoEvent fields.
 
 The vision Lambda builds its PhotoEvent from the FlyBot request (sentinel.handler); the FlyBot-webhook and
-CamOS-SQS shapes of the first build are gone with their transports.
+Older queue-based event shapes are not used any more.
 """
 
 from __future__ import annotations

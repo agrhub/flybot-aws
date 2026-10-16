@@ -1,8 +1,8 @@
 # Model card: FlyBot fruit-fly detector
 
-Status (2026-10-16): **primary detector = YOLO26n** (Ultralytics, NMS-free end-to-end head) trained on Colab
+**Primary detector = YOLO26n** (Ultralytics, NMS-free end-to-end head) trained on Colab
 (`models/colab_train_yolo26.ipynb`) and running on OpenCV 5 DNN, new engine (`DETECTOR=yolo26`). **YOLOv7-tiny**
-(the owner's AMB82 NPU model) stays as the baseline and the edge model; its section follows. Every number cites its
+(the AI camera's AMB82 NPU model) stays as the baseline and the edge model; its section follows. Every number cites its
 source file; "not measured" means not measured.
 
 ## YOLO26n (primary)
@@ -34,7 +34,7 @@ compares detections, not raw rows. The sample photos are mostly empty lure traps
 | Architecture | **YOLOv7-tiny**, reparameterized deploy graph (Realtek `reparam_yolov7-tiny.py`), head `Detect`, strides 8/16/32, default anchors (`--noautoanchor`) |
 | Parameters | 6,014,038 (checkpoint stored as float16; exported as float32) |
 | Weights | `models/yolov7-tiny/fruitfly_deploy.pt` (git-ignored), sha256 `487516c7896b4471a2e1e49f12e463b5d467c66352a0893718fd89d8ff942a45` |
-| Trained by | owner, Colab, `../camos-ai-camera/models/colab/train_fruitfly_yolov7tiny.ipynb`: WongKinYiu/yolov7 `train.py`, from `yolov7-tiny.pt`, 640x640, batch 32, `hyp.scratch.tiny.yaml`, 150 epochs planned. Epochs actually run: not recorded in the checkpoint (`epoch: -1` after reparameterization) |
+| Trained by | AGRHUB, Colab (the AI camera project's training notebook `train_fruitfly_yolov7tiny.ipynb`): WongKinYiu/yolov7 `train.py`, from `yolov7-tiny.pt`, 640x640, batch 32, `hyp.scratch.tiny.yaml`, 150 epochs planned. Epochs actually run: not recorded in the checkpoint (`epoch: -1` after reparameterization) |
 | Runtime | OpenCV 5.0.0 `cv2.dnn`, `ENGINE_NEW` passed explicitly, CPU; NMS with `cv2.dnn.NMSBoxes` (`sentinel/vision/detect_yolov7.py`) |
 
 ## ONNX interface (`models/export_yolov7.py`)
@@ -66,10 +66,10 @@ train 1,605 / valid 93 / test 76 images. The test split has no augmented twin of
 | Count vs **production** `ai_count` (Roboflow RF-DETR Small, **not human**) | 93 photos of the 2 trap cameras (gt_sample) | MAE 1.91, bias +1.01 (letterbox); MAE 1.86, bias +1.19 (stretch) | `eval/results/count_vs_production__fruitfly_deploy__trap-cameras.{csv,json}` |
 | Count vs production, all 3 cameras | first 48 of gt_sample | MAE 13.92, bias -8.71 (letterbox) | `eval/results/count_vs_production__fruitfly_deploy.{csv,json}`: dominated by AC6527557, which has no trap in view (both models count bricks and leaves) |
 | Count MAE vs **human** counts | 150-photo GT sample | not measured (labels pending, `eval/GROUND_TRUTH.md`) | |
-| CPU latency, new vs classic engine | | not measured as a benchmark: forward times in the results files were taken on a shared, busy laptop | T4.1 |
+| CPU latency, new vs classic engine | | not measured as a benchmark: forward times in the results files were taken on a shared, busy laptop | `bench/REPORT_COOL.md` (EC2 benchmark) |
 
-T1.3 acceptance (mAP@50 >= 0.90 on the 76 test images) is met by this checkpoint; the run was not
-ours, so training curves (`results.txt`) are not available here.
+The acceptance target (mAP@50 >= 0.90 on the 76 test images) is met by this checkpoint. It was trained outside this
+repository, so its training curves (`results.txt`) are not available here.
 
 ## Preprocessing
 

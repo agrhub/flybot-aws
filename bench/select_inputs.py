@@ -1,4 +1,4 @@
-"""T4.1: pick the fixed benchmark input set and package it (run once on the dev machine).
+"""pick the fixed benchmark input set and package it (run once on the dev machine).
 
     uv run python bench/select_inputs.py [--n 500] [--manifest data/manifest.csv]
 

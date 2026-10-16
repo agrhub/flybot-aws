@@ -1,112 +1,259 @@
 # FlyBot on AWS
 
-FlyBot counts fruit flies on orchard traps from camera photos and advises growers. This repository is the OpenCV AI Competition 2026 entry: FlyBot deployed on AWS, with
+FlyBot counts fruit flies on orchard traps from camera photos and helps growers act on it. Cameras (EZVIZ cloud
+cameras and an open ESP32-S3 trap camera) send photos; an **OpenCV 5** pipeline on **AWS Lambda** detects and counts the
+flies (YOLO26n on the OpenCV 5 DNN engine), checks the photo's quality and compares it with the previous one; a small
+**agent** turns what it sees into proposals (take another photo, fix the camera's image settings, change the schedule,
+ask a person to review, alert the grower) that FlyBot shows as confirm cards, and it answers grower questions in
+FlyBot's chatbot. This repository is the OpenCV AI Competition 2026 entry: the vision Lambda, the agent, the AWS
+infrastructure with a one-command deploy, the benchmark and the evaluation.
 
-- **OpenCV 5 on Lambda** replacing the hosted detector (YOLO26n exported to ONNX, OpenCV 5 DNN new engine), plus the planning agent that proposes camera actions and answers deep-analysis questions in FlyBot's chatbot;
-- **AWS IoT Core** as the camera hub (shadow, RPC, OTA) and **Kinesis Video Streams WebRTC** for live view;
-- an open **ESP32-S3 trap camera** (Wi-Fi or 4G, solar + battery, GPS) in `firmware-esp32/`.
+Live demo: **https://flybot.agrhub.com**
 
-Status (16 Oct 2026): the vision Lambda with YOLO26n, the FlyBot integration (private submodule), the ESP32 firmware and the one-command deploy are in. Contracts between the parts: docs/CONTRACTS.md; design decisions: docs/DECISIONS.md.
+## Architecture
 
-Layout: `flybot/` (**private** submodule: the FlyBot app, see below), `firmware-esp32/` (public submodule, the trap camera firmware), `lambda/vision/` (OpenCV 5 + agent Lambda, Python 3.12 / uv), `infra/` (SAM template + scripts), `bench/`, `eval/`, `models/`, `docs/`.
+```mermaid
+flowchart LR
+  subgraph IN["Input"]
+    CAM1["EZVIZ trap cameras<br/>(cloud API)"]
+    CAM2["ESP32-S3 trap camera<br/>(firmware-esp32/)"]
+  end
+  subgraph CV["OpenCV 5"]
+    DNN["DNN new engine<br/>YOLO26n ONNX"]
+    OPS["image ops: quality gate,<br/>SIFT registration, diff,<br/>motion, density, face blur"]
+  end
+  subgraph PER["Perception"]
+    P1["count + boxes, quality flags,<br/>new catch vs previous photo,<br/>card moved, 4x4 density"]
+  end
+  subgraph AG["Agent"]
+    A1["rule planner / LLM planner<br/>+ guardrails + trace"]
+  end
+  subgraph AWS["AWS (ap-southeast-2)"]
+    IOT["IoT Core<br/>shadow, RPC, presence"]
+    S3["S3<br/>photos, evidence"]
+    L["Lambda arm64<br/>(container, ECR)"]
+    EC2["EC2 t4g.micro<br/>FlyBot web + API, Caddy TLS"]
+    KVS["Kinesis Video Streams<br/>WebRTC live view"]
+    SM["Secrets Manager"]
+    CB["CodeBuild<br/>(Lambda image)"]
+    CW["CloudWatch<br/>logs, alarms, SNS"]
+  end
+  subgraph ACT["Decision / Action"]
+    D1["alerts (Telegram, email, push),<br/>confirm cards: capture_now, set_isp,<br/>set_interval, review, notify;<br/>chatbot answers"]
+  end
+  CAM1 -->|photo| EC2
+  CAM2 -->|MQTT| IOT --> EC2
+  CAM2 -->|HTTPS photo| EC2
+  EC2 -->|store| S3
+  EC2 -->|Invoke| L
+  L --> DNN --> P1
+  L --> OPS --> P1
+  P1 --> A1 --> ACT
+  ACT -->|approved action| IOT
+  EC2 --- KVS
+  EC2 --- SM
+  CB --> L
+  L --- CW
+```
 
-## Open-core split
+| AWS service | What it does here |
+|---|---|
+| **Lambda** (arm64 container, 2 GB) | the OpenCV 5 vision pipeline + agent, one synchronous call per photo (`docs/CONTRACTS.md` section 1) |
+| **S3** | photos (FlyBot), annotated evidence pictures (Lambda), FlyBot releases and the Lambda build context |
+| **EC2** t4g.micro + Elastic IP | FlyBot (Node 22, prebuilt release from S3, systemd), Caddy (automatic TLS), MongoDB 7 unless you bring your own |
+| **IoT Core** | the CamOS camera hub: device shadow (schedule, image settings), RPC, presence; one certificate per camera |
+| **Kinesis Video Streams** | WebRTC live view of CamOS cameras, 15-minute viewer credentials per browser session |
+| **CodeBuild** | builds the Lambda image (ARM) and pushes it to **ECR**; nothing is built on the server |
+| **Secrets Manager** | every application secret (JWT, EZVIZ, SMTP, Telegram, MongoDB URI, storage keys, Google key) |
+| **CloudWatch** + SNS | Lambda and build logs, alarms (Lambda errors and duration, EC2 status) by email |
+| CloudFormation (SAM), IAM, SSM | one stack `flybot-<stage>` (`infra/template.yaml`), least-privilege roles, remote commands without SSH |
 
-| Part | Where | Access |
+## Try it
+
+Open https://flybot.agrhub.com and register. The demo traps are two EZVIZ lure-trap cameras in an orchard in southern
+Vietnam; ask the operator (contact form on the site) to share them with your account to see their photos, counts,
+traces and the chatbot. A self-registered ESP32-S3 camera can be claimed at `/claim` (up to 3 cameras per account).
+
+## Deploy your own (one command)
+
+Prerequisites: an AWS account where you can create IAM roles, the [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html),
+the [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html),
+[uv](https://docs.astral.sh/uv/) or Python 3.9+, Node.js 22.12+ with npm, git, curl, and a checkout of the FlyBot app
+(AGPL-3.0, repository private for now: see "Repository" below). No Docker anywhere: the server runs a prebuilt FlyBot release and the
+Lambda image is built by CodeBuild.
+
+```
+cp deploy.env.example deploy.env      # once; fill it (table below). deploy.env is git-ignored
+aws login --profile sentinel          # or any profile with admin rights in the target account
+./deploy.sh                           # macOS / Linux / Git Bash;  Windows cmd or PowerShell: deploy.bat
+```
+
+The first run takes about 25 minutes (CloudFormation, the Lambda image on CodeBuild, the FlyBot build on your computer),
+a re-run 3-5 minutes; it changes only what changed. It ends with a summary (URL, IP, release, detector, cost) and the
+few things left for a person. The steps, all idempotent:
+
+1. **preflight**: finds the tools (also off PATH), checks the AWS session (expired: prints the `aws login` command and
+   exits with code 2), the region, that every AWS API it needs answers, the default VPC, the instance type, the Elastic IP
+   and vCPU quotas, your FlyBot checkout (clean, Node 22), your bucket or S3-compatible storage if you named one;
+2. **discover**: IoT endpoint, the newest Amazon Linux 2023 arm64 AMI (then kept), your public IP for the SSH rule, an
+   SNS topic with a confirmed email to reuse, the existing stack and secrets;
+3. **models**: the YOLO26n weights to the public model bucket (only when their sha256 changed);
+4. **secrets**: `flybot-<stage>-app` / `-gcp` / `-anthropic` in Secrets Manager from deploy.env (JWT and web-push keys
+   generated once), written only when the content changed; no value is ever printed;
+5. **stack**: buckets, ECR, CodeBuild, IoT thing type and device policy, roles, the EC2 instance and its Elastic IP; the
+   DNS record to add is printed right away in a box;
+6. **flybot**: `npm ci` (when the lock file changed) and `npm run build` in your FlyBot checkout, a release tarball with
+   its sha256 to S3, and the release pointer the server follows;
+7. **image** + **lambda**: the Lambda image on CodeBuild when its inputs changed (tag = hash of code and models), then the
+   function and its alarms;
+8. **bootstrap**: through SSM, the server installs Node 22, Caddy and (by default) MongoDB 7, downloads and checks the
+   release, switches to it atomically (the previous one is kept) and restarts the services;
+9. **health**, **smoke**, **coldstart**: FlyBot `/health` on the server, one DNS + HTTPS check (never a wait), one Lambda
+   call with a sample photo checked against the contract, cold and warm latency into `bench/results/lambda_latency.json`.
+
+Useful options: `--dry-run` (real checks, read-only, prints the plan), `--only <step>`, `--show-ip`, `--rollback` (back to
+the previous FlyBot release), `--allow-dirty` (test release from uncommitted changes), `--npm-ci`, `--yes` (allow deleting a
+stack stuck in ROLLBACK_COMPLETE). Log: `infra/.build/deploy-<stage>.log`. Remove everything: `./destroy.sh --yes`
+(`--keep-photos`, `--keep-secrets`; a bucket of your own is never touched). Step-by-step with expected output:
+`infra/DEPLOY_CHECKLIST.md`.
+
+### deploy.env
+
+| Key | Default | Meaning |
 |---|---|---|
-| This repo: vision Lambda + agent (`lambda/vision/`), infra (`infra/`, `./deploy.sh`), bench, eval, docs, YOLO26n weights on the public model bucket | agrhub/flybot-aws | public, AGPL-3.0 |
-| ESP32-S3 trap camera firmware (`firmware-esp32/`) | agrhub/camos-esp32-trap | public, its own license |
-| FlyBot web app (`flybot/`: API, Vue client, chatbot, camera platforms) | agrhub/flybot | **private**, proprietary (not covered by this repo's license) |
-| AMB82 firmware, production datasets, production model weights | AGRHUB | private |
+| `STAGE` | `dev` | stack `flybot-<STAGE>`; every resource name carries it |
+| `AWS_PROFILE`, `AWS_REGION` | `sentinel`, `ap-southeast-2` | CLI profile; the region is fixed (the account allows Sydney only) |
+| `DOMAIN_NAME` | `flybot.agrhub.com` | the site; add the A record the script prints at your DNS provider |
+| `ACME_EMAIL` | `ALARM_EMAIL` | Let's Encrypt contact |
+| `ALARM_EMAIL` | reuse a confirmed topic | CloudWatch alarm email (a new address must click the SNS confirmation) |
+| `OWNER_CIDR` | your public IP /32 | SSH source; SSH is optional (SSM is used) |
+| `FLYBOT_SRC` | `../ezviz-manager` | your FlyBot checkout; built here, uploaded to S3 |
+| `VITE_GOOGLE_MAP_KEY` | empty | Google Maps browser key baked into the client |
+| `MONGO_URI` (secret) | empty = MongoDB 7 on the server | an external database (e.g. MongoDB Atlas: allow the Elastic IP); a shared database also gets FlyBot's start-up migrations |
+| `S3_BUCKET_NAME` | empty = a stack bucket | an existing AWS bucket (the roles get access; it is never deleted) or the bucket on `S3_ENDPOINT` |
+| `S3_REGION` | looked up | the bucket's region (`auto` for S3-compatible services) |
+| `S3_ENDPOINT` | empty | S3-compatible storage (MinIO, R2, ...): the Lambda then gets presigned URLs and evidence goes to a stack bucket |
+| `S3_ACCESS_KEY`, `S3_SECRET_KEY` (secrets) | empty = the server's role | keys for `S3_ENDPOINT` |
+| `DETECTOR` | `yolo26` | `yolo26` or `yolov7` (baseline) |
+| `PLANNER_MODE` | `rule` | `rule` (deterministic) or `llm` (Anthropic per photo) for detect mode; deep mode uses the LLM when a key exists |
+| `ANTHROPIC_SECRET_NAME`, `ANTHROPIC_API_KEY` (secret), `ANTHROPIC_MODEL` | `sentinel-dev-anthropic`, empty, `claude-haiku-5-5` | the LLM for deep-mode answers |
+| `JWT_SECRET` (secret) | generated once | login tokens |
+| `APP_KEY`, `SECRET_KEY` (secrets), `EZVIZ_DOMAIN` | empty | EZVIZ Open Platform app (EZVIZ cameras) |
+| `TELEGRAM_BOT_TOKEN` (secret), `TELEGRAM_BOT_USERNAME` | empty = off | Telegram alerts |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` (secret), `MAIL_FROM`, `CONTACT_EMAIL` | empty = emails go to the server log | email verification, password reset, alerts |
+| `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` (secret), `VAPID_SUBJECT` | generated once | web push |
+| `APP_MODE` | `hybrid` | `b2c` personal workspaces, `b2b` organizations, `hybrid` both |
+| `GCP_SERVICE_ACCOUNT_FILE`, `VERTEX_PROJECT_ID`, `VERTEX_LOCATION`, `VERTEX_MODEL` | empty = chatbot off | Google service-account JSON (kept outside git) for the chatbot on Vertex AI |
+| `DEMO_MAX_CAMERAS_PER_USER`, `DEMO_MAX_SNAPSHOTS_PER_DAY`, `DEMO_MAX_UNCLAIMED` | 3, 48, 200 | limits for self-registered cameras (`docs/CONTRACTS.md` 2a) |
+| `INSTANCE_TYPE` | `t4g.micro` | changing it stops and starts the server (IP and disk stay) |
+| `KEY_NAME`, `AMI_ID`, `NODE_VERSION`, `CADDY_VERSION`, `MODELS_BUCKET` | empty, pinned, newest 22.x, `2.10.2`, `sentinel-<account>-models-public` | advanced |
+| `DEVICE_EVENTS_URL`, `DEVICE_EVENTS_SECRET` | empty | optional IoT rule webhook instead of FlyBot's MQTT subscriber |
+| `SKIP_COLDSTART` | empty | `1` skips the latency measurement |
 
-Judges get read access to `agrhub/flybot` on request: the owner adds their GitHub accounts as read-only collaborators (or runs a
-judge-only deployment, https://flybot.agrhub.com). Everything in the "Judge entry" below except FlyBot's own UI works without it:
-`make test`, `make replay-sample` and `make lambda-local` only use `lambda/vision/`, `data/samples/` and `models/`.
+### Windows notes
+
+- Run `deploy.bat` from cmd or PowerShell (same options). It uses Git for Windows' bash; set `GIT_BASH` if Git lives
+  elsewhere. Without a `deploy.env` it copies the example and opens it in Notepad.
+- Install the AWS CLI, SAM CLI, uv and Node from **your own terminal**, not from inside a sandboxed app: tools installed
+  by an MSIX-packaged app under its virtualized `%APPDATA%` are invisible to your shell. The scripts look in the usual
+  places (AWS CLI MSI per-user and all-users folders, `~/.local/bin`, `%APPDATA%\uv\tools`, nvm-windows `NVM_SYMLINK`
+  and `D:\Tools\nvm-noinstall`, `C:\Program Files\nodejs`) and tell you what they tried.
+- `python` may be the Microsoft Store stub; the scripts then use `uv run python`. AWS CLI output is forced to UTF-8.
+
+## Run locally (no AWS account needed)
 
 ```
 git clone https://github.com/agrhub/flybot-aws.git && cd flybot-aws
-git submodule update --init firmware-esp32        # public
-git submodule update --init flybot                # only with read access to agrhub/flybot
-```
-
-(`git clone --recurse-submodules` stops with an authentication error on `flybot/` without access; the clone itself and the
-public submodule are still usable, finish with the two commands above.) The deployed EC2 reads the private submodule with a
-read-only deploy key that `./deploy.sh` creates and asks you to add on GitHub (or a fine-grained token, `FLYBOT_REPO_TOKEN`).
-
-## Judge entry
-
-Everything below runs from a clean clone with `uv` (Python 3.12) and `make`; AWS steps need the AWS CLI v2 + SAM CLI and the account profile `sentinel` (`aws login --profile sentinel`, region ap-southeast-2 only).
-
-### 1. Run locally (10 min)
-
-```
 make setup                 # uv sync in lambda/vision (OpenCV 5.0.0, numpy, pydantic, anthropic; no torch)
 make models                # YOLOv7-tiny baseline ONNX (24 MB, SHA-256 checked) into models/yolov7-tiny/
-make test                  # 185 tests (vision ops on real trap fixtures, agent guardrails, the FlyBot contract with a fake detector + S3 stub); ~5 min
-make replay-sample         # 24 real lure-trap photos through the Lambda handler -> data/replay/sample/{responses.jsonl,summary.json,evidence/}
-make lambda-local          # POST http://localhost:9001/invoke, the same JSON as Lambda.Invoke (docs/CONTRACTS.md 1); GET /health
+make test                  # the vision ops on real trap fixtures, the agent and its guardrails, the Lambda contract (~2-5 min)
+make replay-sample         # 24 real lure-trap photos through the Lambda handler -> data/replay/sample/
+make lambda-local          # POST http://localhost:9001/invoke, the same JSON as Lambda.Invoke; GET /health
 ```
 
-`make replay-sample` prints one line per photo (count, quality flags, proposals, DNN ms) and a summary table; the annotated
-JPEGs (boxes, flags, faces blurred when a person is suspected) land in `data/replay/sample/evidence/<camera>/`. A request by hand:
+Without `make` (Windows): `cd lambda/vision && uv sync --group dev && uv run pytest -q`, and
+`uv run python -m sentinel.lambda_local`. YOLO26n instead of the baseline: download
+`https://sentinel-685527430355-models-public.s3.ap-southeast-2.amazonaws.com/models/yolo26/fruitfly_yolo26n.onnx`
+(and `.onnx.json`) into `models/yolo26/` (sha256 `fb4da5c0...f176`, `models/MODEL_CARD.md`) and set `DETECTOR=yolo26`.
+
+A request by hand:
 
 ```
-curl -s localhost:9001/invoke -d '{"v":1,"mode":"detect","photo":{"url":"file:///ABS/PATH/flybot-aws/data/samples/images/BE4089629/6ac327d44c3227d11cfbd084.jpg"},"camera":{"id":"BE4089629","trapKind":"lure"},"capturedAt":"2026-10-05T04:30:12Z","locale":"en"}' | python -m json.tool
+curl -s localhost:9001/invoke -d '{"v":1,"mode":"detect","photo":{"url":"file:///ABS/PATH/flybot-aws/data/samples/images/BE4089629/6ac327d44c3227d11cfbd084.jpg"},"camera":{"id":"BE4089629","trapKind":"lure"},"capturedAt":"2026-10-05T04:30:12Z","locale":"en"}'
 ```
 
-Deep mode (`"mode":"deep","question":"Why did the count jump today?"`) answers in markdown through the LLM planner (Anthropic key in
-`.env`, see `.env.example`); without a key it falls back to the rule planner and a templated answer. FlyBot itself (web app, chatbot,
-cameras) runs with `docker compose up` (needs the private `flybot/` submodule, branch `feat/aws`); set
-`AI_PROVIDER=opencv-lambda` and `VISION_LAMBDA_URL=http://host.docker.internal:9001/invoke` to use the local Lambda.
+Deep mode (`"mode":"deep","question":"Why did the count jump today?"`) answers in markdown through the LLM planner when
+`ANTHROPIC_API_KEY` is set (`.env.example`); without a key it answers from the rule planner with a template. FlyBot itself
+(web app, chatbot, cameras) runs locally with `docker compose up -d --build mongo flybot` (needs the FlyBot submodule).
 
-### 2. Deploy on AWS in one command (~35 min the first time)
+## Results
 
-```
-cp deploy.env.example deploy.env      # once: fill it (domain, emails, EZVIZ keys, Telegram/SMTP, Google key path); git-ignored
-aws login --profile sentinel          # 12-hour session
-./deploy.sh                           # or: make deploy
-```
+| What | Number | Source |
+|---|---|---|
+| YOLO26n on OpenCV 5 DNN, Roboflow test split (76 images, 2,349 flies) | mAP@50 0.953, mAP@50-95 0.700, P/R 0.913/0.898 | `models/MODEL_CARD.md`, `eval/results/yolo26n_test_metrics.json` |
+| OpenCV 5 DNN vs ONNX Runtime | identical detections on 20 test images and 20 trap photos | `eval/results/yolo26n_opencv_parity_colab.json`, `eval/results/yolo26_parity.json` |
+| YOLOv7-tiny baseline vs the production count, 1,293 real photos | MAE 0.84 flies | `eval/RESULTS.md` 1b |
+| Lambda latency (arm64, 2 GB, sample photo pair) | warm p50 1,087 ms | `bench/results/lambda_latency.json` |
+| COOL (Graviton4 AMI) vs pip OpenCV 5 on the same pipeline, 500 photo pairs x 5 | COOL 4.6 % slower per photo; cheapest: x86 c7i, USD 0.0155 per 1,000 photos | `bench/REPORT_COOL.md` |
+| Marginal cost on Lambda | ~USD 0.054 per 1,000 photos | `infra/COST.md` |
 
-`deploy.env` holds every setting (Lambda, EC2, FlyBot app secrets); `./deploy.sh` does the rest, idempotently, and can be re-run
-after any change:
+Reproduce:
+- Evaluation: `eval/RESULTS.md` was rendered by `eval/run_eval.py` from the result files in `eval/results/` (each table
+  names its file). A rerun needs the Roboflow dataset (public, CC BY 4.0, `models/dataset.md`) and FlyBot's photo
+  export (production data, not public); the replay and live-trace sections also depend on modules of the earlier
+  queue-based pipeline that are not in this repository. The detection numbers of YOLO26n are reproduced by
+  `models/colab_train_yolo26.ipynb` and `models/verify_yolo26.py`; the Lambda path by `make replay-sample`.
+- COOL benchmark: `bash bench/run_matrix.sh --dry-run`, then `--only b,c` and `--only cool` (`bench/REPORT_COOL.md`
+  section 7). It launches EC2 instances in your account and terminates them itself; the 500 photo pairs it uses come from
+  the production export, so outside AGRHUB's account pass your own `--bucket` with inputs.
+- Model: `models/colab_train_yolo26.ipynb` and `models/COLAB_RUNBOOK.md` (Colab T4, about 25 minutes).
 
-1. **preflight**: finds `aws` / `sam` / Python even off PATH, checks the session (expired: prints `aws login --profile ...`, exit 2),
-   account, region (Sydney only), that CloudFormation, IoT Core, KVS, Lambda, ECR, SSM, Secrets Manager, SNS, S3 and IAM answer,
-   the default VPC, `t4g.small` in the AZs, the Elastic IP and vCPU quotas, and that GitHub `main` is what you have locally
-   (the EC2 clones GitHub);
-2. **discover**: IoT Data-ATS endpoint, newest AL2023 arm64 AMI (then pinned: a new AMI would replace the instance), your public
-   IP for SSH, an SNS topic with a confirmed email to reuse, the photos bucket, the secrets, the stack state;
-3. **models**: uploads `models/yolo26/` to the public model bucket under `models/yolo26/` only when the sha256 differs, checks the
-   anonymous GET (`DETECTOR=yolo26` falls back to yolov7 when the files are missing);
-4. **secrets**: creates or updates `flybot-<stage>-app` (JWT and VAPID generated once), `flybot-<stage>-gcp` (the service-account
-   JSON) and, when needed, the Anthropic key, only when the content changed; values are never printed;
-5. **stack** (bucket, ECR, IoT thing type + device policy, roles, EC2 + Elastic IP; the Lambda is kept), then a highlighted box
-   with the **DNS record to add** while the build runs; **image**: the Lambda image is built on the EC2 through SSM only when its
-   inputs changed (tag = hash of the code + models); **lambda**: the function on that image + alarms;
-6. **bootstrap**: re-runs the host's current user-data (git pull, `.env`, secrets, `docker compose up -d --build`);
-7. **health**: waits until 1.1.1.1 and 8.8.8.8 resolve the domain to the Elastic IP (up to 30 min) and HTTPS answers with a valid
-   certificate; **smoke**: one contract call to the Lambda with a sample photo; **coldstart**: cold/warm latency into
-   `bench/results/lambda_latency.json`; **summary**: URL, IP, Lambda, detector + sha, IoT endpoint, KVS role, what is left.
+## Costs
 
-`./deploy.sh --dry-run` runs preflight and discovery for real and prints the plan without changing anything; `--only <step>` re-runs
-one step; `--show-ip` prints the Elastic IP and the DNS record; logs go to `infra/.build/deploy-<stage>.log`. `./destroy.sh --yes
-[--keep-photos] [--keep-secrets]` removes it again (the model bucket and `sentinel-dev` are never touched). Left for a human: the DNS
-record at Namecheap (printed as soon as the IP exists) and registering the first account (it becomes the admin). Details and expected
-output: `infra/DEPLOY_CHECKLIST.md`; costs: `infra/COST.md`; `make host CMD='...'` runs a command on the EC2 through SSM.
+About **17 USD per month** for the demo (t4g.micro, its public IPv4 and disk are 85 % of it) and **~0.054 USD per 1,000
+photos** on Lambda. Details and sources: `infra/COST.md`.
 
-### 3. Detector: YOLO26n on OpenCV 5
+## Security and responsible use
 
-`models/colab_train_yolo26.ipynb` trains YOLO26n on the Roboflow camos/fruit-fly dataset (~1 h on a T4), exports the NMS-free
-end-to-end ONNX (`[1, 300, 6]`), checks it on OpenCV 5 DNN against ONNX Runtime, and `models/verify_yolo26.py` repeats the check on
-20 sample photos on the laptop; `models/COLAB_RUNBOOK.md` is the owner's step list, `models/MODEL_CARD.md` the numbers with their
-source files. Until those weights exist the Lambda runs the YOLOv7-tiny baseline (`DETECTOR=yolov7`).
+- Secrets live in Secrets Manager only; the server's environment file holds names and ARNs, never a secret value. The
+  scripts never print secret values, and the pre-commit check (`make hooks`, `infra/ops/secrets-scan.sh --staged`)
+  refuses `deploy.env`, key files and secret-looking lines.
+- Least-privilege IAM: the server reads only its own releases and photo bucket, invokes only its Lambda, manages only
+  `camos-camera` things and their certificates, and hands browsers 15-minute KVS viewer credentials scoped to one
+  channel. Each camera certificate can only use its own MQTT topics. IMDSv2 is required; no SSH key is needed.
+- People and privacy: the LLM planner receives the pipeline's numbers and flags as text, never a photo. When the
+  pipeline suspects a person, faces are blurred in the stored evidence picture. Evidence pictures in the stack bucket
+  expire after 90 days.
+- People decide: the agent proposes, a person confirms camera changes and schedule changes in FlyBot; guardrails cap
+  extra captures per camera and day.
+- Self-registered demo cameras are limited (cameras per user, photos per day, unclaimed devices; `docs/CONTRACTS.md` 2a).
 
-### 4. Reproduce the bench and the evaluation
+## Limits
 
-`make bench` (Roboflow vs OpenCV 5 Lambda vs YOLOv7-tiny vs COOL on Graviton; `bench/`) and `eval/` (replay harness,
-failure injection, ground-truth labels) are being adapted to this build; `bench/REPORT_COOL.md` and `eval/RESULTS.md` carry the
-first build's measured numbers with their source files.
+- One region (Sydney), one server: no high availability; MongoDB on the server is backed up only with its EBS volume
+  (snapshots are not configured), or use `MONGO_URI`.
+- Detection accuracy is measured on the Roboflow test split; counts on the orchard traps are compared with the production
+  model, not with human counts (none labeled yet, `eval/RESULTS.md`). The demo traps were mostly empty in October 2026.
+- The DNS record is added by hand at the registrar; Caddy gets the certificate once it resolves.
+- S3-compatible storage must be reachable from AWS (the Lambda fetches presigned URLs), and FlyBot's console shows
+  evidence pictures only from its own bucket.
 
-License: this repository is AGPL-3.0 (see LICENSE and NOTICE; the YOLO26n weights derive from Ultralytics YOLO26, AGPL-3.0). The
-`flybot/` submodule points at a private, proprietary repository that is not licensed by this repo. Dataset: camos fruit-fly
-dataset, CC BY 4.0.
+## Repository
+
+| Part | Path | Access |
+|---|---|---|
+| Vision Lambda + agent (Python 3.12, OpenCV 5) | `lambda/vision/` | this repo, AGPL-3.0 |
+| Infrastructure: SAM template, `deploy.sh`, `destroy.sh` | `infra/`, `deploy.env.example` | this repo |
+| Benchmark, evaluation, model training | `bench/`, `eval/`, `models/` | this repo |
+| Contracts between the parts, design decisions | `docs/CONTRACTS.md`, `docs/DECISIONS.md` | this repo |
+| ESP32-S3 trap camera firmware | `firmware-esp32/` (agrhub/camos-esp32-trap) | public submodule, AGPL-3.0 |
+| FlyBot web app (API, Vue client, chatbot, camera platforms) | `flybot/` (agrhub/flybot) | submodule, AGPL-3.0; repository private for now, access on request |
+| AMB82 camera firmware, production datasets, production model weights | not published | |
+
+`git clone --recurse-submodules` stops at `flybot/` without access to that repository; the clone and the public submodule are
+still complete: `git submodule update --init firmware-esp32`. Everything in "Run locally" works without the FlyBot app.
+Deploying needs a FlyBot checkout on your computer (`FLYBOT_SRC`); the server never needs GitHub access.
+
+License: AGPL-3.0 (LICENSE, NOTICE); the YOLO26n weights derive from Ultralytics YOLO26 (AGPL-3.0). FlyBot
+(`flybot/`, AGPL-3.0-only from the release after 1.5.0) and the camera firmware (`firmware-esp32/`, AGPL-3.0) carry
+their own LICENSE files. Dataset: camos fruit-fly dataset on Roboflow Universe, CC BY 4.0.

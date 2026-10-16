@@ -9,7 +9,7 @@ from the FlyBot export (`data/export/images/`, git-ignored):
 | BE4111159 | 2026-10-07 04:30 .. 08:00 | 2304x1296, 142-176 KB | 0 |
 
 - `samples_manifest.csv`: the columns of `data/manifest.csv` (data/README.md). `image_path` is relative to this
-  folder, `trap_kind` is the owner-confirmed `lure` (the export says `sticky`), `previous_snapshot_id` points inside
+  folder, `trap_kind` is `lure` (confirmed on site; the export says `sticky`), `previous_snapshot_id` points inside
   the sample, `s3_key` is left empty (FlyBot's storage path is not needed here). Counts are FlyBot's production
   values, **not human ground truth**.
 - `yolov7/<snapshot_id>.json`: the YOLOv7-tiny result of each photo, computed by `eval/replay.py`

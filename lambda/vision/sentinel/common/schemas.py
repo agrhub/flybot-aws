@@ -4,7 +4,7 @@ Everything here is JSON-serializable with `.model_dump(mode="json")`. Image refe
 strings: `s3://bucket/key`, `https://...` (FlyBot presigned link), `file://...`/a local path, or
 `fake://...` in tests and replay.
 
-Trace shape follows MASTER_PLAN 2.5: {event_id, camera, source, opencv_outputs, planner,
+Trace shape: {event_id, camera, source, opencv_outputs, planner,
 reasoning_summary, tool_calls[], device_ack, approval, outcome, followup}.
 """
 

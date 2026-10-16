@@ -1,6 +1,6 @@
 # Data
 
-`manifest.csv` (produced by the T0.3 export, git-ignored) columns:
+`manifest.csv` (FlyBot's photo export, git-ignored) columns:
 
 `snapshot_id, device_serial, provider, captured_at, image_path, s3_key, farm_id, plot_id, lat, lon, trap_kind, ai_count, ai_counts_json, review_status, human_count, quality_issues, previous_snapshot_id, card_replaced_at, treatment_ids`
 

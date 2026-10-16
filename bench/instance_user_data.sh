@@ -1,5 +1,5 @@
 #!/bin/bash
-# T4.1 EC2 user data: install, benchmark, upload, self-terminate. bench/run_matrix.sh prepends the variables:
+# EC2 user data: install, benchmark, upload, self-terminate. bench/run_matrix.sh prepends the variables:
 #   CONFIG (e.g. pip_arm64_c8g)  MODE (cool | pip)  BUCKET  REGION  RUNS  WARMUP  MICRO_ITERS  LIMIT  MAX_MIN
 # The instance is launched with InstanceInitiatedShutdownBehavior=terminate, so every `shutdown -h` here
 # terminates it: at the end (success or failure, EXIT trap) and by a hard cap of MAX_MIN minutes set first.

@@ -1,4 +1,4 @@
-# Training tooling for the fruit-fly detector (T0.4 / T1.3).
+# Training tooling for the fruit-fly detector.
 # A separate uv project on purpose: the main project (repo root) and CI never install torch/ultralytics.
 #   cd models && uv sync && uv run python train.py --help
 [project]

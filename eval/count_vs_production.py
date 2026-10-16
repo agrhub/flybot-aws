@@ -1,4 +1,4 @@
-"""Count agreement of a YOLOv7 ONNX (OpenCV 5 DNN) with the production count `ai_count` (T1.3/T1.4).
+"""Count agreement of a YOLOv7 ONNX (OpenCV 5 DNN) with the production count `ai_count`.
 
 `ai_count` is the Roboflow RF-DETR Small count FlyBot stored at capture time: it is a model, **not
 human ground truth**. This script measures how close our detector is to production, nothing more.

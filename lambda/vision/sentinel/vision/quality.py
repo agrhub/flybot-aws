@@ -9,7 +9,7 @@
 Thresholds live in quality_thresholds.yaml. Scene-dependent rules (blur, haze, dirt) are judged
 against the camera's own recent good photos (`Baseline`), as FlyBot production does
 (ezviz-manager server/src/services/imageQuality.js); absolute floors apply without a baseline.
-Issues map to camera actions in MASTER_PLAN 2.3 (dark/overexposed/low_contrast/glare -> set_image,
+Issues map to camera actions (dark/overexposed/low_contrast/glare -> set_image,
 blurry -> capture again, dirty -> remind to clean, ir -> postpone, no_card/partial_card -> ROI / visit).
 """
 
