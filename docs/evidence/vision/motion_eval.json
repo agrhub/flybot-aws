@@ -1,0 +1,4586 @@
+{
+ "summary": {
+  "real_pairs": 200,
+  "real_occluded_flags": 0,
+  "real_camera_moved_flags": 0,
+  "real_global_change": 1,
+  "synthetic_occluders": 100,
+  "occluder_recall": 0.94,
+  "occluder_recall_by_kind": {
+   "hand": "27/30",
+   "animal": "36/38",
+   "cloth": "31/32"
+  },
+  "occluder_box_iou_mean": 0.9077,
+  "occluder_in_frame_cur": 89,
+  "synthetic_moves": 100,
+  "camera_moved_recall": 1.0,
+  "moves_flagged_as_occlusion": 0,
+  "time_ms_real": {
+   "p50": 702.8,
+   "p95": 1811.5
+  },
+  "frame_size": [
+   640,
+   360
+  ],
+  "tuning": "real pairs 1-200 (seed-5 order) chose RATIO_T/CHROMA_T; these are pairs 201-400"
+ },
+ "real": [
+  {
+   "prev": "6ac9f2174d7f8dff1a261208",
+   "cur": "6ac9f2646b2d368d8b350666",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T08:06:47.081Z",
+   "cur_at": "2026-10-10T08:08:04.544Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0004,
+   "inliers": 150
+  },
+  {
+   "prev": "6acc1d2a35da959c78fefc6d",
+   "cur": "6acc243135da959c78fefc6f",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-11T23:35:06.101Z",
+   "cur_at": "2026-10-12T00:05:05.617Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 40
+  },
+  {
+   "prev": "6ac408d24c3227d11cfbdcfb",
+   "cur": "6ac41dea4c3227d11cfbdd7a",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T20:30:10.977Z",
+   "cur_at": "2026-10-05T22:00:10.107Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 47
+  },
+  {
+   "prev": "6ac3579c18c539406748963b",
+   "cur": "6ac3587583fa4bbe30e59399",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T07:54:04.769Z",
+   "cur_at": "2026-10-05T07:57:41.213Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0036,
+   "inliers": 55
+  },
+  {
+   "prev": "6ac5e6f94a6a99588b8c8a0c",
+   "cur": "6ac5e6f99d7333beb125be17",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-07T06:30:17.061Z",
+   "cur_at": "2026-10-07T06:30:17.231Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 62
+  },
+  {
+   "prev": "6ac7548d9d7333beb125beb6",
+   "cur": "6ac7548e4843db06c8da0d1e",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-08T08:30:05.670Z",
+   "cur_at": "2026-10-08T08:30:06.705Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 162
+  },
+  {
+   "prev": "6ac4ba097dde5182d7c5d8a4",
+   "cur": "6ac4bbf972099ec4d8507411",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T09:06:17.389Z",
+   "cur_at": "2026-10-06T09:14:33.799Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 50
+  },
+  {
+   "prev": "6acf37b2d7f580a4573c9a80",
+   "cur": "6acf3eb9d7f580a4573c9a83",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-14T08:05:06.770Z",
+   "cur_at": "2026-10-14T08:35:05.278Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0049,
+   "inliers": 47
+  },
+  {
+   "prev": "6ac73878479d7db1e044807f",
+   "cur": "6ac73f7f9d7333beb125bead",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T06:30:16.263Z",
+   "cur_at": "2026-10-08T07:00:15.457Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0022,
+   "inliers": 41
+  },
+  {
+   "prev": "6ac762a43a2b1db02d2cb708",
+   "cur": "6ac762a59d7333beb125bebd",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T09:30:12.958Z",
+   "cur_at": "2026-10-08T09:30:13.420Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 71
+  },
+  {
+   "prev": "6accb6a9d7f580a4573c993e",
+   "cur": "6accbdb5d7f580a4573c9940",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-12T10:30:01.642Z",
+   "cur_at": "2026-10-12T11:00:05.510Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.016,
+   "inliers": 45
+  },
+  {
+   "prev": "6ac9b7aa86eaf725a4d9b2e5",
+   "cur": "6ac9b84a86eaf725a4d9b2e8",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T03:57:30.567Z",
+   "cur_at": "2026-10-10T04:00:10.063Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0004,
+   "inliers": 149
+  },
+  {
+   "prev": "6acdf440d7f580a4573c99d9",
+   "cur": "6acdfb49d7f580a4573c99dc",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-13T09:05:04.936Z",
+   "cur_at": "2026-10-13T09:35:05.910Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 66
+  },
+  {
+   "prev": "6ac48e679d7333beb125bd96",
+   "cur": "6ac48e67ffbd82802883f0ef",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T06:00:07.661Z",
+   "cur_at": "2026-10-06T06:00:07.778Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 69
+  },
+  {
+   "prev": "6acbffdd35da959c78fefc5e",
+   "cur": "6acc06e635da959c78fefc61",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-11T21:30:05.004Z",
+   "cur_at": "2026-10-11T22:00:06.135Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 102
+  },
+  {
+   "prev": "6ac37c324c3227d11cfbd3a7",
+   "cur": "6ac37e4f6ea4e1c6cd710315",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T10:30:10.933Z",
+   "cur_at": "2026-10-05T10:39:11.202Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0014,
+   "inliers": 41
+  },
+  {
+   "prev": "6acbe3bc35da959c78fefc4e",
+   "cur": "6acbeac635da959c78fefc51",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-11T19:30:04.994Z",
+   "cur_at": "2026-10-11T20:00:06.084Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0022,
+   "inliers": 95
+  },
+  {
+   "prev": "6ac5dff19d7333beb125be14",
+   "cur": "6ac5e6f94a6a99588b8c8a0c",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-07T06:00:17.554Z",
+   "cur_at": "2026-10-07T06:30:17.061Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0145,
+   "inliers": 43
+  },
+  {
+   "prev": "6ac6cf009d7333beb125be81",
+   "cur": "6ac6d60d9d7333beb125be84",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-07T23:00:16.943Z",
+   "cur_at": "2026-10-07T23:30:21.827Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 43
+  },
+  {
+   "prev": "6ac738789d7333beb125beaa",
+   "cur": "6ac738784843db06c8da0d19",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T06:30:16.012Z",
+   "cur_at": "2026-10-08T06:30:16.019Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 60
+  },
+  {
+   "prev": "6acb652ea4ea966cf7a43b0c",
+   "cur": "6acb6c003a2190fe612f1053",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-11T10:30:06.367Z",
+   "cur_at": "2026-10-11T10:59:12.219Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0163,
+   "inliers": 36
+  },
+  {
+   "prev": "6ac7815085861ebbeda5d72c",
+   "cur": "6ac781dadc3629211bbe4ad8",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-08T11:41:04.690Z",
+   "cur_at": "2026-10-08T11:43:22.410Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": true,
+   "changed_share": 0.876,
+   "inliers": 7
+  },
+  {
+   "prev": "6ac770bf4468599435b058d4",
+   "cur": "6ac774b935178a2c8740620c",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T10:30:23.633Z",
+   "cur_at": "2026-10-08T10:47:21.995Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0082,
+   "inliers": 26
+  },
+  {
+   "prev": "6ac73870479d7db1e044807e",
+   "cur": "6ac73f759d7333beb125beac",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-08T06:30:08.263Z",
+   "cur_at": "2026-10-08T07:00:05.472Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.001,
+   "inliers": 93
+  },
+  {
+   "prev": "6ac60e3152d0030734c39e7c",
+   "cur": "6ac60e76844de1a8095cba7f",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-07T09:17:37.053Z",
+   "cur_at": "2026-10-07T09:18:46.921Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 138
+  },
+  {
+   "prev": "6acc7765d7f580a4573c992a",
+   "cur": "6acc8576d7f580a4573c992f",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-12T06:00:05.862Z",
+   "cur_at": "2026-10-12T07:00:06.504Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.016,
+   "inliers": 57
+  },
+  {
+   "prev": "6ac9a967a6411bcc32eb2623",
+   "cur": "6ac9aa34a6411bcc32eb2626",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T02:56:39.917Z",
+   "cur_at": "2026-10-10T03:00:04.086Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 167
+  },
+  {
+   "prev": "6ac763f08771d4439135f1e9",
+   "cur": "6ac766d574b9fff6ad4760a0",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T09:35:44.360Z",
+   "cur_at": "2026-10-08T09:48:05.353Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 66
+  },
+  {
+   "prev": "6ac998ba84cdbbe238110d93",
+   "cur": "6ac998d6596c119b0ca8c856",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T01:45:30.648Z",
+   "cur_at": "2026-10-10T01:45:58.753Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 144
+  },
+  {
+   "prev": "6ac99f2043a0fcd906e2ba25",
+   "cur": "6ac99f8e8dd5cabed8463e11",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T02:12:48.663Z",
+   "cur_at": "2026-10-10T02:14:38.457Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0053,
+   "inliers": 60
+  },
+  {
+   "prev": "6acdacc5d7f580a4573c99b8",
+   "cur": "6acdbad5d7f580a4573c99bc",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-13T04:00:05.921Z",
+   "cur_at": "2026-10-13T05:00:05.269Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0165,
+   "inliers": 93
+  },
+  {
+   "prev": "6ac76730c91c45c37c6bc6e1",
+   "cur": "6ac7674de1f2a29fd1fba511",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-08T09:49:36.412Z",
+   "cur_at": "2026-10-08T09:50:05.631Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 149
+  },
+  {
+   "prev": "6ac98e159d7333beb125bfae",
+   "cur": "6ac994fe2cdd67cb5b3084be",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T01:00:05.503Z",
+   "cur_at": "2026-10-10T01:29:34.743Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 136
+  },
+  {
+   "prev": "6aca36d79d7333beb125bfeb",
+   "cur": "6aca3ddd9d7333beb125bfee",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T13:00:07.819Z",
+   "cur_at": "2026-10-10T13:30:05.955Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 100
+  },
+  {
+   "prev": "6ac924a89d7333beb125bf7e",
+   "cur": "6ac92bb69d7333beb125bf80",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-09T17:30:16.676Z",
+   "cur_at": "2026-10-09T18:00:22.953Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 48
+  },
+  {
+   "prev": "6acc081135da959c78fefc64",
+   "cur": "6acc0f1935da959c78fefc67",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-11T22:05:05.730Z",
+   "cur_at": "2026-10-11T22:35:05.556Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0058,
+   "inliers": 30
+  },
+  {
+   "prev": "6ac3fac64c3227d11cfbdcb0",
+   "cur": "6ac401ca4c3227d11cfbdcca",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T19:30:14.615Z",
+   "cur_at": "2026-10-05T20:00:10.051Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 60
+  },
+  {
+   "prev": "6ac995299d7333beb125bfb1",
+   "cur": "6ac995d4631137c2f1670b73",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T01:30:17.549Z",
+   "cur_at": "2026-10-10T01:33:08.419Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 63
+  },
+  {
+   "prev": "6aca21d99d7333beb125bfe4",
+   "cur": "6aca27b6399285cb4cdf2397",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T11:30:33.489Z",
+   "cur_at": "2026-10-10T11:55:34.826Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 51
+  },
+  {
+   "prev": "6ac87be89d7333beb125bf37",
+   "cur": "6ac882f19d7333beb125bf3a",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-09T05:30:16.442Z",
+   "cur_at": "2026-10-09T06:00:17.597Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0004,
+   "inliers": 54
+  },
+  {
+   "prev": "6acc9a8dd7f580a4573c9936",
+   "cur": "6acca89dd7f580a4573c993a",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-12T08:30:05.797Z",
+   "cur_at": "2026-10-12T09:30:05.227Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0009,
+   "inliers": 67
+  },
+  {
+   "prev": "6ac5928f9d7333beb125bdfe",
+   "cur": "6ac59998d26953cd701dba52",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-07T00:30:07.329Z",
+   "cur_at": "2026-10-07T01:00:08.948Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 60
+  },
+  {
+   "prev": "6ac61f38844de1a8095cba8a",
+   "cur": "6ac61f399d7333beb125be30",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-07T10:30:16.471Z",
+   "cur_at": "2026-10-07T10:30:17.294Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 76
+  },
+  {
+   "prev": "6ac7d32f9d7333beb125bedf",
+   "cur": "6ac7da2e9d7333beb125bee2",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T17:30:23.333Z",
+   "cur_at": "2026-10-08T18:00:14.923Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 42
+  },
+  {
+   "prev": "6ac8d74665ed4059e7da7f68",
+   "cur": "6ac8de4d9d7333beb125bf5a",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-09T12:00:06.475Z",
+   "cur_at": "2026-10-09T12:30:05.900Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 118
+  },
+  {
+   "prev": "6ac7090b4843db06c8da0d10",
+   "cur": "6ac7095dbd804de8e8054f12",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-08T03:07:55.678Z",
+   "cur_at": "2026-10-08T03:09:17.213Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 137
+  },
+  {
+   "prev": "6ac84aa79d7333beb125bf22",
+   "cur": "6ac850abb13eb3007fc8712d",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-09T02:00:07.262Z",
+   "cur_at": "2026-10-09T02:25:47.790Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0039,
+   "inliers": 140
+  },
+  {
+   "prev": "6acfcb592edf1794f1ef61d3",
+   "cur": "6acfd96a2edf1794f1ef61dd",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-14T18:35:05.288Z",
+   "cur_at": "2026-10-14T19:35:06.019Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 58
+  },
+  {
+   "prev": "6ac618339d7333beb125be2c",
+   "cur": "6ac61f38844de1a8095cba8a",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-07T10:00:19.173Z",
+   "cur_at": "2026-10-07T10:30:16.471Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0007,
+   "inliers": 46
+  },
+  {
+   "prev": "6ac75b9cb9d9058f6b5daf0a",
+   "cur": "6ac75b9d9d7333beb125beba",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T09:00:12.800Z",
+   "cur_at": "2026-10-08T09:00:13.089Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 78
+  },
+  {
+   "prev": "6ac319bd11641919eebf1f6b",
+   "cur": "6ac319bf4c3227d11cfbd047",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T03:30:05.856Z",
+   "cur_at": "2026-10-05T03:30:07.993Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 76
+  },
+  {
+   "prev": "6ac51b079d7333beb125bdd8",
+   "cur": "6ac5220f9d7333beb125bddc",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T16:00:07.473Z",
+   "cur_at": "2026-10-06T16:30:07.397Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 71
+  },
+  {
+   "prev": "6ac3590783fa4bbe30e593a0",
+   "cur": "6ac359094c3227d11cfbd1d5",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T08:00:07.203Z",
+   "cur_at": "2026-10-05T08:00:09.832Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 87
+  },
+  {
+   "prev": "6ac4c6b915f52ab4fb18cb19",
+   "cur": "6ac4c81bca291fe786e8c636",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T10:00:25.737Z",
+   "cur_at": "2026-10-06T10:06:19.759Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 75
+  },
+  {
+   "prev": "6acb82791d59d53d83c23e1c",
+   "cur": "6acb88759d7333beb125c076",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-11T12:35:05.786Z",
+   "cur_at": "2026-10-11T13:00:37.453Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 54
+  },
+  {
+   "prev": "6ac3ad6b4c3227d11cfbd95a",
+   "cur": "6ac3b4744c3227d11cfbd9f7",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T14:00:11.504Z",
+   "cur_at": "2026-10-05T14:30:12.246Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 60
+  },
+  {
+   "prev": "6acdec0dd7f580a4573c99d4",
+   "cur": "6acdf31ad7f580a4573c99d8",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-13T08:30:05.538Z",
+   "cur_at": "2026-10-13T09:00:10.139Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0013,
+   "inliers": 81
+  },
+  {
+   "prev": "6ac62d3d9d7333beb125be35",
+   "cur": "6ac6344f9d7333beb125be38",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-07T11:30:05.548Z",
+   "cur_at": "2026-10-07T12:00:15.083Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 94
+  },
+  {
+   "prev": "6ac4b01133a73cd1ded3c2f0",
+   "cur": "6ac4b020d68e2ba9146474db",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T08:23:45.664Z",
+   "cur_at": "2026-10-06T08:24:00.523Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 64
+  },
+  {
+   "prev": "6acc9bb9d7f580a4573c9938",
+   "cur": "6acca9cad7f580a4573c993c",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-12T08:35:05.529Z",
+   "cur_at": "2026-10-12T09:35:06.139Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0005,
+   "inliers": 44
+  },
+  {
+   "prev": "6ad003992edf1794f1ef61fd",
+   "cur": "6ad00aa12edf1794f1ef6202",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-14T22:35:05.376Z",
+   "cur_at": "2026-10-14T23:05:05.000Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0012,
+   "inliers": 47
+  },
+  {
+   "prev": "6ac6e4199d7333beb125be89",
+   "cur": "6ac6eb259d7333beb125be8c",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T00:30:17.333Z",
+   "cur_at": "2026-10-08T01:00:21.893Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 44
+  },
+  {
+   "prev": "6ac708f543e3a72109b18f66",
+   "cur": "6ac7090b4843db06c8da0d10",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-08T03:07:33.945Z",
+   "cur_at": "2026-10-08T03:07:55.678Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 146
+  },
+  {
+   "prev": "6ac3c98c4c3227d11cfbdb23",
+   "cur": "6ac3d0924c3227d11cfbdb65",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T16:00:12.446Z",
+   "cur_at": "2026-10-05T16:30:10.988Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 53
+  },
+  {
+   "prev": "6ac313a111641919eebf1f11",
+   "cur": "6ac319bd11641919eebf1f6b",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T03:04:01.818Z",
+   "cur_at": "2026-10-05T03:30:05.856Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0077,
+   "inliers": 35
+  },
+  {
+   "prev": "6ac77baee276e9762d4866cb",
+   "cur": "6ac77d5953fe9ff305bfe42e",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T11:17:02.687Z",
+   "cur_at": "2026-10-08T11:24:09.414Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 63
+  },
+  {
+   "prev": "6ac4d2f75b1ec6c90f029143",
+   "cur": "6ac4d4b69d7333beb125bdb6",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T10:52:39.637Z",
+   "cur_at": "2026-10-06T11:00:06.938Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0074,
+   "inliers": 21
+  },
+  {
+   "prev": "6ac3833a4c3227d11cfbd469",
+   "cur": "6ac38366974c9263c0d06b09",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T11:00:10.658Z",
+   "cur_at": "2026-10-05T11:00:54.110Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 67
+  },
+  {
+   "prev": "6acff45d2edf1794f1ef61f0",
+   "cur": "6acffb652edf1794f1ef61f6",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-14T21:30:05.107Z",
+   "cur_at": "2026-10-14T22:00:05.900Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 102
+  },
+  {
+   "prev": "6ac2e1844c3227d11cfbced6",
+   "cur": "6ac2e88b4c3227d11cfbceee",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-04T23:30:12.931Z",
+   "cur_at": "2026-10-05T00:00:11.387Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0004,
+   "inliers": 38
+  },
+  {
+   "prev": "6ac0ee4b4c3227d11cfbb8b1",
+   "cur": "6ac0f5594c3227d11cfbb92f",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-03T12:00:11.458Z",
+   "cur_at": "2026-10-03T12:30:17.460Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 74
+  },
+  {
+   "prev": "6ac46dfdf2204675fae9533e",
+   "cur": "6ac46dfd4cbf385e65e48ca4",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T03:41:49.030Z",
+   "cur_at": "2026-10-06T03:41:49.046Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 54
+  },
+  {
+   "prev": "6acd1215d7f580a4573c9962",
+   "cur": "6acd272dd7f580a4573c996a",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-12T17:00:05.588Z",
+   "cur_at": "2026-10-12T18:30:05.658Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 91
+  },
+  {
+   "prev": "6aca763a9d7333beb125c003",
+   "cur": "6aca7d399d7333beb125c006",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T17:30:34.564Z",
+   "cur_at": "2026-10-10T18:00:25.494Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 48
+  },
+  {
+   "prev": "6ac1e4644c3227d11cfbc22a",
+   "cur": "6ac1eb6c4c3227d11cfbc249",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-04T05:30:12.652Z",
+   "cur_at": "2026-10-04T06:00:12.805Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0045,
+   "inliers": 48
+  },
+  {
+   "prev": "6ac9977495fabead97b6f613",
+   "cur": "6ac9985d2e5947de87f15573",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T01:40:04.534Z",
+   "cur_at": "2026-10-10T01:43:57.614Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 140
+  },
+  {
+   "prev": "6ac766ffcd89cc77077e8584",
+   "cur": "6ac76759e1f2a29fd1fba512",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T09:48:47.190Z",
+   "cur_at": "2026-10-08T09:50:17.391Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 58
+  },
+  {
+   "prev": "6ac60a159d7333beb125be26",
+   "cur": "6ac60a16d056f860571579d4",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-07T09:00:05.919Z",
+   "cur_at": "2026-10-07T09:00:06.295Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 147
+  },
+  {
+   "prev": "6ac6111d9d7333beb125be29",
+   "cur": "6ac61826844de1a8095cba87",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-07T09:30:05.355Z",
+   "cur_at": "2026-10-07T10:00:06.535Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0005,
+   "inliers": 128
+  },
+  {
+   "prev": "6ac545389d7333beb125bdea",
+   "cur": "6ac54c409d7333beb125bdec",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T19:00:08.090Z",
+   "cur_at": "2026-10-06T19:30:08.110Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 44
+  },
+  {
+   "prev": "6ace5db9d7f580a4573c99ff",
+   "cur": "6ace64c0d7f580a4573c9a02",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-13T16:35:05.362Z",
+   "cur_at": "2026-10-13T17:05:04.945Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 58
+  },
+  {
+   "prev": "6ac46e280c49581d1f9f5e3c",
+   "cur": "6ac46e28ad659472fd7cec49",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T03:42:32.141Z",
+   "cur_at": "2026-10-06T03:42:32.418Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 54
+  },
+  {
+   "prev": "6ac9b061cf2c153c9d684769",
+   "cur": "6ac9b13bcf2c153c9d68476c",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T03:26:25.291Z",
+   "cur_at": "2026-10-10T03:30:03.777Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0008,
+   "inliers": 155
+  },
+  {
+   "prev": "6aca3ddd9d7333beb125bfee",
+   "cur": "6aca44e69d7333beb125bff1",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T13:30:05.955Z",
+   "cur_at": "2026-10-10T14:00:06.710Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 89
+  },
+  {
+   "prev": "6ad0107d2edf1794f1ef6204",
+   "cur": "6ad017852edf1794f1ef6208",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-14T23:30:05.149Z",
+   "cur_at": "2026-10-15T00:00:05.813Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0012,
+   "inliers": 127
+  },
+  {
+   "prev": "6ac995c9631137c2f1670b72",
+   "cur": "6ac9968b9a1476b3e06a61c1",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T01:32:57.331Z",
+   "cur_at": "2026-10-10T01:36:11.910Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 150
+  },
+  {
+   "prev": "6ac996989a1476b3e06a61c2",
+   "cur": "6ac9977f95fabead97b6f614",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T01:36:24.077Z",
+   "cur_at": "2026-10-10T01:40:15.676Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 54
+  },
+  {
+   "prev": "6ac355275b3b067a9e7c1aac",
+   "cur": "6ac355349e3d64f84bdf3a72",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T07:43:35.343Z",
+   "cur_at": "2026-10-05T07:43:48.970Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 73
+  },
+  {
+   "prev": "6ac766c01c0ff5b7dcc691d7",
+   "cur": "6ac766cf74b9fff6ad47609f",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-08T09:47:44.926Z",
+   "cur_at": "2026-10-08T09:47:59.609Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 182
+  },
+  {
+   "prev": "6acaae639d7333beb125c01e",
+   "cur": "6acab458573d9b77c7e1f488",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T21:30:11.642Z",
+   "cur_at": "2026-10-10T21:55:36.109Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 122
+  },
+  {
+   "prev": "6ac932bf9d7333beb125bf83",
+   "cur": "6ac939c69d7333beb125bf85",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-09T18:30:23.582Z",
+   "cur_at": "2026-10-09T19:00:22.273Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 45
+  },
+  {
+   "prev": "6acd4b81d7f580a4573c9985",
+   "cur": "6acd528ad7f580a4573c998c",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-12T21:05:05.100Z",
+   "cur_at": "2026-10-12T21:35:06.002Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 46
+  },
+  {
+   "prev": "6ac9aa3f9d7333beb125bfb9",
+   "cur": "6ac9b06dcf2c153c9d68476a",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T03:00:15.793Z",
+   "cur_at": "2026-10-10T03:26:37.622Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0039,
+   "inliers": 45
+  },
+  {
+   "prev": "6ac7da2e9d7333beb125bee2",
+   "cur": "6ac7e1399d7333beb125bee7",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T18:00:14.923Z",
+   "cur_at": "2026-10-08T18:30:17.322Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 42
+  },
+  {
+   "prev": "6ac385360fa5fc1147f1c2fc",
+   "cur": "6ac385a75cce2141ad1dcd16",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T11:08:38.785Z",
+   "cur_at": "2026-10-05T11:10:31.531Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 75
+  },
+  {
+   "prev": "6ac383386ea4e1c6cd710644",
+   "cur": "6ac3833a4c3227d11cfbd469",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T11:00:08.285Z",
+   "cur_at": "2026-10-05T11:00:10.658Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 88
+  },
+  {
+   "prev": "6ac34f1fe2041e0cbbd42bc8",
+   "cur": "6ac350bb85650578c63d7bef",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T07:17:51.987Z",
+   "cur_at": "2026-10-05T07:24:43.031Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0045,
+   "inliers": 51
+  },
+  {
+   "prev": "6ac7002abbe06e4fad884de0",
+   "cur": "6ac70260cd787453edf6e646",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-08T02:30:02.391Z",
+   "cur_at": "2026-10-08T02:39:28.741Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0012,
+   "inliers": 150
+  },
+  {
+   "prev": "6aca13ad9d7333beb125bfdd",
+   "cur": "6aca198a58d8ec8928c2be7b",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T10:30:05.463Z",
+   "cur_at": "2026-10-10T10:55:06.496Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0198,
+   "inliers": 37
+  },
+  {
+   "prev": "6ac45f94d530f653d837a919",
+   "cur": "6ac45f94a1d8f9ba1a67bf99",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T02:40:20.320Z",
+   "cur_at": "2026-10-06T02:40:20.359Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 65
+  },
+  {
+   "prev": "6ac4c8275c8196dc4e43f75c",
+   "cur": "6ac4c9197b4beae47f8bcf88",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T10:06:31.766Z",
+   "cur_at": "2026-10-06T10:10:33.110Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 66
+  },
+  {
+   "prev": "6aca047c2f6c34a49ef8e8f6",
+   "cur": "6aca05a89d7333beb125bfd8",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T09:25:16.639Z",
+   "cur_at": "2026-10-10T09:30:16.381Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0005,
+   "inliers": 60
+  },
+  {
+   "prev": "6ac700329d7333beb125be94",
+   "cur": "6ac7026bcd787453edf6e647",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T02:30:10.346Z",
+   "cur_at": "2026-10-08T02:39:39.302Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0017,
+   "inliers": 30
+  },
+  {
+   "prev": "6ac463b7c31879fef8b2e6f9",
+   "cur": "6ac463b8a57d3d90456e83dd",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T02:58:00.036Z",
+   "cur_at": "2026-10-06T02:58:00.064Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 66
+  },
+  {
+   "prev": "6ac3b4744c3227d11cfbd9f7",
+   "cur": "6ac3c2824c3227d11cfbdad6",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T14:30:12.246Z",
+   "cur_at": "2026-10-05T15:30:10.416Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 46
+  },
+  {
+   "prev": "6ac6d6029d7333beb125be83",
+   "cur": "6ac6e40d9d7333beb125be88",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-07T23:30:10.343Z",
+   "cur_at": "2026-10-08T00:30:05.826Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0005,
+   "inliers": 148
+  },
+  {
+   "prev": "6ac851b7b13eb3007fc87215",
+   "cur": "6ac851b89d7333beb125bf26",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-09T02:30:15.303Z",
+   "cur_at": "2026-10-09T02:30:16.081Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 82
+  },
+  {
+   "prev": "6ac30eee38a8a6d5d3f24949",
+   "cur": "6ac3126f58107cdf5156490a",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T02:43:58.312Z",
+   "cur_at": "2026-10-05T02:58:55.085Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0049,
+   "inliers": 49
+  },
+  {
+   "prev": "6ac4623643297e21635b0685",
+   "cur": "6ac4625b8c328620f37df109",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T02:51:34.618Z",
+   "cur_at": "2026-10-06T02:52:11.608Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 63
+  },
+  {
+   "prev": "6acab5659d7333beb125c022",
+   "cur": "6acabc729d7333beb125c029",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T22:00:05.919Z",
+   "cur_at": "2026-10-10T22:30:10.196Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 104
+  },
+  {
+   "prev": "6ac99f1543a0fcd906e2ba24",
+   "cur": "6ac9a32c8dd5cabed8463e15",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T02:12:37.849Z",
+   "cur_at": "2026-10-10T02:30:04.666Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0017,
+   "inliers": 129
+  },
+  {
+   "prev": "6aca43bc9ba3fac26873dd0d",
+   "cur": "6aca4a86d098f8849b281463",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T13:55:08.374Z",
+   "cur_at": "2026-10-10T14:24:06.223Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 59
+  },
+  {
+   "prev": "6acd2f60d7f580a4573c996d",
+   "cur": "6acd366ad7f580a4573c9970",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-12T19:05:04.986Z",
+   "cur_at": "2026-10-12T19:35:06.029Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 47
+  },
+  {
+   "prev": "6ac4c1aa0e348e92c632d974",
+   "cur": "6ac4c1b643ccaafe4c28743a",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T09:38:50.866Z",
+   "cur_at": "2026-10-06T09:39:02.373Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 73
+  },
+  {
+   "prev": "6ac41dea4c3227d11cfbdd7a",
+   "cur": "6ac42bfa4c3227d11cfbddd7",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T22:00:10.107Z",
+   "cur_at": "2026-10-05T23:00:10.656Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0042,
+   "inliers": 22
+  },
+  {
+   "prev": "6ac9951b2cdd67cb5b3084bf",
+   "cur": "6ac9951c9d7333beb125bfb0",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T01:30:03.593Z",
+   "cur_at": "2026-10-10T01:30:04.915Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 185
+  },
+  {
+   "prev": "6ac9fb8c52bf08b2d84d5f58",
+   "cur": "6ac9fcb7bbb7f68c0c7e9fda",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T08:47:08.263Z",
+   "cur_at": "2026-10-10T08:52:07.478Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 47
+  },
+  {
+   "prev": "6ac200834c3227d11cfbc339",
+   "cur": "6ac2078c4c3227d11cfbc3a6",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-04T07:30:11.685Z",
+   "cur_at": "2026-10-04T08:00:12.876Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0004,
+   "inliers": 34
+  },
+  {
+   "prev": "6ac74d914843db06c8da0d1c",
+   "cur": "6ac74d91479d7db1e0448082",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T08:00:17.528Z",
+   "cur_at": "2026-10-08T08:00:17.568Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 82
+  },
+  {
+   "prev": "6ac4aa8946d0a7aab832428a",
+   "cur": "6ac4b01133a73cd1ded3c2f0",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T08:00:09.351Z",
+   "cur_at": "2026-10-06T08:23:45.664Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0271,
+   "inliers": 38
+  },
+  {
+   "prev": "6ac7637e3bc3e01aa71030fd",
+   "cur": "6ac763f08771d4439135f1e9",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T09:33:50.299Z",
+   "cur_at": "2026-10-08T09:35:44.360Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 66
+  },
+  {
+   "prev": "6ac767728c1b5482e3031248",
+   "cur": "6ac767e6542760088f0008ea",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T09:50:42.386Z",
+   "cur_at": "2026-10-08T09:52:38.837Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 53
+  },
+  {
+   "prev": "6ac5dff14a6a99588b8c8a09",
+   "cur": "6ac5dff19d7333beb125be14",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-07T06:00:17.329Z",
+   "cur_at": "2026-10-07T06:00:17.554Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 70
+  },
+  {
+   "prev": "6acc14f535da959c78fefc69",
+   "cur": "6acc1bfe35da959c78fefc6b",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-11T23:00:05.378Z",
+   "cur_at": "2026-10-11T23:30:06.035Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 130
+  },
+  {
+   "prev": "6aca5fdb5e537a598ce0d7c4",
+   "cur": "6aca61209d7333beb125bffd",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T15:55:07.823Z",
+   "cur_at": "2026-10-10T16:00:32.965Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 56
+  },
+  {
+   "prev": "6ac5fc079d7333beb125be20",
+   "cur": "6ac5fc084a6a99588b8c8a15",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-07T08:00:07.814Z",
+   "cur_at": "2026-10-07T08:00:08.521Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 180
+  },
+  {
+   "prev": "6ac1f2734c3227d11cfbc272",
+   "cur": "6ac1f97b4c3227d11cfbc2cc",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-04T06:30:11.091Z",
+   "cur_at": "2026-10-04T07:00:11.037Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 53
+  },
+  {
+   "prev": "6accccf1d7f580a4573c9948",
+   "cur": "6accdb00d7f580a4573c994d",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-12T12:05:05.733Z",
+   "cur_at": "2026-10-12T13:05:04.954Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 52
+  },
+  {
+   "prev": "6ac9fc6fe6543cde81f48fa4",
+   "cur": "6ac9fcadbbb7f68c0c7e9fd9",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T08:50:55.681Z",
+   "cur_at": "2026-10-10T08:51:57.538Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 142
+  },
+  {
+   "prev": "6ac75ff6a636cbbcb998916b",
+   "cur": "6ac7628a3a2b1db02d2cb705",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T09:18:46.405Z",
+   "cur_at": "2026-10-08T09:29:46.256Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 60
+  },
+  {
+   "prev": "6ac8b42865ed4059e7da7f66",
+   "cur": "6ac8bb319d7333beb125bf4f",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-09T09:30:16.698Z",
+   "cur_at": "2026-10-09T10:00:17.534Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0006,
+   "inliers": 58
+  },
+  {
+   "prev": "6ac0af034c3227d11cfbb3dc",
+   "cur": "6ac0b60b4c3227d11cfbb46e",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-03T07:30:11.714Z",
+   "cur_at": "2026-10-03T08:00:11.168Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0319,
+   "inliers": 58
+  },
+  {
+   "prev": "6ac9f2a7a5d843faf12203e0",
+   "cur": "6ac9f2e1249704af24d74318",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T08:09:11.919Z",
+   "cur_at": "2026-10-10T08:10:09.736Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0004,
+   "inliers": 166
+  },
+  {
+   "prev": "6ac46b3c88fbbad3006c084e",
+   "cur": "6ac46b3cdc089e0be8cd24ad",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T03:30:04.632Z",
+   "cur_at": "2026-10-06T03:30:04.748Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 60
+  },
+  {
+   "prev": "6acedc49d7f580a4573c9a59",
+   "cur": "6acee351d7f580a4573c9a5c",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-14T01:35:05.821Z",
+   "cur_at": "2026-10-14T02:05:05.565Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.007,
+   "inliers": 27
+  },
+  {
+   "prev": "6acecd0dd7f580a4573c9a52",
+   "cur": "6aced415d7f580a4573c9a55",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-14T00:30:05.421Z",
+   "cur_at": "2026-10-14T01:00:05.248Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0085,
+   "inliers": 110
+  },
+  {
+   "prev": "6ac62635844de1a8095cba8c",
+   "cur": "6ac62d3d9d7333beb125be35",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-07T11:00:05.938Z",
+   "cur_at": "2026-10-07T11:30:05.548Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 114
+  },
+  {
+   "prev": "6ac9f08511edef0a6d86c3cd",
+   "cur": "6ac9f0869d7333beb125bfcf",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T08:00:05.329Z",
+   "cur_at": "2026-10-10T08:00:06.192Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 193
+  },
+  {
+   "prev": "6ac657829d7333beb125be45",
+   "cur": "6ac65e819d7333beb125be48",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-07T14:30:26.200Z",
+   "cur_at": "2026-10-07T15:00:17.754Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 58
+  },
+  {
+   "prev": "6ac1c8434c3227d11cfbc16f",
+   "cur": "6ac1cf4c4c3227d11cfbc1a1",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-04T03:30:11.793Z",
+   "cur_at": "2026-10-04T04:00:12.475Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0019,
+   "inliers": 39
+  },
+  {
+   "prev": "6ac8a61e9d7333beb125bf46",
+   "cur": "6ac8a62065ed4059e7da7f60",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-09T08:30:22.220Z",
+   "cur_at": "2026-10-09T08:30:24.770Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 72
+  },
+  {
+   "prev": "6ac376cc69020970b6427a50",
+   "cur": "6ac378f71c811b2988915542",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T10:07:08.638Z",
+   "cur_at": "2026-10-05T10:16:23.925Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0004,
+   "inliers": 52
+  },
+  {
+   "prev": "6ac33ceb4c3227d11cfbd0f4",
+   "cur": "6ac343f24c3227d11cfbd13a",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T06:00:11.275Z",
+   "cur_at": "2026-10-05T06:30:10.819Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0071,
+   "inliers": 43
+  },
+  {
+   "prev": "6acb79e072dcb99eff57ff64",
+   "cur": "6acb7a479d7333beb125c06f",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-11T11:58:24.709Z",
+   "cur_at": "2026-10-11T12:00:07.259Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 103
+  },
+  {
+   "prev": "6acf8c112edf1794f1ef61b7",
+   "cur": "6acf931a2edf1794f1ef61bc",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-14T14:05:05.907Z",
+   "cur_at": "2026-10-14T14:35:06.444Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 69
+  },
+  {
+   "prev": "6ac731664843db06c8da0d15",
+   "cur": "6ac73166479d7db1e044807b",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-08T06:00:06.498Z",
+   "cur_at": "2026-10-08T06:00:06.499Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 200
+  },
+  {
+   "prev": "6acbcfd135da959c78fefc45",
+   "cur": "6acbdde135da959c78fefc4c",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-11T18:05:05.700Z",
+   "cur_at": "2026-10-11T19:05:05.017Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 58
+  },
+  {
+   "prev": "6aca5a179d7333beb125bffb",
+   "cur": "6aca5fdb5e537a598ce0d7c4",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T15:30:31.824Z",
+   "cur_at": "2026-10-10T15:55:07.823Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 51
+  },
+  {
+   "prev": "6acc9385d7f580a4573c9933",
+   "cur": "6acc9a8dd7f580a4573c9936",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-12T08:00:05.984Z",
+   "cur_at": "2026-10-12T08:30:05.797Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0021,
+   "inliers": 81
+  },
+  {
+   "prev": "6ac8ec6e9d7333beb125bf63",
+   "cur": "6ac8f3709d7333beb125bf67",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-09T13:30:22.903Z",
+   "cur_at": "2026-10-09T14:00:16.469Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 35
+  },
+  {
+   "prev": "6ac9987bc7bf08ddb193c417",
+   "cur": "6ac998898c5dd217d4deffe9",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T01:44:27.909Z",
+   "cur_at": "2026-10-10T01:44:41.319Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 129
+  },
+  {
+   "prev": "6ac5fc124a6a99588b8c8a16",
+   "cur": "6ac5fc129d7333beb125be21",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-07T08:00:18.619Z",
+   "cur_at": "2026-10-07T08:00:18.751Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 77
+  },
+  {
+   "prev": "6ac889f965ed4059e7da7f53",
+   "cur": "6ac8910165ed4059e7da7f56",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-09T06:30:17.484Z",
+   "cur_at": "2026-10-09T07:00:17.324Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0168,
+   "inliers": 50
+  },
+  {
+   "prev": "6acf1489d7f580a4573c9a6f",
+   "cur": "6acf1b91d7f580a4573c9a74",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-14T05:35:05.794Z",
+   "cur_at": "2026-10-14T06:05:05.646Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0187,
+   "inliers": 42
+  },
+  {
+   "prev": "6acadf959d7333beb125c037",
+   "cur": "6acae69d9d7333beb125c03a",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-11T01:00:05.508Z",
+   "cur_at": "2026-10-11T01:30:05.009Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 128
+  },
+  {
+   "prev": "6ac995282cdd67cb5b3084c1",
+   "cur": "6ac995299d7333beb125bfb1",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T01:30:16.185Z",
+   "cur_at": "2026-10-10T01:30:17.549Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 94
+  },
+  {
+   "prev": "6ac9fda424d71f9d24dddf92",
+   "cur": "6ac9fdb4ba2ede0d63b24c9e",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T08:56:04.496Z",
+   "cur_at": "2026-10-10T08:56:20.865Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 128
+  },
+  {
+   "prev": "6ac4c1b643ccaafe4c28743a",
+   "cur": "6ac4c6a39d7333beb125bdaf",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T09:39:02.373Z",
+   "cur_at": "2026-10-06T10:00:03.778Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 56
+  },
+  {
+   "prev": "6accf5f5d7f580a4573c9957",
+   "cur": "6accfd01d7f580a4573c995a",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-12T15:00:05.451Z",
+   "cur_at": "2026-10-12T15:30:09.458Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 112
+  },
+  {
+   "prev": "6ac4b6825caa316610cb3d60",
+   "cur": "6ac4b83b27ddf74fcfe9b900",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T08:51:14.543Z",
+   "cur_at": "2026-10-06T08:58:35.022Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 51
+  },
+  {
+   "prev": "6acb9d8d9d7333beb125c07d",
+   "cur": "6acb9e9ad4427f155b3ed859",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-11T14:30:37.771Z",
+   "cur_at": "2026-10-11T14:35:06.494Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 63
+  },
+  {
+   "prev": "6ac6a4d19d7333beb125be66",
+   "cur": "6ac6abd99d7333beb125be6b",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-07T20:00:17.551Z",
+   "cur_at": "2026-10-07T20:30:17.220Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 44
+  },
+  {
+   "prev": "6acbb24206c6d91836d85f6f",
+   "cur": "6acbb98d48dcc8583049ada0",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-11T15:58:58.410Z",
+   "cur_at": "2026-10-11T16:30:05.834Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 126
+  },
+  {
+   "prev": "6ac576709d7333beb125bdf7",
+   "cur": "6ac5847f9d7333beb125bdfa",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T22:30:08.496Z",
+   "cur_at": "2026-10-06T23:30:07.818Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0061,
+   "inliers": 23
+  },
+  {
+   "prev": "6ac7fd4d9d7333beb125bef9",
+   "cur": "6ac804559d7333beb125befe",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-08T20:30:05.989Z",
+   "cur_at": "2026-10-08T21:00:05.536Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 93
+  },
+  {
+   "prev": "6ac6078bd056f860571579d2",
+   "cur": "6ac60a20d056f860571579d5",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-07T08:49:15.491Z",
+   "cur_at": "2026-10-07T09:00:16.200Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0005,
+   "inliers": 42
+  },
+  {
+   "prev": "6ac781fdb2df4e7d9fc09558",
+   "cur": "6ac782a1edfa0a877eed5fee",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T11:43:57.976Z",
+   "cur_at": "2026-10-08T11:46:41.031Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 77
+  },
+  {
+   "prev": "6ac0cb224c3227d11cfbb60c",
+   "cur": "6ac0d22b4c3227d11cfbb682",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-03T09:30:10.473Z",
+   "cur_at": "2026-10-03T10:00:11.296Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0028,
+   "inliers": 36
+  },
+  {
+   "prev": "6ac9f2fada5c2647d9164f52",
+   "cur": "6ac9f3a612cea200ec038fdf",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T08:10:34.165Z",
+   "cur_at": "2026-10-10T08:13:26.804Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0126,
+   "inliers": 57
+  },
+  {
+   "prev": "6ac9985d2e5947de87f15573",
+   "cur": "6ac9987bc7bf08ddb193c417",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T01:43:57.614Z",
+   "cur_at": "2026-10-10T01:44:27.909Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 141
+  },
+  {
+   "prev": "6ac8045f9d7333beb125beff",
+   "cur": "6ac80b679d7333beb125bf04",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T21:00:15.633Z",
+   "cur_at": "2026-10-08T21:30:15.459Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 54
+  },
+  {
+   "prev": "6ac7847b94fac863525b8a4b",
+   "cur": "6ac785643bc7b498d420555e",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-08T11:54:35.692Z",
+   "cur_at": "2026-10-08T11:58:28.579Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0046,
+   "inliers": 113
+  },
+  {
+   "prev": "6ac561589d7333beb125bdf1",
+   "cur": "6ac5685f9d7333beb125bdf3",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T21:00:08.366Z",
+   "cur_at": "2026-10-06T21:30:07.827Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 59
+  },
+  {
+   "prev": "6ac4b9779ab78008e9f68a14",
+   "cur": "6ac4b992750eeecb90f9ca66",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T09:03:51.034Z",
+   "cur_at": "2026-10-06T09:04:18.898Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 64
+  },
+  {
+   "prev": "6ad0026d2edf1794f1ef61fa",
+   "cur": "6ad009752edf1794f1ef61ff",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-14T22:30:05.605Z",
+   "cur_at": "2026-10-14T23:00:05.310Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0106,
+   "inliers": 25
+  },
+  {
+   "prev": "6ac0a0f34c3227d11cfbb334",
+   "cur": "6ac0a7fa4c3227d11cfbb379",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-03T06:30:11.404Z",
+   "cur_at": "2026-10-03T07:00:10.864Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0158,
+   "inliers": 65
+  },
+  {
+   "prev": "6acb432e20a701669ab73bbb",
+   "cur": "6acb49289d7333beb125c05e",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-11T08:05:02.509Z",
+   "cur_at": "2026-10-11T08:30:32.029Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 64
+  },
+  {
+   "prev": "6ac9f13874f52430e32e1fd5",
+   "cur": "6ac9f2204d7f8dff1a261209",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T08:03:04.034Z",
+   "cur_at": "2026-10-10T08:06:56.310Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0067,
+   "inliers": 52
+  },
+  {
+   "prev": "6ac320cb4c3227d11cfbd05f",
+   "cur": "6ac327d44c3227d11cfbd084",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T04:00:11.107Z",
+   "cur_at": "2026-10-05T04:30:12.318Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 36
+  },
+  {
+   "prev": "6ac874d69d7333beb125bf33",
+   "cur": "6ac87bde9d7333beb125bf36",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-09T05:00:06.081Z",
+   "cur_at": "2026-10-09T05:30:06.392Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0039,
+   "inliers": 114
+  },
+  {
+   "prev": "6acd7b8dd7f580a4573c999f",
+   "cur": "6acd8295d7f580a4573c99a1",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-13T00:30:05.747Z",
+   "cur_at": "2026-10-13T01:00:05.459Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0062,
+   "inliers": 125
+  },
+  {
+   "prev": "6ac6819e9d7333beb125be55",
+   "cur": "6ac688a69d7333beb125be58",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-07T17:30:06.268Z",
+   "cur_at": "2026-10-07T18:00:06.522Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 119
+  },
+  {
+   "prev": "6acb513df1b7acbe8f4d6033",
+   "cur": "6acb5e479d7333beb125c065",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-11T09:05:02.001Z",
+   "cur_at": "2026-10-11T10:00:39.316Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0009,
+   "inliers": 44
+  },
+  {
+   "prev": "6acf9ffc2edf1794f1ef61c3",
+   "cur": "6acfae0d2edf1794f1ef61c7",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-14T15:30:04.974Z",
+   "cur_at": "2026-10-14T16:30:05.845Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0019,
+   "inliers": 104
+  },
+  {
+   "prev": "6acdca11d7f580a4573c99c4",
+   "cur": "6acdd119d7f580a4573c99c9",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-13T06:05:05.459Z",
+   "cur_at": "2026-10-13T06:35:05.604Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 40
+  },
+  {
+   "prev": "6ac8a62065ed4059e7da7f60",
+   "cur": "6ac8ad249d7333beb125bf49",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-09T08:30:24.770Z",
+   "cur_at": "2026-10-09T09:00:20.733Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0004,
+   "inliers": 53
+  },
+  {
+   "prev": "6ac6f7288ad82467dab172b3",
+   "cur": "6ac6f92dcb181161dbb29097",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T01:51:36.495Z",
+   "cur_at": "2026-10-08T02:00:13.039Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 51
+  },
+  {
+   "prev": "6acc6955d7f580a4573c9923",
+   "cur": "6acc705fd7f580a4573c9927",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-12T05:00:05.290Z",
+   "cur_at": "2026-10-12T05:30:07.339Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0007,
+   "inliers": 114
+  },
+  {
+   "prev": "6ac8de4e65ed4059e7da7f6b",
+   "cur": "6ac8e5569d7333beb125bf5d",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-09T12:30:06.041Z",
+   "cur_at": "2026-10-09T13:00:06.939Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 109
+  },
+  {
+   "prev": "6acaca7d9d7333beb125c02f",
+   "cur": "6acad1869d7333beb125c031",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T23:30:05.141Z",
+   "cur_at": "2026-10-11T00:00:06.224Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.006,
+   "inliers": 131
+  },
+  {
+   "prev": "6ace9d00d7f580a4573c9a3a",
+   "cur": "6acea409d7f580a4573c9a40",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-13T21:05:04.942Z",
+   "cur_at": "2026-10-13T21:35:05.958Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 54
+  },
+  {
+   "prev": "6ac99e27a64a56bd3422f9ea",
+   "cur": "6ac99e9b692ce3ad0417532a",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T02:08:39.471Z",
+   "cur_at": "2026-10-10T02:10:35.160Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0003,
+   "inliers": 147
+  },
+  {
+   "prev": "6ac464379d7333beb125bd8a",
+   "cur": "6ac46561bae070f7ce0531d1",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-06T03:00:07.999Z",
+   "cur_at": "2026-10-06T03:05:05.062Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 48
+  },
+  {
+   "prev": "6ac9f0909d7333beb125bfd0",
+   "cur": "6ac9f13874f52430e32e1fd5",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-10T08:00:16.177Z",
+   "cur_at": "2026-10-10T08:03:04.034Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0052,
+   "inliers": 64
+  },
+  {
+   "prev": "6ac7e1399d7333beb125bee7",
+   "cur": "6ac7e8489d7333beb125beeb",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-08T18:30:17.322Z",
+   "cur_at": "2026-10-08T19:00:24.593Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0002,
+   "inliers": 41
+  },
+  {
+   "prev": "6ac901809d7333beb125bf6e",
+   "cur": "6ac90f919d7333beb125bf75",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-09T15:00:16.894Z",
+   "cur_at": "2026-10-09T16:00:17.391Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 41
+  },
+  {
+   "prev": "6ac74d884843db06c8da0d1b",
+   "cur": "6ac74d88479d7db1e0448081",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-08T08:00:08.168Z",
+   "cur_at": "2026-10-08T08:00:08.170Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0,
+   "inliers": 168
+  },
+  {
+   "prev": "6ac7ef3d9d7333beb125bef1",
+   "cur": "6ac7f6469d7333beb125bef5",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-08T19:30:05.167Z",
+   "cur_at": "2026-10-08T20:00:06.296Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0001,
+   "inliers": 109
+  },
+  {
+   "prev": "6ac35e0be8cbe1a0e8cdfe8b",
+   "cur": "6ac35fe4dcbe9094ba6e9a7b",
+   "camera": "BE4089629",
+   "prev_at": "2026-10-05T08:21:31.447Z",
+   "cur_at": "2026-10-05T08:29:24.831Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0006,
+   "inliers": 42
+  },
+  {
+   "prev": "6ac9e98cd6db8f5987612b60",
+   "cur": "6ac9eb499398b2ce2e26af74",
+   "camera": "BE4111159",
+   "prev_at": "2026-10-10T07:30:20.943Z",
+   "cur_at": "2026-10-10T07:37:45.096Z",
+   "occluded": false,
+   "camera_moved": false,
+   "moved_reasons": [],
+   "global_change": false,
+   "changed_share": 0.0021,
+   "inliers": 98
+  }
+ ],
+ "synthetic_occluders": [
+  {
+   "cur": "6ac9f2646b2d368d8b350666",
+   "kind": "cloth",
+   "area_share": 0.1177,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9922,
+   "camera_moved": false,
+   "evidence": "docs/evidence/vision/motion/synth_occluder_0.jpg"
+  },
+  {
+   "cur": "6acc243135da959c78fefc6f",
+   "kind": "hand",
+   "area_share": 0.1469,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9913,
+   "camera_moved": false,
+   "evidence": "docs/evidence/vision/motion/synth_occluder_1.jpg"
+  },
+  {
+   "cur": "6ac41dea4c3227d11cfbdd7a",
+   "kind": "hand",
+   "area_share": 0.1515,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9923,
+   "camera_moved": false,
+   "evidence": "docs/evidence/vision/motion/synth_occluder_2.jpg"
+  },
+  {
+   "cur": "6ac3587583fa4bbe30e59399",
+   "kind": "animal",
+   "area_share": 0.2345,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.991,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac5e6f99d7333beb125be17",
+   "kind": "animal",
+   "area_share": 0.0704,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.7181,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac7548e4843db06c8da0d1e",
+   "kind": "animal",
+   "area_share": 0.3209,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9879,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac4bbf972099ec4d8507411",
+   "kind": "cloth",
+   "area_share": 0.1471,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9848,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acf3eb9d7f580a4573c9a83",
+   "kind": "hand",
+   "area_share": 0.1482,
+   "detected": false,
+   "in_frame": null,
+   "box_iou": 0.9873,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac73f7f9d7333beb125bead",
+   "kind": "animal",
+   "area_share": 0.2904,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9916,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac762a59d7333beb125bebd",
+   "kind": "animal",
+   "area_share": 0.1714,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9028,
+   "camera_moved": false
+  },
+  {
+   "cur": "6accbdb5d7f580a4573c9940",
+   "kind": "cloth",
+   "area_share": 0.1213,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.6926,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac9b84a86eaf725a4d9b2e8",
+   "kind": "cloth",
+   "area_share": 0.1033,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9605,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acdfb49d7f580a4573c99dc",
+   "kind": "hand",
+   "area_share": 0.2231,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 1.0,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac48e67ffbd82802883f0ef",
+   "kind": "cloth",
+   "area_share": 0.1958,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9931,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acc06e635da959c78fefc61",
+   "kind": "cloth",
+   "area_share": 0.1163,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9859,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac37e4f6ea4e1c6cd710315",
+   "kind": "animal",
+   "area_share": 0.0915,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9633,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acbeac635da959c78fefc51",
+   "kind": "animal",
+   "area_share": 0.2227,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9441,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac5e6f94a6a99588b8c8a0c",
+   "kind": "hand",
+   "area_share": 0.1288,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9909,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac6d60d9d7333beb125be84",
+   "kind": "hand",
+   "area_share": 0.1265,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.97,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac738784843db06c8da0d19",
+   "kind": "cloth",
+   "area_share": 0.2073,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.989,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acb6c003a2190fe612f1053",
+   "kind": "hand",
+   "area_share": 0.1501,
+   "detected": false,
+   "in_frame": null,
+   "box_iou": 0.0578,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac781dadc3629211bbe4ad8",
+   "kind": "cloth",
+   "area_share": 0.1749,
+   "detected": false,
+   "in_frame": null,
+   "box_iou": 0.2396,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac774b935178a2c8740620c",
+   "kind": "cloth",
+   "area_share": 0.094,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9747,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac73f759d7333beb125beac",
+   "kind": "hand",
+   "area_share": 0.1838,
+   "detected": true,
+   "in_frame": "prev",
+   "box_iou": 0.49,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac60e76844de1a8095cba7f",
+   "kind": "hand",
+   "area_share": 0.2226,
+   "detected": true,
+   "in_frame": "prev",
+   "box_iou": 0.9695,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acc8576d7f580a4573c992f",
+   "kind": "animal",
+   "area_share": 0.2054,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.6399,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac9aa34a6411bcc32eb2626",
+   "kind": "hand",
+   "area_share": 0.2032,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.4667,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac766d574b9fff6ad4760a0",
+   "kind": "cloth",
+   "area_share": 0.1536,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.992,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac998d6596c119b0ca8c856",
+   "kind": "hand",
+   "area_share": 0.0966,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.7766,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac99f8e8dd5cabed8463e11",
+   "kind": "hand",
+   "area_share": 0.1573,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9617,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acdbad5d7f580a4573c99bc",
+   "kind": "cloth",
+   "area_share": 0.0673,
+   "detected": true,
+   "in_frame": "prev",
+   "box_iou": 0.9376,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac7674de1f2a29fd1fba511",
+   "kind": "cloth",
+   "area_share": 0.1143,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9636,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac994fe2cdd67cb5b3084be",
+   "kind": "hand",
+   "area_share": 0.1641,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9706,
+   "camera_moved": false
+  },
+  {
+   "cur": "6aca3ddd9d7333beb125bfee",
+   "kind": "hand",
+   "area_share": 0.1175,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 1.0,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac92bb69d7333beb125bf80",
+   "kind": "animal",
+   "area_share": 0.1256,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.6451,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acc0f1935da959c78fefc67",
+   "kind": "animal",
+   "area_share": 0.1039,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.5395,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac401ca4c3227d11cfbdcca",
+   "kind": "animal",
+   "area_share": 0.2639,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 1.0,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac995d4631137c2f1670b73",
+   "kind": "animal",
+   "area_share": 0.0958,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9774,
+   "camera_moved": false
+  },
+  {
+   "cur": "6aca27b6399285cb4cdf2397",
+   "kind": "hand",
+   "area_share": 0.2483,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9791,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac882f19d7333beb125bf3a",
+   "kind": "hand",
+   "area_share": 0.1733,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9917,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acca89dd7f580a4573c993a",
+   "kind": "hand",
+   "area_share": 0.1807,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.5999,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac59998d26953cd701dba52",
+   "kind": "animal",
+   "area_share": 0.1254,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.8125,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac61f399d7333beb125be30",
+   "kind": "hand",
+   "area_share": 0.1024,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 1.0,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac7da2e9d7333beb125bee2",
+   "kind": "cloth",
+   "area_share": 0.2734,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9982,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac8de4d9d7333beb125bf5a",
+   "kind": "hand",
+   "area_share": 0.2311,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 1.0,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac7095dbd804de8e8054f12",
+   "kind": "animal",
+   "area_share": 0.1184,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.8195,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac850abb13eb3007fc8712d",
+   "kind": "hand",
+   "area_share": 0.1882,
+   "detected": false,
+   "in_frame": null,
+   "box_iou": 0.0,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acfd96a2edf1794f1ef61dd",
+   "kind": "animal",
+   "area_share": 0.1943,
+   "detected": false,
+   "in_frame": null,
+   "box_iou": 0.995,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac61f38844de1a8095cba8a",
+   "kind": "animal",
+   "area_share": 0.096,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9538,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac75b9d9d7333beb125beba",
+   "kind": "cloth",
+   "area_share": 0.1798,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9746,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac319bf4c3227d11cfbd047",
+   "kind": "hand",
+   "area_share": 0.1336,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 1.0,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac5220f9d7333beb125bddc",
+   "kind": "cloth",
+   "area_share": 0.1576,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9774,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac359094c3227d11cfbd1d5",
+   "kind": "hand",
+   "area_share": 0.0919,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.7966,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac4c81bca291fe786e8c636",
+   "kind": "hand",
+   "area_share": 0.1586,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 1.0,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acb88759d7333beb125c076",
+   "kind": "animal",
+   "area_share": 0.2326,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9664,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac3b4744c3227d11cfbd9f7",
+   "kind": "cloth",
+   "area_share": 0.2578,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9931,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acdf31ad7f580a4573c99d8",
+   "kind": "cloth",
+   "area_share": 0.1694,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9919,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac6344f9d7333beb125be38",
+   "kind": "animal",
+   "area_share": 0.1777,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 1.0,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac4b020d68e2ba9146474db",
+   "kind": "animal",
+   "area_share": 0.1848,
+   "detected": false,
+   "in_frame": null,
+   "box_iou": 0.9013,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acca9cad7f580a4573c993c",
+   "kind": "animal",
+   "area_share": 0.1713,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.8148,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ad00aa12edf1794f1ef6202",
+   "kind": "cloth",
+   "area_share": 0.1567,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9719,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac6eb259d7333beb125be8c",
+   "kind": "hand",
+   "area_share": 0.2267,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.996,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac7090b4843db06c8da0d10",
+   "kind": "hand",
+   "area_share": 0.1989,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 1.0,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac3d0924c3227d11cfbdb65",
+   "kind": "animal",
+   "area_share": 0.19,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.7974,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac319bd11641919eebf1f6b",
+   "kind": "hand",
+   "area_share": 0.1268,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.878,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac77d5953fe9ff305bfe42e",
+   "kind": "cloth",
+   "area_share": 0.0887,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9948,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac4d4b69d7333beb125bdb6",
+   "kind": "animal",
+   "area_share": 0.1576,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.7667,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac38366974c9263c0d06b09",
+   "kind": "animal",
+   "area_share": 0.1504,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.5809,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acffb652edf1794f1ef61f6",
+   "kind": "cloth",
+   "area_share": 0.1554,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9676,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac2e88b4c3227d11cfbceee",
+   "kind": "cloth",
+   "area_share": 0.2523,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9921,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac0f5594c3227d11cfbb92f",
+   "kind": "cloth",
+   "area_share": 0.109,
+   "detected": true,
+   "in_frame": "prev",
+   "box_iou": 0.9871,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac46dfd4cbf385e65e48ca4",
+   "kind": "animal",
+   "area_share": 0.1461,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9574,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acd272dd7f580a4573c996a",
+   "kind": "hand",
+   "area_share": 0.1815,
+   "detected": true,
+   "in_frame": "prev",
+   "box_iou": 0.2835,
+   "camera_moved": false
+  },
+  {
+   "cur": "6aca7d399d7333beb125c006",
+   "kind": "animal",
+   "area_share": 0.1841,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.8741,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac1eb6c4c3227d11cfbc249",
+   "kind": "cloth",
+   "area_share": 0.1547,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9854,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac9985d2e5947de87f15573",
+   "kind": "animal",
+   "area_share": 0.1304,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 1.0,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac76759e1f2a29fd1fba512",
+   "kind": "animal",
+   "area_share": 0.2538,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.8754,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac60a16d056f860571579d4",
+   "kind": "cloth",
+   "area_share": 0.2239,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9875,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac61826844de1a8095cba87",
+   "kind": "cloth",
+   "area_share": 0.1958,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9541,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac54c409d7333beb125bdec",
+   "kind": "animal",
+   "area_share": 0.1464,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.864,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ace64c0d7f580a4573c9a02",
+   "kind": "animal",
+   "area_share": 0.0795,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 1.0,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac46e28ad659472fd7cec49",
+   "kind": "hand",
+   "area_share": 0.076,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9729,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac9b13bcf2c153c9d68476c",
+   "kind": "cloth",
+   "area_share": 0.125,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9892,
+   "camera_moved": false
+  },
+  {
+   "cur": "6aca44e69d7333beb125bff1",
+   "kind": "animal",
+   "area_share": 0.1839,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.8802,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ad017852edf1794f1ef6208",
+   "kind": "animal",
+   "area_share": 0.0911,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.806,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac9968b9a1476b3e06a61c1",
+   "kind": "cloth",
+   "area_share": 0.124,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9724,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac9977f95fabead97b6f614",
+   "kind": "hand",
+   "area_share": 0.1981,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9879,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac355349e3d64f84bdf3a72",
+   "kind": "animal",
+   "area_share": 0.1866,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9877,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac766cf74b9fff6ad47609f",
+   "kind": "animal",
+   "area_share": 0.0759,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.8943,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acab458573d9b77c7e1f488",
+   "kind": "animal",
+   "area_share": 0.2873,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9918,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac939c69d7333beb125bf85",
+   "kind": "animal",
+   "area_share": 0.1846,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9575,
+   "camera_moved": false
+  },
+  {
+   "cur": "6acd528ad7f580a4573c998c",
+   "kind": "cloth",
+   "area_share": 0.0872,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9675,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac9b06dcf2c153c9d68476a",
+   "kind": "cloth",
+   "area_share": 0.163,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9922,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac7e1399d7333beb125bee7",
+   "kind": "hand",
+   "area_share": 0.3008,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.996,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac385a75cce2141ad1dcd16",
+   "kind": "cloth",
+   "area_share": 0.2387,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9889,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac3833a4c3227d11cfbd469",
+   "kind": "animal",
+   "area_share": 0.1836,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.7457,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac350bb85650578c63d7bef",
+   "kind": "animal",
+   "area_share": 0.1891,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.858,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac70260cd787453edf6e646",
+   "kind": "animal",
+   "area_share": 0.2126,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9027,
+   "camera_moved": false
+  },
+  {
+   "cur": "6aca198a58d8ec8928c2be7b",
+   "kind": "cloth",
+   "area_share": 0.0986,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.7148,
+   "camera_moved": false
+  },
+  {
+   "cur": "6ac45f94a1d8f9ba1a67bf99",
+   "kind": "cloth",
+   "area_share": 0.1145,
+   "detected": true,
+   "in_frame": "cur",
+   "box_iou": 0.9842,
+   "camera_moved": false
+  }
+ ],
+ "synthetic_moves": [
+  {
+   "cur": "6ac9f2646b2d368d8b350666",
+   "shift_share": 0.0432,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0434,
+   "occluded": false
+  },
+  {
+   "cur": "6acc243135da959c78fefc6f",
+   "shift_share": 0.0455,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0455,
+   "occluded": false
+  },
+  {
+   "cur": "6ac41dea4c3227d11cfbdd7a",
+   "shift_share": 0.0323,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0323,
+   "occluded": false
+  },
+  {
+   "cur": "6ac3587583fa4bbe30e59399",
+   "shift_share": 0.0571,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0572,
+   "occluded": false
+  },
+  {
+   "cur": "6ac5e6f99d7333beb125be17",
+   "shift_share": 0.0404,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0405,
+   "occluded": false
+  },
+  {
+   "cur": "6ac7548e4843db06c8da0d1e",
+   "shift_share": 0.0655,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0655,
+   "occluded": false
+  },
+  {
+   "cur": "6ac4bbf972099ec4d8507411",
+   "shift_share": 0.0733,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0734,
+   "occluded": false
+  },
+  {
+   "cur": "6acf3eb9d7f580a4573c9a83",
+   "shift_share": 0.0353,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0356,
+   "occluded": false
+  },
+  {
+   "cur": "6ac73f7f9d7333beb125bead",
+   "shift_share": 0.0574,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0573,
+   "occluded": false
+  },
+  {
+   "cur": "6ac762a59d7333beb125bebd",
+   "shift_share": 0.0688,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0687,
+   "occluded": false
+  },
+  {
+   "cur": "6accbdb5d7f580a4573c9940",
+   "shift_share": 0.0538,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0537,
+   "occluded": false
+  },
+  {
+   "cur": "6ac9b84a86eaf725a4d9b2e8",
+   "shift_share": 0.0504,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0505,
+   "occluded": false
+  },
+  {
+   "cur": "6acdfb49d7f580a4573c99dc",
+   "shift_share": 0.0365,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0364,
+   "occluded": false
+  },
+  {
+   "cur": "6ac48e67ffbd82802883f0ef",
+   "shift_share": 0.0584,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0585,
+   "occluded": false
+  },
+  {
+   "cur": "6acc06e635da959c78fefc61",
+   "shift_share": 0.0502,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0502,
+   "occluded": false
+  },
+  {
+   "cur": "6ac37e4f6ea4e1c6cd710315",
+   "shift_share": 0.0365,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0364,
+   "occluded": false
+  },
+  {
+   "cur": "6acbeac635da959c78fefc51",
+   "shift_share": 0.0783,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0782,
+   "occluded": false
+  },
+  {
+   "cur": "6ac5e6f94a6a99588b8c8a0c",
+   "shift_share": 0.0695,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0696,
+   "occluded": false
+  },
+  {
+   "cur": "6ac6d60d9d7333beb125be84",
+   "shift_share": 0.0594,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0594,
+   "occluded": false
+  },
+  {
+   "cur": "6ac738784843db06c8da0d19",
+   "shift_share": 0.0357,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0357,
+   "occluded": false
+  },
+  {
+   "cur": "6acb6c003a2190fe612f1053",
+   "shift_share": 0.0425,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0424,
+   "occluded": false
+  },
+  {
+   "cur": "6ac781dadc3629211bbe4ad8",
+   "shift_share": 0.0624,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0624,
+   "occluded": false
+  },
+  {
+   "cur": "6ac774b935178a2c8740620c",
+   "shift_share": 0.0747,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0748,
+   "occluded": false
+  },
+  {
+   "cur": "6ac73f759d7333beb125beac",
+   "shift_share": 0.039,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0389,
+   "occluded": false
+  },
+  {
+   "cur": "6ac60e76844de1a8095cba7f",
+   "shift_share": 0.0784,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0784,
+   "occluded": false
+  },
+  {
+   "cur": "6acc8576d7f580a4573c992f",
+   "shift_share": 0.0771,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0771,
+   "occluded": false
+  },
+  {
+   "cur": "6ac9aa34a6411bcc32eb2626",
+   "shift_share": 0.0387,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0387,
+   "occluded": false
+  },
+  {
+   "cur": "6ac766d574b9fff6ad4760a0",
+   "shift_share": 0.0377,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0377,
+   "occluded": false
+  },
+  {
+   "cur": "6ac998d6596c119b0ca8c856",
+   "shift_share": 0.0453,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0454,
+   "occluded": false
+  },
+  {
+   "cur": "6ac99f8e8dd5cabed8463e11",
+   "shift_share": 0.0342,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0342,
+   "occluded": false
+  },
+  {
+   "cur": "6acdbad5d7f580a4573c99bc",
+   "shift_share": 0.0428,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0429,
+   "occluded": false
+  },
+  {
+   "cur": "6ac7674de1f2a29fd1fba511",
+   "shift_share": 0.0749,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0749,
+   "occluded": false
+  },
+  {
+   "cur": "6ac994fe2cdd67cb5b3084be",
+   "shift_share": 0.0441,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0442,
+   "occluded": false
+  },
+  {
+   "cur": "6aca3ddd9d7333beb125bfee",
+   "shift_share": 0.0736,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0737,
+   "occluded": false
+  },
+  {
+   "cur": "6ac92bb69d7333beb125bf80",
+   "shift_share": 0.0535,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0534,
+   "occluded": false
+  },
+  {
+   "cur": "6acc0f1935da959c78fefc67",
+   "shift_share": 0.0636,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0636,
+   "occluded": false
+  },
+  {
+   "cur": "6ac401ca4c3227d11cfbdcca",
+   "shift_share": 0.0477,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0477,
+   "occluded": false
+  },
+  {
+   "cur": "6ac995d4631137c2f1670b73",
+   "shift_share": 0.0778,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0779,
+   "occluded": false
+  },
+  {
+   "cur": "6aca27b6399285cb4cdf2397",
+   "shift_share": 0.0529,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0528,
+   "occluded": false
+  },
+  {
+   "cur": "6ac882f19d7333beb125bf3a",
+   "shift_share": 0.0409,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.041,
+   "occluded": false
+  },
+  {
+   "cur": "6acca89dd7f580a4573c993a",
+   "shift_share": 0.0672,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0672,
+   "occluded": false
+  },
+  {
+   "cur": "6ac59998d26953cd701dba52",
+   "shift_share": 0.0746,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0745,
+   "occluded": false
+  },
+  {
+   "cur": "6ac61f399d7333beb125be30",
+   "shift_share": 0.073,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0731,
+   "occluded": false
+  },
+  {
+   "cur": "6ac7da2e9d7333beb125bee2",
+   "shift_share": 0.0569,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0569,
+   "occluded": false
+  },
+  {
+   "cur": "6ac8de4d9d7333beb125bf5a",
+   "shift_share": 0.0428,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.043,
+   "occluded": false
+  },
+  {
+   "cur": "6ac7095dbd804de8e8054f12",
+   "shift_share": 0.0497,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0496,
+   "occluded": false
+  },
+  {
+   "cur": "6ac850abb13eb3007fc8712d",
+   "shift_share": 0.0434,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0435,
+   "occluded": false
+  },
+  {
+   "cur": "6acfd96a2edf1794f1ef61dd",
+   "shift_share": 0.0531,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0531,
+   "occluded": false
+  },
+  {
+   "cur": "6ac61f38844de1a8095cba8a",
+   "shift_share": 0.0424,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0421,
+   "occluded": false
+  },
+  {
+   "cur": "6ac75b9d9d7333beb125beba",
+   "shift_share": 0.0764,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0764,
+   "occluded": false
+  },
+  {
+   "cur": "6ac319bf4c3227d11cfbd047",
+   "shift_share": 0.0377,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0378,
+   "occluded": false
+  },
+  {
+   "cur": "6ac5220f9d7333beb125bddc",
+   "shift_share": 0.0737,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0735,
+   "occluded": false
+  },
+  {
+   "cur": "6ac359094c3227d11cfbd1d5",
+   "shift_share": 0.0787,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0786,
+   "occluded": false
+  },
+  {
+   "cur": "6ac4c81bca291fe786e8c636",
+   "shift_share": 0.0326,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0326,
+   "occluded": false
+  },
+  {
+   "cur": "6acb88759d7333beb125c076",
+   "shift_share": 0.0341,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0341,
+   "occluded": false
+  },
+  {
+   "cur": "6ac3b4744c3227d11cfbd9f7",
+   "shift_share": 0.0334,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0335,
+   "occluded": false
+  },
+  {
+   "cur": "6acdf31ad7f580a4573c99d8",
+   "shift_share": 0.0412,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0412,
+   "occluded": false
+  },
+  {
+   "cur": "6ac6344f9d7333beb125be38",
+   "shift_share": 0.0693,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0693,
+   "occluded": false
+  },
+  {
+   "cur": "6ac4b020d68e2ba9146474db",
+   "shift_share": 0.0367,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0365,
+   "occluded": false
+  },
+  {
+   "cur": "6acca9cad7f580a4573c993c",
+   "shift_share": 0.0503,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0502,
+   "occluded": false
+  },
+  {
+   "cur": "6ad00aa12edf1794f1ef6202",
+   "shift_share": 0.0698,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0698,
+   "occluded": false
+  },
+  {
+   "cur": "6ac6eb259d7333beb125be8c",
+   "shift_share": 0.0377,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0377,
+   "occluded": false
+  },
+  {
+   "cur": "6ac7090b4843db06c8da0d10",
+   "shift_share": 0.0471,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0471,
+   "occluded": false
+  },
+  {
+   "cur": "6ac3d0924c3227d11cfbdb65",
+   "shift_share": 0.058,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.058,
+   "occluded": false
+  },
+  {
+   "cur": "6ac319bd11641919eebf1f6b",
+   "shift_share": 0.0604,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0606,
+   "occluded": false
+  },
+  {
+   "cur": "6ac77d5953fe9ff305bfe42e",
+   "shift_share": 0.066,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.066,
+   "occluded": false
+  },
+  {
+   "cur": "6ac4d4b69d7333beb125bdb6",
+   "shift_share": 0.0643,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0643,
+   "occluded": false
+  },
+  {
+   "cur": "6ac38366974c9263c0d06b09",
+   "shift_share": 0.0617,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0617,
+   "occluded": false
+  },
+  {
+   "cur": "6acffb652edf1794f1ef61f6",
+   "shift_share": 0.0572,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0572,
+   "occluded": false
+  },
+  {
+   "cur": "6ac2e88b4c3227d11cfbceee",
+   "shift_share": 0.0469,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0469,
+   "occluded": false
+  },
+  {
+   "cur": "6ac0f5594c3227d11cfbb92f",
+   "shift_share": 0.0428,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0429,
+   "occluded": false
+  },
+  {
+   "cur": "6ac46dfd4cbf385e65e48ca4",
+   "shift_share": 0.0714,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0715,
+   "occluded": false
+  },
+  {
+   "cur": "6acd272dd7f580a4573c996a",
+   "shift_share": 0.0745,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0745,
+   "occluded": false
+  },
+  {
+   "cur": "6aca7d399d7333beb125c006",
+   "shift_share": 0.0337,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0334,
+   "occluded": false
+  },
+  {
+   "cur": "6ac1eb6c4c3227d11cfbc249",
+   "shift_share": 0.0706,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0706,
+   "occluded": false
+  },
+  {
+   "cur": "6ac9985d2e5947de87f15573",
+   "shift_share": 0.077,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.077,
+   "occluded": false
+  },
+  {
+   "cur": "6ac76759e1f2a29fd1fba512",
+   "shift_share": 0.0474,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0474,
+   "occluded": false
+  },
+  {
+   "cur": "6ac60a16d056f860571579d4",
+   "shift_share": 0.0733,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0732,
+   "occluded": false
+  },
+  {
+   "cur": "6ac61826844de1a8095cba87",
+   "shift_share": 0.0763,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0763,
+   "occluded": false
+  },
+  {
+   "cur": "6ac54c409d7333beb125bdec",
+   "shift_share": 0.042,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.042,
+   "occluded": false
+  },
+  {
+   "cur": "6ace64c0d7f580a4573c9a02",
+   "shift_share": 0.0407,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0407,
+   "occluded": false
+  },
+  {
+   "cur": "6ac46e28ad659472fd7cec49",
+   "shift_share": 0.0319,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0319,
+   "occluded": false
+  },
+  {
+   "cur": "6ac9b13bcf2c153c9d68476c",
+   "shift_share": 0.0595,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0596,
+   "occluded": false
+  },
+  {
+   "cur": "6aca44e69d7333beb125bff1",
+   "shift_share": 0.0502,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0502,
+   "occluded": false
+  },
+  {
+   "cur": "6ad017852edf1794f1ef6208",
+   "shift_share": 0.0451,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0451,
+   "occluded": false
+  },
+  {
+   "cur": "6ac9968b9a1476b3e06a61c1",
+   "shift_share": 0.0461,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0461,
+   "occluded": false
+  },
+  {
+   "cur": "6ac9977f95fabead97b6f614",
+   "shift_share": 0.0314,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0316,
+   "occluded": false
+  },
+  {
+   "cur": "6ac355349e3d64f84bdf3a72",
+   "shift_share": 0.0652,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0651,
+   "occluded": false
+  },
+  {
+   "cur": "6ac766cf74b9fff6ad47609f",
+   "shift_share": 0.0532,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0534,
+   "occluded": false
+  },
+  {
+   "cur": "6acab458573d9b77c7e1f488",
+   "shift_share": 0.0428,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0428,
+   "occluded": false
+  },
+  {
+   "cur": "6ac939c69d7333beb125bf85",
+   "shift_share": 0.0398,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0398,
+   "occluded": false
+  },
+  {
+   "cur": "6acd528ad7f580a4573c998c",
+   "shift_share": 0.0666,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0667,
+   "occluded": false
+  },
+  {
+   "cur": "6ac9b06dcf2c153c9d68476a",
+   "shift_share": 0.0566,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0567,
+   "occluded": false
+  },
+  {
+   "cur": "6ac7e1399d7333beb125bee7",
+   "shift_share": 0.069,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.069,
+   "occluded": false
+  },
+  {
+   "cur": "6ac385a75cce2141ad1dcd16",
+   "shift_share": 0.0422,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0421,
+   "occluded": false
+  },
+  {
+   "cur": "6ac3833a4c3227d11cfbd469",
+   "shift_share": 0.0305,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.031,
+   "occluded": false
+  },
+  {
+   "cur": "6ac350bb85650578c63d7bef",
+   "shift_share": 0.0784,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0784,
+   "occluded": false
+  },
+  {
+   "cur": "6ac70260cd787453edf6e646",
+   "shift_share": 0.0724,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0725,
+   "occluded": false
+  },
+  {
+   "cur": "6aca198a58d8ec8928c2be7b",
+   "shift_share": 0.0723,
+   "detected": true,
+   "reasons": [
+    "shift"
+   ],
+   "measured_share": 0.0723,
+   "occluded": false
+  },
+  {
+   "cur": "6ac45f94a1d8f9ba1a67bf99",
+   "shift_share": 0.0519,
+   "detected": true,
+   "reasons": [
+    "shift",
+    "rotation"
+   ],
+   "measured_share": 0.0518,
+   "occluded": false
+  }
+ ]
+}

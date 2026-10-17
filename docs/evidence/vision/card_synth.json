@@ -1,0 +1,55 @@
+{
+ "env": {
+  "machine": "Intel64 Family 6 Model 142 Stepping 9, GenuineIntel",
+  "cpu_count": 4,
+  "cv2": "5.0.0",
+  "cv2_threads": 4,
+  "frame": [
+   1920,
+   1080
+  ],
+  "note": "shared dev laptop; other agents' jobs ran at the same time, so numbers are upper bounds"
+ },
+ "backgrounds": "real export frames resized to 1920x1080 (3 of 4) + textured noise (1 of 4)",
+ "normal": {
+  "n": 40,
+  "ok": 39,
+  "hit_rate": 0.975,
+  "corner_err_px_p50": 1.83,
+  "corner_err_px_p95": 3.26
+ },
+ "angled": {
+  "n": 40,
+  "ok": 40,
+  "hit_rate": 1.0,
+  "corner_err_px_p50": 1.92,
+  "corner_err_px_p95": 4.13
+ },
+ "partial": {
+  "n": 40,
+  "ok": 40,
+  "hit_rate": 1.0,
+  "corner_err_px_p50": null,
+  "corner_err_px_p95": null
+ },
+ "two_cards": {
+  "n": 40,
+  "ok": 33,
+  "hit_rate": 0.825,
+  "corner_err_px_p50": 2.46,
+  "corner_err_px_p95": 997.74
+ },
+ "no_card": {
+  "n": 40,
+  "ok": 40,
+  "hit_rate": 1.0,
+  "corner_err_px_p50": null,
+  "corner_err_px_p95": null
+ },
+ "criteria": {
+  "normal/angled": "found and max corner error <= 2 % of the frame diagonal (44 px at 1080p)",
+  "partial": "found and partial=True",
+  "two_cards": "n_cards == 2",
+  "no_card": "found=False"
+ }
+}

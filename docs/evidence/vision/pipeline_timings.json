@@ -1,0 +1,57 @@
+{
+ "n_pairs": 20,
+ "method": "sift",
+ "trap_kind": "lure",
+ "frame_sizes": {
+  "2304x1296": 3,
+  "768x432": 17
+ },
+ "ms": {
+  "wall_total": {
+   "p50": 1113.1,
+   "p95": 1359.5
+  },
+  "op1_card": {
+   "p50": 108.8,
+   "p95": 178.7
+  },
+  "op2_quality": {
+   "p50": 32.5,
+   "p95": 48.7
+  },
+  "op3_register": {
+   "p50": 478.4,
+   "p95": 717.1
+  },
+  "op4_diff": {
+   "p50": 14.7,
+   "p95": 29.8
+  },
+  "op6_crowd": {
+   "p50": 0.0,
+   "p95": 0.0
+  },
+  "op8_motion": {
+   "p50": 441.8,
+   "p95": 567.5
+  },
+  "total": {
+   "p50": 1111.6,
+   "p95": 1359.2
+  }
+ },
+ "flags": {
+  "floor_found": 20,
+  "registered": 19,
+  "occluded": 0,
+  "camera_moved": 0,
+  "errors": 0
+ },
+ "machine": {
+  "platform": "Windows-11-10.0.26100-SP0",
+  "cpus": 4,
+  "opencv": "5.0.0",
+  "processor": "Intel64 Family 6 Model 142 Stepping 9, GenuineIntel"
+ },
+ "note": "image decode not included (arrays passed in); no evidence files written"
+}

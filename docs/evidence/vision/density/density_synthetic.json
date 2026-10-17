@@ -1,0 +1,275 @@
+{
+ "grid": {
+  "width": 47,
+  "height": 39,
+  "cell_m": 5.0,
+  "origin": [
+   106.4820953,
+   11.1297828
+  ],
+  "crs": "EPSG:4326 (lon, lat)",
+  "max_dist_m": 72.03,
+  "known_share": 1.0
+ },
+ "value_range": [
+  2.3,
+  28.8
+ ],
+ "hot_threshold": 14.2,
+ "hot_zones": {
+  "type": "FeatureCollection",
+  "features": [
+   {
+    "type": "Feature",
+    "geometry": {
+     "type": "Polygon",
+     "coordinates": [
+      [
+       [
+        106.4828286,
+        11.129558
+       ],
+       [
+        106.4825994,
+        11.1293332
+       ],
+       [
+        106.4825536,
+        11.1290634
+       ],
+       [
+        106.4827369,
+        11.1288386
+       ],
+       [
+        106.4830577,
+        11.1287486
+       ],
+       [
+        106.4832868,
+        11.1290634
+       ],
+       [
+        106.4832868,
+        11.1292882
+       ],
+       [
+        106.4831035,
+        11.129513
+       ],
+       [
+        106.4828286,
+        11.129558
+       ]
+      ]
+     ]
+    },
+    "properties": {
+     "zone": 1,
+     "area_m2": 5975.0,
+     "peak": 21.959,
+     "mean": 17.402,
+     "traps": [
+      "T12",
+      "T21",
+      "T22",
+      "T32"
+     ]
+    }
+   }
+  ],
+  "properties": {
+   "crs": "EPSG:4326 (lon, lat)",
+   "hot_threshold": 14.2,
+   "label": "flies/trap/day"
+  }
+ },
+ "n_hot_zones": 1,
+ "traps": [
+  {
+   "id": "T00",
+   "value": 2.5,
+   "cell": [
+    6,
+    31
+   ],
+   "map_value": 4.614
+  },
+  {
+   "id": "T01",
+   "value": 5.5,
+   "cell": [
+    13,
+    30
+   ],
+   "map_value": 6.834
+  },
+  {
+   "id": "T02",
+   "value": 4.9,
+   "cell": [
+    22,
+    30
+   ],
+   "map_value": 6.791
+  },
+  {
+   "id": "T03",
+   "value": 2.5,
+   "cell": [
+    31,
+    30
+   ],
+   "map_value": 4.383
+  },
+  {
+   "id": "T04",
+   "value": 3.1,
+   "cell": [
+    39,
+    31
+   ],
+   "map_value": 4.019
+  },
+  {
+   "id": "T10",
+   "value": 6.2,
+   "cell": [
+    6,
+    22
+   ],
+   "map_value": 8.062
+  },
+  {
+   "id": "T11",
+   "value": 14.5,
+   "cell": [
+    14,
+    22
+   ],
+   "map_value": 13.66
+  },
+  {
+   "id": "T12",
+   "value": 17.8,
+   "cell": [
+    21,
+    22
+   ],
+   "map_value": 15.073
+  },
+  {
+   "id": "T13",
+   "value": 6.8,
+   "cell": [
+    30,
+    22
+   ],
+   "map_value": 7.902
+  },
+  {
+   "id": "T14",
+   "value": 3.2,
+   "cell": [
+    39,
+    22
+   ],
+   "map_value": 4.44
+  },
+  {
+   "id": "T20",
+   "value": 9.8,
+   "cell": [
+    7,
+    14
+   ],
+   "map_value": 11.2
+  },
+  {
+   "id": "T21",
+   "value": 28.8,
+   "cell": [
+    15,
+    14
+   ],
+   "map_value": 21.925
+  },
+  {
+   "id": "T22",
+   "value": 28.8,
+   "cell": [
+    22,
+    13
+   ],
+   "map_value": 21.518
+  },
+  {
+   "id": "T23",
+   "value": 9.9,
+   "cell": [
+    30,
+    14
+   ],
+   "map_value": 10.194
+  },
+  {
+   "id": "T24",
+   "value": 3.1,
+   "cell": [
+    38,
+    15
+   ],
+   "map_value": 4.743
+  },
+  {
+   "id": "T30",
+   "value": 7.6,
+   "cell": [
+    7,
+    7
+   ],
+   "map_value": 9.773
+  },
+  {
+   "id": "T31",
+   "value": 14.2,
+   "cell": [
+    13,
+    6
+   ],
+   "map_value": 13.829
+  },
+  {
+   "id": "T32",
+   "value": 14.2,
+   "cell": [
+    22,
+    6
+   ],
+   "map_value": 14.25
+  },
+  {
+   "id": "T33",
+   "value": 7.0,
+   "cell": [
+    30,
+    7
+   ],
+   "map_value": 8.511
+  },
+  {
+   "id": "T34",
+   "value": 2.3,
+   "cell": [
+    39,
+    7
+   ],
+   "map_value": 4.079
+  }
+ ],
+ "time_ms": 381.0,
+ "evidence": {
+  "png": "docs/evidence/vision/density/density_synthetic.png",
+  "geojson": "docs/evidence/vision/density/density_synthetic.geojson"
+ }
+}

@@ -1,0 +1,1852 @@
+{
+ "summary": {
+  "dataset": "../camos-ai-camera/models/fruit-fly-v3/valid",
+  "n_images": 93,
+  "label_count": {
+   "min": 4,
+   "median": 14.0,
+   "max": 94
+  },
+  "disc_found": 10,
+  "modes": {
+   "full_frame": {
+    "blob_count_vs_labels": {
+     "pearson_r": 0.9865,
+     "pearson_p": 2.39e-73,
+     "spearman_rho": 0.9146,
+     "spearman_p": 1.48e-37
+    },
+    "component_count_vs_labels": {
+     "pearson_r": 0.9876,
+     "pearson_p": 5.01e-75,
+     "spearman_rho": 0.9112,
+     "spearman_p": 8.15e-37
+    },
+    "saturation_pct_vs_labels": {
+     "pearson_r": 0.9859,
+     "pearson_p": 2.08e-72,
+     "spearman_rho": 0.9232,
+     "spearman_p": 1.41e-39
+    },
+    "blob_count_mae": 4.688,
+    "blob_count_bias": 0.688,
+    "split_count_total": 86,
+    "saturation_pct": {
+     "min": 0.564,
+     "p50": 1.394,
+     "p90": 6.492,
+     "p95": 6.737,
+     "max": 7.129
+    },
+    "labels_per_saturation_pct": [
+     12.9794,
+     -3.7132
+    ]
+   },
+   "disc": {
+    "blob_count_vs_labels": {
+     "pearson_r": 0.9858,
+     "pearson_p": 2.35e-72,
+     "spearman_rho": 0.9145,
+     "spearman_p": 1.61e-37
+    },
+    "component_count_vs_labels": {
+     "pearson_r": 0.9872,
+     "pearson_p": 2.45e-74,
+     "spearman_rho": 0.911,
+     "spearman_p": 9.04e-37
+    },
+    "saturation_pct_vs_labels": {
+     "pearson_r": 0.9854,
+     "pearson_p": 8.93e-72,
+     "spearman_rho": 0.9236,
+     "spearman_p": 1.18e-39
+    },
+    "blob_count_mae": 4.72,
+    "blob_count_bias": 0.656,
+    "split_count_total": 85,
+    "saturation_pct": {
+     "min": 0.564,
+     "p50": 1.394,
+     "p90": 6.492,
+     "p95": 6.766,
+     "max": 7.129
+    },
+    "labels_per_saturation_pct": [
+     12.9308,
+     -3.6327
+    ]
+   }
+  }
+ },
+ "rows": [
+  {
+   "image": "image_01045_jpg.rf.09a8eaced2d1c527559533bcdab32346.jpg",
+   "labels": 32,
+   "full_frame": {
+    "saturation_pct": 1.86,
+    "blob_count": 27,
+    "component_count": 27,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 1.883,
+    "blob_count": 27,
+    "component_count": 27,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": true
+  },
+  {
+   "image": "image_01127_jpg.rf.91e482b576efb0fb68653770b9fdf9f4.jpg",
+   "labels": 61,
+   "full_frame": {
+    "saturation_pct": 4.852,
+    "blob_count": 60,
+    "component_count": 60,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 4.852,
+    "blob_count": 60,
+    "component_count": 60,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_01129_jpg.rf.2efb3871b8bf3e17bb6db743a96ae1df.jpg",
+   "labels": 65,
+   "full_frame": {
+    "saturation_pct": 4.978,
+    "blob_count": 58,
+    "component_count": 57,
+    "split_count": 1,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 4.978,
+    "blob_count": 58,
+    "component_count": 57,
+    "split_count": 1,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_01138_jpg.rf.a0e25262956d2052e8cd0a1b26fa47c6.jpg",
+   "labels": 79,
+   "full_frame": {
+    "saturation_pct": 6.479,
+    "blob_count": 64,
+    "component_count": 69,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 6.479,
+    "blob_count": 64,
+    "component_count": 69,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_01139_jpg.rf.60712dba92b0cd94bea42079981ee38b.jpg",
+   "labels": 79,
+   "full_frame": {
+    "saturation_pct": 6.512,
+    "blob_count": 71,
+    "component_count": 67,
+    "split_count": 4,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 6.634,
+    "blob_count": 70,
+    "component_count": 66,
+    "split_count": 4,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": true
+  },
+  {
+   "image": "image_01142_jpg.rf.e02cd0d121240744614c497b700cfda5.jpg",
+   "labels": 84,
+   "full_frame": {
+    "saturation_pct": 6.783,
+    "blob_count": 75,
+    "component_count": 75,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 6.783,
+    "blob_count": 75,
+    "component_count": 75,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_01147_jpg.rf.d65280a9a23826e3344908b88ca27e87.jpg",
+   "labels": 83,
+   "full_frame": {
+    "saturation_pct": 6.725,
+    "blob_count": 78,
+    "component_count": 72,
+    "split_count": 6,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 6.813,
+    "blob_count": 78,
+    "component_count": 72,
+    "split_count": 6,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": true
+  },
+  {
+   "image": "image_01152_jpg.rf.ccd2ee60d982692edfdf8915e5aa3808.jpg",
+   "labels": 79,
+   "full_frame": {
+    "saturation_pct": 6.754,
+    "blob_count": 76,
+    "component_count": 70,
+    "split_count": 6,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 6.754,
+    "blob_count": 76,
+    "component_count": 70,
+    "split_count": 6,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_01156_jpg.rf.fa735ac09e0b7649898a4bca5283f10d.jpg",
+   "labels": 78,
+   "full_frame": {
+    "saturation_pct": 6.384,
+    "blob_count": 70,
+    "component_count": 65,
+    "split_count": 5,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 6.384,
+    "blob_count": 70,
+    "component_count": 65,
+    "split_count": 5,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_01159_jpg.rf.2fe0b826a3bfbcd3fb555213befaee3c.jpg",
+   "labels": 71,
+   "full_frame": {
+    "saturation_pct": 6.204,
+    "blob_count": 68,
+    "component_count": 66,
+    "split_count": 2,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 6.411,
+    "blob_count": 70,
+    "component_count": 67,
+    "split_count": 3,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": true
+  },
+  {
+   "image": "image_01177_jpg.rf.b8fd2125ed0aaae0d4723130c3f1eefb.jpg",
+   "labels": 78,
+   "full_frame": {
+    "saturation_pct": 7.102,
+    "blob_count": 79,
+    "component_count": 76,
+    "split_count": 3,
+    "fly_radius_px": 6.39
+   },
+   "disc": {
+    "saturation_pct": 7.102,
+    "blob_count": 79,
+    "component_count": 76,
+    "split_count": 3,
+    "fly_radius_px": 6.39
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_01191_jpg.rf.b8b21ea7c81efa168bada5eecc4df93c.jpg",
+   "labels": 74,
+   "full_frame": {
+    "saturation_pct": 6.488,
+    "blob_count": 70,
+    "component_count": 72,
+    "split_count": 0,
+    "fly_radius_px": 6.2
+   },
+   "disc": {
+    "saturation_pct": 6.488,
+    "blob_count": 70,
+    "component_count": 72,
+    "split_count": 0,
+    "fly_radius_px": 6.2
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_01210_jpg.rf.58568c3d41f3af6b370e72b9e4fe1703.jpg",
+   "labels": 77,
+   "full_frame": {
+    "saturation_pct": 6.808,
+    "blob_count": 78,
+    "component_count": 73,
+    "split_count": 5,
+    "fly_radius_px": 6.2
+   },
+   "disc": {
+    "saturation_pct": 6.808,
+    "blob_count": 78,
+    "component_count": 73,
+    "split_count": 5,
+    "fly_radius_px": 6.2
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_01215_jpg.rf.d28360ee4a07c68eda6196b903a50061.jpg",
+   "labels": 78,
+   "full_frame": {
+    "saturation_pct": 7.129,
+    "blob_count": 74,
+    "component_count": 75,
+    "split_count": 0,
+    "fly_radius_px": 6.2
+   },
+   "disc": {
+    "saturation_pct": 7.129,
+    "blob_count": 74,
+    "component_count": 75,
+    "split_count": 0,
+    "fly_radius_px": 6.2
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_01220_jpg.rf.8973ee487ed3ffef3b1eae28e274d4f5.jpg",
+   "labels": 79,
+   "full_frame": {
+    "saturation_pct": 6.457,
+    "blob_count": 74,
+    "component_count": 74,
+    "split_count": 0,
+    "fly_radius_px": 6.2
+   },
+   "disc": {
+    "saturation_pct": 6.457,
+    "blob_count": 74,
+    "component_count": 74,
+    "split_count": 0,
+    "fly_radius_px": 6.2
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_01233_jpg.rf.5bfe5e3d7580a934da4ccf747d90f614.jpg",
+   "labels": 79,
+   "full_frame": {
+    "saturation_pct": 6.493,
+    "blob_count": 79,
+    "component_count": 78,
+    "split_count": 1,
+    "fly_radius_px": 6.39
+   },
+   "disc": {
+    "saturation_pct": 6.493,
+    "blob_count": 79,
+    "component_count": 78,
+    "split_count": 1,
+    "fly_radius_px": 6.39
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_01249_jpg.rf.2acd65806713f1c7879491f56d992281.jpg",
+   "labels": 77,
+   "full_frame": {
+    "saturation_pct": 6.576,
+    "blob_count": 84,
+    "component_count": 78,
+    "split_count": 6,
+    "fly_radius_px": 6.39
+   },
+   "disc": {
+    "saturation_pct": 6.576,
+    "blob_count": 84,
+    "component_count": 78,
+    "split_count": 6,
+    "fly_radius_px": 6.39
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_01252_jpg.rf.fc57dc82f906957f1e78a6b574358e87.jpg",
+   "labels": 77,
+   "full_frame": {
+    "saturation_pct": 6.582,
+    "blob_count": 80,
+    "component_count": 78,
+    "split_count": 2,
+    "fly_radius_px": 6.39
+   },
+   "disc": {
+    "saturation_pct": 6.582,
+    "blob_count": 80,
+    "component_count": 78,
+    "split_count": 2,
+    "fly_radius_px": 6.39
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02144_jpg.rf.84c3ab1d56d70efb44b53176e763ae85.jpg",
+   "labels": 14,
+   "full_frame": {
+    "saturation_pct": 1.373,
+    "blob_count": 19,
+    "component_count": 19,
+    "split_count": 0,
+    "fly_radius_px": 6.2
+   },
+   "disc": {
+    "saturation_pct": 1.377,
+    "blob_count": 19,
+    "component_count": 19,
+    "split_count": 0,
+    "fly_radius_px": 6.2
+   },
+   "disc_found": true
+  },
+  {
+   "image": "image_02190_jpg.rf.c20c92a920d46d21120c7f7706db62e9.jpg",
+   "labels": 8,
+   "full_frame": {
+    "saturation_pct": 0.774,
+    "blob_count": 8,
+    "component_count": 8,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 0.774,
+    "blob_count": 8,
+    "component_count": 8,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02192_jpg.rf.81d0314ee694753cbb023487a5b4fabb.jpg",
+   "labels": 9,
+   "full_frame": {
+    "saturation_pct": 0.855,
+    "blob_count": 6,
+    "component_count": 7,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 0.855,
+    "blob_count": 6,
+    "component_count": 7,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02193_jpg.rf.220c79e0e2b77c81e349684985fee96c.jpg",
+   "labels": 8,
+   "full_frame": {
+    "saturation_pct": 0.832,
+    "blob_count": 8,
+    "component_count": 8,
+    "split_count": 0,
+    "fly_radius_px": 6.39
+   },
+   "disc": {
+    "saturation_pct": 0.832,
+    "blob_count": 8,
+    "component_count": 8,
+    "split_count": 0,
+    "fly_radius_px": 6.39
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02196_jpg.rf.3efd14a28483d41ed7e8b83a28f85a18.jpg",
+   "labels": 9,
+   "full_frame": {
+    "saturation_pct": 0.766,
+    "blob_count": 8,
+    "component_count": 8,
+    "split_count": 0,
+    "fly_radius_px": 6.1
+   },
+   "disc": {
+    "saturation_pct": 0.766,
+    "blob_count": 8,
+    "component_count": 8,
+    "split_count": 0,
+    "fly_radius_px": 6.1
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02198_jpg.rf.ad31c7834a7d7096d62e4c7358b25d54.jpg",
+   "labels": 10,
+   "full_frame": {
+    "saturation_pct": 0.709,
+    "blob_count": 6,
+    "component_count": 5,
+    "split_count": 1,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 0.709,
+    "blob_count": 6,
+    "component_count": 5,
+    "split_count": 1,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02199_jpg.rf.ab8e6e5680194c47ca63834d4d9a1fb5.jpg",
+   "labels": 10,
+   "full_frame": {
+    "saturation_pct": 0.945,
+    "blob_count": 10,
+    "component_count": 10,
+    "split_count": 0,
+    "fly_radius_px": 6.3
+   },
+   "disc": {
+    "saturation_pct": 0.945,
+    "blob_count": 10,
+    "component_count": 10,
+    "split_count": 0,
+    "fly_radius_px": 6.3
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02208_jpg.rf.e0adf94eeacf41e5f345e684f776258d.jpg",
+   "labels": 10,
+   "full_frame": {
+    "saturation_pct": 0.739,
+    "blob_count": 9,
+    "component_count": 9,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 0.739,
+    "blob_count": 9,
+    "component_count": 9,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02218_jpg.rf.53909b25c27c43612129097a3a59795f.jpg",
+   "labels": 13,
+   "full_frame": {
+    "saturation_pct": 1.013,
+    "blob_count": 10,
+    "component_count": 9,
+    "split_count": 1,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 1.013,
+    "blob_count": 10,
+    "component_count": 9,
+    "split_count": 1,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02263_jpg.rf.ec11ccf1e970bae4e369f597ae2dc15a.jpg",
+   "labels": 27,
+   "full_frame": {
+    "saturation_pct": 2.128,
+    "blob_count": 24,
+    "component_count": 23,
+    "split_count": 1,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 2.128,
+    "blob_count": 24,
+    "component_count": 23,
+    "split_count": 1,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02264_jpg.rf.e3da93acee0af2bdb93e17edf3e37d6a.jpg",
+   "labels": 27,
+   "full_frame": {
+    "saturation_pct": 2.419,
+    "blob_count": 26,
+    "component_count": 26,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 2.419,
+    "blob_count": 26,
+    "component_count": 26,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02270_jpg.rf.020d9aa30f45bdf47c530f5d73dbb7a5.jpg",
+   "labels": 32,
+   "full_frame": {
+    "saturation_pct": 2.685,
+    "blob_count": 31,
+    "component_count": 31,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 2.685,
+    "blob_count": 31,
+    "component_count": 31,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02274_jpg.rf.1435fc60829bbff19f2264f98c0dde90.jpg",
+   "labels": 32,
+   "full_frame": {
+    "saturation_pct": 2.562,
+    "blob_count": 28,
+    "component_count": 29,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 2.562,
+    "blob_count": 28,
+    "component_count": 29,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02276_jpg.rf.ac5ab45ccd75d54affdf6b1ffaa84ac1.jpg",
+   "labels": 33,
+   "full_frame": {
+    "saturation_pct": 2.779,
+    "blob_count": 34,
+    "component_count": 33,
+    "split_count": 1,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 2.779,
+    "blob_count": 34,
+    "component_count": 33,
+    "split_count": 1,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02277_jpg.rf.24918966d2c1271b23427cdf5d8e0267.jpg",
+   "labels": 34,
+   "full_frame": {
+    "saturation_pct": 2.754,
+    "blob_count": 31,
+    "component_count": 31,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 2.754,
+    "blob_count": 31,
+    "component_count": 31,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02280_jpg.rf.c5313b575f2b8be17cbcf3debe2597ab.jpg",
+   "labels": 36,
+   "full_frame": {
+    "saturation_pct": 2.781,
+    "blob_count": 34,
+    "component_count": 34,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 2.781,
+    "blob_count": 34,
+    "component_count": 34,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02281_jpg.rf.248d0dc468c92cbc74e8515596fd19f5.jpg",
+   "labels": 32,
+   "full_frame": {
+    "saturation_pct": 2.577,
+    "blob_count": 29,
+    "component_count": 30,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 2.577,
+    "blob_count": 29,
+    "component_count": 30,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02282_jpg.rf.002bd578258db00188b56f3da562bd95.jpg",
+   "labels": 35,
+   "full_frame": {
+    "saturation_pct": 2.794,
+    "blob_count": 35,
+    "component_count": 35,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 2.794,
+    "blob_count": 35,
+    "component_count": 35,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02283_jpg.rf.a56c662c21338631877ff95c5687c072.jpg",
+   "labels": 34,
+   "full_frame": {
+    "saturation_pct": 2.672,
+    "blob_count": 31,
+    "component_count": 31,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 2.672,
+    "blob_count": 31,
+    "component_count": 31,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02284_jpg.rf.adbbddb4c5e794da3f8fb47c9678f90f.jpg",
+   "labels": 38,
+   "full_frame": {
+    "saturation_pct": 2.834,
+    "blob_count": 35,
+    "component_count": 35,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 2.834,
+    "blob_count": 35,
+    "component_count": 35,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02286_jpg.rf.5c06d8cbb2838d3fb9a4a5999336842b.jpg",
+   "labels": 33,
+   "full_frame": {
+    "saturation_pct": 2.438,
+    "blob_count": 31,
+    "component_count": 29,
+    "split_count": 2,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 2.438,
+    "blob_count": 31,
+    "component_count": 29,
+    "split_count": 2,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02287_jpg.rf.dc8afd726e0fed84150f99a6975adce8.jpg",
+   "labels": 32,
+   "full_frame": {
+    "saturation_pct": 2.595,
+    "blob_count": 30,
+    "component_count": 29,
+    "split_count": 1,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 2.595,
+    "blob_count": 30,
+    "component_count": 29,
+    "split_count": 1,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02288_jpg.rf.51a0fff6e904b4e666198c903bdccf08.jpg",
+   "labels": 32,
+   "full_frame": {
+    "saturation_pct": 2.78,
+    "blob_count": 30,
+    "component_count": 29,
+    "split_count": 1,
+    "fly_radius_px": 6.2
+   },
+   "disc": {
+    "saturation_pct": 2.78,
+    "blob_count": 30,
+    "component_count": 29,
+    "split_count": 1,
+    "fly_radius_px": 6.2
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02292_jpg.rf.2d74091f694b96637f6e07088f2b4187.jpg",
+   "labels": 37,
+   "full_frame": {
+    "saturation_pct": 2.875,
+    "blob_count": 37,
+    "component_count": 36,
+    "split_count": 1,
+    "fly_radius_px": 5.9
+   },
+   "disc": {
+    "saturation_pct": 2.83,
+    "blob_count": 36,
+    "component_count": 35,
+    "split_count": 1,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": true
+  },
+  {
+   "image": "image_02293_jpg.rf.2ed9dc0d39b07f762ca5d3bbcbb8ee84.jpg",
+   "labels": 38,
+   "full_frame": {
+    "saturation_pct": 3.062,
+    "blob_count": 37,
+    "component_count": 36,
+    "split_count": 1,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 3.062,
+    "blob_count": 37,
+    "component_count": 36,
+    "split_count": 1,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02295_jpg.rf.850621b553566a3643967d6db66dc4bc.jpg",
+   "labels": 43,
+   "full_frame": {
+    "saturation_pct": 3.315,
+    "blob_count": 39,
+    "component_count": 39,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 3.315,
+    "blob_count": 39,
+    "component_count": 39,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": true
+  },
+  {
+   "image": "image_02298_jpg.rf.d6d133ece2fddc9b7b70664814eb9053.jpg",
+   "labels": 46,
+   "full_frame": {
+    "saturation_pct": 3.637,
+    "blob_count": 46,
+    "component_count": 45,
+    "split_count": 1,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 3.637,
+    "blob_count": 46,
+    "component_count": 45,
+    "split_count": 1,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02299_jpg.rf.8bb61b10a8f5a09e3b0207af904a67c7.jpg",
+   "labels": 44,
+   "full_frame": {
+    "saturation_pct": 3.58,
+    "blob_count": 42,
+    "component_count": 41,
+    "split_count": 1,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 3.58,
+    "blob_count": 42,
+    "component_count": 41,
+    "split_count": 1,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02301_jpg.rf.0c4bdfa412f8b935bed4bb147239574a.jpg",
+   "labels": 43,
+   "full_frame": {
+    "saturation_pct": 3.395,
+    "blob_count": 39,
+    "component_count": 38,
+    "split_count": 1,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 3.395,
+    "blob_count": 39,
+    "component_count": 38,
+    "split_count": 1,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02302_jpg.rf.4e2a204fe62598fe9d51a4d919ddee31.jpg",
+   "labels": 48,
+   "full_frame": {
+    "saturation_pct": 3.673,
+    "blob_count": 43,
+    "component_count": 44,
+    "split_count": 0,
+    "fly_radius_px": 5.7
+   },
+   "disc": {
+    "saturation_pct": 3.673,
+    "blob_count": 43,
+    "component_count": 44,
+    "split_count": 0,
+    "fly_radius_px": 5.7
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02303_jpg.rf.408dd1eed51d492f99dc2d00d0ecded6.jpg",
+   "labels": 45,
+   "full_frame": {
+    "saturation_pct": 3.669,
+    "blob_count": 44,
+    "component_count": 42,
+    "split_count": 2,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 3.669,
+    "blob_count": 44,
+    "component_count": 42,
+    "split_count": 2,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02304_jpg.rf.158809a77698cd022509db42c405c6ff.jpg",
+   "labels": 45,
+   "full_frame": {
+    "saturation_pct": 3.564,
+    "blob_count": 39,
+    "component_count": 40,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 3.564,
+    "blob_count": 39,
+    "component_count": 40,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_02516_jpg.rf.8b941c934955fc8d8079bf6de72539bd.jpg",
+   "labels": 15,
+   "full_frame": {
+    "saturation_pct": 1.232,
+    "blob_count": 16,
+    "component_count": 15,
+    "split_count": 1,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 1.232,
+    "blob_count": 16,
+    "component_count": 15,
+    "split_count": 1,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_03407_jpg.rf.9bbb8af804a8dd65b4da0bc306031440.jpg",
+   "labels": 6,
+   "full_frame": {
+    "saturation_pct": 0.566,
+    "blob_count": 9,
+    "component_count": 9,
+    "split_count": 0,
+    "fly_radius_px": 5.2
+   },
+   "disc": {
+    "saturation_pct": 0.566,
+    "blob_count": 9,
+    "component_count": 9,
+    "split_count": 0,
+    "fly_radius_px": 5.2
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_03412_jpg.rf.789f213f89b0b707125eb68d97c7f934.jpg",
+   "labels": 7,
+   "full_frame": {
+    "saturation_pct": 0.788,
+    "blob_count": 13,
+    "component_count": 12,
+    "split_count": 1,
+    "fly_radius_px": 5.5
+   },
+   "disc": {
+    "saturation_pct": 0.788,
+    "blob_count": 13,
+    "component_count": 12,
+    "split_count": 1,
+    "fly_radius_px": 5.5
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_03415_jpg.rf.10e7f1662a81f01b06b947529456c9d5.jpg",
+   "labels": 7,
+   "full_frame": {
+    "saturation_pct": 0.679,
+    "blob_count": 10,
+    "component_count": 10,
+    "split_count": 0,
+    "fly_radius_px": 5.6
+   },
+   "disc": {
+    "saturation_pct": 0.679,
+    "blob_count": 10,
+    "component_count": 10,
+    "split_count": 0,
+    "fly_radius_px": 5.6
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_03417_jpg.rf.97e81b2494d822557df79ff0ee68e0bd.jpg",
+   "labels": 7,
+   "full_frame": {
+    "saturation_pct": 0.575,
+    "blob_count": 9,
+    "component_count": 9,
+    "split_count": 0,
+    "fly_radius_px": 5.39
+   },
+   "disc": {
+    "saturation_pct": 0.575,
+    "blob_count": 9,
+    "component_count": 9,
+    "split_count": 0,
+    "fly_radius_px": 5.39
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_03420_jpg.rf.df2615ba8aa63a686c1e3c1ba2535d19.jpg",
+   "labels": 6,
+   "full_frame": {
+    "saturation_pct": 0.564,
+    "blob_count": 9,
+    "component_count": 9,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 0.564,
+    "blob_count": 9,
+    "component_count": 9,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_03429_jpg.rf.03abd6212faad17740ef0d8826c1384b.jpg",
+   "labels": 7,
+   "full_frame": {
+    "saturation_pct": 0.662,
+    "blob_count": 10,
+    "component_count": 10,
+    "split_count": 0,
+    "fly_radius_px": 5.6
+   },
+   "disc": {
+    "saturation_pct": 0.662,
+    "blob_count": 10,
+    "component_count": 10,
+    "split_count": 0,
+    "fly_radius_px": 5.6
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_03455_jpg.rf.0cb634da370d866322948c6cbe8e5add.jpg",
+   "labels": 6,
+   "full_frame": {
+    "saturation_pct": 0.716,
+    "blob_count": 10,
+    "component_count": 11,
+    "split_count": 0,
+    "fly_radius_px": 5.39
+   },
+   "disc": {
+    "saturation_pct": 0.716,
+    "blob_count": 10,
+    "component_count": 11,
+    "split_count": 0,
+    "fly_radius_px": 5.39
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_03456_jpg.rf.876837d2acd9d2a288b13bd17574d8d9.jpg",
+   "labels": 5,
+   "full_frame": {
+    "saturation_pct": 0.689,
+    "blob_count": 9,
+    "component_count": 10,
+    "split_count": 0,
+    "fly_radius_px": 5.39
+   },
+   "disc": {
+    "saturation_pct": 0.689,
+    "blob_count": 9,
+    "component_count": 10,
+    "split_count": 0,
+    "fly_radius_px": 5.39
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_03457_jpg.rf.f8d9a3b8e6a40150bcb95cf433aad3d0.jpg",
+   "labels": 6,
+   "full_frame": {
+    "saturation_pct": 0.788,
+    "blob_count": 13,
+    "component_count": 12,
+    "split_count": 1,
+    "fly_radius_px": 5.59
+   },
+   "disc": {
+    "saturation_pct": 0.788,
+    "blob_count": 13,
+    "component_count": 12,
+    "split_count": 1,
+    "fly_radius_px": 5.59
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_03762_jpg.rf.387265ed9113f3735097541216fd2349.jpg",
+   "labels": 94,
+   "full_frame": {
+    "saturation_pct": 6.14,
+    "blob_count": 72,
+    "component_count": 69,
+    "split_count": 3,
+    "fly_radius_px": 7.0
+   },
+   "disc": {
+    "saturation_pct": 6.151,
+    "blob_count": 71,
+    "component_count": 68,
+    "split_count": 3,
+    "fly_radius_px": 7.0
+   },
+   "disc_found": true
+  },
+  {
+   "image": "image_03764_jpg.rf.bce934fcccf0be979551da84220c90cc.jpg",
+   "labels": 86,
+   "full_frame": {
+    "saturation_pct": 5.795,
+    "blob_count": 73,
+    "component_count": 69,
+    "split_count": 4,
+    "fly_radius_px": 6.39
+   },
+   "disc": {
+    "saturation_pct": 5.726,
+    "blob_count": 71,
+    "component_count": 69,
+    "split_count": 2,
+    "fly_radius_px": 6.39
+   },
+   "disc_found": true
+  },
+  {
+   "image": "image_03768_jpg.rf.629b231e999936a7cefcad792755be88.jpg",
+   "labels": 88,
+   "full_frame": {
+    "saturation_pct": 5.701,
+    "blob_count": 78,
+    "component_count": 75,
+    "split_count": 3,
+    "fly_radius_px": 6.2
+   },
+   "disc": {
+    "saturation_pct": 5.701,
+    "blob_count": 78,
+    "component_count": 75,
+    "split_count": 3,
+    "fly_radius_px": 6.2
+   },
+   "disc_found": true
+  },
+  {
+   "image": "image_09306_jpg.rf.98d2752f1a0e33809b0522b2c0d1145d.jpg",
+   "labels": 6,
+   "full_frame": {
+    "saturation_pct": 1.081,
+    "blob_count": 12,
+    "component_count": 12,
+    "split_count": 0,
+    "fly_radius_px": 5.3
+   },
+   "disc": {
+    "saturation_pct": 1.081,
+    "blob_count": 12,
+    "component_count": 12,
+    "split_count": 0,
+    "fly_radius_px": 5.3
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09311_jpg.rf.0852655a4bd05e3585b73ae2f1df6143.jpg",
+   "labels": 5,
+   "full_frame": {
+    "saturation_pct": 0.82,
+    "blob_count": 10,
+    "component_count": 11,
+    "split_count": 0,
+    "fly_radius_px": 5.2
+   },
+   "disc": {
+    "saturation_pct": 0.82,
+    "blob_count": 10,
+    "component_count": 11,
+    "split_count": 0,
+    "fly_radius_px": 5.2
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09320_jpg.rf.ffeb8577a6068646748f70c9e98ee868.jpg",
+   "labels": 5,
+   "full_frame": {
+    "saturation_pct": 1.073,
+    "blob_count": 13,
+    "component_count": 13,
+    "split_count": 0,
+    "fly_radius_px": 5.39
+   },
+   "disc": {
+    "saturation_pct": 1.073,
+    "blob_count": 13,
+    "component_count": 13,
+    "split_count": 0,
+    "fly_radius_px": 5.39
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09321_jpg.rf.81c826ebdc8f3e8856c9bdea33b06f91.jpg",
+   "labels": 5,
+   "full_frame": {
+    "saturation_pct": 1.016,
+    "blob_count": 14,
+    "component_count": 13,
+    "split_count": 1,
+    "fly_radius_px": 5.39
+   },
+   "disc": {
+    "saturation_pct": 1.016,
+    "blob_count": 14,
+    "component_count": 13,
+    "split_count": 1,
+    "fly_radius_px": 5.39
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09325_jpg.rf.efd9fa41453433a989957be36db88d49.jpg",
+   "labels": 6,
+   "full_frame": {
+    "saturation_pct": 1.042,
+    "blob_count": 13,
+    "component_count": 13,
+    "split_count": 0,
+    "fly_radius_px": 5.39
+   },
+   "disc": {
+    "saturation_pct": 1.042,
+    "blob_count": 13,
+    "component_count": 13,
+    "split_count": 0,
+    "fly_radius_px": 5.39
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09330_jpg.rf.aaee10042695e5340c3e50ebdcf8bbf2.jpg",
+   "labels": 6,
+   "full_frame": {
+    "saturation_pct": 1.013,
+    "blob_count": 12,
+    "component_count": 12,
+    "split_count": 0,
+    "fly_radius_px": 5.2
+   },
+   "disc": {
+    "saturation_pct": 1.013,
+    "blob_count": 12,
+    "component_count": 12,
+    "split_count": 0,
+    "fly_radius_px": 5.2
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09334_jpg.rf.3ebe4d7d7b9e7afb194126260d56cfb1.jpg",
+   "labels": 5,
+   "full_frame": {
+    "saturation_pct": 0.871,
+    "blob_count": 9,
+    "component_count": 10,
+    "split_count": 0,
+    "fly_radius_px": 5.8
+   },
+   "disc": {
+    "saturation_pct": 0.871,
+    "blob_count": 9,
+    "component_count": 10,
+    "split_count": 0,
+    "fly_radius_px": 5.8
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09342_jpg.rf.48625f68e15da4cfb7a062dde7c9ba36.jpg",
+   "labels": 4,
+   "full_frame": {
+    "saturation_pct": 0.936,
+    "blob_count": 12,
+    "component_count": 11,
+    "split_count": 1,
+    "fly_radius_px": 5.0
+   },
+   "disc": {
+    "saturation_pct": 0.936,
+    "blob_count": 12,
+    "component_count": 11,
+    "split_count": 1,
+    "fly_radius_px": 5.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09346_jpg.rf.8312ae15df90e5218bca3c0cb1e2b20a.jpg",
+   "labels": 5,
+   "full_frame": {
+    "saturation_pct": 0.962,
+    "blob_count": 11,
+    "component_count": 12,
+    "split_count": 0,
+    "fly_radius_px": 5.7
+   },
+   "disc": {
+    "saturation_pct": 0.962,
+    "blob_count": 11,
+    "component_count": 12,
+    "split_count": 0,
+    "fly_radius_px": 5.7
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09349_jpg.rf.d84b59eb1f86d54fce4ba07c7c077f75.jpg",
+   "labels": 7,
+   "full_frame": {
+    "saturation_pct": 1.06,
+    "blob_count": 12,
+    "component_count": 13,
+    "split_count": 0,
+    "fly_radius_px": 5.6
+   },
+   "disc": {
+    "saturation_pct": 1.06,
+    "blob_count": 12,
+    "component_count": 13,
+    "split_count": 0,
+    "fly_radius_px": 5.6
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09360_jpg.rf.5a2e95264af6bb0c18c3b5caa288e9db.jpg",
+   "labels": 4,
+   "full_frame": {
+    "saturation_pct": 0.829,
+    "blob_count": 8,
+    "component_count": 10,
+    "split_count": 0,
+    "fly_radius_px": 5.2
+   },
+   "disc": {
+    "saturation_pct": 0.829,
+    "blob_count": 8,
+    "component_count": 10,
+    "split_count": 0,
+    "fly_radius_px": 5.2
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09361_jpg.rf.f75ea7a6dc7337f74d8a1ce1b5df5358.jpg",
+   "labels": 5,
+   "full_frame": {
+    "saturation_pct": 0.985,
+    "blob_count": 11,
+    "component_count": 9,
+    "split_count": 2,
+    "fly_radius_px": 5.6
+   },
+   "disc": {
+    "saturation_pct": 0.985,
+    "blob_count": 11,
+    "component_count": 9,
+    "split_count": 2,
+    "fly_radius_px": 5.6
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09362_jpg.rf.9be8109c8494ee2859632c07f62e7165.jpg",
+   "labels": 4,
+   "full_frame": {
+    "saturation_pct": 0.88,
+    "blob_count": 12,
+    "component_count": 11,
+    "split_count": 1,
+    "fly_radius_px": 5.0
+   },
+   "disc": {
+    "saturation_pct": 0.88,
+    "blob_count": 12,
+    "component_count": 11,
+    "split_count": 1,
+    "fly_radius_px": 5.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09364_jpg.rf.ee993ea2a15492b53dc9b4e1018f772f.jpg",
+   "labels": 7,
+   "full_frame": {
+    "saturation_pct": 1.154,
+    "blob_count": 16,
+    "component_count": 13,
+    "split_count": 3,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 1.154,
+    "blob_count": 16,
+    "component_count": 13,
+    "split_count": 3,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09370_jpg.rf.1e7c59bd0dc7b25fa1af2e9fe278a0e6.jpg",
+   "labels": 8,
+   "full_frame": {
+    "saturation_pct": 1.181,
+    "blob_count": 15,
+    "component_count": 14,
+    "split_count": 1,
+    "fly_radius_px": 5.2
+   },
+   "disc": {
+    "saturation_pct": 1.181,
+    "blob_count": 15,
+    "component_count": 14,
+    "split_count": 1,
+    "fly_radius_px": 5.2
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09381_jpg.rf.eff68a75a442788e14c2cfedcf6730fd.jpg",
+   "labels": 8,
+   "full_frame": {
+    "saturation_pct": 1.003,
+    "blob_count": 12,
+    "component_count": 13,
+    "split_count": 0,
+    "fly_radius_px": 5.6
+   },
+   "disc": {
+    "saturation_pct": 1.003,
+    "blob_count": 12,
+    "component_count": 13,
+    "split_count": 0,
+    "fly_radius_px": 5.6
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09386_jpg.rf.f619a1920ec71600cd066c73411c59e8.jpg",
+   "labels": 8,
+   "full_frame": {
+    "saturation_pct": 1.106,
+    "blob_count": 14,
+    "component_count": 14,
+    "split_count": 0,
+    "fly_radius_px": 5.7
+   },
+   "disc": {
+    "saturation_pct": 1.106,
+    "blob_count": 14,
+    "component_count": 14,
+    "split_count": 0,
+    "fly_radius_px": 5.7
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09387_jpg.rf.01399c38535b2a0a42b55588d6d487fd.jpg",
+   "labels": 7,
+   "full_frame": {
+    "saturation_pct": 1.07,
+    "blob_count": 13,
+    "component_count": 14,
+    "split_count": 0,
+    "fly_radius_px": 5.5
+   },
+   "disc": {
+    "saturation_pct": 1.07,
+    "blob_count": 13,
+    "component_count": 14,
+    "split_count": 0,
+    "fly_radius_px": 5.5
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09394_jpg.rf.1f728b66840e03b83fe0bffcf439fd61.jpg",
+   "labels": 9,
+   "full_frame": {
+    "saturation_pct": 1.309,
+    "blob_count": 16,
+    "component_count": 15,
+    "split_count": 1,
+    "fly_radius_px": 5.39
+   },
+   "disc": {
+    "saturation_pct": 1.309,
+    "blob_count": 16,
+    "component_count": 15,
+    "split_count": 1,
+    "fly_radius_px": 5.39
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09396_jpg.rf.b2f33767460197abe1d2ab50a194d240.jpg",
+   "labels": 10,
+   "full_frame": {
+    "saturation_pct": 1.232,
+    "blob_count": 14,
+    "component_count": 15,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc": {
+    "saturation_pct": 1.232,
+    "blob_count": 14,
+    "component_count": 15,
+    "split_count": 0,
+    "fly_radius_px": 5.79
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09409_jpg.rf.39abd7c44efc48860f940c5829fa8e28.jpg",
+   "labels": 10,
+   "full_frame": {
+    "saturation_pct": 1.394,
+    "blob_count": 17,
+    "component_count": 17,
+    "split_count": 0,
+    "fly_radius_px": 5.6
+   },
+   "disc": {
+    "saturation_pct": 1.394,
+    "blob_count": 17,
+    "component_count": 17,
+    "split_count": 0,
+    "fly_radius_px": 5.6
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09412_jpg.rf.4360b07ae8a2bf7eeec17b748b63ff3c.jpg",
+   "labels": 10,
+   "full_frame": {
+    "saturation_pct": 1.254,
+    "blob_count": 16,
+    "component_count": 16,
+    "split_count": 0,
+    "fly_radius_px": 5.59
+   },
+   "disc": {
+    "saturation_pct": 1.254,
+    "blob_count": 16,
+    "component_count": 16,
+    "split_count": 0,
+    "fly_radius_px": 5.59
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09415_jpg.rf.e70ded2feb1b205774cffede782baadd.jpg",
+   "labels": 10,
+   "full_frame": {
+    "saturation_pct": 1.197,
+    "blob_count": 16,
+    "component_count": 16,
+    "split_count": 0,
+    "fly_radius_px": 5.5
+   },
+   "disc": {
+    "saturation_pct": 1.197,
+    "blob_count": 16,
+    "component_count": 16,
+    "split_count": 0,
+    "fly_radius_px": 5.5
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09416_jpg.rf.6f4eeb416fcb4933e02513d3ec197ce9.jpg",
+   "labels": 9,
+   "full_frame": {
+    "saturation_pct": 1.098,
+    "blob_count": 15,
+    "component_count": 15,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc": {
+    "saturation_pct": 1.098,
+    "blob_count": 15,
+    "component_count": 15,
+    "split_count": 0,
+    "fly_radius_px": 6.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09424_jpg.rf.d188a3e0e3335adb8f298756862f0697.jpg",
+   "labels": 14,
+   "full_frame": {
+    "saturation_pct": 1.53,
+    "blob_count": 20,
+    "component_count": 19,
+    "split_count": 1,
+    "fly_radius_px": 5.6
+   },
+   "disc": {
+    "saturation_pct": 1.53,
+    "blob_count": 20,
+    "component_count": 19,
+    "split_count": 1,
+    "fly_radius_px": 5.6
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09428_jpg.rf.08ca49b628618666a410082fcca3d435.jpg",
+   "labels": 11,
+   "full_frame": {
+    "saturation_pct": 1.141,
+    "blob_count": 17,
+    "component_count": 17,
+    "split_count": 0,
+    "fly_radius_px": 5.0
+   },
+   "disc": {
+    "saturation_pct": 1.141,
+    "blob_count": 17,
+    "component_count": 17,
+    "split_count": 0,
+    "fly_radius_px": 5.0
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09438_jpg.rf.8da2705b85ccd3a22df9a610837bf16b.jpg",
+   "labels": 11,
+   "full_frame": {
+    "saturation_pct": 1.299,
+    "blob_count": 20,
+    "component_count": 18,
+    "split_count": 2,
+    "fly_radius_px": 5.6
+   },
+   "disc": {
+    "saturation_pct": 1.299,
+    "blob_count": 20,
+    "component_count": 18,
+    "split_count": 2,
+    "fly_radius_px": 5.6
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09446_jpg.rf.b61d59fa49b69415e48692ca269f72e9.jpg",
+   "labels": 11,
+   "full_frame": {
+    "saturation_pct": 1.566,
+    "blob_count": 20,
+    "component_count": 19,
+    "split_count": 1,
+    "fly_radius_px": 5.6
+   },
+   "disc": {
+    "saturation_pct": 1.566,
+    "blob_count": 20,
+    "component_count": 19,
+    "split_count": 1,
+    "fly_radius_px": 5.6
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09447_jpg.rf.22bb55b8746c67f970ab7d08d0f8d6d6.jpg",
+   "labels": 11,
+   "full_frame": {
+    "saturation_pct": 1.281,
+    "blob_count": 19,
+    "component_count": 17,
+    "split_count": 2,
+    "fly_radius_px": 5.39
+   },
+   "disc": {
+    "saturation_pct": 1.281,
+    "blob_count": 19,
+    "component_count": 17,
+    "split_count": 2,
+    "fly_radius_px": 5.39
+   },
+   "disc_found": false
+  },
+  {
+   "image": "image_09448_jpg.rf.0fc4dc047fc5692a2d5f3cdd19725643.jpg",
+   "labels": 10,
+   "full_frame": {
+    "saturation_pct": 1.243,
+    "blob_count": 18,
+    "component_count": 17,
+    "split_count": 1,
+    "fly_radius_px": 5.6
+   },
+   "disc": {
+    "saturation_pct": 1.243,
+    "blob_count": 18,
+    "component_count": 17,
+    "split_count": 1,
+    "fly_radius_px": 5.6
+   },
+   "disc_found": false
+  }
+ ],
+ "credit": "camos/fruit-fly-wmcqi v3 test split, Roboflow Universe, CC BY 4.0"
+}

@@ -1,0 +1,172 @@
+{
+ "source": "data/manifest.csv quality_issues (FlyBot imageQuality.js), replayed per camera in time order",
+ "thresholds": "sentinel\\vision\\quality_thresholds.yaml",
+ "checked_from": "2026-10-11T00:00:00Z",
+ "trap_kind": "lure",
+ "checked_window": {
+  "photos": 334,
+  "exact_agreement": 1.0,
+  "any_issue_agreement": 1.0,
+  "per_issue": {
+   "dark": {
+    "prod_flags": 0,
+    "ours_flags": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 334,
+    "precision": null,
+    "recall": null
+   },
+   "overexposed": {
+    "prod_flags": 0,
+    "ours_flags": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 334,
+    "precision": null,
+    "recall": null
+   },
+   "blurry": {
+    "prod_flags": 0,
+    "ours_flags": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 334,
+    "precision": null,
+    "recall": null
+   },
+   "low_contrast": {
+    "prod_flags": 0,
+    "ours_flags": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 334,
+    "precision": null,
+    "recall": null
+   }
+  },
+  "our_extra_issues": {
+   "glare": 12,
+   "no_card": 1
+  }
+ },
+ "all_photos": {
+  "photos": 1293,
+  "exact_agreement": 0.9969,
+  "any_issue_agreement": 0.9969,
+  "per_issue": {
+   "dark": {
+    "prod_flags": 0,
+    "ours_flags": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 1293,
+    "precision": null,
+    "recall": null
+   },
+   "overexposed": {
+    "prod_flags": 0,
+    "ours_flags": 4,
+    "tp": 0,
+    "fp": 4,
+    "fn": 0,
+    "tn": 1289,
+    "precision": 0.0,
+    "recall": null
+   },
+   "blurry": {
+    "prod_flags": 0,
+    "ours_flags": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 1293,
+    "precision": null,
+    "recall": null
+   },
+   "low_contrast": {
+    "prod_flags": 0,
+    "ours_flags": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 1293,
+    "precision": null,
+    "recall": null
+   }
+  },
+  "our_extra_issues": {
+   "glare": 91,
+   "no_card": 6,
+   "ir": 4
+  }
+ },
+ "card_found": 1287,
+ "blurry_by_camera": {},
+ "sweep_ratio_contrast": {
+  "0.4": {
+   "exact_agreement": 1.0,
+   "low_contrast": {
+    "prod_flags": 0,
+    "ours_flags": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 334,
+    "precision": null,
+    "recall": null
+   }
+  },
+  "0.5": {
+   "exact_agreement": 1.0,
+   "low_contrast": {
+    "prod_flags": 0,
+    "ours_flags": 0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 334,
+    "precision": null,
+    "recall": null
+   }
+  },
+  "0.6": {
+   "exact_agreement": 0.9251,
+   "low_contrast": {
+    "prod_flags": 0,
+    "ours_flags": 25,
+    "tp": 0,
+    "fp": 25,
+    "fn": 0,
+    "tn": 309,
+    "precision": 0.0,
+    "recall": null
+   }
+  },
+  "0.7": {
+   "exact_agreement": 0.7036,
+   "low_contrast": {
+    "prod_flags": 0,
+    "ours_flags": 99,
+    "tp": 0,
+    "fp": 99,
+    "fn": 0,
+    "tn": 235,
+    "precision": 0.0,
+    "recall": null
+   }
+  }
+ },
+ "score_ranges": {
+  "brightness_p5_p50_p95": [
+   124.8,
+   147.8,
+   161.4
+  ]
+ }
+}

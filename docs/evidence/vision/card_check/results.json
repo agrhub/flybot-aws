@@ -1,0 +1,1914 @@
+[
+ {
+  "i": 1,
+  "snapshot_id": "6abb12c875e50bc9cc8a8a57",
+  "camera": "AC6527557",
+  "captured_at": "2026-09-29T01:22:16.080Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "4",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/01_AC6527557_6abb12c875e50bc9cc8a8a57.jpg"
+ },
+ {
+  "i": 2,
+  "snapshot_id": "6abc1fd3c11d5ca72cfbfadc",
+  "camera": "AC6527557",
+  "captured_at": "2026-09-29T20:30:11.859Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "7",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/02_AC6527557_6abc1fd3c11d5ca72cfbfadc.jpg"
+ },
+ {
+  "i": 3,
+  "snapshot_id": "6abda28bc11d5ca72cfc0fc4",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-01T00:00:11.843Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "1",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/03_AC6527557_6abda28bc11d5ca72cfc0fc4.jpg"
+ },
+ {
+  "i": 4,
+  "snapshot_id": "6abf2546c11d5ca72cfc2390",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-02T03:30:14.879Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "3",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/04_AC6527557_6abf2546c11d5ca72cfc2390.jpg"
+ },
+ {
+  "i": 5,
+  "snapshot_id": "6ac0a8034c3227d11cfbb382",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-03T07:00:19.791Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "75",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.2054,
+   "n_cards": 2,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.625,
+     0.0
+    ],
+    [
+     0.9984,
+     0.1528
+    ],
+    [
+     0.9984,
+     0.3722
+    ],
+    [
+     0.575,
+     0.8306
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/05_AC6527557_6ac0a8034c3227d11cfbb382.jpg"
+ },
+ {
+  "i": 6,
+  "snapshot_id": "6ac22abc4c3227d11cfbc607",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-04T10:30:20.228Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "113",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.2685,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.5703,
+     0.0
+    ],
+    [
+     0.9984,
+     0.0
+    ],
+    [
+     0.9984,
+     0.4083
+    ],
+    [
+     0.5922,
+     0.8667
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/06_AC6527557_6ac22abc4c3227d11cfbc607.jpg"
+ },
+ {
+  "i": 7,
+  "snapshot_id": "6ac343fb4c3227d11cfbd141",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-05T06:30:19.915Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "4",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.1984,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.1192,
+     0.0
+    ],
+    [
+     0.363,
+     0.1928
+    ],
+    [
+     0.3598,
+     1.0
+    ],
+    [
+     0.0954,
+     0.6536
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/07_AC6527557_6ac343fb4c3227d11cfbd141.jpg"
+ },
+ {
+  "i": 8,
+  "snapshot_id": "6ac4656abae070f7ce0531d2",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-06T03:05:14.968Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/08_AC6527557_6ac4656abae070f7ce0531d2.jpg"
+ },
+ {
+  "i": 9,
+  "snapshot_id": "6ac611329d7333beb125be2b",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-07T09:30:26.998Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/09_AC6527557_6ac611329d7333beb125be2b.jpg"
+ },
+ {
+  "i": 10,
+  "snapshot_id": "6ac758910691025f82d3df27",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-08T08:47:13.536Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/10_AC6527557_6ac758910691025f82d3df27.jpg"
+ },
+ {
+  "i": 11,
+  "snapshot_id": "6ac916b09d7333beb125bf79",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-09T16:30:40.349Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/11_AC6527557_6ac916b09d7333beb125bf79.jpg"
+ },
+ {
+  "i": 12,
+  "snapshot_id": "6ac9f79f9d7333beb125bfd4",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-10T08:30:23.305Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/12_AC6527557_6ac9f79f9d7333beb125bfd4.jpg"
+ },
+ {
+  "i": 13,
+  "snapshot_id": "6acaf4bc9d7333beb125c03f",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-11T02:30:20.478Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/13_AC6527557_6acaf4bc9d7333beb125c03f.jpg"
+ },
+ {
+  "i": 14,
+  "snapshot_id": "6acd0b0ed7f580a4573c9961",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-12T16:30:06.789Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/14_AC6527557_6acd0b0ed7f580a4573c9961.jpg"
+ },
+ {
+  "i": 15,
+  "snapshot_id": "6acd4a54d7f580a4573c9982",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-12T21:00:04.215Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "1",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/15_AC6527557_6acd4a54d7f580a4573c9982.jpg"
+ },
+ {
+  "i": 16,
+  "snapshot_id": "6acea2dcd7f580a4573c9a3b",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-13T21:30:04.808Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "2",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/16_AC6527557_6acea2dcd7f580a4573c9a3b.jpg"
+ },
+ {
+  "i": 17,
+  "snapshot_id": "6acfe64b2edf1794f1ef61e1",
+  "camera": "AC6527557",
+  "captured_at": "2026-10-14T20:30:03.955Z",
+  "size": [
+   1280,
+   720
+  ],
+  "ai_count": "2",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": false,
+   "profile": "white",
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false,
+   "quad_norm": null
+  },
+  "evidence": "docs/evidence/vision/card_check/17_AC6527557_6acfe64b2edf1794f1ef61e1.jpg"
+ },
+ {
+  "i": 18,
+  "snapshot_id": "6abb149f75e50bc9cc8a8a79",
+  "camera": "BE4089629",
+  "captured_at": "2026-09-29T01:30:07.645Z",
+  "size": [
+   640,
+   640
+  ],
+  "ai_count": "27",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.3832,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.05,
+     0.275
+    ],
+    [
+     0.5781,
+     0.0
+    ],
+    [
+     0.7625,
+     0.6312
+    ],
+    [
+     0.3234,
+     0.9484
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/18_BE4089629_6abb149f75e50bc9cc8a8a79.jpg"
+ },
+ {
+  "i": 19,
+  "snapshot_id": "6abc1fcdc11d5ca72cfbfac0",
+  "camera": "BE4089629",
+  "captured_at": "2026-09-29T20:30:05.186Z",
+  "size": [
+   640,
+   640
+  ],
+  "ai_count": "27",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.3832,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.05,
+     0.275
+    ],
+    [
+     0.5781,
+     0.0
+    ],
+    [
+     0.7625,
+     0.6312
+    ],
+    [
+     0.3234,
+     0.9484
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/19_BE4089629_6abc1fcdc11d5ca72cfbfac0.jpg"
+ },
+ {
+  "i": 20,
+  "snapshot_id": "6abda285c11d5ca72cfc0f9f",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-01T00:00:05.431Z",
+  "size": [
+   640,
+   640
+  ],
+  "ai_count": "36",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.3647,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.2313,
+     0.2859
+    ],
+    [
+     0.8562,
+     0.2859
+    ],
+    [
+     0.8516,
+     0.8766
+    ],
+    [
+     0.0906,
+     0.7328
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/20_BE4089629_6abda285c11d5ca72cfc0f9f.jpg"
+ },
+ {
+  "i": 21,
+  "snapshot_id": "6abf253ec11d5ca72cfc2374",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-02T03:30:06.594Z",
+  "size": [
+   640,
+   640
+  ],
+  "ai_count": "27",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.3832,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.05,
+     0.275
+    ],
+    [
+     0.5781,
+     0.0
+    ],
+    [
+     0.7625,
+     0.6312
+    ],
+    [
+     0.3234,
+     0.9484
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/21_BE4089629_6abf253ec11d5ca72cfc2374.jpg"
+ },
+ {
+  "i": 22,
+  "snapshot_id": "6ac0a7fa4c3227d11cfbb379",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-03T07:00:10.864Z",
+  "size": [
+   2304,
+   1296
+  ],
+  "ai_count": "8",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.5602,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.1125,
+     0.0
+    ],
+    [
+     0.9984,
+     0.0694
+    ],
+    [
+     0.6437,
+     0.9306
+    ],
+    [
+     0.0687,
+     0.55
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/22_BE4089629_6ac0a7fa4c3227d11cfbb379.jpg"
+ },
+ {
+  "i": 23,
+  "snapshot_id": "6ac22ab34c3227d11cfbc5ff",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-04T10:30:11.253Z",
+  "size": [
+   2304,
+   1296
+  ],
+  "ai_count": "7",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.4008,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.2563,
+     0.0
+    ],
+    [
+     0.8711,
+     0.0
+    ],
+    [
+     0.8347,
+     0.7049
+    ],
+    [
+     0.2617,
+     0.6432
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/23_BE4089629_6ac22ab34c3227d11cfbc5ff.jpg"
+ },
+ {
+  "i": 24,
+  "snapshot_id": "6ac33ceb4c3227d11cfbd0f4",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-05T06:00:11.275Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "6",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.5758,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.1125,
+     0.0
+    ],
+    [
+     0.9469,
+     0.0
+    ],
+    [
+     0.6297,
+     0.9778
+    ],
+    [
+     0.0688,
+     0.5667
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/24_BE4089629_6ac33ceb4c3227d11cfbd0f4.jpg"
+ },
+ {
+  "i": 25,
+  "snapshot_id": "6ac46435def56a2e9df7b08e",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-06T03:00:05.389Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.5734,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.0859,
+     0.0
+    ],
+    [
+     0.9578,
+     0.1361
+    ],
+    [
+     0.6516,
+     0.9611
+    ],
+    [
+     0.0703,
+     0.6556
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/25_BE4089629_6ac46435def56a2e9df7b08e.jpg"
+ },
+ {
+  "i": 26,
+  "snapshot_id": "6ac6345a9d7333beb125be39",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-07T12:00:26.797Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.3257,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.2766,
+     0.2
+    ],
+    [
+     0.7203,
+     0.2
+    ],
+    [
+     0.6844,
+     0.9972
+    ],
+    [
+     0.3109,
+     0.9972
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/26_BE4089629_6ac6345a9d7333beb125be39.jpg"
+ },
+ {
+  "i": 27,
+  "snapshot_id": "6ac763f08771d4439135f1e9",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-08T09:35:44.360Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.6495,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.1125,
+     0.0
+    ],
+    [
+     0.9406,
+     0.0
+    ],
+    [
+     0.7562,
+     0.9972
+    ],
+    [
+     0.0719,
+     0.6722
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/27_BE4089629_6ac763f08771d4439135f1e9.jpg"
+ },
+ {
+  "i": 28,
+  "snapshot_id": "6ac83ca09d7333beb125bf1e",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-09T01:00:16.859Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.6014,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.0844,
+     0.0
+    ],
+    [
+     0.9563,
+     0.1528
+    ],
+    [
+     0.6453,
+     0.9972
+    ],
+    [
+     0.0734,
+     0.7278
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/28_BE4089629_6ac83ca09d7333beb125bf1e.jpg"
+ },
+ {
+  "i": 29,
+  "snapshot_id": "6aca0cbe9d7333beb125bfdc",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-10T10:00:30.259Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.5992,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.1125,
+     0.0
+    ],
+    [
+     0.9984,
+     0.2361
+    ],
+    [
+     0.7547,
+     0.9972
+    ],
+    [
+     0.0703,
+     0.6611
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/29_BE4089629_6aca0cbe9d7333beb125bfdc.jpg"
+ },
+ {
+  "i": 30,
+  "snapshot_id": "6acb421e9d7333beb125c05c",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-11T08:00:30.048Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.8261,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.0309,
+     0.0
+    ],
+    [
+     0.9306,
+     0.0
+    ],
+    [
+     0.803,
+     0.9972
+    ],
+    [
+     0.0459,
+     0.9972
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/30_BE4089629_6acb421e9d7333beb125c05c.jpg"
+ },
+ {
+  "i": 31,
+  "snapshot_id": "6acc162035da959c78fefc6a",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-11T23:05:04.966Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.5871,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.1125,
+     0.0
+    ],
+    [
+     0.9563,
+     0.1444
+    ],
+    [
+     0.6781,
+     0.9972
+    ],
+    [
+     0.0719,
+     0.6611
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/31_BE4089629_6acc162035da959c78fefc6a.jpg"
+ },
+ {
+  "i": 32,
+  "snapshot_id": "6acd91d1d7f580a4573c99a8",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-13T02:05:05.862Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.5859,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.0844,
+     0.0
+    ],
+    [
+     0.9469,
+     0.075
+    ],
+    [
+     0.6406,
+     0.9667
+    ],
+    [
+     0.0703,
+     0.6583
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/32_BE4089629_6acd91d1d7f580a4573c99a8.jpg"
+ },
+ {
+  "i": 33,
+  "snapshot_id": "6acf4cc9d7f580a4573c9a88",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-14T09:35:05.933Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.6184,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.1125,
+     0.0
+    ],
+    [
+     0.9734,
+     0.1417
+    ],
+    [
+     0.7562,
+     0.9972
+    ],
+    [
+     0.0703,
+     0.6639
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/33_BE4089629_6acf4cc9d7f580a4573c9a88.jpg"
+ },
+ {
+  "i": 34,
+  "snapshot_id": "6acfe7792edf1794f1ef61e6",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-14T20:35:05.159Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.3177,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.2766,
+     0.225
+    ],
+    [
+     0.7203,
+     0.2083
+    ],
+    [
+     0.6828,
+     0.9972
+    ],
+    [
+     0.3125,
+     0.9972
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/34_BE4089629_6acfe7792edf1794f1ef61e6.jpg"
+ },
+ {
+  "i": 35,
+  "snapshot_id": "6abb1499c11d5ca72cfbe957",
+  "camera": "BE4111159",
+  "captured_at": "2026-09-29T01:30:01.013Z",
+  "size": [
+   640,
+   640
+  ],
+  "ai_count": "13",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.2877,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.2469,
+     0.2281
+    ],
+    [
+     0.7234,
+     0.0
+    ],
+    [
+     0.8734,
+     0.5656
+    ],
+    [
+     0.4547,
+     0.7734
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/35_BE4111159_6abb1499c11d5ca72cfbe957.jpg"
+ },
+ {
+  "i": 36,
+  "snapshot_id": "6abc1fc8c11d5ca72cfbfaa4",
+  "camera": "BE4111159",
+  "captured_at": "2026-09-29T20:30:00.550Z",
+  "size": [
+   640,
+   640
+  ],
+  "ai_count": "27",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.3832,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.05,
+     0.275
+    ],
+    [
+     0.5781,
+     0.0
+    ],
+    [
+     0.7625,
+     0.6312
+    ],
+    [
+     0.3234,
+     0.9484
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/36_BE4111159_6abc1fc8c11d5ca72cfbfaa4.jpg"
+ },
+ {
+  "i": 37,
+  "snapshot_id": "6abda280c11d5ca72cfc0f7a",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-01T00:00:00.687Z",
+  "size": [
+   640,
+   640
+  ],
+  "ai_count": "36",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.3647,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.2313,
+     0.2859
+    ],
+    [
+     0.8562,
+     0.2859
+    ],
+    [
+     0.8516,
+     0.8766
+    ],
+    [
+     0.0906,
+     0.7328
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/37_BE4111159_6abda280c11d5ca72cfc0f7a.jpg"
+ },
+ {
+  "i": 38,
+  "snapshot_id": "6abf2539c11d5ca72cfc234f",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-02T03:30:01.155Z",
+  "size": [
+   640,
+   640
+  ],
+  "ai_count": "36",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.3647,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.2313,
+     0.2859
+    ],
+    [
+     0.8562,
+     0.2859
+    ],
+    [
+     0.8516,
+     0.8766
+    ],
+    [
+     0.0906,
+     0.7328
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/38_BE4111159_6abf2539c11d5ca72cfc234f.jpg"
+ },
+ {
+  "i": 39,
+  "snapshot_id": "6ac0a7f04c3227d11cfbb36b",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-03T07:00:00.997Z",
+  "size": [
+   640,
+   640
+  ],
+  "ai_count": "13",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.2877,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.2469,
+     0.2281
+    ],
+    [
+     0.7234,
+     0.0
+    ],
+    [
+     0.8734,
+     0.5656
+    ],
+    [
+     0.4547,
+     0.7734
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/39_BE4111159_6ac0a7f04c3227d11cfbb36b.jpg"
+ },
+ {
+  "i": 40,
+  "snapshot_id": "6ac22aa94c3227d11cfbc5e3",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-04T10:30:01.349Z",
+  "size": [
+   640,
+   640
+  ],
+  "ai_count": "27",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.3832,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.05,
+     0.275
+    ],
+    [
+     0.5781,
+     0.0
+    ],
+    [
+     0.7625,
+     0.6312
+    ],
+    [
+     0.3234,
+     0.9484
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/40_BE4111159_6ac22aa94c3227d11cfbc5e3.jpg"
+ },
+ {
+  "i": 41,
+  "snapshot_id": "6ac3a6594c3227d11cfbd88e",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-05T13:30:01.541Z",
+  "size": [
+   640,
+   640
+  ],
+  "ai_count": "36",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.3647,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.2313,
+     0.2859
+    ],
+    [
+     0.8562,
+     0.2859
+    ],
+    [
+     0.8516,
+     0.8766
+    ],
+    [
+     0.0906,
+     0.7328
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/41_BE4111159_6ac3a6594c3227d11cfbd88e.jpg"
+ },
+ {
+  "i": 42,
+  "snapshot_id": "6ac44f184c3227d11cfbde58",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-06T01:30:00.943Z",
+  "size": [
+   640,
+   640
+  ],
+  "ai_count": "13",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.2877,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.2469,
+     0.2281
+    ],
+    [
+     0.7234,
+     0.0
+    ],
+    [
+     0.8734,
+     0.5656
+    ],
+    [
+     0.4547,
+     0.7734
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/42_BE4111159_6ac44f184c3227d11cfbde58.jpg"
+ },
+ {
+  "i": 43,
+  "snapshot_id": "6ac74d879d7333beb125beb3",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-08T08:00:07.658Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.6381,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.1068,
+     0.0
+    ],
+    [
+     0.9399,
+     0.2382
+    ],
+    [
+     0.6673,
+     1.0
+    ],
+    [
+     0.0634,
+     0.8244
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/43_BE4111159_6ac74d879d7333beb125beb3.jpg"
+ },
+ {
+  "i": 44,
+  "snapshot_id": "6ac7da249d7333beb125bee1",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-08T18:00:04.867Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.2876,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.3313,
+     0.2139
+    ],
+    [
+     0.6984,
+     0.2278
+    ],
+    [
+     0.7094,
+     0.9528
+    ],
+    [
+     0.2938,
+     0.9583
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/44_BE4111159_6ac7da249d7333beb125bee1.jpg"
+ },
+ {
+  "i": 45,
+  "snapshot_id": "6ac9f693141af6f516da9481",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-10T08:25:55.532Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.8793,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.0894,
+     0.0649
+    ],
+    [
+     0.9984,
+     0.0138
+    ],
+    [
+     0.9984,
+     0.9972
+    ],
+    [
+     0.0711,
+     0.9972
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/45_BE4111159_6ac9f693141af6f516da9481.jpg"
+ },
+ {
+  "i": 46,
+  "snapshot_id": "6acb3af99d7333beb125c057",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-11T07:30:01.697Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.7168,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.1081,
+     0.0393
+    ],
+    [
+     0.9859,
+     0.0237
+    ],
+    [
+     0.9859,
+     0.9972
+    ],
+    [
+     0.3814,
+     0.9972
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/46_BE4111159_6acb3af99d7333beb125c057.jpg"
+ },
+ {
+  "i": 47,
+  "snapshot_id": "6acbdcb635da959c78fefc4b",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-11T19:00:06.536Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.2928,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.375,
+     0.15
+    ],
+    [
+     0.7484,
+     0.3278
+    ],
+    [
+     0.6828,
+     0.9972
+    ],
+    [
+     0.2531,
+     0.8667
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/47_BE4111159_6acbdcb635da959c78fefc4b.jpg"
+ },
+ {
+  "i": 48,
+  "snapshot_id": "6acdc8e5d7f580a4573c99c3",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-13T06:00:05.845Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.4346,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.1828,
+     0.2167
+    ],
+    [
+     0.9984,
+     0.1778
+    ],
+    [
+     0.9125,
+     0.8222
+    ],
+    [
+     0.2625,
+     0.7583
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/48_BE4111159_6acdc8e5d7f580a4573c99c3.jpg"
+ },
+ {
+  "i": 49,
+  "snapshot_id": "6acf3d8dd7f580a4573c9a82",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-14T08:30:05.553Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.6314,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.1297,
+     0.0
+    ],
+    [
+     0.9453,
+     0.1583
+    ],
+    [
+     0.9078,
+     0.8306
+    ],
+    [
+     0.0859,
+     0.8639
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/49_BE4111159_6acf3d8dd7f580a4573c9a82.jpg"
+ },
+ {
+  "i": 50,
+  "snapshot_id": "6acffb652edf1794f1ef61f6",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-14T22:00:05.900Z",
+  "size": [
+   768,
+   432
+  ],
+  "ai_count": "0",
+  "yellow": {
+   "found": false,
+   "coverage": 0.0,
+   "n_cards": 0,
+   "partial": false
+  },
+  "auto": {
+   "found": true,
+   "profile": "white",
+   "coverage": 0.2817,
+   "n_cards": 1,
+   "partial": true,
+   "quad_norm": [
+    [
+     0.3063,
+     0.2639
+    ],
+    [
+     0.6875,
+     0.2139
+    ],
+    [
+     0.7094,
+     0.9528
+    ],
+    [
+     0.3281,
+     0.9972
+    ]
+   ]
+  },
+  "evidence": "docs/evidence/vision/card_check/50_BE4111159_6acffb652edf1794f1ef61f6.jpg"
+ }
+]

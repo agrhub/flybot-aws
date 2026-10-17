@@ -1,0 +1,4010 @@
+[
+ {
+  "i": 1,
+  "snapshot_id": "6ac076c04c3227d11cfbb1f8",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-03T03:30:08.605Z",
+  "size": [
+   2304,
+   1296
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_polygon",
+   "coverage": 0.8316,
+   "fill": 0.854,
+   "quad_norm": null,
+   "roi": [
+    [
+     [
+      0.9984,
+      0.0
+     ],
+     [
+      0.9984,
+      0.9972
+     ],
+     [
+      0.2406,
+      0.9972
+     ],
+     [
+      0.0,
+      0.8
+     ],
+     [
+      0.0,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.8316,
+   "solidity": 0.854,
+   "v_median": 152.0,
+   "s_median": 2.0,
+   "plausible": true,
+   "quad_fill": 0.8314,
+   "quad_cover": 0.9987,
+   "quad_overflow": 1.0216,
+   "quad_min_angle": 89.52,
+   "quad_in_frame": true,
+   "quad_dev": 0.0857,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 520.22,
+  "evidence": "docs/evidence/vision/card_check_lure/01_BE4089629_6ac076c04c3227d11cfbb1f8.jpg"
+ },
+ {
+  "i": 2,
+  "snapshot_id": "6ac0af034c3227d11cfbb3dc",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-03T07:30:11.714Z",
+  "size": [
+   2304,
+   1296
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6973,
+   "fill": 0.9924,
+   "quad_norm": [
+    [
+     0.1644,
+     0.0
+    ],
+    [
+     0.87,
+     0.0
+    ],
+    [
+     0.8548,
+     0.9972
+    ],
+    [
+     0.1314,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8375,
+      0.0
+     ],
+     [
+      0.8687,
+      0.6639
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2375,
+      0.9972
+     ],
+     [
+      0.1531,
+      0.9111
+     ],
+     [
+      0.1469,
+      0.3583
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6973,
+   "solidity": 0.9924,
+   "v_median": 159.0,
+   "s_median": 10.0,
+   "plausible": true,
+   "quad_fill": 0.971,
+   "quad_cover": 0.9977,
+   "quad_overflow": 1.014,
+   "quad_min_angle": 86.64,
+   "quad_in_frame": true,
+   "quad_dev": 0.046,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 200.93,
+  "evidence": "docs/evidence/vision/card_check_lure/02_BE4089629_6ac0af034c3227d11cfbb3dc.jpg"
+ },
+ {
+  "i": 3,
+  "snapshot_id": "6ac1c8434c3227d11cfbc16f",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-04T03:30:11.793Z",
+  "size": [
+   2304,
+   1296
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6876,
+   "fill": 0.9894,
+   "quad_norm": [
+    [
+     0.1688,
+     0.0
+    ],
+    [
+     0.8633,
+     0.0
+    ],
+    [
+     0.8465,
+     0.9972
+    ],
+    [
+     0.135,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8359,
+      0.0
+     ],
+     [
+      0.8609,
+      0.3806
+     ],
+     [
+      0.8266,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1547,
+      0.9056
+     ],
+     [
+      0.1469,
+      0.3806
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6876,
+   "solidity": 0.9894,
+   "v_median": 170.0,
+   "s_median": 10.0,
+   "plausible": true,
+   "quad_fill": 0.9726,
+   "quad_cover": 0.9979,
+   "quad_overflow": 1.0088,
+   "quad_min_angle": 86.55,
+   "quad_in_frame": true,
+   "quad_dev": 0.0473,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 166.59,
+  "evidence": "docs/evidence/vision/card_check_lure/03_BE4089629_6ac1c8434c3227d11cfbc16f.jpg"
+ },
+ {
+  "i": 4,
+  "snapshot_id": "6ac30af4db4317640470a02e",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-05T02:27:00.325Z",
+  "size": [
+   2304,
+   1296
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6745,
+   "fill": 0.9757,
+   "quad_norm": [
+    [
+     0.1697,
+     0.0
+    ],
+    [
+     0.8054,
+     0.0
+    ],
+    [
+     0.8667,
+     0.9972
+    ],
+    [
+     0.1331,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.85,
+      0.0611
+     ],
+     [
+      0.8266,
+      0.9972
+     ],
+     [
+      0.2375,
+      0.9972
+     ],
+     [
+      0.1547,
+      0.9
+     ],
+     [
+      0.1844,
+      0.0
+     ],
+     [
+      0.7828,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6745,
+   "solidity": 0.9757,
+   "v_median": 173.0,
+   "s_median": 11.0,
+   "plausible": true,
+   "quad_fill": 0.9681,
+   "quad_cover": 0.9845,
+   "quad_overflow": 0.9875,
+   "quad_min_angle": 83.76,
+   "quad_in_frame": true,
+   "quad_dev": 0.0498,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 139.25,
+  "evidence": "docs/evidence/vision/card_check_lure/04_BE4089629_6ac30af4db4317640470a02e.jpg"
+ },
+ {
+  "i": 5,
+  "snapshot_id": "6ac312b958107cdf5156490c",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-05T03:00:09.193Z",
+  "size": [
+   2304,
+   1296
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6865,
+   "fill": 0.9856,
+   "quad_norm": [
+    [
+     0.1683,
+     0.0
+    ],
+    [
+     0.8633,
+     0.0
+    ],
+    [
+     0.8464,
+     0.9972
+    ],
+    [
+     0.1371,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8359,
+      0.0
+     ],
+     [
+      0.8656,
+      0.6722
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2406,
+      0.9972
+     ],
+     [
+      0.1547,
+      0.9
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6865,
+   "solidity": 0.9856,
+   "v_median": 169.0,
+   "s_median": 10.0,
+   "plausible": true,
+   "quad_fill": 0.9715,
+   "quad_cover": 0.9962,
+   "quad_overflow": 1.0053,
+   "quad_min_angle": 86.82,
+   "quad_in_frame": true,
+   "quad_dev": 0.0481,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 103.9,
+  "evidence": "docs/evidence/vision/card_check_lure/05_BE4089629_6ac312b958107cdf5156490c.jpg"
+ },
+ {
+  "i": 6,
+  "snapshot_id": "6ac31c2e9e6c6fdc7f8fcfc4",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-05T03:40:30.152Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6868,
+   "fill": 0.9894,
+   "quad_norm": [
+    [
+     0.1692,
+     0.0
+    ],
+    [
+     0.8604,
+     0.0
+    ],
+    [
+     0.8495,
+     0.9972
+    ],
+    [
+     0.1343,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8359,
+      0.0
+     ],
+     [
+      0.8594,
+      0.4611
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2406,
+      0.9972
+     ],
+     [
+      0.1547,
+      0.9028
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6868,
+   "solidity": 0.9894,
+   "v_median": 177.0,
+   "s_median": 14.0,
+   "plausible": true,
+   "quad_fill": 0.9713,
+   "quad_cover": 0.9976,
+   "quad_overflow": 1.0102,
+   "quad_min_angle": 86.44,
+   "quad_in_frame": true,
+   "quad_dev": 0.0487,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 106.85,
+  "evidence": "docs/evidence/vision/card_check_lure/06_BE4089629_6ac31c2e9e6c6fdc7f8fcfc4.jpg"
+ },
+ {
+  "i": 7,
+  "snapshot_id": "6ac46a20dc089e0be8cd24ab",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-06T03:25:20.723Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6873,
+   "fill": 0.9896,
+   "quad_norm": [
+    [
+     0.1696,
+     0.0
+    ],
+    [
+     0.8624,
+     0.0
+    ],
+    [
+     0.8445,
+     0.9972
+    ],
+    [
+     0.1341,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8359,
+      0.0
+     ],
+     [
+      0.8641,
+      0.3889
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1547,
+      0.9028
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6873,
+   "solidity": 0.9896,
+   "v_median": 178.0,
+   "s_median": 8.0,
+   "plausible": true,
+   "quad_fill": 0.9751,
+   "quad_cover": 0.9964,
+   "quad_overflow": 1.0074,
+   "quad_min_angle": 86.37,
+   "quad_in_frame": true,
+   "quad_dev": 0.0488,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 81.76,
+  "evidence": "docs/evidence/vision/card_check_lure/07_BE4089629_6ac46a20dc089e0be8cd24ab.jpg"
+ },
+ {
+  "i": 8,
+  "snapshot_id": "6ac611289d7333beb125be2a",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-07T09:30:16.925Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6902,
+   "fill": 0.9878,
+   "quad_norm": [
+    [
+     0.1649,
+     0.0
+    ],
+    [
+     0.8592,
+     0.0
+    ],
+    [
+     0.8516,
+     0.9972
+    ],
+    [
+     0.1366,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8344,
+      0.0
+     ],
+     [
+      0.8672,
+      0.675
+     ],
+     [
+      0.8297,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1547,
+      0.9056
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6902,
+   "solidity": 0.9878,
+   "v_median": 164.0,
+   "s_median": 8.0,
+   "plausible": true,
+   "quad_fill": 0.973,
+   "quad_cover": 0.9956,
+   "quad_overflow": 1.0057,
+   "quad_min_angle": 87.11,
+   "quad_in_frame": true,
+   "quad_dev": 0.0462,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 89.84,
+  "evidence": "docs/evidence/vision/card_check_lure/08_BE4089629_6ac611289d7333beb125be2a.jpg"
+ },
+ {
+  "i": 9,
+  "snapshot_id": "6ac6345a9d7333beb125be39",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-07T12:00:26.797Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6849,
+   "fill": 0.9909,
+   "quad_norm": [
+    [
+     0.1453,
+     0.0
+    ],
+    [
+     0.869,
+     0.0
+    ],
+    [
+     0.8521,
+     0.9972
+    ],
+    [
+     0.1453,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8516,
+      0.0972
+     ],
+     [
+      0.8656,
+      0.6778
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2406,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9056
+     ],
+     [
+      0.1609,
+      0.1944
+     ],
+     [
+      0.2609,
+      0.0
+     ],
+     [
+      0.7844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6849,
+   "solidity": 0.9909,
+   "v_median": 155.0,
+   "s_median": 11.0,
+   "plausible": true,
+   "quad_fill": 0.9536,
+   "quad_cover": 0.9974,
+   "quad_overflow": 1.0319,
+   "quad_min_angle": 88.27,
+   "quad_in_frame": true,
+   "quad_dev": 0.0563,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 135.12,
+  "evidence": "docs/evidence/vision/card_check_lure/09_BE4089629_6ac6345a9d7333beb125be39.jpg"
+ },
+ {
+  "i": 10,
+  "snapshot_id": "6ac66c919d7333beb125be4e",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-07T16:00:17.780Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_polygon",
+   "coverage": 0.6842,
+   "fill": 0.9905,
+   "quad_norm": null,
+   "roi": [
+    [
+     [
+      0.8516,
+      0.1028
+     ],
+     [
+      0.8672,
+      0.6667
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2406,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9056
+     ],
+     [
+      0.1422,
+      0.5306
+     ],
+     [
+      0.1828,
+      0.0917
+     ],
+     [
+      0.2656,
+      0.0
+     ],
+     [
+      0.7766,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6842,
+   "solidity": 0.9905,
+   "v_median": 155.0,
+   "s_median": 10.0,
+   "plausible": true,
+   "quad_fill": 1.0,
+   "quad_cover": 0.8434,
+   "quad_overflow": 0.8308,
+   "quad_min_angle": 87.21,
+   "quad_in_frame": true,
+   "quad_dev": 0.0498,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 72.79,
+  "evidence": "docs/evidence/vision/card_check_lure/10_BE4089629_6ac66c919d7333beb125be4e.jpg"
+ },
+ {
+  "i": 11,
+  "snapshot_id": "6ac768b6d4e3b04cff431989",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-08T09:56:06.998Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6856,
+   "fill": 0.9871,
+   "quad_norm": [
+    [
+     0.1785,
+     0.0
+    ],
+    [
+     0.8673,
+     0.0
+    ],
+    [
+     0.844,
+     0.9972
+    ],
+    [
+     0.135,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8344,
+      0.0
+     ],
+     [
+      0.8641,
+      0.3861
+     ],
+     [
+      0.8266,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9056
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6856,
+   "solidity": 0.9871,
+   "v_median": 175.0,
+   "s_median": 7.0,
+   "plausible": true,
+   "quad_fill": 0.9742,
+   "quad_cover": 0.9957,
+   "quad_overflow": 1.0034,
+   "quad_min_angle": 85.56,
+   "quad_in_frame": true,
+   "quad_dev": 0.048,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 102.91,
+  "evidence": "docs/evidence/vision/card_check_lure/11_BE4089629_6ac768b6d4e3b04cff431989.jpg"
+ },
+ {
+  "i": 12,
+  "snapshot_id": "6ac8557265765d9381efa90f",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-09T02:46:10.168Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6854,
+   "fill": 0.9903,
+   "quad_norm": [
+    [
+     0.1671,
+     0.0
+    ],
+    [
+     0.861,
+     0.0
+    ],
+    [
+     0.8422,
+     0.9972
+    ],
+    [
+     0.1372,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8344,
+      0.0
+     ],
+     [
+      0.8594,
+      0.4306
+     ],
+     [
+      0.8266,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9056
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6854,
+   "solidity": 0.9903,
+   "v_median": 171.0,
+   "s_median": 8.0,
+   "plausible": true,
+   "quad_fill": 0.9748,
+   "quad_cover": 0.9966,
+   "quad_overflow": 1.0078,
+   "quad_min_angle": 86.95,
+   "quad_in_frame": true,
+   "quad_dev": 0.0469,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 103.07,
+  "evidence": "docs/evidence/vision/card_check_lure/12_BE4089629_6ac8557265765d9381efa90f.jpg"
+ },
+ {
+  "i": 13,
+  "snapshot_id": "6ac866d765ed4059e7da7f4e",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-09T04:00:23.156Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.686,
+   "fill": 0.9906,
+   "quad_norm": [
+    [
+     0.1666,
+     0.0
+    ],
+    [
+     0.8612,
+     0.0
+    ],
+    [
+     0.8426,
+     0.9972
+    ],
+    [
+     0.1374,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8359,
+      0.0
+     ],
+     [
+      0.8594,
+      0.4472
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2328,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9056
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.686,
+   "solidity": 0.9906,
+   "v_median": 174.0,
+   "s_median": 7.0,
+   "plausible": true,
+   "quad_fill": 0.9755,
+   "quad_cover": 0.9965,
+   "quad_overflow": 1.0079,
+   "quad_min_angle": 87.02,
+   "quad_in_frame": true,
+   "quad_dev": 0.0465,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 75.94,
+  "evidence": "docs/evidence/vision/card_check_lure/13_BE4089629_6ac866d765ed4059e7da7f4e.jpg"
+ },
+ {
+  "i": 14,
+  "snapshot_id": "6ac8910165ed4059e7da7f56",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-09T07:00:17.324Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6895,
+   "fill": 0.9893,
+   "quad_norm": [
+    [
+     0.1646,
+     0.0
+    ],
+    [
+     0.8598,
+     0.0
+    ],
+    [
+     0.8485,
+     0.9972
+    ],
+    [
+     0.1349,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8359,
+      0.0
+     ],
+     [
+      0.8656,
+      0.6694
+     ],
+     [
+      0.8297,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9083
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6895,
+   "solidity": 0.9893,
+   "v_median": 168.0,
+   "s_median": 8.0,
+   "plausible": true,
+   "quad_fill": 0.9737,
+   "quad_cover": 0.9974,
+   "quad_overflow": 1.008,
+   "quad_min_angle": 86.97,
+   "quad_in_frame": true,
+   "quad_dev": 0.0469,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 115.3,
+  "evidence": "docs/evidence/vision/card_check_lure/14_BE4089629_6ac8910165ed4059e7da7f56.jpg"
+ },
+ {
+  "i": 15,
+  "snapshot_id": "6aca61209d7333beb125bffd",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-10T16:00:32.965Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6824,
+   "fill": 0.9894,
+   "quad_norm": [
+    [
+     0.1453,
+     0.0
+    ],
+    [
+     0.8632,
+     0.0
+    ],
+    [
+     0.8518,
+     0.9972
+    ],
+    [
+     0.1453,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.85,
+      0.0972
+     ],
+     [
+      0.8672,
+      0.6667
+     ],
+     [
+      0.8266,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9028
+     ],
+     [
+      0.1609,
+      0.1889
+     ],
+     [
+      0.2609,
+      0.0
+     ],
+     [
+      0.7781,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6824,
+   "solidity": 0.9894,
+   "v_median": 155.0,
+   "s_median": 11.0,
+   "plausible": true,
+   "quad_fill": 0.9546,
+   "quad_cover": 0.9978,
+   "quad_overflow": 1.0296,
+   "quad_min_angle": 88.84,
+   "quad_in_frame": true,
+   "quad_dev": 0.057,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 98.65,
+  "evidence": "docs/evidence/vision/card_check_lure/15_BE4089629_6aca61209d7333beb125bffd.jpg"
+ },
+ {
+  "i": 16,
+  "snapshot_id": "6acb9e9ad4427f155b3ed859",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-11T14:35:06.494Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6841,
+   "fill": 0.9905,
+   "quad_norm": [
+    [
+     0.1453,
+     0.0
+    ],
+    [
+     0.8591,
+     0.0
+    ],
+    [
+     0.8551,
+     0.9972
+    ],
+    [
+     0.1453,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.85,
+      0.0944
+     ],
+     [
+      0.8656,
+      0.675
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2422,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9111
+     ],
+     [
+      0.1609,
+      0.1944
+     ],
+     [
+      0.2547,
+      0.0
+     ],
+     [
+      0.7812,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6841,
+   "solidity": 0.9905,
+   "v_median": 155.0,
+   "s_median": 10.0,
+   "plausible": true,
+   "quad_fill": 0.957,
+   "quad_cover": 0.9978,
+   "quad_overflow": 1.0277,
+   "quad_min_angle": 89.59,
+   "quad_in_frame": true,
+   "quad_dev": 0.0559,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 100.89,
+  "evidence": "docs/evidence/vision/card_check_lure/16_BE4089629_6acb9e9ad4427f155b3ed859.jpg"
+ },
+ {
+  "i": 17,
+  "snapshot_id": "6aca7d399d7333beb125c006",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-10T18:00:25.494Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6926,
+   "fill": 0.9929,
+   "quad_norm": [
+    [
+     0.1211,
+     0.0
+    ],
+    [
+     0.8581,
+     0.0
+    ],
+    [
+     0.8572,
+     0.9972
+    ],
+    [
+     0.1533,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.825,
+      0.0
+     ],
+     [
+      0.8687,
+      0.6472
+     ],
+     [
+      0.8297,
+      0.9972
+     ],
+     [
+      0.2406,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9056
+     ],
+     [
+      0.1547,
+      0.2556
+     ],
+     [
+      0.2188,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6926,
+   "solidity": 0.9929,
+   "v_median": 152.0,
+   "s_median": 9.0,
+   "plausible": true,
+   "quad_fill": 0.9559,
+   "quad_cover": 0.9974,
+   "quad_overflow": 1.03,
+   "quad_min_angle": 86.71,
+   "quad_in_frame": true,
+   "quad_dev": 0.0636,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 81.85,
+  "evidence": "docs/evidence/vision/card_check_lure/17_BE4089629_6aca7d399d7333beb125c006.jpg"
+ },
+ {
+  "i": 18,
+  "snapshot_id": "6acaae779d7333beb125c021",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-10T21:30:31.943Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6921,
+   "fill": 0.9928,
+   "quad_norm": [
+    [
+     0.1843,
+     0.0
+    ],
+    [
+     0.8583,
+     0.0
+    ],
+    [
+     0.8568,
+     0.9972
+    ],
+    [
+     0.127,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8266,
+      0.0
+     ],
+     [
+      0.8687,
+      0.65
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9056
+     ],
+     [
+      0.1547,
+      0.2528
+     ],
+     [
+      0.2188,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6921,
+   "solidity": 0.9928,
+   "v_median": 151.0,
+   "s_median": 9.0,
+   "plausible": true,
+   "quad_fill": 0.9736,
+   "quad_cover": 0.989,
+   "quad_overflow": 1.004,
+   "quad_min_angle": 84.17,
+   "quad_in_frame": true,
+   "quad_dev": 0.0516,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 121.47,
+  "evidence": "docs/evidence/vision/card_check_lure/18_BE4089629_6acaae779d7333beb125c021.jpg"
+ },
+ {
+  "i": 19,
+  "snapshot_id": "6acbf2f935da959c78fefc55",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-11T20:35:05.149Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6841,
+   "fill": 0.9907,
+   "quad_norm": [
+    [
+     0.1335,
+     0.0
+    ],
+    [
+     0.8648,
+     0.0
+    ],
+    [
+     0.8516,
+     0.9972
+    ],
+    [
+     0.1497,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.85,
+      0.1
+     ],
+     [
+      0.8656,
+      0.675
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2406,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9111
+     ],
+     [
+      0.1609,
+      0.1944
+     ],
+     [
+      0.2578,
+      0.0
+     ],
+     [
+      0.7766,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6841,
+   "solidity": 0.9907,
+   "v_median": 154.0,
+   "s_median": 10.0,
+   "plausible": true,
+   "quad_fill": 0.9501,
+   "quad_cover": 0.9982,
+   "quad_overflow": 1.0349,
+   "quad_min_angle": 88.35,
+   "quad_in_frame": true,
+   "quad_dev": 0.0624,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 92.6,
+  "evidence": "docs/evidence/vision/card_check_lure/19_BE4089629_6acbf2f935da959c78fefc55.jpg"
+ },
+ {
+  "i": 20,
+  "snapshot_id": "6acd528ad7f580a4573c998c",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-12T21:35:06.002Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6954,
+   "fill": 0.9937,
+   "quad_norm": [
+    [
+     0.1198,
+     0.0
+    ],
+    [
+     0.8695,
+     0.0
+    ],
+    [
+     0.8574,
+     0.9972
+    ],
+    [
+     0.1535,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8453,
+      0.0556
+     ],
+     [
+      0.8687,
+      0.6639
+     ],
+     [
+      0.8312,
+      0.9972
+     ],
+     [
+      0.2406,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9139
+     ],
+     [
+      0.1672,
+      0.1056
+     ],
+     [
+      0.2141,
+      0.0
+     ],
+     [
+      0.8094,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6954,
+   "solidity": 0.9937,
+   "v_median": 152.0,
+   "s_median": 9.0,
+   "plausible": true,
+   "quad_fill": 0.9535,
+   "quad_cover": 0.9985,
+   "quad_overflow": 1.0358,
+   "quad_min_angle": 86.57,
+   "quad_in_frame": true,
+   "quad_dev": 0.064,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 90.59,
+  "evidence": "docs/evidence/vision/card_check_lure/20_BE4089629_6acd528ad7f580a4573c998c.jpg"
+ },
+ {
+  "i": 21,
+  "snapshot_id": "6acd91d1d7f580a4573c99a8",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-13T02:05:05.862Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6808,
+   "fill": 0.9841,
+   "quad_norm": [
+    [
+     0.1679,
+     0.0
+    ],
+    [
+     0.8583,
+     0.0
+    ],
+    [
+     0.8401,
+     0.9972
+    ],
+    [
+     0.1384,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8344,
+      0.0
+     ],
+     [
+      0.8594,
+      0.425
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9139
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6808,
+   "solidity": 0.9841,
+   "v_median": 173.0,
+   "s_median": 8.0,
+   "plausible": true,
+   "quad_fill": 0.9718,
+   "quad_cover": 0.9959,
+   "quad_overflow": 1.0034,
+   "quad_min_angle": 86.99,
+   "quad_in_frame": true,
+   "quad_dev": 0.0428,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 147.34,
+  "evidence": "docs/evidence/vision/card_check_lure/21_BE4089629_6acd91d1d7f580a4573c99a8.jpg"
+ },
+ {
+  "i": 22,
+  "snapshot_id": "6acdc309d7f580a4573c99c1",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-13T05:35:05.945Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6889,
+   "fill": 0.9902,
+   "quad_norm": [
+    [
+     0.1654,
+     0.0
+    ],
+    [
+     0.861,
+     0.0
+    ],
+    [
+     0.8482,
+     0.9972
+    ],
+    [
+     0.1374,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8359,
+      0.0
+     ],
+     [
+      0.8641,
+      0.3972
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1578,
+      0.9167
+     ],
+     [
+      0.15,
+      0.3306
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6889,
+   "solidity": 0.9902,
+   "v_median": 166.0,
+   "s_median": 8.0,
+   "plausible": true,
+   "quad_fill": 0.9745,
+   "quad_cover": 0.9968,
+   "quad_overflow": 1.0079,
+   "quad_min_angle": 87.14,
+   "quad_in_frame": true,
+   "quad_dev": 0.0431,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 125.69,
+  "evidence": "docs/evidence/vision/card_check_lure/22_BE4089629_6acdc309d7f580a4573c99c1.jpg"
+ },
+ {
+  "i": 23,
+  "snapshot_id": "6acfa8312edf1794f1ef61c6",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-14T16:05:05.615Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6828,
+   "fill": 0.9913,
+   "quad_norm": [
+    [
+     0.1079,
+     0.0
+    ],
+    [
+     0.8619,
+     0.0
+    ],
+    [
+     0.8496,
+     0.9972
+    ],
+    [
+     0.1588,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8484,
+      0.0889
+     ],
+     [
+      0.8594,
+      0.7389
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2422,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9111
+     ],
+     [
+      0.1797,
+      0.0972
+     ],
+     [
+      0.2609,
+      0.0
+     ],
+     [
+      0.7828,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6828,
+   "solidity": 0.9913,
+   "v_median": 155.0,
+   "s_median": 11.0,
+   "plausible": true,
+   "quad_fill": 0.9415,
+   "quad_cover": 0.9987,
+   "quad_overflow": 1.0459,
+   "quad_min_angle": 84.82,
+   "quad_in_frame": true,
+   "quad_dev": 0.0787,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 89.05,
+  "evidence": "docs/evidence/vision/card_check_lure/23_BE4089629_6acfa8312edf1794f1ef61c6.jpg"
+ },
+ {
+  "i": 24,
+  "snapshot_id": "6ad018b22edf1794f1ef6209",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-15T00:05:06.809Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6874,
+   "fill": 0.9909,
+   "quad_norm": [
+    [
+     0.1648,
+     0.0
+    ],
+    [
+     0.8572,
+     0.0
+    ],
+    [
+     0.8487,
+     0.9972
+    ],
+    [
+     0.1374,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8328,
+      0.0
+     ],
+     [
+      0.8578,
+      0.4556
+     ],
+     [
+      0.8281,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9139
+     ],
+     [
+      0.1406,
+      0.6222
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6874,
+   "solidity": 0.9909,
+   "v_median": 170.0,
+   "s_median": 9.0,
+   "plausible": true,
+   "quad_fill": 0.9739,
+   "quad_cover": 0.9973,
+   "quad_overflow": 1.0089,
+   "quad_min_angle": 87.2,
+   "quad_in_frame": true,
+   "quad_dev": 0.0432,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 89.1,
+  "evidence": "docs/evidence/vision/card_check_lure/24_BE4089629_6ad018b22edf1794f1ef6209.jpg"
+ },
+ {
+  "i": 25,
+  "snapshot_id": "6ad00aa12edf1794f1ef6202",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-14T23:05:05.000Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6863,
+   "fill": 0.9908,
+   "quad_norm": [
+    [
+     0.1666,
+     0.0
+    ],
+    [
+     0.8597,
+     0.0
+    ],
+    [
+     0.8449,
+     0.9972
+    ],
+    [
+     0.1374,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8312,
+      0.0
+     ],
+     [
+      0.8578,
+      0.4583
+     ],
+     [
+      0.8266,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1578,
+      0.9167
+     ],
+     [
+      0.15,
+      0.3444
+     ],
+     [
+      0.1844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6863,
+   "solidity": 0.9908,
+   "v_median": 169.0,
+   "s_median": 10.0,
+   "plausible": true,
+   "quad_fill": 0.9751,
+   "quad_cover": 0.9969,
+   "quad_overflow": 1.0082,
+   "quad_min_angle": 87.02,
+   "quad_in_frame": true,
+   "quad_dev": 0.0431,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 130.09,
+  "evidence": "docs/evidence/vision/card_check_lure/25_BE4089629_6ad00aa12edf1794f1ef6202.jpg"
+ },
+ {
+  "i": 26,
+  "snapshot_id": "6ac5cace9d7333beb125be0c",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-07T04:30:06.764Z",
+  "size": [
+   2304,
+   1296
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6627,
+   "fill": 0.9846,
+   "quad_norm": [
+    [
+     0.1824,
+     0.0
+    ],
+    [
+     0.8583,
+     0.1248
+    ],
+    [
+     0.8812,
+     0.9972
+    ],
+    [
+     0.149,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8484,
+      0.1972
+     ],
+     [
+      0.8766,
+      0.675
+     ],
+     [
+      0.8516,
+      0.9972
+     ],
+     [
+      0.2078,
+      0.9972
+     ],
+     [
+      0.1547,
+      0.9167
+     ],
+     [
+      0.1719,
+      0.2833
+     ],
+     [
+      0.2,
+      0.1083
+     ],
+     [
+      0.2969,
+      0.0
+     ],
+     [
+      0.6547,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6627,
+   "solidity": 0.9846,
+   "v_median": 162.0,
+   "s_median": 10.0,
+   "plausible": true,
+   "quad_fill": 0.9668,
+   "quad_cover": 0.9653,
+   "quad_overflow": 0.9783,
+   "quad_min_angle": 81.4,
+   "quad_in_frame": true,
+   "quad_dev": 0.0517,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 142.19,
+  "evidence": "docs/evidence/vision/card_check_lure/26_BE4111159_6ac5cace9d7333beb125be0c.jpg"
+ },
+ {
+  "i": 27,
+  "snapshot_id": "6ac5edfb9d7333beb125be19",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-07T07:00:11.179Z",
+  "size": [
+   2304,
+   1296
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_polygon",
+   "coverage": 0.5876,
+   "fill": 0.8913,
+   "quad_norm": null,
+   "roi": [
+    [
+     [
+      0.1906,
+      0.1778
+     ],
+     [
+      0.3266,
+      0.0
+     ],
+     [
+      0.7922,
+      0.1056
+     ],
+     [
+      0.8641,
+      0.3139
+     ],
+     [
+      0.8516,
+      0.9972
+     ],
+     [
+      0.2062,
+      0.9972
+     ],
+     [
+      0.1562,
+      0.9167
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.5876,
+   "solidity": 0.8913,
+   "v_median": 242.0,
+   "s_median": 6.0,
+   "plausible": true,
+   "quad_fill": 0.91,
+   "quad_cover": 0.8329,
+   "quad_overflow": 0.8112,
+   "quad_min_angle": 83.25,
+   "quad_in_frame": true,
+   "quad_dev": 0.079,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 90.06,
+  "evidence": "docs/evidence/vision/card_check_lure/27_BE4111159_6ac5edfb9d7333beb125be19.jpg"
+ },
+ {
+  "i": 28,
+  "snapshot_id": "6ac6f21c844de1a8095cba8f",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-08T01:30:04.667Z",
+  "size": [
+   2304,
+   1296
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6383,
+   "fill": 0.9637,
+   "quad_norm": [
+    [
+     0.1778,
+     0.0665
+    ],
+    [
+     0.8595,
+     0.1111
+    ],
+    [
+     0.8763,
+     0.9972
+    ],
+    [
+     0.1482,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.2,
+      0.1139
+     ],
+     [
+      0.5031,
+      0.0
+     ],
+     [
+      0.7453,
+      0.0778
+     ],
+     [
+      0.875,
+      0.1917
+     ],
+     [
+      0.85,
+      0.9972
+     ],
+     [
+      0.2562,
+      0.9972
+     ],
+     [
+      0.1641,
+      0.925
+     ],
+     [
+      0.1641,
+      0.3861
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6383,
+   "solidity": 0.9637,
+   "v_median": 165.0,
+   "s_median": 9.0,
+   "plausible": true,
+   "quad_fill": 0.9661,
+   "quad_cover": 0.9741,
+   "quad_overflow": 0.9669,
+   "quad_min_angle": 85.97,
+   "quad_in_frame": true,
+   "quad_dev": 0.043,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 92.88,
+  "evidence": "docs/evidence/vision/card_check_lure/28_BE4111159_6ac6f21c844de1a8095cba8f.jpg"
+ },
+ {
+  "i": 29,
+  "snapshot_id": "6ac6f923cb181161dbb29096",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-08T02:00:03.055Z",
+  "size": [
+   2304,
+   1296
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6406,
+   "fill": 0.9659,
+   "quad_norm": [
+    [
+     0.1871,
+     0.0583
+    ],
+    [
+     0.8573,
+     0.0719
+    ],
+    [
+     0.876,
+     0.9972
+    ],
+    [
+     0.1515,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.2141,
+      0.0972
+     ],
+     [
+      0.3672,
+      0.0
+     ],
+     [
+      0.5047,
+      0.0
+     ],
+     [
+      0.8453,
+      0.1278
+     ],
+     [
+      0.8766,
+      0.1944
+     ],
+     [
+      0.85,
+      0.9972
+     ],
+     [
+      0.2562,
+      0.9972
+     ],
+     [
+      0.1656,
+      0.925
+     ],
+     [
+      0.1734,
+      0.3472
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6406,
+   "solidity": 0.9659,
+   "v_median": 177.0,
+   "s_median": 12.0,
+   "plausible": true,
+   "quad_fill": 0.9636,
+   "quad_cover": 0.9833,
+   "quad_overflow": 0.9802,
+   "quad_min_angle": 86.15,
+   "quad_in_frame": true,
+   "quad_dev": 0.0373,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 207.84,
+  "evidence": "docs/evidence/vision/card_check_lure/29_BE4111159_6ac6f923cb181161dbb29096.jpg"
+ },
+ {
+  "i": 30,
+  "snapshot_id": "6ac703ad92c896770d1521d4",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-08T02:45:01.217Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6369,
+   "fill": 0.9629,
+   "quad_norm": [
+    [
+     0.1795,
+     0.0764
+    ],
+    [
+     0.8572,
+     0.0789
+    ],
+    [
+     0.8769,
+     0.9972
+    ],
+    [
+     0.1534,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.2,
+      0.1139
+     ],
+     [
+      0.5047,
+      0.0
+     ],
+     [
+      0.8469,
+      0.125
+     ],
+     [
+      0.875,
+      0.7111
+     ],
+     [
+      0.85,
+      0.9972
+     ],
+     [
+      0.1781,
+      0.9972
+     ],
+     [
+      0.1641,
+      0.4917
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6369,
+   "solidity": 0.9629,
+   "v_median": 176.0,
+   "s_median": 9.0,
+   "plausible": true,
+   "quad_fill": 0.9671,
+   "quad_cover": 0.9835,
+   "quad_overflow": 0.974,
+   "quad_min_angle": 87.12,
+   "quad_in_frame": true,
+   "quad_dev": 0.0381,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 86.97,
+  "evidence": "docs/evidence/vision/card_check_lure/30_BE4111159_6ac703ad92c896770d1521d4.jpg"
+ },
+ {
+  "i": 31,
+  "snapshot_id": "6ac87bde9d7333beb125bf36",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-09T05:30:06.392Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.631,
+   "fill": 0.9666,
+   "quad_norm": [
+    [
+     0.1496,
+     0.1058
+    ],
+    [
+     0.8358,
+     0.0878
+    ],
+    [
+     0.8768,
+     0.9972
+    ],
+    [
+     0.1563,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.175,
+      0.1444
+     ],
+     [
+      0.3109,
+      0.0444
+     ],
+     [
+      0.7313,
+      0.0583
+     ],
+     [
+      0.8484,
+      0.1583
+     ],
+     [
+      0.85,
+      0.9972
+     ],
+     [
+      0.2734,
+      0.9972
+     ],
+     [
+      0.1641,
+      0.925
+     ],
+     [
+      0.1469,
+      0.425
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.631,
+   "solidity": 0.9666,
+   "v_median": 160.0,
+   "s_median": 9.0,
+   "plausible": true,
+   "quad_fill": 0.9673,
+   "quad_cover": 0.9756,
+   "quad_overflow": 0.9704,
+   "quad_min_angle": 85.41,
+   "quad_in_frame": true,
+   "quad_dev": 0.0355,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 74.09,
+  "evidence": "docs/evidence/vision/card_check_lure/31_BE4111159_6ac87bde9d7333beb125bf36.jpg"
+ },
+ {
+  "i": 32,
+  "snapshot_id": "6ac897fd65ed4059e7da7f58",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-09T07:30:05.555Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_polygon",
+   "coverage": 0.6096,
+   "fill": 0.9493,
+   "quad_norm": null,
+   "roi": [
+    [
+     [
+      0.825,
+      0.1028
+     ],
+     [
+      0.8672,
+      0.6917
+     ],
+     [
+      0.85,
+      0.9972
+     ],
+     [
+      0.2078,
+      0.9972
+     ],
+     [
+      0.1594,
+      0.9278
+     ],
+     [
+      0.1516,
+      0.3333
+     ],
+     [
+      0.2391,
+      0.0972
+     ],
+     [
+      0.5359,
+      0.0389
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6096,
+   "solidity": 0.9493,
+   "v_median": 246.0,
+   "s_median": 6.0,
+   "plausible": true,
+   "quad_fill": 0.9571,
+   "quad_cover": 0.9633,
+   "quad_overflow": 0.9506,
+   "quad_min_angle": 69.5,
+   "quad_in_frame": true,
+   "quad_dev": 0.0618,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 59.79,
+  "evidence": "docs/evidence/vision/card_check_lure/32_BE4111159_6ac897fd65ed4059e7da7f58.jpg"
+ },
+ {
+  "i": 33,
+  "snapshot_id": "6ac8b41e65ed4059e7da7f65",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-09T09:30:06.213Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6279,
+   "fill": 0.962,
+   "quad_norm": [
+    [
+     0.1533,
+     0.0975
+    ],
+    [
+     0.8349,
+     0.0975
+    ],
+    [
+     0.8781,
+     0.9972
+    ],
+    [
+     0.153,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8516,
+      0.1639
+     ],
+     [
+      0.85,
+      0.9972
+     ],
+     [
+      0.2734,
+      0.9972
+     ],
+     [
+      0.1625,
+      0.925
+     ],
+     [
+      0.1469,
+      0.4222
+     ],
+     [
+      0.1891,
+      0.1278
+     ],
+     [
+      0.6219,
+      0.0389
+     ],
+     [
+      0.8156,
+      0.0917
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6279,
+   "solidity": 0.962,
+   "v_median": 167.0,
+   "s_median": 9.0,
+   "plausible": true,
+   "quad_fill": 0.9667,
+   "quad_cover": 0.9795,
+   "quad_overflow": 0.9697,
+   "quad_min_angle": 85.12,
+   "quad_in_frame": true,
+   "quad_dev": 0.0361,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 74.08,
+  "evidence": "docs/evidence/vision/card_check_lure/33_BE4111159_6ac8b41e65ed4059e7da7f65.jpg"
+ },
+ {
+  "i": 34,
+  "snapshot_id": "6ac9e97d9d7333beb125bfcd",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-10T07:30:05.073Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_polygon",
+   "coverage": 0.6122,
+   "fill": 0.9509,
+   "quad_norm": null,
+   "roi": [
+    [
+     [
+      0.8281,
+      0.1
+     ],
+     [
+      0.8687,
+      0.6917
+     ],
+     [
+      0.8516,
+      0.9972
+     ],
+     [
+      0.2063,
+      0.9972
+     ],
+     [
+      0.1594,
+      0.9278
+     ],
+     [
+      0.1531,
+      0.3194
+     ],
+     [
+      0.2375,
+      0.0972
+     ],
+     [
+      0.5312,
+      0.0472
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6122,
+   "solidity": 0.9509,
+   "v_median": 233.0,
+   "s_median": 7.0,
+   "plausible": true,
+   "quad_fill": 0.9604,
+   "quad_cover": 0.9632,
+   "quad_overflow": 0.9494,
+   "quad_min_angle": 68.52,
+   "quad_in_frame": true,
+   "quad_dev": 0.0618,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 49.78,
+  "evidence": "docs/evidence/vision/card_check_lure/34_BE4111159_6ac9e97d9d7333beb125bfcd.jpg"
+ },
+ {
+  "i": 35,
+  "snapshot_id": "6ac9f2646b2d368d8b350666",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-10T08:08:04.544Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.5894,
+   "fill": 0.9333,
+   "quad_norm": [
+    [
+     0.2255,
+     0.1032
+    ],
+    [
+     0.8396,
+     0.1025
+    ],
+    [
+     0.8685,
+     0.9972
+    ],
+    [
+     0.1374,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8234,
+      0.1667
+     ],
+     [
+      0.8656,
+      0.6083
+     ],
+     [
+      0.85,
+      0.9972
+     ],
+     [
+      0.1828,
+      0.9972
+     ],
+     [
+      0.1453,
+      0.4306
+     ],
+     [
+      0.1859,
+      0.1361
+     ],
+     [
+      0.7297,
+      0.075
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.5894,
+   "solidity": 0.9333,
+   "v_median": 194.0,
+   "s_median": 10.0,
+   "plausible": true,
+   "quad_fill": 0.938,
+   "quad_cover": 0.9626,
+   "quad_overflow": 0.9525,
+   "quad_min_angle": 80.03,
+   "quad_in_frame": true,
+   "quad_dev": 0.0411,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 60.07,
+  "evidence": "docs/evidence/vision/card_check_lure/35_BE4111159_6ac9f2646b2d368d8b350666.jpg"
+ },
+ {
+  "i": 36,
+  "snapshot_id": "6ac9f693141af6f516da9481",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-10T08:25:55.532Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.5958,
+   "fill": 0.943,
+   "quad_norm": [
+    [
+     0.1806,
+     0.1019
+    ],
+    [
+     0.8389,
+     0.1269
+    ],
+    [
+     0.8746,
+     0.9972
+    ],
+    [
+     0.1317,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.825,
+      0.1667
+     ],
+     [
+      0.8609,
+      0.4833
+     ],
+     [
+      0.8469,
+      0.9972
+     ],
+     [
+      0.2828,
+      0.9972
+     ],
+     [
+      0.1594,
+      0.925
+     ],
+     [
+      0.1453,
+      0.4444
+     ],
+     [
+      0.1781,
+      0.15
+     ],
+     [
+      0.6234,
+      0.0389
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.5958,
+   "solidity": 0.943,
+   "v_median": 229.0,
+   "s_median": 10.0,
+   "plausible": true,
+   "quad_fill": 0.9439,
+   "quad_cover": 0.9845,
+   "quad_overflow": 0.979,
+   "quad_min_angle": 84.45,
+   "quad_in_frame": true,
+   "quad_dev": 0.0428,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 82.14,
+  "evidence": "docs/evidence/vision/card_check_lure/36_BE4111159_6ac9f693141af6f516da9481.jpg"
+ },
+ {
+  "i": 37,
+  "snapshot_id": "6acb3af99d7333beb125c057",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-11T07:30:01.697Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_polygon",
+   "coverage": 0.6167,
+   "fill": 0.9504,
+   "quad_norm": null,
+   "roi": [
+    [
+     [
+      0.8281,
+      0.1
+     ],
+     [
+      0.8687,
+      0.6944
+     ],
+     [
+      0.85,
+      0.9972
+     ],
+     [
+      0.1672,
+      0.9972
+     ],
+     [
+      0.1453,
+      0.4222
+     ],
+     [
+      0.2281,
+      0.0972
+     ],
+     [
+      0.5391,
+      0.0306
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6167,
+   "solidity": 0.9504,
+   "v_median": 196.0,
+   "s_median": 12.0,
+   "plausible": true,
+   "quad_fill": 0.9678,
+   "quad_cover": 0.9558,
+   "quad_overflow": 0.9319,
+   "quad_min_angle": 71.4,
+   "quad_in_frame": true,
+   "quad_dev": 0.0603,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 57.18,
+  "evidence": "docs/evidence/vision/card_check_lure/37_BE4111159_6acb3af99d7333beb125c057.jpg"
+ },
+ {
+  "i": 38,
+  "snapshot_id": "6acb5de3b9e739178a14e319",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-11T09:58:59.593Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6369,
+   "fill": 0.9632,
+   "quad_norm": [
+    [
+     0.1541,
+     0.1161
+    ],
+    [
+     0.8309,
+     0.0416
+    ],
+    [
+     0.8799,
+     0.9972
+    ],
+    [
+     0.1523,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.1766,
+      0.1444
+     ],
+     [
+      0.4672,
+      0.0
+     ],
+     [
+      0.825,
+      0.0972
+     ],
+     [
+      0.8672,
+      0.6611
+     ],
+     [
+      0.8453,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1641,
+      0.925
+     ],
+     [
+      0.1484,
+      0.4278
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6369,
+   "solidity": 0.9632,
+   "v_median": 168.0,
+   "s_median": 6.0,
+   "plausible": true,
+   "quad_fill": 0.9667,
+   "quad_cover": 0.9851,
+   "quad_overflow": 0.9766,
+   "quad_min_angle": 84.8,
+   "quad_in_frame": true,
+   "quad_dev": 0.0399,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 59.16,
+  "evidence": "docs/evidence/vision/card_check_lure/38_BE4111159_6acb5de3b9e739178a14e319.jpg"
+ },
+ {
+  "i": 39,
+  "snapshot_id": "6acb733ddb98d7a19b9d7655",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-11T11:30:05.348Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_polygon",
+   "coverage": 0.6508,
+   "fill": 0.9734,
+   "quad_norm": null,
+   "roi": [
+    [
+     [
+      0.7641,
+      0.0694
+     ],
+     [
+      0.8609,
+      0.3694
+     ],
+     [
+      0.8453,
+      0.9972
+     ],
+     [
+      0.2766,
+      0.9972
+     ],
+     [
+      0.1609,
+      0.925
+     ],
+     [
+      0.1453,
+      0.4528
+     ],
+     [
+      0.1875,
+      0.1222
+     ],
+     [
+      0.3484,
+      0.0
+     ],
+     [
+      0.6859,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6508,
+   "solidity": 0.9734,
+   "v_median": 152.0,
+   "s_median": 16.0,
+   "plausible": true,
+   "quad_fill": 0.9255,
+   "quad_cover": 0.9654,
+   "quad_overflow": 1.0097,
+   "quad_min_angle": 63.16,
+   "quad_in_frame": true,
+   "quad_dev": 0.1286,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 54.34,
+  "evidence": "docs/evidence/vision/card_check_lure/39_BE4111159_6acb733ddb98d7a19b9d7655.jpg"
+ },
+ {
+  "i": 40,
+  "snapshot_id": "6acc5b4535da959c78fefc91",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-12T04:00:05.899Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_polygon",
+   "coverage": 0.6567,
+   "fill": 0.9725,
+   "quad_norm": null,
+   "roi": [
+    [
+     [
+      0.85,
+      0.15
+     ],
+     [
+      0.8484,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1641,
+      0.925
+     ],
+     [
+      0.1562,
+      0.3139
+     ],
+     [
+      0.2,
+      0.1083
+     ],
+     [
+      0.3531,
+      0.0
+     ],
+     [
+      0.6812,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6567,
+   "solidity": 0.9725,
+   "v_median": 160.0,
+   "s_median": 11.0,
+   "plausible": true,
+   "quad_fill": 0.9966,
+   "quad_cover": 0.8488,
+   "quad_overflow": 0.8236,
+   "quad_min_angle": 86.79,
+   "quad_in_frame": true,
+   "quad_dev": 0.0682,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 131.08,
+  "evidence": "docs/evidence/vision/card_check_lure/40_BE4111159_6acc5b4535da959c78fefc91.jpg"
+ },
+ {
+  "i": 41,
+  "snapshot_id": "6acc9385d7f580a4573c9933",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-12T08:00:05.984Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.5942,
+   "fill": 0.9266,
+   "quad_norm": [
+    [
+     0.1534,
+     0.1141
+    ],
+    [
+     0.8391,
+     0.0894
+    ],
+    [
+     0.8733,
+     0.9972
+    ],
+    [
+     0.1428,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8484,
+      0.1611
+     ],
+     [
+      0.8469,
+      0.9972
+     ],
+     [
+      0.2078,
+      0.9972
+     ],
+     [
+      0.1578,
+      0.925
+     ],
+     [
+      0.1453,
+      0.4222
+     ],
+     [
+      0.1812,
+      0.1333
+     ],
+     [
+      0.5312,
+      0.0556
+     ],
+     [
+      0.7297,
+      0.0722
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.5942,
+   "solidity": 0.9266,
+   "v_median": 208.0,
+   "s_median": 8.0,
+   "plausible": true,
+   "quad_fill": 0.9227,
+   "quad_cover": 0.9912,
+   "quad_overflow": 0.9891,
+   "quad_min_angle": 86.17,
+   "quad_in_frame": true,
+   "quad_dev": 0.0357,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 63.18,
+  "evidence": "docs/evidence/vision/card_check_lure/41_BE4111159_6acc9385d7f580a4573c9933.jpg"
+ },
+ {
+  "i": 42,
+  "snapshot_id": "6accd2cdd7f580a4573c994a",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-12T12:30:05.541Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_polygon",
+   "coverage": 0.6405,
+   "fill": 0.9691,
+   "quad_norm": null,
+   "roi": [
+    [
+     [
+      0.7641,
+      0.0722
+     ],
+     [
+      0.8516,
+      0.3861
+     ],
+     [
+      0.8469,
+      0.9972
+     ],
+     [
+      0.2781,
+      0.9972
+     ],
+     [
+      0.1625,
+      0.925
+     ],
+     [
+      0.1469,
+      0.425
+     ],
+     [
+      0.1719,
+      0.1694
+     ],
+     [
+      0.2312,
+      0.075
+     ],
+     [
+      0.3531,
+      0.0
+     ],
+     [
+      0.6844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6405,
+   "solidity": 0.9691,
+   "v_median": 156.0,
+   "s_median": 18.0,
+   "plausible": true,
+   "quad_fill": 0.9625,
+   "quad_cover": 0.9543,
+   "quad_overflow": 0.9556,
+   "quad_min_angle": 75.17,
+   "quad_in_frame": true,
+   "quad_dev": 0.049,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 56.71,
+  "evidence": "docs/evidence/vision/card_check_lure/42_BE4111159_6accd2cdd7f580a4573c994a.jpg"
+ },
+ {
+  "i": 43,
+  "snapshot_id": "6acd8295d7f580a4573c99a1",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-13T01:00:05.459Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6413,
+   "fill": 0.9621,
+   "quad_norm": [
+    [
+     0.1607,
+     0.0765
+    ],
+    [
+     0.831,
+     0.0394
+    ],
+    [
+     0.8796,
+     0.9972
+    ],
+    [
+     0.1467,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.1922,
+      0.1139
+     ],
+     [
+      0.3953,
+      0.0
+     ],
+     [
+      0.8219,
+      0.0917
+     ],
+     [
+      0.8531,
+      0.1583
+     ],
+     [
+      0.8484,
+      0.9972
+     ],
+     [
+      0.2391,
+      0.9972
+     ],
+     [
+      0.1625,
+      0.925
+     ],
+     [
+      0.15,
+      0.5028
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6413,
+   "solidity": 0.9621,
+   "v_median": 167.0,
+   "s_median": 12.0,
+   "plausible": true,
+   "quad_fill": 0.9584,
+   "quad_cover": 0.99,
+   "quad_overflow": 0.9891,
+   "quad_min_angle": 84.85,
+   "quad_in_frame": true,
+   "quad_dev": 0.0377,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 99.32,
+  "evidence": "docs/evidence/vision/card_check_lure/43_BE4111159_6acd8295d7f580a4573c99a1.jpg"
+ },
+ {
+  "i": 44,
+  "snapshot_id": "6acdc1dcd7f580a4573c99c0",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-13T05:30:04.887Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6457,
+   "fill": 0.96,
+   "quad_norm": [
+    [
+     0.1488,
+     0.1147
+    ],
+    [
+     0.8317,
+     0.0411
+    ],
+    [
+     0.88,
+     0.9972
+    ],
+    [
+     0.1584,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8234,
+      0.0917
+     ],
+     [
+      0.8687,
+      0.6778
+     ],
+     [
+      0.85,
+      0.9972
+     ],
+     [
+      0.2078,
+      0.9972
+     ],
+     [
+      0.1656,
+      0.925
+     ],
+     [
+      0.1484,
+      0.425
+     ],
+     [
+      0.1766,
+      0.1417
+     ],
+     [
+      0.4453,
+      0.0
+     ],
+     [
+      0.6766,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6457,
+   "solidity": 0.96,
+   "v_median": 165.0,
+   "s_median": 10.0,
+   "plausible": true,
+   "quad_fill": 0.9695,
+   "quad_cover": 0.9763,
+   "quad_overflow": 0.9615,
+   "quad_min_angle": 84.87,
+   "quad_in_frame": true,
+   "quad_dev": 0.0405,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 123.7,
+  "evidence": "docs/evidence/vision/card_check_lure/44_BE4111159_6acdc1dcd7f580a4573c99c0.jpg"
+ },
+ {
+  "i": 45,
+  "snapshot_id": "6acdf31ad7f580a4573c99d8",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-13T09:00:10.139Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_polygon",
+   "coverage": 0.6067,
+   "fill": 0.9352,
+   "quad_norm": null,
+   "roi": [
+    [
+     [
+      0.175,
+      0.1861
+     ],
+     [
+      0.4016,
+      0.0
+     ],
+     [
+      0.7203,
+      0.0694
+     ],
+     [
+      0.8453,
+      0.2833
+     ],
+     [
+      0.85,
+      0.9972
+     ],
+     [
+      0.2594,
+      0.9972
+     ],
+     [
+      0.1594,
+      0.925
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6067,
+   "solidity": 0.9352,
+   "v_median": 165.0,
+   "s_median": 9.0,
+   "plausible": true,
+   "quad_fill": 0.9897,
+   "quad_cover": 0.8471,
+   "quad_overflow": 0.7958,
+   "quad_min_angle": 72.68,
+   "quad_in_frame": true,
+   "quad_dev": 0.0804,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 71.58,
+  "evidence": "docs/evidence/vision/card_check_lure/45_BE4111159_6acdf31ad7f580a4573c99d8.jpg"
+ },
+ {
+  "i": 46,
+  "snapshot_id": "6acf67bcd7f580a4573c9a96",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-14T11:30:04.984Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6537,
+   "fill": 0.9676,
+   "quad_norm": [
+    [
+     0.1562,
+     0.0388
+    ],
+    [
+     0.8331,
+     0.0507
+    ],
+    [
+     0.8806,
+     0.9972
+    ],
+    [
+     0.1441,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8219,
+      0.1028
+     ],
+     [
+      0.8609,
+      0.3833
+     ],
+     [
+      0.8484,
+      0.9972
+     ],
+     [
+      0.275,
+      0.9972
+     ],
+     [
+      0.1609,
+      0.925
+     ],
+     [
+      0.1453,
+      0.425
+     ],
+     [
+      0.2094,
+      0.0806
+     ],
+     [
+      0.3516,
+      0.0
+     ],
+     [
+      0.6859,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6537,
+   "solidity": 0.9676,
+   "v_median": 152.0,
+   "s_median": 16.0,
+   "plausible": true,
+   "quad_fill": 0.9436,
+   "quad_cover": 0.9772,
+   "quad_overflow": 0.9962,
+   "quad_min_angle": 84.34,
+   "quad_in_frame": true,
+   "quad_dev": 0.0477,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 134.02,
+  "evidence": "docs/evidence/vision/card_check_lure/46_BE4111159_6acf67bcd7f580a4573c9a96.jpg"
+ },
+ {
+  "i": 47,
+  "snapshot_id": "6acfae0d2edf1794f1ef61c7",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-14T16:30:05.845Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6472,
+   "fill": 0.9623,
+   "quad_norm": [
+    [
+     0.1939,
+     0.0399
+    ],
+    [
+     0.8345,
+     0.0491
+    ],
+    [
+     0.8798,
+     0.9972
+    ],
+    [
+     0.1286,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8219,
+      0.0972
+     ],
+     [
+      0.8687,
+      0.6806
+     ],
+     [
+      0.8484,
+      0.9972
+     ],
+     [
+      0.275,
+      0.9972
+     ],
+     [
+      0.1609,
+      0.925
+     ],
+     [
+      0.1437,
+      0.4278
+     ],
+     [
+      0.2094,
+      0.0806
+     ],
+     [
+      0.35,
+      0.0
+     ],
+     [
+      0.6844,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6472,
+   "solidity": 0.9623,
+   "v_median": 152.0,
+   "s_median": 16.0,
+   "plausible": true,
+   "quad_fill": 0.9447,
+   "quad_cover": 0.9731,
+   "quad_overflow": 0.9859,
+   "quad_min_angle": 83.08,
+   "quad_in_frame": true,
+   "quad_dev": 0.0453,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 98.94,
+  "evidence": "docs/evidence/vision/card_check_lure/47_BE4111159_6acfae0d2edf1794f1ef61c7.jpg"
+ },
+ {
+  "i": 48,
+  "snapshot_id": "6acea9e4d7f580a4573c9a42",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-13T22:00:04.712Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_polygon",
+   "coverage": 0.6438,
+   "fill": 0.9697,
+   "quad_norm": null,
+   "roi": [
+    [
+     [
+      0.7641,
+      0.0722
+     ],
+     [
+      0.8641,
+      0.3861
+     ],
+     [
+      0.8484,
+      0.9972
+     ],
+     [
+      0.2781,
+      0.9972
+     ],
+     [
+      0.1641,
+      0.925
+     ],
+     [
+      0.1469,
+      0.4444
+     ],
+     [
+      0.1719,
+      0.1667
+     ],
+     [
+      0.2203,
+      0.0889
+     ],
+     [
+      0.3516,
+      0.0
+     ],
+     [
+      0.6812,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6438,
+   "solidity": 0.9697,
+   "v_median": 155.0,
+   "s_median": 18.0,
+   "plausible": true,
+   "quad_fill": 0.9565,
+   "quad_cover": 0.9547,
+   "quad_overflow": 0.9632,
+   "quad_min_angle": 75.42,
+   "quad_in_frame": true,
+   "quad_dev": 0.0624,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 72.23,
+  "evidence": "docs/evidence/vision/card_check_lure/48_BE4111159_6acea9e4d7f580a4573c9a42.jpg"
+ },
+ {
+  "i": 49,
+  "snapshot_id": "6ad0026d2edf1794f1ef61fa",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-14T22:30:05.605Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_quad",
+   "coverage": 0.6622,
+   "fill": 0.9786,
+   "quad_norm": [
+    [
+     0.1494,
+     0.0402
+    ],
+    [
+     0.8359,
+     0.049
+    ],
+    [
+     0.8795,
+     0.9972
+    ],
+    [
+     0.1482,
+     0.9972
+    ]
+   ],
+   "roi": [
+    [
+     [
+      0.8219,
+      0.0972
+     ],
+     [
+      0.8656,
+      0.3917
+     ],
+     [
+      0.8484,
+      0.9972
+     ],
+     [
+      0.275,
+      0.9972
+     ],
+     [
+      0.1625,
+      0.925
+     ],
+     [
+      0.1469,
+      0.425
+     ],
+     [
+      0.2094,
+      0.0806
+     ],
+     [
+      0.35,
+      0.0
+     ],
+     [
+      0.6859,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6622,
+   "solidity": 0.9786,
+   "v_median": 151.0,
+   "s_median": 16.0,
+   "plausible": true,
+   "quad_fill": 0.9544,
+   "quad_cover": 0.9779,
+   "quad_overflow": 0.998,
+   "quad_min_angle": 84.91,
+   "quad_in_frame": true,
+   "quad_dev": 0.0515,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 74.32,
+  "evidence": "docs/evidence/vision/card_check_lure/49_BE4111159_6ad0026d2edf1794f1ef61fa.jpg"
+ },
+ {
+  "i": 50,
+  "snapshot_id": "6acfd83d2edf1794f1ef61da",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-14T19:30:05.136Z",
+  "size": [
+   768,
+   432
+  ],
+  "lure": {
+   "found": true,
+   "roi_source": "floor_polygon",
+   "coverage": 0.6425,
+   "fill": 0.9711,
+   "quad_norm": null,
+   "roi": [
+    [
+     [
+      0.7641,
+      0.0722
+     ],
+     [
+      0.8531,
+      0.3778
+     ],
+     [
+      0.8484,
+      0.9972
+     ],
+     [
+      0.2766,
+      0.9972
+     ],
+     [
+      0.1641,
+      0.925
+     ],
+     [
+      0.1562,
+      0.3
+     ],
+     [
+      0.2219,
+      0.0861
+     ],
+     [
+      0.3516,
+      0.0
+     ],
+     [
+      0.6812,
+      0.0
+     ]
+    ]
+   ]
+  },
+  "floor_checks": {
+   "coverage": 0.6425,
+   "solidity": 0.9711,
+   "v_median": 156.0,
+   "s_median": 17.0,
+   "plausible": true,
+   "quad_fill": 0.9616,
+   "quad_cover": 0.9548,
+   "quad_overflow": 0.9595,
+   "quad_min_angle": 74.99,
+   "quad_in_frame": true,
+   "quad_dev": 0.0544,
+   "quad_method": "approx_poly"
+  },
+  "time_ms": 81.77,
+  "evidence": "docs/evidence/vision/card_check_lure/50_BE4111159_6acfd83d2edf1794f1ef61da.jpg"
+ }
+]

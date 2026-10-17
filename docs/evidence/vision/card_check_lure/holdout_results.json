@@ -1,0 +1,452 @@
+[
+ {
+  "i": 1,
+  "snapshot_id": "6ac2a9424c3227d11cfbcda0",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-04T19:30:10.593Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6892,
+  "quad_min_angle": 87.86
+ },
+ {
+  "i": 2,
+  "snapshot_id": "6ac49c78ffbd82802883f0f5",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-06T07:00:08.619Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.684,
+  "quad_min_angle": 88.24
+ },
+ {
+  "i": 3,
+  "snapshot_id": "6ac854f15f7d7583c5d89d80",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-09T02:44:01.594Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6357,
+  "quad_min_angle": 84.79
+ },
+ {
+  "i": 4,
+  "snapshot_id": "6aca36ec9d7333beb125bfed",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-10T13:00:28.326Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6814,
+  "quad_min_angle": 88.46
+ },
+ {
+  "i": 5,
+  "snapshot_id": "6ac408d24c3227d11cfbdcfb",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-05T20:30:10.977Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.689,
+  "quad_min_angle": 88.31
+ },
+ {
+  "i": 6,
+  "snapshot_id": "6ac73166479d7db1e044807b",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-08T06:00:06.499Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.5937,
+  "quad_min_angle": 83.06
+ },
+ {
+  "i": 7,
+  "snapshot_id": "6ac4623643297e21635b0685",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-06T02:51:34.618Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6868,
+  "quad_min_angle": 86.59
+ },
+ {
+  "i": 8,
+  "snapshot_id": "6aca128f58d8ec8928c2be7a",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-10T10:25:19.867Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6882,
+  "quad_min_angle": 87.03
+ },
+ {
+  "i": 9,
+  "snapshot_id": "6ace082dd7f580a4573c99e0",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-13T10:30:05.807Z",
+  "roi_source": "floor_polygon",
+  "coverage": 0.6258,
+  "quad_min_angle": 73.66
+ },
+ {
+  "i": 10,
+  "snapshot_id": "6ac8e55a65ed4059e7da7f6e",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-09T13:00:10.104Z",
+  "roi_source": "floor_polygon",
+  "coverage": 0.6444,
+  "quad_min_angle": 76.21
+ },
+ {
+  "i": 11,
+  "snapshot_id": "6ac9aa34a6411bcc32eb2626",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-10T03:00:04.086Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6399,
+  "quad_min_angle": 84.04
+ },
+ {
+  "i": 12,
+  "snapshot_id": "6ac0b60b4c3227d11cfbb46e",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-03T08:00:11.168Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6978,
+  "quad_min_angle": 86.42
+ },
+ {
+  "i": 13,
+  "snapshot_id": "6acae6b49d7333beb125c03c",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-11T01:30:28.160Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6862,
+  "quad_min_angle": 86.97
+ },
+ {
+  "i": 14,
+  "snapshot_id": "6aca13c89d7333beb125bfdf",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-10T10:30:32.593Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6872,
+  "quad_min_angle": 87.06
+ },
+ {
+  "i": 15,
+  "snapshot_id": "6acda5bcd7f580a4573c99b5",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-13T03:30:04.956Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.643,
+  "quad_min_angle": 85.24
+ },
+ {
+  "i": 16,
+  "snapshot_id": "6ac7682232bfeb5846f61aa9",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-08T09:53:38.600Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6864,
+  "quad_min_angle": 86.1
+ },
+ {
+  "i": 17,
+  "snapshot_id": "6ac4875fffbd82802883f0ed",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-06T05:30:07.917Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6878,
+  "quad_min_angle": 86.7
+ },
+ {
+  "i": 18,
+  "snapshot_id": "6ac238c34c3227d11cfbc72c",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-04T11:30:11.612Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6991,
+  "quad_min_angle": 84.18
+ },
+ {
+  "i": 19,
+  "snapshot_id": "6ac46e47ffbd82802883f0eb",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-06T03:43:03.083Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6875,
+  "quad_min_angle": 86.55
+ },
+ {
+  "i": 20,
+  "snapshot_id": "6ac21ca24c3227d11cfbc511",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-04T09:30:10.083Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6894,
+  "quad_min_angle": 86.4
+ },
+ {
+  "i": 21,
+  "snapshot_id": "6ac9f0909d7333beb125bfd0",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-10T08:00:16.177Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6903,
+  "quad_min_angle": 86.96
+ },
+ {
+  "i": 22,
+  "snapshot_id": "6acb25e991f54b8b7a025e06",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-11T06:00:09.833Z",
+  "roi_source": "floor_polygon",
+  "coverage": 0.6402,
+  "quad_min_angle": 75.97
+ },
+ {
+  "i": 23,
+  "snapshot_id": "6ac99ea5692ce3ad0417532b",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-10T02:10:45.770Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6788,
+  "quad_min_angle": 86.96
+ },
+ {
+  "i": 24,
+  "snapshot_id": "6aca99599d7333beb125c015",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-10T20:00:25.054Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6814,
+  "quad_min_angle": 88.49
+ },
+ {
+  "i": 25,
+  "snapshot_id": "6ac3c98c4c3227d11cfbdb23",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-05T16:00:12.446Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6881,
+  "quad_min_angle": 88.37
+ },
+ {
+  "i": 26,
+  "snapshot_id": "6ac767688c1b5482e3031247",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-08T09:50:32.484Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.643,
+  "quad_min_angle": 85.12
+ },
+ {
+  "i": 27,
+  "snapshot_id": "6aca35abbe86ee88335ad830",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-10T12:55:07.235Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6829,
+  "quad_min_angle": 89.47
+ },
+ {
+  "i": 28,
+  "snapshot_id": "6ac7ef489d7333beb125bef2",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-08T19:30:16.451Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6856,
+  "quad_min_angle": 88.02
+ },
+ {
+  "i": 29,
+  "snapshot_id": "6ac4669dc67c4c3fd406709c",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-06T03:10:21.250Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6868,
+  "quad_min_angle": 86.58
+ },
+ {
+  "i": 30,
+  "snapshot_id": "6ac0c41d4c3227d11cfbb5a4",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-03T09:00:13.244Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6932,
+  "quad_min_angle": 86.95
+ },
+ {
+  "i": 31,
+  "snapshot_id": "6ac49c789d7333beb125bd9c",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-06T07:00:08.607Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6841,
+  "quad_min_angle": 86.35
+ },
+ {
+  "i": 32,
+  "snapshot_id": "6ac7aff59d7333beb125bed4",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-08T15:00:05.379Z",
+  "roi_source": "floor_polygon",
+  "coverage": 0.6397,
+  "quad_min_angle": 76.22
+ },
+ {
+  "i": 33,
+  "snapshot_id": "6acc86a0d7f580a4573c9930",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-12T07:05:04.753Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6794,
+  "quad_min_angle": 88.78
+ },
+ {
+  "i": 34,
+  "snapshot_id": "6ac0cb224c3227d11cfbb60c",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-03T09:30:10.473Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6899,
+  "quad_min_angle": 86.64
+ },
+ {
+  "i": 35,
+  "snapshot_id": "6ac6344f9d7333beb125be38",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-07T12:00:15.083Z",
+  "roi_source": "floor_polygon",
+  "coverage": 0.6563,
+  "quad_min_angle": 75.07
+ },
+ {
+  "i": 36,
+  "snapshot_id": "6acaedc09d7333beb125c03e",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-11T02:00:32.647Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6848,
+  "quad_min_angle": 86.82
+ },
+ {
+  "i": 37,
+  "snapshot_id": "6ac99e9b692ce3ad0417532a",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-10T02:10:35.160Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6477,
+  "quad_min_angle": 82.86
+ },
+ {
+  "i": 38,
+  "snapshot_id": "6acf4b9cd7f580a4573c9a87",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-14T09:30:04.932Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.63,
+  "quad_min_angle": 84.41
+ },
+ {
+  "i": 39,
+  "snapshot_id": "6ac6c7ee9d7333beb125be7d",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-07T22:30:06.110Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6424,
+  "quad_min_angle": 86.31
+ },
+ {
+  "i": 40,
+  "snapshot_id": "6acfe7792edf1794f1ef61e6",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-14T20:35:05.159Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6925,
+  "quad_min_angle": 86.87
+ },
+ {
+  "i": 41,
+  "snapshot_id": "6aca19a158d8ec8928c2be7d",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-10T10:55:29.654Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6919,
+  "quad_min_angle": 84.24
+ },
+ {
+  "i": 42,
+  "snapshot_id": "6ac3fac64c3227d11cfbdcb0",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-05T19:30:14.615Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6872,
+  "quad_min_angle": 84.72
+ },
+ {
+  "i": 43,
+  "snapshot_id": "6ac71c4d9d7333beb125be9e",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-08T04:30:05.682Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6604,
+  "quad_min_angle": 84.72
+ },
+ {
+  "i": 44,
+  "snapshot_id": "6ac995282cdd67cb5b3084c1",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-10T01:30:16.185Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6848,
+  "quad_min_angle": 86.71
+ },
+ {
+  "i": 45,
+  "snapshot_id": "6ac766a4887b768a9d2f84fa",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-08T09:47:16.555Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6346,
+  "quad_min_angle": 79.23
+ },
+ {
+  "i": 46,
+  "snapshot_id": "6acc405135da959c78fefc89",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-12T02:05:05.483Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6777,
+  "quad_min_angle": 86.93
+ },
+ {
+  "i": 47,
+  "snapshot_id": "6ac3126f58107cdf5156490a",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-05T02:58:55.085Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6865,
+  "quad_min_angle": 86.81
+ },
+ {
+  "i": 48,
+  "snapshot_id": "6acad1869d7333beb125c031",
+  "camera": "BE4111159",
+  "captured_at": "2026-10-11T00:00:06.224Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6413,
+  "quad_min_angle": 84.68
+ },
+ {
+  "i": 49,
+  "snapshot_id": "6ac6b9ef9d7333beb125be75",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-07T21:30:23.236Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6851,
+  "quad_min_angle": 88.54
+ },
+ {
+  "i": 50,
+  "snapshot_id": "6ac4d7cdd26953cd701dba13",
+  "camera": "BE4089629",
+  "captured_at": "2026-10-06T11:13:17.794Z",
+  "roi_source": "floor_quad",
+  "coverage": 0.6842,
+  "quad_min_angle": 80.27
+ }
+]

@@ -1,0 +1,1142 @@
+{
+ "all_pairs": {
+  "per_camera": {
+   "AC6527557": {
+    "days_compared": 17,
+    "mae": 775.35,
+    "mape_days_with_rise": 36324.9,
+    "days_with_rise": 8,
+    "days_within_15pct": 0,
+    "sum_new": 13304,
+    "sum_daily_rise": 123,
+    "pairs": 1117,
+    "pairs_same_resolution": 1111,
+    "reg_ok_same_resolution": 1105,
+    "inliers_same_resolution_p50": 201.0,
+    "inliers_same_resolution_p10": 78.0,
+    "pairs_ge_80_inliers": 996,
+    "card_change_flags": 104,
+    "card_change_flags_resolution_switch": 6
+   },
+   "BE4089629": {
+    "days_compared": 16,
+    "mae": 185.56,
+    "mape_days_with_rise": 3677.8,
+    "days_with_rise": 1,
+    "days_within_15pct": 0,
+    "sum_new": 2978,
+    "sum_daily_rise": 9,
+    "pairs": 1038,
+    "pairs_same_resolution": 994,
+    "reg_ok_same_resolution": 844,
+    "inliers_same_resolution_p50": 54.0,
+    "inliers_same_resolution_p10": 6.0,
+    "pairs_ge_80_inliers": 91,
+    "card_change_flags": 211,
+    "card_change_flags_resolution_switch": 43
+   },
+   "BE4111159": {
+    "days_compared": 17,
+    "mae": 266.0,
+    "mape_days_with_rise": null,
+    "days_with_rise": 0,
+    "days_within_15pct": 0,
+    "sum_new": 4522,
+    "sum_daily_rise": 0,
+    "pairs": 842,
+    "pairs_same_resolution": 840,
+    "reg_ok_same_resolution": 597,
+    "inliers_same_resolution_p50": 111.0,
+    "inliers_same_resolution_p10": 5.0,
+    "pairs_ge_80_inliers": 551,
+    "card_change_flags": 253,
+    "card_change_flags_resolution_switch": 1
+   }
+  },
+  "card_change": {
+   "events": 1,
+   "recall": 1.0,
+   "event_checks": [
+    {
+     "event": {
+      "id": "6acb03d0daf2f95973afc620",
+      "deviceSerial": "BE4089629",
+      "type": "card_replaced",
+      "at": "2026-10-11T03:34:40.413Z",
+      "source": "manual",
+      "note": "",
+      "createdAt": "2026-10-11T03:34:40.523Z"
+     },
+     "pair": {
+      "camera": "BE4089629",
+      "prev": "6acaedc09d7333beb125c03e",
+      "cur": "6acb11fa80957f5f523ad922",
+      "prev_at": "2026-10-11T02:00:32.647Z",
+      "cur_at": "2026-10-11T04:35:06.322Z",
+      "day": "2026-10-11",
+      "res": [
+       "768x432",
+       "768x432"
+      ],
+      "source": [
+       "full_frame",
+       "full_frame"
+      ],
+      "reg_ok": true,
+      "inliers": 42,
+      "matches": 46,
+      "new": 1,
+      "persisted": 0,
+      "disappeared": 8,
+      "prev_boxes": 8,
+      "cur_boxes": 1,
+      "change_ratio": 0.0095,
+      "card_change": true,
+      "reasons": [
+       "disappeared>>persisted"
+      ],
+      "ai_prev": 0,
+      "ai_cur": 0,
+      "evidence": {}
+     },
+     "flagged": true
+    }
+   ],
+   "false_flags": 567,
+   "false_flags_resolution_switch": 50,
+   "false_flags_by_reason": {
+    "disappeared>>persisted": 340,
+    "registration_failed+appearance_change": 446
+   },
+   "pairs": 2997
+  },
+  "per_day": [
+   {
+    "camera": "AC6527557",
+    "day": "2026-09-29",
+    "new_sum": 624,
+    "pairs": 36,
+    "daily_rise": 13,
+    "ai_pairwise_rise_sum": 334
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-09-30",
+    "new_sum": 808,
+    "pairs": 48,
+    "daily_rise": 14,
+    "ai_pairwise_rise_sum": 258
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-01",
+    "new_sum": 901,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 249
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-02",
+    "new_sum": 998,
+    "pairs": 49,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 349
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-03",
+    "new_sum": 842,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 305
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-04",
+    "new_sum": 840,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 253
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-05",
+    "new_sum": 1535,
+    "pairs": 104,
+    "daily_rise": 88,
+    "ai_pairwise_rise_sum": 1009
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-06",
+    "new_sum": 1261,
+    "pairs": 146,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 151
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-07",
+    "new_sum": 798,
+    "pairs": 74,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 6
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-08",
+    "new_sum": 786,
+    "pairs": 115,
+    "daily_rise": 1,
+    "ai_pairwise_rise_sum": 8
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-09",
+    "new_sum": 608,
+    "pairs": 71,
+    "daily_rise": 1,
+    "ai_pairwise_rise_sum": 16
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-10",
+    "new_sum": 721,
+    "pairs": 112,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 8
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-11",
+    "new_sum": 975,
+    "pairs": 64,
+    "daily_rise": 1,
+    "ai_pairwise_rise_sum": 8
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-12",
+    "new_sum": 516,
+    "pairs": 46,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 5
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-13",
+    "new_sum": 481,
+    "pairs": 45,
+    "daily_rise": 2,
+    "ai_pairwise_rise_sum": 8
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-14",
+    "new_sum": 544,
+    "pairs": 48,
+    "daily_rise": 3,
+    "ai_pairwise_rise_sum": 11
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-15",
+    "new_sum": 66,
+    "pairs": 15,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 4
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-09-29",
+    "new_sum": 328,
+    "pairs": 35,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 138
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-09-30",
+    "new_sum": 484,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 253
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-01",
+    "new_sum": 532,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 248
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-02",
+    "new_sum": 534,
+    "pairs": 49,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 295
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-03",
+    "new_sum": 220,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 138
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-04",
+    "new_sum": 142,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 121
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-05",
+    "new_sum": 104,
+    "pairs": 107,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 154
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-06",
+    "new_sum": 340,
+    "pairs": 151,
+    "daily_rise": 9,
+    "ai_pairwise_rise_sum": 261
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-07",
+    "new_sum": 37,
+    "pairs": 65,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-08",
+    "new_sum": 57,
+    "pairs": 98,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-09",
+    "new_sum": 33,
+    "pairs": 57,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-10",
+    "new_sum": 96,
+    "pairs": 99,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-11",
+    "new_sum": 54,
+    "pairs": 55,
+    "daily_rise": null,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-12",
+    "new_sum": 24,
+    "pairs": 40,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-13",
+    "new_sum": 25,
+    "pairs": 42,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-14",
+    "new_sum": 22,
+    "pairs": 39,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-15",
+    "new_sum": 0,
+    "pairs": 9,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-09-29",
+    "new_sum": 310,
+    "pairs": 35,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 180
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-09-30",
+    "new_sum": 474,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 262
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-01",
+    "new_sum": 494,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 244
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-02",
+    "new_sum": 406,
+    "pairs": 49,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 226
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-03",
+    "new_sum": 474,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 239
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-04",
+    "new_sum": 504,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 243
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-05",
+    "new_sum": 486,
+    "pairs": 49,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 298
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-06",
+    "new_sum": 276,
+    "pairs": 32,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 157
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-07",
+    "new_sum": 42,
+    "pairs": 36,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-08",
+    "new_sum": 230,
+    "pairs": 110,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-09",
+    "new_sum": 118,
+    "pairs": 63,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-10",
+    "new_sum": 264,
+    "pairs": 100,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-11",
+    "new_sum": 109,
+    "pairs": 52,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-12",
+    "new_sum": 99,
+    "pairs": 40,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-13",
+    "new_sum": 112,
+    "pairs": 36,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-14",
+    "new_sum": 97,
+    "pairs": 37,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-15",
+    "new_sum": 27,
+    "pairs": 11,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   }
+  ]
+ },
+ "native_pairs": {
+  "per_camera": {
+   "AC6527557": {
+    "days_compared": 17,
+    "mae": 766.06,
+    "mape_days_with_rise": 36324.9,
+    "days_with_rise": 8,
+    "days_within_15pct": 0,
+    "sum_new": 13146,
+    "sum_daily_rise": 123,
+    "pairs": 1106,
+    "pairs_same_resolution": 1106,
+    "reg_ok_same_resolution": 1105,
+    "inliers_same_resolution_p50": 201.5,
+    "inliers_same_resolution_p10": 80.0,
+    "pairs_ge_80_inliers": 996,
+    "card_change_flags": 93,
+    "card_change_flags_resolution_switch": 0
+   },
+   "BE4089629": {
+    "days_compared": 12,
+    "mae": 33.58,
+    "mape_days_with_rise": 622.2,
+    "days_with_rise": 1,
+    "days_within_15pct": 0,
+    "sum_new": 412,
+    "sum_daily_rise": 9,
+    "pairs": 786,
+    "pairs_same_resolution": 785,
+    "reg_ok_same_resolution": 781,
+    "inliers_same_resolution_p50": 55.0,
+    "inliers_same_resolution_p10": 39.0,
+    "pairs_ge_80_inliers": 28,
+    "card_change_flags": 22,
+    "card_change_flags_resolution_switch": 0
+   },
+   "BE4111159": {
+    "days_compared": 9,
+    "mae": 121.11,
+    "mape_days_with_rise": null,
+    "days_with_rise": 0,
+    "days_within_15pct": 0,
+    "sum_new": 1090,
+    "sum_daily_rise": 0,
+    "pairs": 484,
+    "pairs_same_resolution": 483,
+    "reg_ok_same_resolution": 477,
+    "inliers_same_resolution_p50": 119.0,
+    "inliers_same_resolution_p10": 78.0,
+    "pairs_ge_80_inliers": 431,
+    "card_change_flags": 15,
+    "card_change_flags_resolution_switch": 0
+   }
+  },
+  "card_change": {
+   "events": 1,
+   "recall": 1.0,
+   "event_checks": [
+    {
+     "event": {
+      "id": "6acb03d0daf2f95973afc620",
+      "deviceSerial": "BE4089629",
+      "type": "card_replaced",
+      "at": "2026-10-11T03:34:40.413Z",
+      "source": "manual",
+      "note": "",
+      "createdAt": "2026-10-11T03:34:40.523Z"
+     },
+     "pair": {
+      "camera": "BE4089629",
+      "prev": "6acaedc09d7333beb125c03e",
+      "cur": "6acb11fa80957f5f523ad922",
+      "prev_at": "2026-10-11T02:00:32.647Z",
+      "cur_at": "2026-10-11T04:35:06.322Z",
+      "day": "2026-10-11",
+      "res": [
+       "768x432",
+       "768x432"
+      ],
+      "source": [
+       "full_frame",
+       "full_frame"
+      ],
+      "reg_ok": true,
+      "inliers": 42,
+      "matches": 46,
+      "new": 1,
+      "persisted": 0,
+      "disappeared": 8,
+      "prev_boxes": 8,
+      "cur_boxes": 1,
+      "change_ratio": 0.0095,
+      "card_change": true,
+      "reasons": [
+       "disappeared>>persisted"
+      ],
+      "ai_prev": 0,
+      "ai_cur": 0,
+      "evidence": {}
+     },
+     "flagged": true
+    }
+   ],
+   "false_flags": 129,
+   "false_flags_resolution_switch": 0,
+   "false_flags_by_reason": {
+    "disappeared>>persisted": 122,
+    "registration_failed+appearance_change": 8
+   },
+   "pairs": 2376
+  },
+  "per_day": [
+   {
+    "camera": "AC6527557",
+    "day": "2026-09-29",
+    "new_sum": 624,
+    "pairs": 36,
+    "daily_rise": 13,
+    "ai_pairwise_rise_sum": 334
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-09-30",
+    "new_sum": 808,
+    "pairs": 48,
+    "daily_rise": 14,
+    "ai_pairwise_rise_sum": 258
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-01",
+    "new_sum": 901,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 249
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-02",
+    "new_sum": 998,
+    "pairs": 49,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 349
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-03",
+    "new_sum": 842,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 305
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-04",
+    "new_sum": 840,
+    "pairs": 48,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 253
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-05",
+    "new_sum": 1535,
+    "pairs": 104,
+    "daily_rise": 88,
+    "ai_pairwise_rise_sum": 1009
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-06",
+    "new_sum": 1103,
+    "pairs": 135,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 22
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-07",
+    "new_sum": 798,
+    "pairs": 74,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 6
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-08",
+    "new_sum": 786,
+    "pairs": 115,
+    "daily_rise": 1,
+    "ai_pairwise_rise_sum": 8
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-09",
+    "new_sum": 608,
+    "pairs": 71,
+    "daily_rise": 1,
+    "ai_pairwise_rise_sum": 16
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-10",
+    "new_sum": 721,
+    "pairs": 112,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 8
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-11",
+    "new_sum": 975,
+    "pairs": 64,
+    "daily_rise": 1,
+    "ai_pairwise_rise_sum": 8
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-12",
+    "new_sum": 516,
+    "pairs": 46,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 5
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-13",
+    "new_sum": 481,
+    "pairs": 45,
+    "daily_rise": 2,
+    "ai_pairwise_rise_sum": 8
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-14",
+    "new_sum": 544,
+    "pairs": 48,
+    "daily_rise": 3,
+    "ai_pairwise_rise_sum": 11
+   },
+   {
+    "camera": "AC6527557",
+    "day": "2026-10-15",
+    "new_sum": 66,
+    "pairs": 15,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 4
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-03",
+    "new_sum": 6,
+    "pairs": 22,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 8
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-04",
+    "new_sum": 8,
+    "pairs": 33,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 16
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-05",
+    "new_sum": 39,
+    "pairs": 100,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 102
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-06",
+    "new_sum": 65,
+    "pairs": 127,
+    "daily_rise": 9,
+    "ai_pairwise_rise_sum": 10
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-07",
+    "new_sum": 37,
+    "pairs": 65,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-08",
+    "new_sum": 57,
+    "pairs": 98,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-09",
+    "new_sum": 33,
+    "pairs": 57,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-10",
+    "new_sum": 96,
+    "pairs": 99,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-11",
+    "new_sum": 54,
+    "pairs": 55,
+    "daily_rise": null,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-12",
+    "new_sum": 24,
+    "pairs": 40,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-13",
+    "new_sum": 25,
+    "pairs": 42,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-14",
+    "new_sum": 22,
+    "pairs": 39,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4089629",
+    "day": "2026-10-15",
+    "new_sum": 0,
+    "pairs": 9,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-07",
+    "new_sum": 34,
+    "pairs": 35,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-08",
+    "new_sum": 230,
+    "pairs": 110,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-09",
+    "new_sum": 118,
+    "pairs": 63,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-10",
+    "new_sum": 264,
+    "pairs": 100,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-11",
+    "new_sum": 109,
+    "pairs": 52,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-12",
+    "new_sum": 99,
+    "pairs": 40,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-13",
+    "new_sum": 112,
+    "pairs": 36,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-14",
+    "new_sum": 97,
+    "pairs": 37,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   },
+   {
+    "camera": "BE4111159",
+    "day": "2026-10-15",
+    "new_sum": 27,
+    "pairs": 11,
+    "daily_rise": 0,
+    "ai_pairwise_rise_sum": 0
+   }
+  ]
+ },
+ "note": "640x640 photos are not EZVIZ frames: they are a rotation of a few uploaded fly-disc pictures (Roboflow-style 640x640) mixed into BE4089629/BE4111159/AC6527557 until 2026-10-06; native_pairs leaves out every pair that involves one. Production daily_rise is computed from all photos, so it includes those pictures.",
+ "run": {
+  "pairs": 2997,
+  "seconds": 1894.7,
+  "long_side": 640,
+  "registration": "sift_flann",
+  "box_source": "classic_blobs (interim)"
+ },
+ "aliked_sample": {
+  "pairs": 6,
+  "aliked_inliers_p50": 348.5,
+  "sift_inliers_p50": 105.5,
+  "aliked_ok": 6,
+  "sift_ok": 6,
+  "aliked_ge_80": 5,
+  "sift_ge_80": 4,
+  "aliked_ms_per_pair_p50": 5749.235000000001,
+  "sift_ms_per_pair_p50": 174.45,
+  "rows": [
+   {
+    "camera": "AC6527557",
+    "prev": "6abb12c875e50bc9cc8a8a57",
+    "cur": "6abb14a675e50bc9cc8a8a95",
+    "res": "1280x720",
+    "aliked": {
+     "ok": true,
+     "inliers": 320,
+     "matches": 320,
+     "extract_ms": [
+      4981.7,
+      3723.1
+     ],
+     "match_ms": 6465.15
+    },
+    "sift": {
+     "ok": true,
+     "inliers": 104,
+     "matches": 118,
+     "extract_ms": [
+      92.2,
+      89.0
+     ],
+     "match_ms": 8.82
+    },
+    "evidence": {
+     "aligned_pair": "docs/evidence/vision/diff/aliked_AC6527557_6abb14a675e50bc9cc8a8a95_aligned.jpg",
+     "matches": "docs/evidence/vision/diff/aliked_AC6527557_6abb14a675e50bc9cc8a8a95_matches.jpg"
+    }
+   },
+   {
+    "camera": "AC6527557",
+    "prev": "6ad0107b2edf1794f1ef6203",
+    "cur": "6ad017832edf1794f1ef6207",
+    "res": "1280x720",
+    "aliked": {
+     "ok": true,
+     "inliers": 333,
+     "matches": 334,
+     "extract_ms": [
+      2359.0,
+      2580.9
+     ],
+     "match_ms": 1579.27
+    },
+    "sift": {
+     "ok": true,
+     "inliers": 191,
+     "matches": 193,
+     "extract_ms": [
+      98.0,
+      85.1
+     ],
+     "match_ms": 15.35
+    },
+    "evidence": {
+     "aligned_pair": "docs/evidence/vision/diff/aliked_AC6527557_6ad017832edf1794f1ef6207_aligned.jpg",
+     "matches": "docs/evidence/vision/diff/aliked_AC6527557_6ad017832edf1794f1ef6207_matches.jpg"
+    }
+   },
+   {
+    "camera": "BE4089629",
+    "prev": "6ac076c04c3227d11cfbb1f8",
+    "cur": "6ac07dcb4c3227d11cfbb22c",
+    "res": "2304x1296",
+    "aliked": {
+     "ok": true,
+     "inliers": 16,
+     "matches": 26,
+     "extract_ms": [
+      1797.9,
+      2074.0
+     ],
+     "match_ms": 1679.76
+    },
+    "sift": {
+     "ok": true,
+     "inliers": 18,
+     "matches": 27,
+     "extract_ms": [
+      86.2,
+      87.8
+     ],
+     "match_ms": 6.6
+    },
+    "evidence": {
+     "aligned_pair": "docs/evidence/vision/diff/aliked_BE4089629_6ac07dcb4c3227d11cfbb22c_aligned.jpg",
+     "matches": "docs/evidence/vision/diff/aliked_BE4089629_6ac07dcb4c3227d11cfbb22c_matches.jpg"
+    }
+   },
+   {
+    "camera": "BE4089629",
+    "prev": "6ad011a92edf1794f1ef6206",
+    "cur": "6ad018b22edf1794f1ef6209",
+    "res": "768x432",
+    "aliked": {
+     "ok": true,
+     "inliers": 364,
+     "matches": 368,
+     "extract_ms": [
+      2192.4,
+      2037.7
+     ],
+     "match_ms": 1716.71
+    },
+    "sift": {
+     "ok": true,
+     "inliers": 43,
+     "matches": 49,
+     "extract_ms": [
+      86.7,
+      77.3
+     ],
+     "match_ms": 4.3
+    },
+    "evidence": {}
+   },
+   {
+    "camera": "BE4111159",
+    "prev": "6ac5cace9d7333beb125be0c",
+    "cur": "6ac5d8dd9d7333beb125be10",
+    "res": "2304x1296",
+    "aliked": {
+     "ok": true,
+     "inliers": 380,
+     "matches": 383,
+     "extract_ms": [
+      1889.7,
+      1747.3
+     ],
+     "match_ms": 1158.96
+    },
+    "sift": {
+     "ok": true,
+     "inliers": 107,
+     "matches": 113,
+     "extract_ms": [
+      77.4,
+      76.4
+     ],
+     "match_ms": 7.93
+    },
+    "evidence": {}
+   },
+   {
+    "camera": "BE4111159",
+    "prev": "6ad0107d2edf1794f1ef6204",
+    "cur": "6ad017852edf1794f1ef6208",
+    "res": "768x432",
+    "aliked": {
+     "ok": true,
+     "inliers": 413,
+     "matches": 415,
+     "extract_ms": [
+      1828.8,
+      1724.0
+     ],
+     "match_ms": 1737.78
+    },
+    "sift": {
+     "ok": true,
+     "inliers": 127,
+     "matches": 133,
+     "extract_ms": [
+      77.6,
+      80.2
+     ],
+     "match_ms": 8.34
+    },
+    "evidence": {}
+   }
+  ]
+ }
+}
