@@ -476,6 +476,10 @@ Resources:
             Resource:
               - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/camos/${!iot:Connection.Thing.ThingName}/*'
               - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topicfilter/$aws/things/${!iot:Connection.Thing.ThingName}/*'
+          # Live view: temporary KVS master keys from the credential provider (CameraKvsRoleAlias)
+          - Effect: Allow
+            Action: iot:AssumeRoleWithCertificate
+            Resource: !GetAtt CameraKvsRoleAlias.RoleAliasArn
 
   # Optional: camera messages -> FlyBot HTTPS (fallback when the MQTT/WSS client is not used)
   DeviceEventsDestination:
@@ -597,7 +601,7 @@ Resources:
             Statement:
               - Sid: IotData
                 Effect: Allow
-                Action: [iot:Publish, iot:GetThingShadow, iot:UpdateThingShadow, iot:DeleteThingShadow, iot:GetRetainedMessage, iot:ListRetainedMessages]
+                Action: [iot:Publish, iot:RetainPublish, iot:GetThingShadow, iot:UpdateThingShadow, iot:DeleteThingShadow, iot:GetRetainedMessage, iot:ListRetainedMessages]
                 Resource: '*'
               - Sid: IotWebSocket
                 Effect: Allow
@@ -690,6 +694,37 @@ Resources:
                 Effect: Allow
                 Action: sts:AssumeRole
                 Resource: !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/flybot-kvs-viewer-${Stage}'
+
+  # Assumed by the cameras themselves through the IoT credential provider (device certificate + role alias
+  # flybot-camera-kvs-<stage>) to join their own signaling channel cam-<thing name> as KVS WebRTC MASTER (live view
+  # on the ESP32-S3, firmware live_kvs.c). ${credentials-iot:ThingName} is the thing attached to the certificate.
+  CameraKvsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'flybot-camera-kvs-${Stage}'
+      Description: KVS WebRTC master credentials for CamOS cameras, each limited to its own channel cam-<thing>
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: credentials.iot.amazonaws.com}
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: kvs-master-own-channel
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [kinesisvideo:ConnectAsMaster, kinesisvideo:DescribeSignalingChannel,
+                         kinesisvideo:GetSignalingChannelEndpoint, kinesisvideo:GetIceServerConfig]
+                Resource: !Sub 'arn:${AWS::Partition}:kinesisvideo:${AWS::Region}:${AWS::AccountId}:channel/cam-${!credentials-iot:ThingName}/*'
+
+  CameraKvsRoleAlias:
+    Type: AWS::IoT::RoleAlias
+    Properties:
+      RoleAlias: !Sub 'flybot-camera-kvs-${Stage}'
+      RoleArn: !GetAtt CameraKvsRole.Arn
+      CredentialDurationSeconds: 3600
 
   # Assumed by FlyBot (the instance role) for each browser live-view session (DurationSeconds 900, with a session
   # policy that narrows it further to the one channel cam-<serial>). Never used by the instance itself.
@@ -903,6 +938,9 @@ Outputs:
     Value: !If [CreateTopic, !Ref AlarmTopic, !Ref ExistingAlarmTopicArn]
   InstanceRoleArn:
     Value: !GetAtt FlyBotRole.Arn
+  CameraKvsRoleAlias:
+    Value: !Ref CameraKvsRoleAlias
+    Description: IoT role alias the cameras use for KVS master credentials (FlyBot's IOT_ROLE_ALIAS)
   KvsViewerRoleArn:
     Value: !GetAtt KvsViewerRole.Arn
     Description: FlyBot's KVS_VIEWER_ROLE_ARN (written to .env by the user-data)

@@ -161,6 +161,8 @@ fi
 
 # 5. FlyBot environment (secrets stay in Secrets Manager flybot-${STAGE}-app: FLYBOT_SECRETS, read at start-up)
 id flybot >/dev/null 2>&1 || useradd --system --home-dir /opt/flybot --shell /sbin/nologin flybot
+# Cameras fetch KVS master keys from the IoT credential provider with the role alias of the stack (live view)
+IOT_CREDENTIALS_ENDPOINT=$(aws iot describe-endpoint --endpoint-type iot:CredentialProvider --query endpointAddress --output text 2>/dev/null || true)
 umask 077
 cat > /etc/flybot/env.new <<EOF
 NODE_ENV=production
@@ -184,6 +186,8 @@ IOT_RULE_SECRET=${IOT_RULE_SECRET}
 IOT_THING_TYPE=camos-camera
 IOT_POLICY_NAME=${IOT_POLICY_NAME}
 KVS_VIEWER_ROLE_ARN=${KVS_VIEWER_ROLE_ARN}
+IOT_CREDENTIALS_ENDPOINT=${IOT_CREDENTIALS_ENDPOINT}
+IOT_ROLE_ALIAS=flybot-camera-kvs-${STAGE}
 FLYBOT_SECRETS=flybot-${STAGE}-app
 APP_MODE=${APP_MODE}
 DEMO_MAX_CAMERAS_PER_USER=${DEMO_MAX_CAMERAS_PER_USER}
