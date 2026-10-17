@@ -4,9 +4,14 @@ The ONNX comes from `models/colab_train_yolo26.ipynb` (opset 17, static 640, bat
 decoded, so the fallback export documented in `models/verify_yolo26.py` needs no code change:
 
     end-to-end (default YOLO26 export): output `[1, 300, 6]` = x1, y1, x2, y2, score, class, in letterboxed
-        input pixels, already top-300 after the model's one-to-one head: no NMS here, rows below `conf` dropped;
-    one-to-many (`end2end=False`): output `[1, 4 + nc, 8400]` = cx, cy, w, h, class scores (no objectness):
-        decoded here and reduced with `cv2.dnn.NMSBoxes`, exactly like detect_yolov7.
+        input pixels, top-300 after the model's one-to-one head; rows below `conf` dropped;
+    one-to-many (`end2end=False`): output `[1, 4 + nc, 8400]` = cx, cy, w, h, class scores (no objectness).
+
+Both heads then go through class-agnostic `cv2.dnn.NMSBoxes` at `iou`: the one-to-one head is meant to be NMS-free,
+but on the valid split it still left 173 pairs of boxes on one fly at IoU >= 0.5 (`eval/results/yolo26_box_rules.json`).
+`rules` (sentinel.vision.box_rules, from the DETECTOR_* variables) then drops boxes that cannot be one fruit fly
+(low score, too large or small for the photo or for the photo's other boxes, too elongated); `detect()` reports
+how many boxes each step removed under `postprocess`.
 
 Preprocessing is the YOLOv7 one (letterbox to S x S, pad 114, RGB, /255), so both detectors share
 `detect_yolov7.preprocess`. The public interface matches `YoloV7Detector`: `detect(img) -> {count, boxes
@@ -26,12 +31,13 @@ import cv2
 import numpy as np
 
 from sentinel import require_opencv5
+from sentinel.vision.box_rules import BoxRules, apply_rules, nms
 from sentinel.vision.detect_smoke import ENGINES, engine_of
 from sentinel.vision.detect_yolov7 import preprocess
 
 
 def decode_end2end(out: np.ndarray, conf: float, scale: tuple[float, float], offset: tuple[int, int]) -> list[dict]:
-    """`[1, N, 6]` (x1, y1, x2, y2, score, class) -> boxes in source-image pixels (`xywh`); no NMS needed."""
+    """`[1, N, 6]` (x1, y1, x2, y2, score, class) -> boxes in source-image pixels (`xywh`), before NMS."""
     rows = out.reshape(-1, out.shape[-1])
     rows = rows[rows[:, 4] >= conf]
     sx, sy = scale
@@ -67,11 +73,10 @@ def decode_one_to_many(out: np.ndarray, conf: float, iou: float, scale: tuple[fl
 
 
 def decode(out: np.ndarray, conf: float, iou: float, scale: tuple[float, float], offset: tuple[int, int]) -> list[dict]:
-    """Pick the decoder from the output shape. `[1, N, 6]` = end-to-end; `[1, 4 + nc, A]` with A > 4 + nc = one-to-many."""
-    if out.ndim == 3 and out.shape[-1] == 6 and out.shape[1] != 6:
-        return decode_end2end(out, conf, scale, offset)
-    if out.ndim == 2 and out.shape[-1] == 6:
-        return decode_end2end(out, conf, scale, offset)
+    """Pick the decoder from the output shape. `[1, N, 6]` = end-to-end; `[1, 4 + nc, A]` with A > 4 + nc = one-to-many.
+    Both are reduced with class-agnostic NMS at `iou`."""
+    if (out.ndim == 3 and out.shape[-1] == 6 and out.shape[1] != 6) or (out.ndim == 2 and out.shape[-1] == 6):
+        return nms(decode_end2end(out, conf, scale, offset), iou)
     if out.ndim == 3 and out.shape[1] < out.shape[2]:
         return decode_one_to_many(out, conf, iou, scale, offset)
     raise ValueError(f"unexpected YOLO26 output shape {list(out.shape)}: expected [1, 300, 6] or [1, 4+nc, A]")
@@ -83,13 +88,13 @@ class Yolo26Detector:
     name = "yolo26n"
 
     def __init__(self, onnx_path: str | Path, engine: str = "new", imgsz: int | None = None,
-                 resize: str = "letterbox", conf: float = 0.25, iou: float = 0.45):
+                 resize: str = "letterbox", conf: float = 0.25, iou: float = 0.45, rules: BoxRules | None = None):
         self.cv_version = require_opencv5()
         self.onnx_path = Path(onnx_path)
         meta_path = self.onnx_path.with_suffix(".onnx.json")
         self.meta = json.loads(meta_path.read_text(encoding="utf-8")) if meta_path.exists() else {}
         self.size = int(imgsz or self.meta.get("imgsz") or 640)
-        self.engine, self.resize, self.conf, self.iou = engine, resize, conf, iou
+        self.engine, self.resize, self.conf, self.iou, self.rules = engine, resize, conf, iou, rules
         t0 = time.perf_counter()
         self.net = cv2.dnn.readNet(str(self.onnx_path), "", "", ENGINES[engine])
         self.load_ms = round((time.perf_counter() - t0) * 1000, 1)
@@ -102,16 +107,26 @@ class Yolo26Detector:
             self._engine_used = engine_of(self.net)
         return self._engine_used
 
-    def detect(self, img: np.ndarray) -> dict:
+    def forward(self, img: np.ndarray) -> tuple[np.ndarray, tuple[float, float], tuple[int, int], float]:
+        """Raw network output for `img`: (output, scale, offset, forward ms)."""
         blob, scale, offset = preprocess(img, self.size, self.resize)
         self.net.setInput(blob)
         t0 = time.perf_counter()
         out = self.net.forward()
         forward_ms = (time.perf_counter() - t0) * 1000
         self.head = "end2end" if (out.ndim >= 2 and out.shape[-1] == 6 and out.shape[-2] != 6) else "one_to_many"
+        return out, scale, offset, forward_ms
+
+    def detect(self, img: np.ndarray) -> dict:
+        out, scale, offset, forward_ms = self.forward(img)
+        raw = decode_end2end(out, self.conf, scale, offset) if self.head == "end2end" else None
         dets = decode(out, self.conf, self.iou, scale, offset)
-        return {"count": len(dets), "boxes": dets, "forward_ms": round(forward_ms, 1),
-                "output_shape": list(out.shape), "output_finite": bool(np.isfinite(out).all()), "head": self.head}
+        kept, rejected = apply_rules(dets, img.shape[1], img.shape[0], self.rules)
+        post = {"nms_iou": self.iou, "nms_removed": None if raw is None else len(raw) - len(dets),
+                "rules": None if self.rules is None else self.rules.as_dict(), "rejected": rejected}
+        return {"count": len(kept), "boxes": kept, "forward_ms": round(forward_ms, 1),
+                "output_shape": list(out.shape), "output_finite": bool(np.isfinite(out).all()), "head": self.head,
+                "postprocess": post}
 
 
 def main() -> None:
@@ -122,8 +137,10 @@ def main() -> None:
     ap.add_argument("--imgsz", type=int, default=None)
     ap.add_argument("--conf", type=float, default=0.25)
     ap.add_argument("--iou", type=float, default=0.45)
+    ap.add_argument("--no-rules", action="store_true", help="NMS only, no box rules (DETECTOR_* variables otherwise)")
     args = ap.parse_args()
-    det = Yolo26Detector(args.onnx, args.engine, args.imgsz, conf=args.conf, iou=args.iou)
+    det = Yolo26Detector(args.onnx, args.engine, args.imgsz, conf=args.conf, iou=args.iou,
+                         rules=None if args.no_rules else BoxRules.from_env())
     img = cv2.imread(args.image, cv2.IMREAD_COLOR)
     if img is None:
         raise SystemExit(f"cannot read image {args.image}")

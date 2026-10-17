@@ -302,6 +302,15 @@ def _truncate(value, depth: int = 0):
     return value
 
 
+def _rejected(res: dict | None) -> dict:
+    """Boxes the detector's NMS and box rules removed (non-zero reasons only), for the `analyzed` log line."""
+    post = ((res or {}).get("detect") or {}).get("postprocess") or {}
+    out = {k: v for k, v in (post.get("rejected") or {}).items() if v}
+    if post.get("nms_removed"):
+        out["nms"] = post["nms_removed"]
+    return out
+
+
 # ---------------------------------------------------------------- evidence
 
 
@@ -442,7 +451,8 @@ def analyze(request, *, llm=None, analyzer=None, clock=None, store: bool = True)
             out["warnings"] = ["prevPhoto not found or unreadable: diff skipped"]
         _log("analyzed", traceId=trace_id, camera=ev.camera, mode=req["mode"], count=out["counts"]["total"],
              flags=out["quality"]["flags"], proposals=[p["action"] for p in proposals], planner=trace.planner.name,
-             fallback=trace.planner.fallback, totalMs=timings["totalMs"], dnnMs=dnn_ms, model=model.get("name"))
+             fallback=trace.planner.fallback, totalMs=timings["totalMs"], dnnMs=dnn_ms, model=model.get("name"),
+             rejected=_rejected(res))
         return json.loads(json.dumps(out, default=str))
     finally:
         vision.IMAGE_CACHE.clear()

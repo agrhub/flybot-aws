@@ -228,7 +228,8 @@ def analyze(
 
 def detect_boxes(img: np.ndarray, onnx_path: str | Path | None = None) -> dict | None:
     """Op 5 (YOLO26n or YOLOv7-tiny on the OpenCV 5 new DNN engine, see sentinel.vision.detector) ->
-    {boxes xyxy, detections [{xywh, score, class_id}], count, engine_used, forward_ms, source};
+    {boxes xyxy, detections [{xywh, score, class_id}], count, engine_used, forward_ms, source, postprocess (NMS and
+    box-rule rejections, YOLO26 only)};
     None when no detector ONNX is available (DetectorUnavailable is swallowed here: the other ops still run)."""
     from sentinel.vision.detector import DetectorUnavailable, build_detector, detector_kind, get_detector
 
@@ -241,7 +242,7 @@ def detect_boxes(img: np.ndarray, onnx_path: str | Path | None = None) -> dict |
     engine = getattr(det, "engine_used", "unknown")
     return {"boxes": boxes, "detections": res["boxes"], "count": res["count"], "engine_used": engine,
             "forward_ms": res.get("forward_ms"), "source": Path(str(getattr(det, "onnx_path", "fake"))).name,
-            "model": getattr(det, "name", type(det).__name__)}
+            "model": getattr(det, "name", type(det).__name__), "postprocess": res.get("postprocess")}
 
 
 def analyze_photo(image, previous=None, trap_kind: str = "sticky", out_dir=None, boxes=None, prev_boxes=None,
