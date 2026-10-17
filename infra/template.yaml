@@ -620,8 +620,10 @@ Resources:
                   - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:thingtype/camos-camera'
               - Sid: IotCameraCertificates
                 Effect: Allow
+                # AttachThingPrincipal / DetachThingPrincipal are authorized on the certificate as well as on the thing
                 Action: [iot:DescribeCertificate, iot:UpdateCertificate, iot:DeleteCertificate, iot:AttachPolicy, iot:DetachPolicy,
-                         iot:ListPrincipalPolicies, iot:ListAttachedPolicies]
+                         iot:ListPrincipalPolicies, iot:ListAttachedPolicies, iot:AttachThingPrincipal, iot:DetachThingPrincipal,
+                         iot:ListPrincipalThings]
                 Resource:
                   - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:cert/*'
                   - !Sub 'arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:policy/camos-camera-${Stage}'
