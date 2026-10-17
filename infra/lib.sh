@@ -113,7 +113,7 @@ py() {
     if [ ${#PY_CMD[@]} -eq 0 ] && [ -n "${UV:-}" ]; then PY_CMD=("$UV" run --quiet --no-project python); fi
     [ ${#PY_CMD[@]} -gt 0 ] || die "no Python 3.9+ found (install uv: https://docs.astral.sh/uv/)"
   fi
-  "${PY_CMD[@]}" "$@"
+  "${PY_CMD[@]}" "$@" | tr -d '\r'   # Windows Python prints CRLF; callers run with pipefail
 }
 
 aws_cr() {

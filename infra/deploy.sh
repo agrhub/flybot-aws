@@ -8,6 +8,7 @@
 #   ./deploy.sh --rollback           put the host back on the previous FlyBot release
 #   ./deploy.sh --allow-dirty        build FlyBot from a checkout with uncommitted changes (the release is marked dirty)
 #   ./deploy.sh --npm-ci             force `npm ci` in the FlyBot checkout before the build
+#   ./deploy.sh --prune-releases     delete FlyBot deploy builds on GitHub beyond the newest FLYBOT_KEEP_RELEASES (5)
 #   ./deploy.sh --yes                allow destructive recoveries (delete a stack stuck in ROLLBACK_COMPLETE)
 #   ./deploy.sh --env-file F         another settings file (default: deploy.env)
 #
@@ -22,7 +23,7 @@ cd "$ROOT"
 find_tools
 
 STEPS=(models secrets stack flybot image lambda bootstrap health smoke coldstart summary)
-ENV_FILE=deploy.env DRY=0 ONLY="" YES=0 SHOW_IP=0 ROLLBACK=0 ALLOW_DIRTY=0 NPM_CI=0
+ENV_FILE=deploy.env DRY=0 ONLY="" YES=0 SHOW_IP=0 ROLLBACK=0 ALLOW_DIRTY=0 NPM_CI=0 PRUNE=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) DRY=1 ;;
@@ -33,9 +34,10 @@ while [ $# -gt 0 ]; do
     --rollback) ROLLBACK=1 ;;
     --allow-dirty) ALLOW_DIRTY=1 ;;
     --npm-ci) NPM_CI=1 ;;
+    --prune-releases) PRUNE=1 ;;
     --env-file) ENV_FILE="${2:?}"; shift ;;
     --env-file=*) ENV_FILE="${1#--env-file=}" ;;
-    -h|--help) sed -n '2,16p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,17p' "$0"; exit 0 ;;
     *) die "unknown option $1 (see --help)" ;;
   esac
   shift
@@ -78,6 +80,11 @@ DEMO_SNAPS="$(cfg DEMO_MAX_SNAPSHOTS_PER_DAY 48)"
 DEMO_UNCLAIMED="$(cfg DEMO_MAX_UNCLAIMED 200)"
 APP_MODE="$(cfg APP_MODE hybrid)"
 case "$APP_MODE" in b2c|b2b|hybrid) ;; *) die "deploy.env: APP_MODE must be b2c, b2b or hybrid (got $APP_MODE)" ;; esac
+PAYMENTS_ENABLED="$(cfg PAYMENTS_ENABLED false)"
+case "$PAYMENTS_ENABLED" in true|false) ;; *) die "deploy.env: PAYMENTS_ENABLED must be true or false (got $PAYMENTS_ENABLED)" ;; esac
+if [ "$PAYMENTS_ENABLED" = true ] && [ "$APP_MODE" = b2b ]; then
+  die "deploy.env: PAYMENTS_ENABLED=true is not allowed with APP_MODE=b2b (FlyBot refuses online payment for organizations)"
+fi
 DEVICE_EVENTS_URL="$(cfg DEVICE_EVENTS_URL)"
 SKIP_COLDSTART="$(cfg SKIP_COLDSTART 0)"
 FLYBOT_SRC="$(cfg FLYBOT_SRC ../ezviz-manager)"
@@ -87,6 +94,12 @@ S3_REGION="$(cfg S3_REGION)"
 S3_ENDPOINT="$(cfg S3_ENDPOINT)"
 NODE_VERSION="$(cfg NODE_VERSION)"
 CADDY_VERSION="$(cfg CADDY_VERSION 2.10.2)"
+RELEASE_STORE="$(cfg FLYBOT_RELEASE_STORE github)"
+case "$RELEASE_STORE" in github|s3) ;; *) die "deploy.env: FLYBOT_RELEASE_STORE must be github or s3 (got $RELEASE_STORE)" ;; esac
+GITHUB_REPO="$(cfg GITHUB_REPO agrhub/flybot-aws)"
+FLYBOT_MEDIA="$(cfg FLYBOT_MEDIA separate)"
+case "$FLYBOT_MEDIA" in separate|bundled) ;; *) die "deploy.env: FLYBOT_MEDIA must be separate or bundled (got $FLYBOT_MEDIA)" ;; esac
+KEEP_RELEASES="$(cfg FLYBOT_KEEP_RELEASES 5)"
 # photos: stack bucket (empty S3_BUCKET_NAME), an AWS bucket by name, or S3-compatible storage at S3_ENDPOINT
 if [ -z "$S3_BUCKET_NAME" ]; then STORAGE_MODE=stack
 elif [ -n "$S3_ENDPOINT" ] && [[ "$S3_ENDPOINT" != *amazonaws.com* ]]; then STORAGE_MODE=external
@@ -142,6 +155,21 @@ doh_a() {  # public resolver ($1 = 1.1.1.1 | 8.8.8.8) -> the A records of DOMAIN
   printf '%s' "$body" | grep -o '"data":"[0-9][0-9.]*"' | grep -o '[0-9][0-9.]*' | tr '\n' ' ' | sed 's/ $//'
 }
 
+# ---------------------------------------------------------------- GitHub REST API (FlyBot releases)
+# The token stays on this computer: it is read from deploy.env into a header file in the private temp folder (never on a
+# command line, never printed, never sent to the server). CURL can point at a stub (infra/tests).
+gh_api() {  # METHOD URL [data-file [content-type]] -> prints the HTTP status; the body is in $TMP/gh.out
+  local m="$1" u="$2" d="${3:-}" ct="${4:-application/json}" code
+  local args=(-sS -o "$TMP/gh.out" -w '%{http_code}' -X "$m" -H "@$(winpath "$TMP/gh.hdr")"
+              -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28')
+  [ -n "$d" ] && args+=(-H "Content-Type: $ct" --data-binary "@$(winpath "$d")")
+  code="$("${CURL:-curl}" "${args[@]}" "$u" 2>/dev/null)" || code=000
+  printf '%s' "${code:-000}"
+}
+gh_anon_status() {  # URL -> HTTP status of an anonymous download (redirects followed)
+  "${CURL:-curl}" -sIL -o /dev/null -w '%{http_code}' --max-time 30 "$1" 2>/dev/null || printf '000'
+}
+
 # ================================================================ preflight
 preflight() {
   step preflight "tools, session, account, region, service limits, FlyBot checkout"
@@ -194,6 +222,22 @@ preflight() {
     fi
     FB_ID="$FB_COMMIT"; [ -n "$FB_DIRTY" ] && FB_ID="$FB_COMMIT-dirty-$(git -C "$FLYBOT_SRC" diff HEAD | sha256sum | cut -c1-8)"
     ok "FlyBot checkout $FLYBOT_SRC: $FB_BRANCH@$FB_COMMIT$([ -n "$FB_DIRTY" ] && echo ' (DIRTY, --allow-dirty)')"
+    if [ "$RELEASE_STORE" = github ] && ! has GITHUB_TOKEN; then
+      warn "GITHUB_TOKEN is empty in $ENV_FILE: the FlyBot release goes to the artifacts bucket instead (FLYBOT_RELEASE_STORE=s3)"
+      RELEASE_STORE=s3
+    fi
+    if [ "$RELEASE_STORE" = github ]; then
+      py infra/deploy_helpers.py get "$ENV_FILE" GITHUB_TOKEN --out "$TMP/ghtok"
+      py -c 'import sys;t=open(sys.argv[1],encoding="utf-8").read().strip();open(sys.argv[2],"w").write("Authorization: Bearer "+t+"\n")' "$TMP/ghtok" "$TMP/gh.hdr"
+      rm -f "$TMP/ghtok"
+      local gc; gc="$(gh_api GET "https://api.github.com/repos/$GITHUB_REPO")"
+      [ "$gc" = 200 ] || die "GITHUB_TOKEN cannot read $GITHUB_REPO (HTTP $gc): a fine-grained token for repository $GITHUB_REPO with Contents: read and write"
+      [ "$(py -c 'import json,sys;print(json.load(open(sys.argv[1],encoding="utf-8")).get("private"))' "$TMP/gh.out")" = False ] \
+        || die "$GITHUB_REPO is private: the server downloads release assets anonymously; make it public or set FLYBOT_RELEASE_STORE=s3"
+      ok "FlyBot releases on GitHub $GITHUB_REPO (token ok, public repository)"
+    else
+      ok "FlyBot releases in the artifacts bucket (FLYBOT_RELEASE_STORE=s3)"
+    fi
   fi
 
   local azs; azs="$(awsx ec2 describe-availability-zones --query 'AvailabilityZones[].ZoneName' --output text 2>&1)" \
@@ -248,6 +292,14 @@ EOF
     external)
       { has S3_ACCESS_KEY && has S3_SECRET_KEY; } || die "S3_ENDPOINT=$S3_ENDPOINT needs S3_ACCESS_KEY and S3_SECRET_KEY in deploy.env"
       [ -n "$S3_REGION" ] || S3_REGION=auto
+      case "$S3_ENDPOINT" in http://*|https://*) ;; *) die "S3_ENDPOINT=$S3_ENDPOINT: needs http:// or https://" ;; esac
+      local s3host="${S3_ENDPOINT#*://}"; s3host="${s3host%%/*}"; s3host="${s3host%:*}"
+      case "$s3host" in localhost|127.*|10.*|192.168.*|172.1[6-9].*|172.2[0-9].*|172.3[01].*|*.local|*.lan)
+        die "S3_ENDPOINT host $s3host is a private address: the Lambda and the server reach it over the internet" ;; esac
+      local s3code; s3code="$(${CURL:-curl} -s -o /dev/null -w '%{http_code}' --max-time 10 "$S3_ENDPOINT/" 2>/dev/null || true)"
+      if [ -z "$s3code" ] || [ "$s3code" = 000 ]; then warn "S3_ENDPOINT $S3_ENDPOINT does not answer from this computer: the Lambda and the server must reach it from the internet"
+      else ok "S3_ENDPOINT answers (HTTP $s3code without credentials)"; fi
+      [[ "$S3_ENDPOINT" == http://* ]] && warn "S3_ENDPOINT is plain http: photos, and the presigned URLs FlyBot gives the Lambda, travel unencrypted between AWS and $s3host"
       ok "photos: S3-compatible $S3_ENDPOINT bucket $S3_BUCKET_NAME (the Lambda gets presigned URLs; evidence in the stack bucket)" ;;
     *) ok "photos: the stack bucket flybot-photos-$ACCOUNT-$STAGE" ;;
   esac
@@ -266,6 +318,9 @@ discover() {
   local cur_type; cur_type="$(param InstanceType)"
   if [ -n "$cur_type" ] && [ "$cur_type" != "$INSTANCE_TYPE" ]; then
     warn "instance type $cur_type -> $INSTANCE_TYPE: CloudFormation stops and starts the instance (Elastic IP and disk stay); the bootstrap step re-runs afterwards"
+  fi
+  if [ "$(param LocalMongo)" = true ] && [ "$LOCAL_MONGO" = false ]; then
+    warn "database: the server's MongoDB -> MONGO_URI. The local MongoDB is stopped; its data (/var/lib/mongo on the instance) is NOT copied to the new database (copy it first with mongodump/mongorestore if you need it)"
   fi
 
   if [ -n "$AMI_ID" ]; then ok "AMI $AMI_ID (deploy.env)"
@@ -490,50 +545,153 @@ step_stack() {
 }
 
 # ================================================================ flybot (prebuilt release, built on this laptop)
-flybot_current() {  # the release the host is told to run: "key sha256" or empty
+flybot_current() {  # the release the host is told to run: "<url or key> <sha256>" or empty
   awsx s3 cp "s3://$ARTIFACTS/flybot/current.json" - 2>/dev/null \
     | py -c 'import json,sys
 try:
-    d=json.load(sys.stdin); print(d["key"], d["sha256"])
+    d=json.load(sys.stdin); print(d.get("url") or d.get("key"), d["sha256"])
 except Exception:
     pass' 2>/dev/null || true
 }
+flybot_build() {  # npm ci (when needed) + npm run build in FLYBOT_SRC, then the release tarball; prints its sha256
+  local tgz="$1" free
+  free="$(df -Pk "$FLYBOT_SRC" | awk 'NR==2 {print int($4/1024)}')"
+  [ "$free" -ge 1500 ] || warn "only $free MB free on the FlyBot checkout's drive (npm ci needs ~1.5 GB)"
+  if [ "$NPM_CI" = 1 ] || [ ! -f "$FLYBOT_SRC/node_modules/.package-lock.json" ] || [ "$FLYBOT_SRC/package-lock.json" -nt "$FLYBOT_SRC/node_modules/.package-lock.json" ]; then
+    log "npm ci in $FLYBOT_SRC (package-lock.json changed or node_modules missing)" >&2
+    (cd "$FLYBOT_SRC" && "$NPM_BIN" ci --no-audit --no-fund --loglevel=error) >&2 || die "npm ci failed in $FLYBOT_SRC"
+  fi
+  log "npm run build (Vue client + server bundle)" >&2
+  (cd "$FLYBOT_SRC" && VITE_GOOGLE_MAP_KEY="$VITE_GOOGLE_MAP_KEY" NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=4096}" "$NPM_BIN" run build) \
+    > "infra/.build/flybot-build-$STAGE.log" 2>&1 || { tail -30 "infra/.build/flybot-build-$STAGE.log" >&2; die "FlyBot build failed (infra/.build/flybot-build-$STAGE.log)"; }
+  printf '{"commit":"%s","branch":"%s","dirty":%s,"built_at":"%s","node":"%s","media":"%s"}\n' "$FB_COMMIT" "$FB_BRANCH" \
+    "$([ -n "$FB_DIRTY" ] && echo true || echo false)" "$(date -u +%FT%TZ)" "$("$NODE_BIN" --version | tr -d '\r')" "$FLYBOT_MEDIA" > "$TMP/release.json"
+  local extra=(); [ "$FLYBOT_MEDIA" = separate ] && extra=(--exclude-media)
+  py infra/deploy_helpers.py pack-flybot --src "$FLYBOT_SRC" --out "$tgz" --meta "$TMP/release.json" "${extra[@]}" \
+    || die "packing the release failed"
+}
+flybot_media() {  # FLYBOT_MEDIA=separate: the videos once to s3://<artifacts>/media/ (sha256 metadata), synced by the host
+  [ "$FLYBOT_MEDIA" = separate ] || return 0
+  local sha size rel key remote n=0 up=0 todo=0
+  [ -d "$FLYBOT_SRC/client/dist/media" ] || { warn "no $FLYBOT_SRC/client/dist/media: videos not published (build FlyBot once)"; return 0; }
+  while read -r sha size rel; do
+    [ -n "$rel" ] || continue
+    n=$((n + 1)); key="$rel"
+    remote="$(awsx s3api head-object --bucket "$ARTIFACTS" --key "$key" --query 'Metadata.sha256' --output text 2>/dev/null || true)"
+    [ "$remote" = "$sha" ] && continue
+    if [ "$DRY" = 1 ]; then plan "upload $rel ($((size / 1048576)) MB) -> s3://$ARTIFACTS/$key"; todo=$((todo + 1)); continue; fi
+    awsx s3 cp "$FLYBOT_SRC/client/dist/$rel" "s3://$ARTIFACTS/$key" --metadata "sha256=$sha" --content-type video/mp4 --only-show-errors
+    up=$((up + 1))
+  done < <(py infra/deploy_helpers.py media-list --src "$FLYBOT_SRC" | tr -d '\r')
+  if [ "$DRY" = 1 ]; then ok "videos: $n, $((n - todo)) already in s3://$ARTIFACTS/media/, $todo to upload; served by Caddy from the server's local copy"
+  else ok "videos: $n in s3://$ARTIFACTS/media/ ($up uploaded now), served by Caddy from the server's local copy"; fi
+}
+flybot_github() {  # TGZ-or-empty: find or create the pre-release + its assets; sets SHA (and RELEASE_URL)
+  local tgz="$1" tag="flybot-$FB_ID" asset="flybot-$FB_ID.tgz" code rel_id="" line
+  local api="https://api.github.com/repos/$GITHUB_REPO"
+  RELEASE_URL="https://github.com/$GITHUB_REPO/releases/download/$tag/$asset"
+  code="$(gh_api GET "$api/releases/tags/$tag")"
+  if [ "$code" = 200 ]; then rel_id="$(py infra/deploy_helpers.py gh-release "$TMP/gh.out" | awk '$1=="id" {print $2}')"
+  elif [ "$code" != 404 ]; then die "GitHub API $code reading release $tag of $GITHUB_REPO"; fi
+  if [ -z "$tgz" ]; then   # look-up only: reuse a complete release
+    SHA=""
+    [ -n "$rel_id" ] || return 0
+    py infra/deploy_helpers.py gh-release "$TMP/gh.out" | grep -q "^asset $asset [0-9]* uploaded " || return 0
+    py infra/deploy_helpers.py gh-release "$TMP/gh.out" | grep -q "^asset $asset.sha256 [0-9]* uploaded " || return 0
+    SHA="$("${CURL:-curl}" -fsSL --max-time 30 "$RELEASE_URL.sha256" 2>/dev/null | awk '{print $1}' || true)"
+    [[ "$SHA" =~ ^[0-9a-f]{64}$ ]] || SHA=""
+    return 0
+  fi
+  local size_mb=$(( $(wc -c < "$tgz") / 1048576 ))
+  if [ -z "$rel_id" ]; then
+    py infra/deploy_helpers.py gh-new-release --tag "$tag" --commit "$FB_ID" --branch "$FB_BRANCH" --built "$(date -u +%FT%TZ)" \
+      --asset "$asset" --sha "$SHA" --size-mb "$size_mb" --out "$TMP/gh-new.json"
+    code="$(gh_api POST "$api/releases" "$TMP/gh-new.json")"
+    [ "$code" = 201 ] || die "GitHub API $code creating release $tag (token needs Contents: read and write on $GITHUB_REPO): $(head -c 300 "$TMP/gh.out")"
+    rel_id="$(py infra/deploy_helpers.py gh-release "$TMP/gh.out" | awk '$1=="id" {print $2}')"
+    ok "GitHub pre-release $tag created in $GITHUB_REPO"
+  fi
+  # a half-uploaded asset of an earlier run blocks a new upload with the same name
+  while read -r line; do
+    set -- $line
+    case "$2" in "$asset"|"$asset.sha256") gh_api DELETE "$api/releases/assets/$3" >/dev/null ;; esac
+  done < <(py infra/deploy_helpers.py gh-release "$TMP/gh.out" | grep '^asset ' || true)
+  code="$(gh_api POST "https://uploads.github.com/repos/$GITHUB_REPO/releases/$rel_id/assets?name=$asset" "$tgz" application/gzip)"
+  [ "$code" = 201 ] || die "GitHub API $code uploading $asset: $(head -c 300 "$TMP/gh.out")"
+  printf '%s  %s\n' "$SHA" "$asset" > "$TMP/$asset.sha256"
+  code="$(gh_api POST "https://uploads.github.com/repos/$GITHUB_REPO/releases/$rel_id/assets?name=$asset.sha256" "$TMP/$asset.sha256" text/plain)"
+  [ "$code" = 201 ] || die "GitHub API $code uploading $asset.sha256: $(head -c 300 "$TMP/gh.out")"
+  ok "uploaded $asset ($size_mb MB) + $asset.sha256 to the GitHub release $tag"
+}
+flybot_prune() {  # --prune-releases: keep the newest KEEP_RELEASES deploy builds (and the current one)
+  [ "$PRUNE" = 1 ] || return 0
+  [ "$RELEASE_STORE" = github ] || { warn "--prune-releases applies to GitHub releases only"; return 0; }
+  local code id tag n=0
+  code="$(gh_api GET "https://api.github.com/repos/$GITHUB_REPO/releases?per_page=100")"
+  [ "$code" = 200 ] || { warn "GitHub API $code listing releases: nothing pruned"; return 0; }
+  while read -r id tag; do
+    [ -n "$id" ] || continue
+    n=$((n + 1))
+    if [ "$DRY" = 1 ]; then plan "delete the GitHub deploy build $tag (release $id and its tag)"; continue; fi
+    code="$(gh_api DELETE "https://api.github.com/repos/$GITHUB_REPO/releases/$id")"
+    [ "$code" = 204 ] || { warn "GitHub API $code deleting release $tag"; continue; }
+    gh_api DELETE "https://api.github.com/repos/$GITHUB_REPO/git/refs/tags/$tag" >/dev/null
+    ok "deleted the deploy build $tag"
+  done < <(py infra/deploy_helpers.py gh-prune "$TMP/gh.out" --keep "$KEEP_RELEASES" --current "flybot-$FB_ID")
+  [ "$n" = 0 ] && ok "GitHub deploy builds: nothing to prune (keeping $KEEP_RELEASES)"
+  return 0
+}
 step_flybot() {
-  step flybot "FlyBot $FB_BRANCH@$FB_ID: npm build here, release tarball to s3://$ARTIFACTS/flybot/ (no GitHub, no build on the host)"
-  local key="flybot/flybot-$FB_ID.tgz" sha="" tgz="infra/.build/flybot-$FB_ID.tgz"
-  if awsx s3api head-bucket --bucket "$ARTIFACTS" >/dev/null 2>&1; then
-    sha="$(awsx s3api head-object --bucket "$ARTIFACTS" --key "$key" --query 'Metadata.sha256' --output text 2>/dev/null | grep -v '^None$' || true)"
-  elif [ "$DRY" != 1 ]; then die "artifacts bucket $ARTIFACTS missing: ./deploy.sh --only stack first"; fi
-  if [ -n "$sha" ]; then
-    ok "release $key already in S3 (sha256 ${sha:0:12}): no build"
-  elif [ "$DRY" = 1 ]; then
-    plan "npm $( { [ "$NPM_CI" = 1 ] || [ ! -f "$FLYBOT_SRC/node_modules/.package-lock.json" ] || [ "$FLYBOT_SRC/package-lock.json" -nt "$FLYBOT_SRC/node_modules/.package-lock.json" ]; } && echo 'ci + ')run build in $FLYBOT_SRC, upload $key"
+  local where="the GitHub release flybot-$FB_ID of $GITHUB_REPO"; [ "$RELEASE_STORE" = s3 ] && where="s3://$ARTIFACTS/flybot/"
+  step flybot "FlyBot $FB_BRANCH@$FB_ID: npm build here, release to $where (no build on the server)"
+  local key="flybot/flybot-$FB_ID.tgz" tgz="infra/.build/flybot-$FB_ID.tgz" ref
+  SHA="" RELEASE_URL=""
+  if ! awsx s3api head-bucket --bucket "$ARTIFACTS" >/dev/null 2>&1 && [ "$DRY" != 1 ]; then die "artifacts bucket $ARTIFACTS missing: ./deploy.sh --only stack first"; fi
+  if [ "$RELEASE_STORE" = github ]; then flybot_github ""
   else
-    local free; free="$(df -Pk "$FLYBOT_SRC" | awk 'NR==2 {print int($4/1024)}')"
-    [ "$free" -ge 1500 ] || warn "only $free MB free on the FlyBot checkout's drive (npm ci needs ~1.5 GB)"
-    if [ "$NPM_CI" = 1 ] || [ ! -f "$FLYBOT_SRC/node_modules/.package-lock.json" ] || [ "$FLYBOT_SRC/package-lock.json" -nt "$FLYBOT_SRC/node_modules/.package-lock.json" ]; then
-      log "npm ci in $FLYBOT_SRC (package-lock.json changed or node_modules missing)"
-      (cd "$FLYBOT_SRC" && "$NPM_BIN" ci --no-audit --no-fund --loglevel=error) || die "npm ci failed in $FLYBOT_SRC"
+    local meta; meta="$(awsx s3api head-object --bucket "$ARTIFACTS" --key "$key" --query '[Metadata.sha256, Metadata.media]' --output text 2>/dev/null || true)"
+    read -r SHA ref <<< "$meta"
+    [ "$SHA" = None ] && SHA=""
+    if [ -n "$SHA" ] && [ "$ref" != "$FLYBOT_MEDIA" ]; then
+      ok "s3://$ARTIFACTS/$key was packed with videos ${ref/None/bundled}, deploy.env says $FLYBOT_MEDIA: rebuilding"; SHA=""
     fi
-    log "npm run build (Vue client + server bundle)"
-    (cd "$FLYBOT_SRC" && VITE_GOOGLE_MAP_KEY="$VITE_GOOGLE_MAP_KEY" NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=4096}" "$NPM_BIN" run build) \
-      > "infra/.build/flybot-build-$STAGE.log" 2>&1 || { tail -30 "infra/.build/flybot-build-$STAGE.log" >&2; die "FlyBot build failed (infra/.build/flybot-build-$STAGE.log)"; }
-    printf '{"commit":"%s","branch":"%s","dirty":%s,"built_at":"%s","node":"%s"}\n' "$FB_COMMIT" "$FB_BRANCH" \
-      "$([ -n "$FB_DIRTY" ] && echo true || echo false)" "$(date -u +%FT%TZ)" "$("$NODE_BIN" --version | tr -d '\r')" > "$TMP/release.json"
-    sha="$(py infra/deploy_helpers.py pack-flybot --src "$FLYBOT_SRC" --out "$tgz" --meta "$TMP/release.json")" || die "packing the release failed"
-    awsx s3 cp "$tgz" "s3://$ARTIFACTS/$key" --metadata "sha256=$sha,commit=$FB_COMMIT" --only-show-errors
-    ok "uploaded $key ($(( $(wc -c < "$tgz") / 1048576 )) MB, sha256 ${sha:0:12})"
+  fi
+  if [ -n "$SHA" ]; then
+    ok "release flybot-$FB_ID already published (sha256 ${SHA:0:12}): no build"
+  elif [ "$DRY" = 1 ]; then
+    plan "npm $( { [ "$NPM_CI" = 1 ] || [ ! -f "$FLYBOT_SRC/node_modules/.package-lock.json" ] || [ "$FLYBOT_SRC/package-lock.json" -nt "$FLYBOT_SRC/node_modules/.package-lock.json" ]; } && echo 'ci + ')run build in $FLYBOT_SRC, pack flybot-$FB_ID.tgz (videos $FLYBOT_MEDIA)"
+    if [ "$RELEASE_STORE" = github ]; then
+      plan "create the GitHub pre-release flybot-$FB_ID \"FlyBot $FB_ID (deploy build)\" in $GITHUB_REPO, upload flybot-$FB_ID.tgz + .sha256"
+    else plan "upload $key to s3://$ARTIFACTS"; fi
+  else
+    SHA="$(flybot_build "$tgz" | tail -1)"
+    [[ "$SHA" =~ ^[0-9a-f]{64}$ ]] || die "no sha256 from the release packer"
+    if [ "$RELEASE_STORE" = github ]; then flybot_github "$tgz"
+    else awsx s3 cp "$tgz" "s3://$ARTIFACTS/$key" --metadata "sha256=$SHA,commit=$FB_COMMIT,media=$FLYBOT_MEDIA" --only-show-errors
+         ok "uploaded $key ($(( $(wc -c < "$tgz") / 1048576 )) MB, sha256 ${SHA:0:12})"; fi
     rm -f "$tgz"
   fi
+  if [ "$RELEASE_STORE" = github ] && [ "$DRY" != 1 ]; then
+    local code; code="$(gh_anon_status "$RELEASE_URL")"
+    [ "$code" = 200 ] || die "the release asset is not downloadable anonymously (HTTP $code): $RELEASE_URL"
+    ok "anonymous download ok: $RELEASE_URL"
+  fi
+  flybot_media
+  ref="$key"; [ "$RELEASE_STORE" = github ] && ref="$RELEASE_URL"
   local cur; cur="$(flybot_current)"
-  if [ "$cur" = "$key ${sha}" ]; then ok "host release pointer already on $FB_ID"; RELEASE_CHANGED=0
-  elif [ "$DRY" = 1 ]; then plan "point s3://$ARTIFACTS/flybot/current.json at $key (the host switches at the bootstrap step)"; RELEASE_CHANGED=1
+  if [ -n "$SHA" ] && [ "$cur" = "$ref $SHA" ]; then ok "host release pointer already on $FB_ID"; RELEASE_CHANGED=0
+  elif [ "$DRY" = 1 ]; then plan "point s3://$ARTIFACTS/flybot/current.json at flybot-$FB_ID ($RELEASE_STORE; the server switches at the bootstrap step, no restart of the instance)"; RELEASE_CHANGED=1
   else
-    printf '{"key":"%s","sha256":"%s","commit":"%s","branch":"%s","set_at":"%s"}\n' "$key" "$sha" "$FB_ID" "$FB_BRANCH" "$(date -u +%FT%TZ)" > "$TMP/current.json"
+    py -c 'import json,sys
+store, ref, sha, commit, branch, at = sys.argv[1:7]
+d = {"store": store, "sha256": sha, "commit": commit, "branch": branch, "set_at": at}
+d["url" if store == "github" else "key"] = ref
+open(sys.argv[7], "w").write(json.dumps(d) + "\n")' "$RELEASE_STORE" "$ref" "$SHA" "$FB_ID" "$FB_BRANCH" "$(date -u +%FT%TZ)" "$TMP/current.json"
     awsx s3 cp "$TMP/current.json" "s3://$ARTIFACTS/flybot/current.json" --content-type application/json --only-show-errors
     ok "release pointer -> $FB_ID (was ${cur:-none})"; RELEASE_CHANGED=1
   fi
-  row "FlyBot release" "$FB_BRANCH@$FB_ID (sha256 ${sha:0:12})"
+  flybot_prune
+  row "FlyBot release" "$FB_BRANCH@$FB_ID ($RELEASE_STORE${SHA:+, sha256 ${SHA:0:12}})"
 }
 
 # ================================================================ image
@@ -573,14 +731,19 @@ step_lambda() {
 }
 
 # ================================================================ bootstrap
+publish_host_script() {  # the host logic lives in S3, not in the user-data: changing it never restarts the instance
+  awsx s3 cp infra/host/bootstrap.sh "s3://$ARTIFACTS/host/bootstrap.sh" --content-type text/x-shellscript --only-show-errors \
+    || die "cannot publish infra/host/bootstrap.sh to s3://$ARTIFACTS/host/"
+}
 host_status() {  # one line: services + release on the host
   ssm_run 'printf "flybot=%s caddy=%s mongod=%s release=%s" "$(systemctl is-active flybot)" "$(systemctl is-active caddy)" "$(systemctl is-active mongod 2>/dev/null || true)" "$(python3 -c "import json;print(json.load(open(\"/opt/flybot/current/.pointer.json\"))[\"commit\"])" 2>/dev/null || echo none)"' 120 2>/dev/null | tr -d '\r' | tail -1 || true
 }
 step_bootstrap() {
   step bootstrap "the host: Node, Caddy, MongoDB, the FlyBot release under systemd (current user-data through SSM)"
   INSTANCE_ID="${INSTANCE_ID:-$(out InstanceId)}"
-  if [ -z "$INSTANCE_ID" ]; then [ "$DRY" = 1 ] && { plan "wait for the first-boot bootstrap of the new instance, then install the release"; return 0; }; die "no instance"; fi
-  if [ "$DRY" = 1 ]; then plan "re-run the current user-data on $INSTANCE_ID through SSM (migrates a Docker host once; installs the release if it changed)"; return 0; fi
+  if [ -z "$INSTANCE_ID" ]; then [ "$DRY" = 1 ] && { plan "publish infra/host/bootstrap.sh to s3://$ARTIFACTS/host/; wait for the first boot of the new instance, then run it"; return 0; }; die "no instance"; fi
+  if [ "$DRY" = 1 ]; then plan "publish infra/host/bootstrap.sh to s3://$ARTIFACTS/host/, run it on $INSTANCE_ID through SSM (installs the release if it changed)"; return 0; fi
+  publish_host_script
   ssm_wait_online 900 || die "SSM agent on $INSTANCE_ID not online after 15 min"
   if [ "${INSTANCE_NEW:-0}" = 1 ]; then
     log "first boot: waiting for 'bootstrap done' (Node, Caddy, MongoDB install, ~5 min)"
@@ -678,9 +841,12 @@ step_summary() {
     printf '%-22s %s\n' "KVS viewer role" "$(out KvsViewerRoleArn)"
     printf '%-22s %s\n' "Photos" "$storage"
     printf '%-22s %s\n' "Database" "$MONGO_NOTE"
-    printf '%-22s %s\n' "Artifacts" "s3://$ARTIFACTS (FlyBot releases, Lambda build context)"
+    printf '%-22s %s\n' "Artifacts" "s3://$ARTIFACTS (release pointer, host script, videos, Lambda build context)"
     printf '%-22s %s\n' "Secrets" "$APP_SECRET, $GCP_SECRET (chatbot ${CHATBOT:-?}), Anthropic: $ANTHROPIC_NOTE"
     printf '%-22s %s\n' "Alarms" "$ALARM_NOTE"
+    if [ "$PAYMENTS_ENABLED" = true ]; then
+      printf '%-22s %s\n' "Payments" "on; webhooks: https://$DOMAIN_NAME/api/payments/webhooks/payos (PayOS), https://$DOMAIN_NAME/api/payments/webhooks/stripe (Stripe)"
+    else printf '%-22s %s\n' "Payments" "off (PAYMENTS_ENABLED=false)"; fi
     [ ${#SUMMARY[@]} -gt 0 ] && printf '%s\n' "${SUMMARY[@]}"
     printf '%-22s %s\n' "Cost" "~17 USD/month at demo scale with t4g.micro (infra/COST.md)"
     printf '%-22s %s\n' "Log" "$LOG"
@@ -689,6 +855,9 @@ step_summary() {
     case " ${SUMMARY[*]:-} " in *"to add:"*) printf '  - DNS: add  %s. A %s  (Namecheap > Advanced DNS), then ./deploy.sh --only health\n' "$DOMAIN_NAME" "$eip" ;; esac
     [ "$LOCAL_MONGO" = false ] && printf '  - MongoDB Atlas (or any firewalled database): allow %s/32 in its IP access list.\n' "${eip:-<EIP>}"
     case "$ALARM_NOTE" in *CONFIRM*) printf '  - Click the confirmation link AWS SNS emailed to the alarm address.\n' ;; esac
+    if [ "$PAYMENTS_ENABLED" = true ]; then
+      printf '  - Payments: enter the webhook URLs above in the PayOS payment channel and the Stripe event destination (FlyBot docs/payments.md).\n'
+    fi
   } | tee "infra/.build/deploy-$STAGE-summary.txt"
 }
 
@@ -702,6 +871,7 @@ rollback() {
   py -c 'import json,sys;d=json.load(open(sys.argv[1]));print("previous:", d["commit"], d["key"])' "$TMP/prev.json" || die "unreadable previous release pointer"
   if [ "$DRY" = 1 ]; then plan "write it to s3://$ARTIFACTS/flybot/current.json and re-run the bootstrap"; return 0; fi
   awsx s3 cp "$TMP/prev.json" "s3://$ARTIFACTS/flybot/current.json" --content-type application/json --only-show-errors
+  publish_host_script
   ssm_run "export FORCE_RESTART=0; $BOOTSTRAP_RERUN" 1800 || die "bootstrap failed: make host CMD='tail -60 /var/log/flybot-bootstrap.log'"
   ok "host: $(host_status)"
 }

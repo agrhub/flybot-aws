@@ -36,6 +36,7 @@ bench/results/lambda_latency*.json
 # deploy settings and keys (./deploy.sh); infra/ops/secrets-scan.sh --staged refuses them too
 deploy.env
 deploy.*.env
+deploy.env.*
 !deploy.env.example
 /secrets/
 *service-account*.json

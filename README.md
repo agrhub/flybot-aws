@@ -102,17 +102,23 @@ few things left for a person. The steps, all idempotent:
    generated once), written only when the content changed; no value is ever printed;
 5. **stack**: buckets, ECR, CodeBuild, IoT thing type and device policy, roles, the EC2 instance and its Elastic IP; the
    DNS record to add is printed right away in a box;
-6. **flybot**: `npm ci` (when the lock file changed) and `npm run build` in your FlyBot checkout, a release tarball with
-   its sha256 to S3, and the release pointer the server follows;
+6. **flybot**: `npm ci` (when the lock file changed) and `npm run build` in your FlyBot checkout; a clean release tarball
+   (about 17 MB, the home-page videos kept apart) published as a **GitHub pre-release** `flybot-<commit>` named
+   "FlyBot <commit> (deploy build)" in `agrhub/flybot-aws`, with a `.sha256` asset (or to the private artifacts bucket
+   with `FLYBOT_RELEASE_STORE=s3`, or when no `GITHUB_TOKEN` is set); the videos once to the artifacts bucket; then the
+   release pointer the server follows (`flybot/current.json` in S3: a new release never restarts the instance).
+   `--prune-releases` keeps the newest 5 deploy builds on GitHub;
 7. **image** + **lambda**: the Lambda image on CodeBuild when its inputs changed (tag = hash of code and models), then the
    function and its alarms;
-8. **bootstrap**: through SSM, the server installs Node 22, Caddy and (by default) MongoDB 7, downloads and checks the
-   release, switches to it atomically (the previous one is kept) and restarts the services;
+8. **bootstrap**: publishes `infra/host/bootstrap.sh` to the artifacts bucket and runs it through SSM (the EC2 user-data is
+   only a stub that runs it, so changing the host logic never restarts the instance): Node 22, Caddy and (by default)
+   MongoDB 7, the release downloaded anonymously from GitHub (or S3) and checked against its sha256, an atomic switch
+   (the previous release is kept), the videos synced for Caddy, and the services restarted;
 9. **health**, **smoke**, **coldstart**: FlyBot `/health` on the server, one DNS + HTTPS check (never a wait), one Lambda
    call with a sample photo checked against the contract, cold and warm latency into `bench/results/lambda_latency.json`.
 
 Useful options: `--dry-run` (real checks, read-only, prints the plan), `--only <step>`, `--show-ip`, `--rollback` (back to
-the previous FlyBot release), `--allow-dirty` (test release from uncommitted changes), `--npm-ci`, `--yes` (allow deleting a
+the previous FlyBot release), `--allow-dirty` (test release from uncommitted changes), `--npm-ci`, `--prune-releases`, `--yes` (allow deleting a
 stack stuck in ROLLBACK_COMPLETE). Log: `infra/.build/deploy-<stage>.log`. Remove everything: `./destroy.sh --yes`
 (`--keep-photos`, `--keep-secrets`; a bucket of your own is never touched). Step-by-step with expected output:
 `infra/DEPLOY_CHECKLIST.md`.
@@ -127,12 +133,17 @@ stack stuck in ROLLBACK_COMPLETE). Log: `infra/.build/deploy-<stage>.log`. Remov
 | `ACME_EMAIL` | `ALARM_EMAIL` | Let's Encrypt contact |
 | `ALARM_EMAIL` | reuse a confirmed topic | CloudWatch alarm email (a new address must click the SNS confirmation) |
 | `OWNER_CIDR` | your public IP /32 | SSH source; SSH is optional (SSM is used) |
-| `FLYBOT_SRC` | `../ezviz-manager` | your FlyBot checkout; built here, uploaded to S3 |
+| `FLYBOT_SRC` | `../ezviz-manager` | your FlyBot checkout; built here, published as a release |
+| `FLYBOT_RELEASE_STORE` | `github` | `github` (pre-release of `GITHUB_REPO`, downloaded anonymously by the server) or `s3` (artifacts bucket); `s3` is used when `GITHUB_TOKEN` is empty |
+| `GITHUB_REPO` | `agrhub/flybot-aws` | the public repository that receives the deploy builds |
+| `GITHUB_TOKEN` (secret, this computer only) | empty = `s3` | fine-grained token for `GITHUB_REPO`, Contents: read and write; never stored in AWS or sent to the server |
+| `FLYBOT_KEEP_RELEASES` | 5 | deploy builds kept on GitHub by `--prune-releases` |
+| `FLYBOT_MEDIA` | `separate` | `separate`: the videos (~190 MB) stay out of the release and are served by Caddy from a synced copy; `bundled`: inside every release |
 | `VITE_GOOGLE_MAP_KEY` | empty | Google Maps browser key baked into the client |
 | `MONGO_URI` (secret) | empty = MongoDB 7 on the server | an external database (e.g. MongoDB Atlas: allow the Elastic IP); a shared database also gets FlyBot's start-up migrations |
 | `S3_BUCKET_NAME` | empty = a stack bucket | an existing AWS bucket (the roles get access; it is never deleted) or the bucket on `S3_ENDPOINT` |
 | `S3_REGION` | looked up | the bucket's region (`auto` for S3-compatible services) |
-| `S3_ENDPOINT` | empty | S3-compatible storage (MinIO, R2, ...): the Lambda then gets presigned URLs and evidence goes to a stack bucket |
+| `S3_ENDPOINT` | empty | S3-compatible storage (MinIO, R2, ...), `https://` or `http://`, reachable from the internet: the Lambda then gets presigned URLs and evidence goes to a stack bucket |
 | `S3_ACCESS_KEY`, `S3_SECRET_KEY` (secrets) | empty = the server's role | keys for `S3_ENDPOINT` |
 | `DETECTOR` | `yolo26` | `yolo26` or `yolov7` (baseline) |
 | `PLANNER_MODE` | `rule` | `rule` (deterministic) or `llm` (Anthropic per photo) for detect mode; deep mode uses the LLM when a key exists |
@@ -143,6 +154,9 @@ stack stuck in ROLLBACK_COMPLETE). Log: `infra/.build/deploy-<stage>.log`. Remov
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` (secret), `MAIL_FROM`, `CONTACT_EMAIL` | empty = emails go to the server log | email verification, password reset, alerts |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` (secret), `VAPID_SUBJECT` | generated once | web push |
 | `APP_MODE` | `hybrid` | `b2c` personal workspaces, `b2b` organizations, `hybrid` both |
+| `PAYMENTS_ENABLED`, `PAYMENTS_GRACE_DAYS`, `PAYMENTS_ALLOW_LIVE` | `false`, 7, `false` | online payment (never with `APP_MODE=b2b`); live Stripe keys on production only. Setup: `flybot/docs/payments.md` (FlyBot submodule) |
+| `PAYOS_CLIENT_ID`, `PAYOS_API_KEY`, `PAYOS_CHECKSUM_KEY` (secrets), `PAYOS_API_URL`, `PAYOS_LINK_TTL_MINUTES` | empty, PayOS defaults | PayOS payment channel; webhook `https://<DOMAIN_NAME>/api/payments/webhooks/payos` |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (secrets), `STRIPE_API_URL`, `STRIPE_WEBHOOK_TOLERANCE` | empty, Stripe defaults, 300 s | Stripe; webhook `https://<DOMAIN_NAME>/api/payments/webhooks/stripe` |
 | `GCP_SERVICE_ACCOUNT_FILE`, `VERTEX_PROJECT_ID`, `VERTEX_LOCATION`, `VERTEX_MODEL` | empty = chatbot off | Google service-account JSON (kept outside git) for the chatbot on Vertex AI |
 | `DEMO_MAX_CAMERAS_PER_USER`, `DEMO_MAX_SNAPSHOTS_PER_DAY`, `DEMO_MAX_UNCLAIMED` | 3, 48, 200 | limits for self-registered cameras (`docs/CONTRACTS.md` 2a) |
 | `INSTANCE_TYPE` | `t4g.micro` | changing it stops and starts the server (IP and disk stay) |
@@ -217,8 +231,9 @@ photos** on Lambda. Details and sources: `infra/COST.md`.
 
 - Secrets live in Secrets Manager only; the server's environment file holds names and ARNs, never a secret value. The
   scripts never print secret values, and the pre-commit check (`make hooks`, `infra/ops/secrets-scan.sh --staged`)
-  refuses `deploy.env`, key files and secret-looking lines.
-- Least-privilege IAM: the server reads only its own releases and photo bucket, invokes only its Lambda, manages only
+  refuses `deploy.env`, key files and secret-looking lines. The GitHub token used to publish FlyBot releases stays on
+  the deploying computer; the server downloads public release assets anonymously and checks their sha256.
+- Least-privilege IAM: the server reads only its release pointer, host script and videos, its photo bucket, invokes only its Lambda, manages only
   `camos-camera` things and their certificates, and hands browsers 15-minute KVS viewer credentials scoped to one
   channel. Each camera certificate can only use its own MQTT topics. IMDSv2 is required; no SSH key is needed.
 - People and privacy: the LLM planner receives the pipeline's numbers and flags as text, never a photo. When the
@@ -246,6 +261,7 @@ photos** on Lambda. Details and sources: `infra/COST.md`.
 | Infrastructure: SAM template, `deploy.sh`, `destroy.sh` | `infra/`, `deploy.env.example` | this repo |
 | Benchmark, evaluation, model training | `bench/`, `eval/`, `models/` | this repo |
 | Contracts between the parts, design decisions | `docs/CONTRACTS.md`, `docs/DECISIONS.md` | this repo |
+| Evidence cited by the reports (vision checks, failure injection, expert review sheet, benchmark build info) | `docs/evidence/` | this repo; `python infra/ops/check-links.py` checks every cited file exists |
 | ESP32-S3 trap camera firmware | `firmware-esp32/` (agrhub/camos-esp32-trap) | public submodule, AGPL-3.0 |
 | FlyBot web app (API, Vue client, chatbot, camera platforms) | `flybot/` (agrhub/flybot) | submodule, AGPL-3.0; repository private for now, access on request |
 | AMB82 camera firmware, production datasets, production model weights | not published | |

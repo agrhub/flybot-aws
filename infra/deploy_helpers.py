@@ -8,7 +8,9 @@
     python infra/deploy_helpers.py contract response.json --detector yolo26
     python infra/deploy_helpers.py latency bench/results/lambda_latency.json
     python infra/deploy_helpers.py ctx-zip out.zip                the vision Lambda build context for CodeBuild
-    python infra/deploy_helpers.py pack-flybot --src ../ezviz-manager --out flybot.tgz   the prebuilt FlyBot release
+    python infra/deploy_helpers.py pack-flybot --src ../ezviz-manager --out flybot.tgz [--exclude-media]   the release
+    python infra/deploy_helpers.py media-list --src ../ezviz-manager                       videos kept out of it
+    python infra/deploy_helpers.py gh-release r.json | gh-prune list.json --keep 5 | gh-new-release ...  GitHub API JSON
 
 deploy.env format: KEY=VALUE per line, `#` comments. Values are taken literally (no $ expansion, nothing is executed);
 quote a value with "..." or '...' when it contains `#` or leading/trailing spaces. CRLF files are fine.
@@ -38,7 +40,13 @@ SETTINGS = {
     "ANTHROPIC_MODEL", "GCP_SERVICE_ACCOUNT_FILE", "DNS_WAIT_MIN", "MODELS_BUCKET", "DEMO_MAX_CAMERAS_PER_USER",
     "DEMO_MAX_SNAPSHOTS_PER_DAY", "DEMO_MAX_UNCLAIMED", "APP_MODE", "DEVICE_EVENTS_URL", "SKIP_COLDSTART",
     "FLYBOT_SRC", "VITE_GOOGLE_MAP_KEY", "S3_BUCKET_NAME", "S3_REGION", "S3_ENDPOINT", "NODE_VERSION", "CADDY_VERSION",
+    "FLYBOT_RELEASE_STORE", "GITHUB_REPO", "FLYBOT_MEDIA", "FLYBOT_KEEP_RELEASES", "PAYMENTS_ENABLED",
 }
+# Payments (FlyBot docs/payments.md): the keys are secrets; the settings are stored the same way (FlyBot reads both
+# from flybot-<stage>-app), so switching payments on or off never changes the stack or restarts the instance
+PAYMENT_SECRETS = ["PAYOS_CLIENT_ID", "PAYOS_API_KEY", "PAYOS_CHECKSUM_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
+PAYMENT_SETTINGS = ["PAYMENTS_ENABLED", "PAYMENTS_GRACE_DAYS", "PAYMENTS_ALLOW_LIVE", "PAYOS_API_URL", "PAYOS_LINK_TTL_MINUTES",
+                    "STRIPE_API_URL", "STRIPE_WEBHOOK_TOLERANCE"]
 # FlyBot application values stored in Secrets Manager flybot-<stage>-app (FLYBOT_SECRETS)
 APP_KEYS = [
     "JWT_SECRET", "APP_KEY", "SECRET_KEY", "EZVIZ_DOMAIN",
@@ -47,10 +55,11 @@ APP_KEYS = [
     "VERTEX_PROJECT_ID", "VERTEX_LOCATION", "VERTEX_MODEL",
     "VAPID_PUBLIC_KEY", "VAPID_PRIVATE_KEY", "VAPID_SUBJECT",
     "MONGO_URI", "S3_ACCESS_KEY", "S3_SECRET_KEY",
+    *PAYMENT_SECRETS, *PAYMENT_SETTINGS,
 ]
 # deploy.env decides these alone: empty there = removed from the secret (a local MongoDB / the instance role is used)
-AUTHORITATIVE = {"MONGO_URI", "S3_ACCESS_KEY", "S3_SECRET_KEY"}
-OTHER_SECRETS = {"ANTHROPIC_API_KEY", "DEVICE_EVENTS_SECRET"}
+AUTHORITATIVE = {"MONGO_URI", "S3_ACCESS_KEY", "S3_SECRET_KEY", *PAYMENT_SECRETS, *PAYMENT_SETTINGS}
+OTHER_SECRETS = {"ANTHROPIC_API_KEY", "DEVICE_EVENTS_SECRET", "GITHUB_TOKEN"}   # GITHUB_TOKEN: laptop only, never stored or sent
 # files of the prebuilt FlyBot release (what the FlyBot Dockerfile's runtime stage copies)
 FLYBOT_FILES = ["package.json", "package-lock.json", "client/package.json", "server/package.json"]
 DEFAULTS = {"VERTEX_LOCATION": "global", "VERTEX_MODEL": "gemini-2.5-flash"}
@@ -260,8 +269,35 @@ def cmd_ctx_zip(a) -> int:
     return 0
 
 
+def is_media_video(rel: str) -> bool:
+    return rel.startswith("media/") and rel.lower().endswith(".mp4")
+
+
+def release_files(src: Path, exclude_media: bool) -> list[tuple[Path, str]]:
+    """(file, arcname) of a clean server/dist: FlyBot's copy-client step copies client/dist into server/dist without
+    removing older hashed bundles, so every entry the client build owns is taken from client/dist (fresh) and only the
+    server's own outputs (app.js, ...) from server/dist."""
+    dist, client = src / "server" / "dist", src / "client" / "dist"
+    client_top = {p.name for p in client.iterdir()} if client.is_dir() else set()
+    out: list[tuple[Path, str]] = []
+    for base, from_client in ((client, True), (dist, False)):
+        if not base.is_dir():
+            continue
+        for p in sorted(base.rglob("*")):
+            if not p.is_file():
+                continue
+            rel = p.relative_to(base).as_posix()
+            if not from_client and rel.split("/", 1)[0] in client_top:
+                continue  # stale copy of a client file: the fresh one comes from client/dist
+            if exclude_media and is_media_video(rel):
+                continue
+            out.append((p, "server/dist/" + rel))
+    return out
+
+
 def cmd_pack_flybot(a) -> int:
-    """server/dist (with the built client inside) + the package manifests, as a .tgz; prints the sha256."""
+    """A clean server/dist (the built client inside, stale bundles dropped, videos optional) + the package manifests,
+    as a .tgz; prints the sha256."""
     import tarfile
 
     src = Path(a.src)
@@ -275,14 +311,64 @@ def cmd_pack_flybot(a) -> int:
         return 4
     out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
+    files = release_files(src, a.exclude_media)
     with tarfile.open(out, "w:gz", compresslevel=6) as tar:
         for f in FLYBOT_FILES:
             tar.add(src / f, arcname=f)
-        tar.add(dist, arcname="server/dist")
+        for p, arc in files:
+            tar.add(p, arcname=arc)
         if a.meta:
             tar.add(a.meta, arcname="RELEASE.json")
     h = hashlib.sha256(out.read_bytes()).hexdigest()
     print(h)
+    return 0
+
+
+def cmd_media_list(a) -> int:
+    """The videos kept out of the release: '<sha256> <size> <path relative to client/dist>' per line."""
+    client = Path(a.src) / "client" / "dist"
+    for p in sorted((client / "media").glob("*")) if (client / "media").is_dir() else []:
+        rel = p.relative_to(client).as_posix()
+        if p.is_file() and is_media_video(rel):
+            print(hashlib.sha256(p.read_bytes()).hexdigest(), p.stat().st_size, rel)
+    return 0
+
+
+def cmd_gh_release(a) -> int:
+    """GitHub release JSON -> 'id <n>' then 'asset <name> <id> <state> <size>' lines (nothing for a 404 body)."""
+    d = load_json(a.file)
+    if not d.get("id"):
+        return 3
+    print("id", d["id"])
+    for x in d.get("assets") or []:
+        print("asset", x.get("name"), x.get("id"), x.get("state"), x.get("size"))
+    return 0
+
+
+def cmd_gh_prune(a) -> int:
+    """Deploy builds to delete: pre-releases tagged flybot-* named '... (deploy build)', newest --keep kept (and the
+    current tag always). Prints '<id> <tag>' per release to delete."""
+    try:
+        rels = json.loads(Path(a.file).read_text(encoding="utf-8"))
+    except ValueError:
+        return 3
+    mine = [r for r in rels if isinstance(r, dict) and str(r.get("tag_name", "")).startswith("flybot-")
+            and r.get("prerelease") and str(r.get("name", "")).endswith("(deploy build)")]
+    mine.sort(key=lambda r: r.get("created_at") or "", reverse=True)
+    for r in mine[a.keep:]:
+        if r.get("tag_name") != a.current:
+            print(r["id"], r["tag_name"])
+    return 0
+
+
+def cmd_gh_new_release(a) -> int:
+    """The JSON body of POST /repos/{repo}/releases for a deploy build (a pre-release, so it is not a product release)."""
+    body = (f"Deploy build of the FlyBot app, made by `./deploy.sh` for the AWS server (not a product release).\n\n"
+            f"- FlyBot branch: `{a.branch}`\n- FlyBot commit: `{a.commit}`\n- Built: {a.built}\n"
+            f"- Asset: `{a.asset}`, sha256 `{a.sha}`, {a.size_mb} MB\n\n"
+            f"The server downloads the asset and checks the sha256 before installing it.")
+    Path(a.out).write_text(json.dumps({"tag_name": a.tag, "name": f"FlyBot {a.commit} (deploy build)", "body": body,
+                                       "draft": False, "prerelease": True, "make_latest": "false"}), encoding="utf-8")
     return 0
 
 
@@ -339,7 +425,15 @@ def main(argv=None) -> int:
     s = sub.add_parser("latency"); s.add_argument("file"); s.set_defaults(fn=cmd_latency)
     s = sub.add_parser("ctx-zip"); s.add_argument("out"); s.set_defaults(fn=cmd_ctx_zip)
     s = sub.add_parser("pack-flybot"); s.add_argument("--src", required=True); s.add_argument("--out", required=True)
-    s.add_argument("--meta"); s.set_defaults(fn=cmd_pack_flybot)
+    s.add_argument("--meta"); s.add_argument("--exclude-media", action="store_true"); s.set_defaults(fn=cmd_pack_flybot)
+    s = sub.add_parser("media-list"); s.add_argument("--src", required=True); s.set_defaults(fn=cmd_media_list)
+    s = sub.add_parser("gh-release"); s.add_argument("file"); s.set_defaults(fn=cmd_gh_release)
+    s = sub.add_parser("gh-prune"); s.add_argument("file"); s.add_argument("--keep", type=int, default=5)
+    s.add_argument("--current", default=""); s.set_defaults(fn=cmd_gh_prune)
+    s = sub.add_parser("gh-new-release")
+    for k in ("--tag", "--commit", "--branch", "--built", "--asset", "--sha", "--size-mb", "--out"):
+        s.add_argument(k, required=True)
+    s.set_defaults(fn=cmd_gh_new_release)
     a = ap.parse_args(argv)
     return a.fn(a)
 

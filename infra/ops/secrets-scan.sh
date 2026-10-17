@@ -8,9 +8,9 @@
 # Three checks, read-only (no git writes):
 #  1. pattern scan of every added line in `git log -p --all`: Anthropic keys, FlyBot keys (fbk_), webhook
 #     secrets (whsec_), AWS access keys (AKIA/ASIA) and long secret-key values, private keys, long Bearer tokens,
-#     GitHub / Slack / Google / Telegram tokens, 32-64 hex values assigned to token/secret/key/password names.
+#     GitHub (classic and fine-grained) / Slack / Google / Telegram tokens, 32-64 hex values assigned to token/secret/key/password names.
 #     Known public test values are allowed (AWS documentation example key, whsec_0123..., whsec_wrong...,
-#     sk_flybot_secret, fbk_test);
+#     sk_flybot_secret, fbk_test, test values containing notreal0);
 #  2. value scan: every value of length >= 12 in .env and data/secrets/* (the real local secrets) is searched for
 #     in the history; only the variable or file NAME is printed, never the value. Non-secret config values (model
 #     ids, regions, URLs) are reported as "config" hits and do not fail the scan;
@@ -32,6 +32,7 @@ secretAccessKey["']? *[:=] *["'][A-Za-z0-9/+=]{30,}
 BEGIN [A-Z ]*PRIVATE KEY
 Bearer [A-Za-z0-9._~+/-]{20,}
 gh[pousr]_[A-Za-z0-9]{30,}
+github_pat_[A-Za-z0-9_]{40,}
 xox[baprs]-[A-Za-z0-9-]{10,}
 AIza[0-9A-Za-z_-]{35}
 [0-9]{9,10}:AA[A-Za-z0-9_-]{33}
@@ -46,10 +47,11 @@ sk_flybot_secret
 fbk_test
 0123456789abcdef0123456789abcdef
 sha256
+notreal0
 EOF
 
 if [ "${1:-}" = --staged ]; then
-  bad="$(git diff --cached --name-only --diff-filter=ACMR | grep -E '(^|/)(deploy(\.[^/]+)?\.env|\.env(\.[^/]+)?|[^/]*service-account[^/]*\.json|gcp-[^/]*\.json|[^/]*\.(pem|key|p12|pfx))$|^data/secrets/|^secrets/' \
+  bad="$(git diff --cached --name-only --diff-filter=ACMR | grep -E '(^|/)(deploy(\.[^/]+)?\.env|deploy\.env\.[^/]+|\.env(\.[^/]+)?|[^/]*service-account[^/]*\.json|gcp-[^/]*\.json|[^/]*\.(pem|key|p12|pfx))$|^data/secrets/|^secrets/' \
          | grep -vE '(^|/)(deploy\.env\.example|\.env\.example)$|AmazonRootCA1\.pem$' || true)"
   [ -n "$bad" ] && { echo "refusing to commit secret files:"; printf '  %s\n' $bad; fail=1; }
   git diff --cached --no-color -U0 | grep -E '^\+[^+]' | grep -iE -f "$TMP/patterns.txt" | grep -vF -f "$TMP/allow.txt" | cut -c1-120 > "$TMP/staged.txt" || true
@@ -60,7 +62,7 @@ if [ "${1:-}" = --staged ]; then
     while IFS= read -r line; do
       k="${line%%=*}"; v="$(printf '%s' "${line#*=}" | sed 's/[[:space:]]#.*$//' | tr -d "\"' \r")"
       [ ${#v} -ge 12 ] || continue
-      case "$k" in STAGE|AWS_*|DOMAIN_NAME|*_EMAIL|OWNER_CIDR|DETECTOR|PLANNER_MODE|REPO_*|AMI_ID|*_MODEL|*_LOCATION|ANTHROPIC_SECRET_NAME|GCP_SERVICE_ACCOUNT_FILE|MODELS_BUCKET|EZVIZ_DOMAIN|SENTINEL_*|DEVICE_EVENTS_URL) continue ;; esac
+      case "$k" in STAGE|AWS_*|DOMAIN_NAME|*_EMAIL|OWNER_CIDR|DETECTOR|PLANNER_MODE|REPO_*|AMI_ID|*_MODEL|*_LOCATION|ANTHROPIC_SECRET_NAME|GCP_SERVICE_ACCOUNT_FILE|MODELS_BUCKET|EZVIZ_DOMAIN|SENTINEL_*|DEVICE_EVENTS_URL|FLYBOT_SRC|GITHUB_REPO) continue ;; esac
       git diff --cached --no-color -U0 | grep -E '^\+' | grep -F -- "$v" >/dev/null && { echo "value of $f $k is in the staged diff"; fail=1; }
     done < <(grep -E '^[A-Za-z_][A-Za-z0-9_]*=' "$f")
   done
@@ -84,7 +86,7 @@ else
 fi
 
 echo "== 2. value scan of local secrets against the history (names only)"
-CONFIG_KEYS='^(STAGE|AWS_PROFILE|AWS_REGION|DOMAIN_NAME|ACME_EMAIL|ALARM_EMAIL|OWNER_CIDR|DETECTOR|PLANNER_MODE|ANTHROPIC_SECRET_NAME|ANTHROPIC_MODEL|GCP_SERVICE_ACCOUNT_FILE|VERTEX_LOCATION|VERTEX_MODEL|EZVIZ_DOMAIN|REPO_URL|MODELS_BUCKET|SENTINEL_ANTHROPIC_MODEL|SENTINEL_BEDROCK_MODEL|SENTINEL_BEDROCK_REGION|SENTINEL_AWS_REGION|SENTINEL_AWS_PROFILE|SENTINEL_DETECTOR_ONNX|SENTINEL_PLANNER|SENTINEL_LLM_BACKEND|SENTINEL_STORE|CAMOS_API_URL|FLYBOT_API_URL)$'
+CONFIG_KEYS='^(STAGE|AWS_PROFILE|AWS_REGION|DOMAIN_NAME|ACME_EMAIL|ALARM_EMAIL|OWNER_CIDR|DETECTOR|PLANNER_MODE|ANTHROPIC_SECRET_NAME|ANTHROPIC_MODEL|GCP_SERVICE_ACCOUNT_FILE|VERTEX_LOCATION|VERTEX_MODEL|EZVIZ_DOMAIN|REPO_URL|MODELS_BUCKET|SENTINEL_ANTHROPIC_MODEL|SENTINEL_BEDROCK_MODEL|SENTINEL_BEDROCK_REGION|SENTINEL_AWS_REGION|SENTINEL_AWS_PROFILE|SENTINEL_DETECTOR_ONNX|SENTINEL_PLANNER|SENTINEL_LLM_BACKEND|SENTINEL_STORE|CAMOS_API_URL|FLYBOT_API_URL|FLYBOT_SRC|GITHUB_REPO)$'
 checked=0
 for f in .env deploy.env data/secrets/*; do
   [ -f "$f" ] || continue
@@ -112,7 +114,7 @@ echo "checked $checked local secret values"
 
 echo "== 3. ignored and never tracked"
 for p in .env deploy.env secrets data/secrets data/export data/cache data/manifest.csv models/yolov7-tiny models/features; do
-  ign=no; git check-ignore -q "$p" && ign=yes
+  ign=no; { git check-ignore -q "$p" || git check-ignore -q "$p/"; } && ign=yes
   ever=no; [ -n "$(git log --all --oneline -- "$p" | head -1)" ] && ever=YES
   printf '%-22s ignored=%-3s ever_tracked=%s\n' "$p" "$ign" "$ever"
   { [ "$ign" = yes ] && [ "$ever" = no ]; } || fail=1

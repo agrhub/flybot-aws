@@ -7,14 +7,15 @@ FlyBot checkout next to this folder (`FLYBOT_SRC`, default `../ezviz-manager`).
 ## 1. First deploy
 
 ```
-cp deploy.env.example deploy.env      # fill it: see the table in README.md ("deploy.env")
+cp deploy.env.example deploy.env      # fill it: the comment above each key explains it (also README.md "deploy.env")
 aws login --profile sentinel
 ./deploy.sh --dry-run                 # optional: real checks, read-only, prints the plan
 ./deploy.sh
 ```
 
 What you see, in order: `== preflight` (one `ok` line per check), `== discover`, `== models`, `== secrets` (key names
-only), `== stack` (SAM changeset, ~5 min) and **a box with the DNS record**, `== flybot` (npm build here, upload),
+only), `== stack` (SAM changeset, ~5 min) and **a box with the DNS record**, `== flybot` (npm build here; the GitHub
+pre-release `flybot-<commit>` with its `.sha256`, or the artifacts bucket without `GITHUB_TOKEN`; the videos once),
 `== image` (CodeBuild, 6-12 min the first time), `== lambda`, `== bootstrap` (`host: flybot=active caddy=active
 mongod=active release=<commit>`), `== health`, `== smoke` (`contract ok: model yolo26n ...`), `== coldstart`,
 `== summary`.
@@ -31,6 +32,11 @@ Then, by hand:
 3. **Alarm email**: only for a new `ALARM_EMAIL`, click the confirmation link AWS SNS sent.
 4. **External MongoDB** (`MONGO_URI`): allow the Elastic IP in the database's IP access list (MongoDB Atlas: Network
    Access).
+5. **Payments** (`PAYMENTS_ENABLED=true`): enter the two webhook URLs from the summary in the PayOS payment channel and
+   the Stripe event destination, as `flybot/docs/payments.md` (FlyBot submodule) describes.
+
+The GitHub token (`GITHUB_TOKEN`): a fine-grained token at github.com > Settings > Developer settings > Fine-grained
+tokens, repository `agrhub/flybot-aws` only, permission Contents: read and write. It stays in your `deploy.env`.
 
 ## 2. Every later change
 
@@ -40,12 +46,21 @@ rebuilds the image. One step only: `./deploy.sh --only <step>` (`models secrets 
 health smoke coldstart summary`).
 
 - Back to the previous FlyBot release: `./deploy.sh --rollback`.
+- Old deploy builds on GitHub: `./deploy.sh --only flybot --prune-releases` keeps the newest 5 (`FLYBOT_KEEP_RELEASES`)
+  and the one the server runs; `--dry-run` first lists what would be deleted.
 - A test build from uncommitted FlyBot changes: `./deploy.sh --only flybot --allow-dirty && ./deploy.sh --only bootstrap`.
 - A command on the server without SSH: `make host CMD='systemctl status flybot --no-pager'` (or `bash infra/host.sh '...'`).
 - Logs: `make host CMD='journalctl -u flybot -n 100 --no-pager'`, `/var/log/flybot-bootstrap.log`; Lambda and builds in
   CloudWatch (`/aws/lambda/flybot-vision-<stage>`, `/aws/codebuild/flybot-vision-build-<stage>`).
 
-## 3. Moving a stack from the Docker layout to the prebuilt release
+## 3. Upgrading an existing stack
+
+**User-data stub (first deploy after this change).** The host logic moved out of the EC2 user-data into
+`infra/host/bootstrap.sh` (published to the artifacts bucket). The stack update replaces the user-data with a short stub,
+so CloudFormation stops and starts the instance once (1-2 minutes of downtime; IP, disk and data stay); the bootstrap
+step then installs the same release again. After that, host changes and new FlyBot releases never restart the instance.
+
+**From the Docker layout to the prebuilt release.**
 
 A stack deployed before October 17, 2026 runs FlyBot, MongoDB and Caddy in Docker on a t4g.small. One `./deploy.sh`
 moves it:
@@ -53,7 +68,7 @@ moves it:
 1. the stack update changes the instance type to t4g.micro and the user-data; CloudFormation stops and starts the
    instance (the Elastic IP, the disk and its data stay; FlyBot is down from here until step 3, about 15-20 minutes);
 2. the FlyBot release is built on your computer and uploaded, the Lambda image is built by CodeBuild;
-3. the bootstrap step runs the new user-data: it dumps the MongoDB container (`mongodump` to
+3. the bootstrap step runs the host bootstrap (`infra/host/bootstrap.sh`): it dumps the MongoDB container (`mongodump` to
    `/var/backups/flybot/compose-mongo.archive`), stops and disables Docker (its volumes are kept), installs Node 22,
    Caddy and MongoDB 7, restores the dump into the local MongoDB, installs the release and starts it under systemd.
    Caddy requests a new certificate.
