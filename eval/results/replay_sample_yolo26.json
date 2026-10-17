@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-16T11:32:34.677353+00:00",
+  "generated_at": "2026-10-17T22:11:06.010341+00:00",
   "manifest": "D:\\Workspace\\Gits\\CamHub\\flybot-aws\\data\\samples\\samples_manifest.csv",
   "photos": 24,
   "ok": 24,
@@ -16,8 +16,8 @@
     "rule": 24
   },
   "counts": {
-    "total_flies": 15,
-    "mae_vs_production_ai_count": 2.17,
+    "total_flies": 0,
+    "mae_vs_production_ai_count": 1.54,
     "n_with_production_count": 24,
     "note": "production ai_count is FlyBot's Roboflow count at capture time, not human ground truth"
   },
@@ -32,11 +32,11 @@
   },
   "diff_available": 22,
   "timings_ms": {
-    "dnn_p50": 133.5,
-    "dnn_p95": 323.8,
-    "total_p50": 992.4,
-    "total_p95": 1484.1,
-    "run_s": 28.2,
+    "dnn_p50": 171.6,
+    "dnn_p95": 304.4,
+    "total_p50": 1134.8,
+    "total_p95": 1685.2,
+    "run_s": 31.3,
     "note": "this machine (dev laptop), not the Lambda; see bench/results/lambda_latency.json"
   },
   "evidence_dir": "D:\\Workspace\\Gits\\CamHub\\flybot-aws\\data\\replay\\sample-yolo26\\evidence"
