@@ -11,18 +11,61 @@ source file; "not measured" means not measured.
 |---|---|---|
 | Architecture | YOLO26n, 2,389,735 parameters, 5.4 GFLOPs, 1 class `fruit_fly` | training log (`eval/results/yolo26n_train_results.csv`) |
 | Training | Colab T4, Ultralytics 8.4.177, from `yolo26n.pt`, 60 epochs, 640, batch 32, AdamW auto, 0.387 h | notebook output |
-| ONNX | `fruitfly_yolo26n.onnx`, 9,863,554 bytes, sha256 `fb4da5c0512088b32f447fc8fa14bd0fd4ed164768ed57d5690617ca2be7f176`, opset 17, static 640, output `[1, 300, 6]` (x1, y1, x2, y2, score, class), no NMS anywhere | `eval/results/yolo26n_onnx_sidecar.json` |
-| Fallback graph | `fruitfly_yolo26n-o2m.onnx`, output `[1, 5, 8400]` (one-to-many head, NMS in Python); not needed | same |
+| ONNX | `fruitfly_yolo26n.onnx`, 9,863,554 bytes, sha256 `fb4da5c0512088b32f447fc8fa14bd0fd4ed164768ed57d5690617ca2be7f176`, opset 17, static 640, output `[1, 300, 6]` (x1, y1, x2, y2, score, class), no NMS in the graph (the Lambda applies NMS and box rules, see Post-processing) | `eval/results/yolo26n_onnx_sidecar.json` |
+| Fallback graph | `fruitfly_yolo26n-o2m.onnx`, output `[1, 5, 8400]` (one-to-many head); not needed | same |
 | mAP@50 (test split, 76 images, 2,349 boxes) | **0.953** (YOLOv7-tiny: 0.958) | `eval/results/yolo26n_test_metrics.json` |
 | mAP@50-95 | **0.700** (YOLOv7-tiny: 0.67) | same |
 | Precision / recall | 0.913 / 0.898 (YOLOv7-tiny: 0.928 / 0.908) | same |
 | OpenCV 5 (new engine) vs ONNX Runtime, Colab | 20 test images: same detections at conf 0.25 (IoU 1.0, score diff < 4e-5, count diff 0) for both graphs | `eval/results/yolo26n_opencv_parity_colab.json` |
 | OpenCV 5 vs ONNX Runtime, laptop | 20 FlyBot sample photos: 0 mismatches, worst box diff 0.0 px | `eval/results/yolo26_parity.json` |
-| 24 sample photos through the Lambda handler (laptop CPU) | same counts as YOLOv7-tiny (15 flies, MAE 2.17 vs production RF-DETR); DNN p50 **133.5 ms** vs 189.1 ms | `eval/results/replay_sample_yolo26.json`, `replay_sample_yolov7.json` |
+| 24 sample photos through the Lambda handler (laptop CPU) | 0 flies, MAE 1.54 vs production RF-DETR with the box rules (before them: 15 flies, all of them the trap's lens on BE4111159, MAE 2.17, like YOLOv7-tiny's 15); DNN p50 171.6 ms on a busy laptop (YOLOv7-tiny 189.1 ms in an earlier run), not a benchmark | `eval/results/replay_sample_yolo26.json`, `replay_sample_yolov7.json`, `yolo26_box_rules.json` |
 
 The raw-tensor check in the notebook reported "mismatch" (max abs diff 421): the end-to-end head's TopK orders
 tied low-score rows differently between engines. Detections above the threshold are identical, so the check now
 compares detections, not raw rows. The sample photos are mostly empty lure traps; field accuracy is not measured.
+
+### Post-processing (Lambda)
+
+`sentinel/vision/detect_yolo26.py` + `sentinel/vision/box_rules.py`, the same for both heads:
+
+1. rows with score >= `DETECTOR_CONF` (0.25);
+2. class-agnostic NMS (`cv2.dnn.NMSBoxes`) at `DETECTOR_IOU` (0.45). Until this change the end-to-end head had no NMS
+   in the Lambda; the one-to-one head still left 173 (valid) and 117 (test) pairs of boxes at IoU >= 0.5;
+3. box rules that reject what cannot be one fruit fly, without retraining. Side = sqrt(w h) / sqrt(W H) of the photo;
+   the "median" rules use the photo's remaining boxes when there are at least 3.
+
+| Rule (variable, default) | Evidence (`eval/results/yolo26_box_rules.json`) |
+|---|---|
+| `DETECTOR_IOU` 0.45 | labelled flies overlapping a neighbour at IoU >= 0.45: 26 of 73,980 (train), 4 of 2,838 (valid), 2 of 2,349 (test) |
+| `DETECTOR_MIN_SCORE` 0.35 | valid F1 after NMS by score limit: 0.25 0.9523, 0.30 0.9527, **0.35 0.9526**, 0.40 0.9500 (0.35: higher precision for the same F1); 2.4 % (valid) and 6.2 % (test) of the true positives score below it. The owner's ESP32 reports of the lens at 26-36 % fall under it up to 0.35; the lens size on ESP32 photos is not measured |
+| `DETECTOR_MAX_SIDE` 0.12 | 167 of 73,980 train flies are larger (close-up pictures; p99.9 0.1326); the lens of the lure trap on the 12 BE4111159 sample photos measures 0.149-0.158 (scores 0.43-0.66). A lizard is many times a fly |
+| `DETECTOR_MIN_SIDE` 0.004 | smallest labelled fly 0.0086 (train) |
+| `DETECTOR_MAX_MEDIAN_RATIO` 3.0 | 11 of 73,834 train flies are above 3x their photo's median side |
+| `DETECTOR_MIN_MEDIAN_RATIO` 0.25 | 24 of 73,834 train flies are below |
+| `DETECTOR_MAX_ASPECT` 4.0 | 165 of 73,980 train flies are longer than 4:1; valid F1 by limit: 3.0 0.9497, **4.0 0.9526**, 5.0 0.9513, none 0.9509 |
+| `DETECTOR_MEDIAN_MIN_BOXES` 3, `DETECTOR_BOX_RULES` on | `off` keeps steps 1-2 only |
+
+The score and aspect limits were chosen on the valid split; the test split is held out. OpenCV 5.0.0, new engine,
+letterbox 640, IoU 0.5 matching (`eval/detector_box_rules.py`):
+
+| Split | Post-processing | Precision | Recall | F1 |
+|---|---|---|---|---|
+| valid (93 images, 2,838 flies) | before (score >= 0.25, no NMS) | 0.8862 | 0.9690 | 0.9258 |
+| | NMS 0.45 | 0.9352 | 0.9658 | 0.9503 |
+| | NMS + rules | **0.9528** | 0.9524 | **0.9526** |
+| test (76 images, 2,349 flies) | before | 0.8376 | 0.9242 | 0.8788 |
+| | NMS 0.45 | 0.8769 | 0.9221 | 0.8989 |
+| | NMS + rules | **0.9025** | 0.8987 | **0.9006** |
+| 24 bundled lure-trap photos | before: 15 flies (BE4111159: 15, production 0), MAE 2.167 vs production | | | |
+| | NMS + rules: 0 flies, MAE 1.542; removed: 12 lens boxes (too large), 3 boxes at the top edge (score 0.26-0.31) | | | |
+
+These numbers come from the OpenCV path the Lambda runs, so they differ from the Ultralytics validation above
+(precision 0.913 / recall 0.898 on test, its own decoding and threshold). Not done: suppressing a box that stays at
+the same place across a camera's photos. The contract's `history` carries counts only, and in a lure trap dead
+flies stay where they fell, so a persistence rule would remove real catches; the diff block already reports new
+and persisted boxes. Limitation seen on the same photos: the flies on the lid of a full trap view are small specks
+once the frame is letterboxed to 640 (size not measured) and are not detected (BE4089629: production 37 flies over
+12 photos, YOLO26 0 before and after); the rules remove false boxes, they add no recall.
 
 ## YOLOv7-tiny (baseline, AMB82 NPU edge model)
 
