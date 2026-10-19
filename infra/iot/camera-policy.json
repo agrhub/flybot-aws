@@ -21,6 +21,7 @@
         "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/telemetry",
         "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/shadow/reported",
         "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/rpc/res",
+        "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/log",
         "arn:aws:iot:${REGION}:${ACCOUNT}:topic/camos/${iot:Connection.Thing.ThingName}/up/req"
       ]
     },
