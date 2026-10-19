@@ -81,9 +81,31 @@ flowchart LR
 
 ## Try it
 
-Open https://flybot.agrhub.com and register. The demo traps are two EZVIZ lure-trap cameras in an orchard in southern
-Vietnam; ask the operator (contact form on the site) to share them with your account to see their photos, counts,
-traces and the chatbot. A self-registered ESP32-S3 camera can be claimed at `/claim` (up to 3 cameras per account).
+Open https://flybot.agrhub.com/auth/login and press **Guest access** (under the sign-in button). No account or
+email is needed: it opens a shared, read-only demo account for two hours. It shows:
+
+- **Cameras** and **Dashboard**: the demo traps' latest photos, fly counts and trends (the density card filters by
+  farm, status and trap kind);
+- **Sentinel** (left menu): every analyzed photo with what OpenCV 5 saw and what the agent decided (traces), and the
+  agent's proposals (view only);
+- **Farms**, **Field map**, **Analytics**, **Reports** and the field log;
+- the chatbot (bottom right): ask, for example, "how many flies on the traps this week?" (each guest session keeps
+  its own conversation).
+
+**Simulated demo farm (clearly labeled, not field data).** The real traps are new and have only a few weeks of
+photos, so the guest account also shows a simulated farm network: 114 sticky and lure traps on 47 farms, in every
+province of Vietnam and in a dozen fruit regions abroad (each with its main fruit fly), with plots, a field log and
+a month of history. Every one is tagged **Simulated**: trap names start with "SIM ·", farms end with "(simulated)",
+and a banner says so on every page. Its photos are synthetic trap pictures (a real empty trap photo with pasted fruit
+flies, stamped SIMULATED), and each one went through the same OpenCV 5 Lambda as a real photo: the counts, boxes,
+quality flags, traces and proposals are the pipeline's own. "Drawn: N" beside a count is the number of flies pasted
+on the picture, to compare the detector on sticky and lure traps. The metrics in [eval/RESULTS.md](eval/RESULTS.md)
+come from real photos only.
+
+The guest account changes nothing: settings, captures, sharing, deleting and approvals are refused. Guest access and
+the demo are the server's **Demo access** settings (Admin > System), on for the judging period. To try your own
+ESP32-S3 camera, register an account and claim it at `/claim` (up to 3 cameras per account). If something does not
+work, the contact form on the site reaches the operator.
 
 ## Deploy your own (one command)
 
