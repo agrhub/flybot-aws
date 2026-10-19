@@ -102,13 +102,18 @@ def test_factory_gives_yolo26_the_env_rules(monkeypatch, tmp_path):
     seen = {}
 
     class Fake:
-        def __init__(self, path, engine, conf, iou, rules):
-            seen.update(conf=conf, iou=iou, rules=rules)
+        def __init__(self, path, engine, conf, iou, rules, tiles):
+            seen.update(conf=conf, iou=iou, rules=rules, tiles=tiles)
 
     import sentinel.vision.detect_yolo26 as y
 
     monkeypatch.setattr(y, "Yolo26Detector", Fake)
     monkeypatch.setenv("DETECTOR_MAX_SIDE", "0.2")
     monkeypatch.delenv("DETECTOR_BOX_RULES", raising=False)
+    monkeypatch.delenv("DETECTOR_TILES", raising=False)
     detector.build_detector("yolo26", tmp_path / "m.onnx")
     assert seen["iou"] == 0.45 and seen["rules"].max_side == 0.2 and seen["rules"].min_score == 0.35
+    assert seen["tiles"].mode == "off"  # tiles stay off unless DETECTOR_TILES says otherwise
+    monkeypatch.setenv("DETECTOR_TILES", "sticky")
+    detector.build_detector("yolo26", tmp_path / "m.onnx")
+    assert seen["tiles"].mode == "sticky"

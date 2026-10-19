@@ -286,12 +286,19 @@ def tiles_lines(path: Path = TILES_RESULTS) -> list[str]:
                 lines.append(f"| {name} | {kind} | {v['photos']} | {v['tiled_photos']} | {v['forwards_per_photo']} | "
                              f"{v['true_flies']} | {v['detected']} | {_f(v['mae'])} | {_f(v['bias'])} | "
                              f"{_f(v['precision_iou30'])} | {_f(v['recall_iou30'])} | {_f(v['f1_iou30'])} |")
-    lines += ["", (f"DNN forward p50: whole frame {fm['whole_frame_p50']} ms, the 4 windows together "
+    lines += ["", (f"DNN forward p50 during this run: whole frame {fm['whole_frame_p50']} ms, the 4 windows together "
                    f"{fm['four_windows_p50']} ms ({fm['note']}).")]
+    if t.get("latency"):
+        lt = t["latency"]
+        lines += ["", (f"Latency cost (`--latency`, {lt['photos']} sticky photos of `{lt['set']}`, {lt['size']}): "
+                       f"`detect()` p50 {lt['off']['detect_ms_p50']} ms whole frame vs {lt['sticky']['detect_ms_p50']} ms "
+                       f"tiled (forwards {lt['off']['forward_ms_p50']} vs {lt['sticky']['forward_ms_p50']} ms); "
+                       f"{lt['note']}.")]
     if t.get("handler"):
         lines += ["", ("Whole handler (trap ROI, box rules, quality ops, agent; prevPhoto sent, so a tiled photo costs 4 "
                        "forwards for the photo and 4 for the previous one) on the clean photos, one run per "
-                       "DETECTOR_TILES value:"), "",
+                       "DETECTOR_TILES value (its times come from runs that shared the laptop with other jobs; the latency "
+                       "line above is the cost):"), "",
                   ("| DETECTOR_TILES | set | trap | photos | true flies | detected | MAE | bias | precision @0.3 | "
                    "recall @0.3 | F1 @0.3 | DNN ms p50 (photo) | handler ms p50 |"),
                   "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]

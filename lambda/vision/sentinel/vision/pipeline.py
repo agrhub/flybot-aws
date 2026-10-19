@@ -226,18 +226,19 @@ def analyze(
     return res
 
 
-def detect_boxes(img: np.ndarray, onnx_path: str | Path | None = None) -> dict | None:
+def detect_boxes(img: np.ndarray, onnx_path: str | Path | None = None, trap_kind: str | None = None) -> dict | None:
     """Op 5 (YOLO26n or YOLOv7-tiny on the OpenCV 5 new DNN engine, see sentinel.vision.detector) ->
-    {boxes xyxy, detections [{xywh, score, class_id}], count, engine_used, forward_ms, source, postprocess (NMS and
-    box-rule rejections, YOLO26 only)};
-    None when no detector ONNX is available (DetectorUnavailable is swallowed here: the other ops still run)."""
+    {boxes xyxy, detections [{xywh, score, class_id}], count, engine_used, forward_ms, source, postprocess (NMS,
+    box-rule rejections and tiles, YOLO26 only)};
+    None when no detector ONNX is available (DetectorUnavailable is swallowed here: the other ops still run).
+    `trap_kind` reaches a detector that tiles (DETECTOR_TILES=sticky)."""
     from sentinel.vision.detector import DetectorUnavailable, build_detector, detector_kind, get_detector
 
     try:
         det = build_detector(detector_kind(), Path(onnx_path)) if onnx_path else get_detector()
     except DetectorUnavailable:
         return None
-    res = det.detect(img)
+    res = det.detect(img, trap_kind=trap_kind) if getattr(det, "tiling", None) is not None else det.detect(img)
     boxes = [[b["xywh"][0], b["xywh"][1], b["xywh"][0] + b["xywh"][2], b["xywh"][1] + b["xywh"][3]] for b in res["boxes"]]
     engine = getattr(det, "engine_used", "unknown")
     return {"boxes": boxes, "detections": res["boxes"], "count": res["count"], "engine_used": engine,
@@ -270,11 +271,11 @@ def analyze_photo(image, previous=None, trap_kind: str = "sticky", out_dir=None,
     det, t5 = None, None
     if detect and boxes is None:
         t0 = time.perf_counter()
-        det = detect_boxes(cur)
+        det = detect_boxes(cur, trap_kind=trap_kind)
         if det is not None:
             boxes = det["boxes"]
             if prev is not None and prev_boxes is None:
-                prev_boxes = detect_boxes(prev)["boxes"]
+                prev_boxes = detect_boxes(prev, trap_kind=trap_kind)["boxes"]
         t5 = round((time.perf_counter() - t0) * 1000.0, 2)
     res = analyze(cur, prev, trap_kind, boxes, prev_boxes, out_dir=out_dir, **kw)
     if isinstance(image, (str, Path)):

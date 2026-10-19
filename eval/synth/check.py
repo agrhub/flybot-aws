@@ -1,7 +1,7 @@
 """Run the vision handler on every photo of a SYNTHETIC set (eval/synth) and record its answer next to the known truth.
 
     uv run --project lambda/vision python -m eval.synth.check [--manifest data/synth/demo-30d/manifest.json]
-        [--url http://localhost:9001/invoke] [--limit N] [--no-prev] [--tiles]
+        [--url http://localhost:9001/invoke] [--limit N] [--no-prev] [--tiles] [--out DIR]
     uv run --project lambda/vision python -m eval.synth.report      # the write-ups, from the check.jsonl files
 
 The handler is the Lambda's code path: YOLO26n on OpenCV 5 DNN (ENGINE_NEW), trap ROI, box rules, quality and motion
@@ -10,7 +10,8 @@ kind, `capturedAt`, `prevPhoto` = the trap's latest photo without an injected de
 not the new normal), and `history` = the trap's earlier counts as the handler gave them (photos it did not count
 left out), so the surge rule sees what it would see in production.
 
-Writes check.jsonl beside the manifest (git-ignored), one record per photo: true and visible count, detected count,
+Writes check.jsonl beside the manifest (git-ignored; `--out` puts it and check.meta.json in another folder, e.g. for
+a second run with other detector settings), one record per photo: true and visible count, detected count,
 box matches, the injected defect and its expected action, the response's quality flags, decision rules, proposal
 actions, whether the photo was counted, the agent's surge decision and the surge the true counts imply. With
 `--tiles`, also the detector alone on the whole frame and on 2x2 tiles. Every photo's JPEG label is verified first:
@@ -135,7 +136,7 @@ def previous_clean(p: dict, by_id: dict[str, dict]) -> dict | None:
 
 
 def run(manifest_path: Path, url: str | None = None, limit: int | None = None, with_prev: bool = True,
-        tiles: bool = False, log=print) -> dict:
+        tiles: bool = False, log=print, out_dir: Path | None = None) -> dict:
     os.environ.setdefault("DETECTOR", "yolo26")
     m = json.loads(manifest_path.read_text(encoding="utf-8"))
     if m.get("schema") != SCHEMA or m.get("synthetic") is not True:
@@ -160,7 +161,9 @@ def run(manifest_path: Path, url: str | None = None, limit: int | None = None, w
     history: dict[str, list[dict]] = {}
     n_ok, errors, model = 0, [], None
     t_run = time.perf_counter()
-    out_path = base / "check.jsonl"
+    out_dir = Path(out_dir) if out_dir else base
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / "check.jsonl"
     with open(out_path, "w", encoding="utf-8") as fh:
         for i, p in enumerate(photos, 1):
             surge_truth = truth.add(p)
@@ -214,7 +217,7 @@ def run(manifest_path: Path, url: str | None = None, limit: int | None = None, w
             "flyScale": {t["id"]: t.get("flyScale", m["config"].get("flyScale")) for t in m["config"].get("traps", [])}
             or m["config"].get("flyScale"), "fly_crops": m["credits"]["flyBank"],
             "run_s": round(time.perf_counter() - t_run, 1), "at": datetime.now().astimezone().isoformat(timespec="seconds")}
-    (base / "check.meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8", newline="\n")
+    (out_dir / "check.meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8", newline="\n")
     return meta
 
 
@@ -225,10 +228,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--no-prev", action="store_true", help="send no prevPhoto (op 8 and the diff are skipped)")
     ap.add_argument("--tiles", action="store_true", help="also run the detector alone on the whole frame and on 2x2 tiles")
+    ap.add_argument("--out", type=Path, default=None, help="folder for check.jsonl / check.meta.json (default: the manifest's)")
     a = ap.parse_args(argv)
-    meta = run(a.manifest, a.url, a.limit, not a.no_prev, a.tiles)
+    meta = run(a.manifest, a.url, a.limit, not a.no_prev, a.tiles, out_dir=a.out)
     print(f"\n{meta['ok']}/{meta['photos']} photos, {len(meta['errors'])} errors, {meta['run_s']} s -> "
-          f"{a.manifest.parent / 'check.jsonl'}")
+          f"{(a.out or a.manifest.parent) / 'check.jsonl'}")
     return 1 if meta["errors"] and not meta["ok"] else 0
 
 

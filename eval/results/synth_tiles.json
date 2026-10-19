@@ -1,0 +1,675 @@
+{
+  "kind": "measurement on SYNTHETIC composites (eval/synth), not field photos",
+  "generated_at": "2026-10-19T05:51:29+00:00",
+  "sets": [
+    {
+      "set": "demo-30d",
+      "seed": 20261019,
+      "clean_photos": 517,
+      "generator_git": "eval/synth of the commit that adds it"
+    },
+    {
+      "set": "pool",
+      "seed": 20261020,
+      "clean_photos": 340,
+      "generator_git": "eval/synth of the commit that adds it"
+    }
+  ],
+  "model": "yolo26n on opencv-5.0.0-dnn-new",
+  "onnx": "fruitfly_yolo26n.onnx",
+  "scope": "detector step only (decoder conf 0.25, NMS 0.45, default box rules), whole frame, no trap ROI; clean photos (no injected defect); true flies = visible pasted flies; greedy one-to-one at IoU 0.3",
+  "tiling": "2x2 windows, overlap 0.12 x frame / 2, a box within 2 detector-input px of an inner window edge is dropped, class-agnostic NMS 0.45 in full-frame pixels, then the box rules",
+  "variants": {
+    "off": {
+      "mode": "off",
+      "keep_full": false
+    },
+    "on": {
+      "mode": "on",
+      "keep_full": false
+    },
+    "sticky": {
+      "mode": "sticky",
+      "keep_full": false
+    },
+    "auto20": {
+      "mode": "auto",
+      "auto_px": 20.0,
+      "keep_full": true
+    },
+    "auto24": {
+      "mode": "auto",
+      "auto_px": 24.0,
+      "keep_full": true
+    },
+    "auto28": {
+      "mode": "auto",
+      "auto_px": 28.0,
+      "keep_full": true
+    },
+    "auto24-full": {
+      "mode": "auto",
+      "auto_px": 24.0,
+      "keep_full": false
+    }
+  },
+  "results": {
+    "off": {
+      "lure": {
+        "photos": 518,
+        "true_flies": 6612,
+        "detected": 5885,
+        "mae": 1.446,
+        "bias": -1.403,
+        "precision_iou30": 0.9774,
+        "recall_iou30": 0.8699,
+        "f1_iou30": 0.9205,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "sticky": {
+        "photos": 339,
+        "true_flies": 15616,
+        "detected": 985,
+        "mae": 43.201,
+        "bias": -43.159,
+        "precision_iou30": 0.669,
+        "recall_iou30": 0.0422,
+        "f1_iou30": 0.0794,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      }
+    },
+    "on": {
+      "lure": {
+        "photos": 518,
+        "true_flies": 6612,
+        "detected": 6804,
+        "mae": 1.108,
+        "bias": 0.371,
+        "precision_iou30": 0.8989,
+        "recall_iou30": 0.925,
+        "f1_iou30": 0.9117,
+        "tiled_photos": 518,
+        "forwards_per_photo": 4.0
+      },
+      "sticky": {
+        "photos": 339,
+        "true_flies": 15616,
+        "detected": 14662,
+        "mae": 5.103,
+        "bias": -2.814,
+        "precision_iou30": 0.8649,
+        "recall_iou30": 0.8121,
+        "f1_iou30": 0.8376,
+        "tiled_photos": 339,
+        "forwards_per_photo": 4.0
+      }
+    },
+    "sticky": {
+      "lure": {
+        "photos": 518,
+        "true_flies": 6612,
+        "detected": 5885,
+        "mae": 1.446,
+        "bias": -1.403,
+        "precision_iou30": 0.9774,
+        "recall_iou30": 0.8699,
+        "f1_iou30": 0.9205,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "sticky": {
+        "photos": 339,
+        "true_flies": 15616,
+        "detected": 14662,
+        "mae": 5.103,
+        "bias": -2.814,
+        "precision_iou30": 0.8649,
+        "recall_iou30": 0.8121,
+        "f1_iou30": 0.8376,
+        "tiled_photos": 339,
+        "forwards_per_photo": 4.0
+      }
+    },
+    "auto20": {
+      "lure": {
+        "photos": 518,
+        "true_flies": 6612,
+        "detected": 5885,
+        "mae": 1.446,
+        "bias": -1.403,
+        "precision_iou30": 0.9774,
+        "recall_iou30": 0.8699,
+        "f1_iou30": 0.9205,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "sticky": {
+        "photos": 339,
+        "true_flies": 15616,
+        "detected": 1044,
+        "mae": 43.198,
+        "bias": -42.985,
+        "precision_iou30": 0.6523,
+        "recall_iou30": 0.0436,
+        "f1_iou30": 0.0818,
+        "tiled_photos": 8,
+        "forwards_per_photo": 1.09
+      }
+    },
+    "auto24": {
+      "lure": {
+        "photos": 518,
+        "true_flies": 6612,
+        "detected": 5885,
+        "mae": 1.446,
+        "bias": -1.403,
+        "precision_iou30": 0.9774,
+        "recall_iou30": 0.8699,
+        "f1_iou30": 0.9205,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "sticky": {
+        "photos": 339,
+        "true_flies": 15616,
+        "detected": 1058,
+        "mae": 43.162,
+        "bias": -42.944,
+        "precision_iou30": 0.6522,
+        "recall_iou30": 0.0442,
+        "f1_iou30": 0.0828,
+        "tiled_photos": 9,
+        "forwards_per_photo": 1.11
+      }
+    },
+    "auto28": {
+      "lure": {
+        "photos": 518,
+        "true_flies": 6612,
+        "detected": 5885,
+        "mae": 1.446,
+        "bias": -1.403,
+        "precision_iou30": 0.9774,
+        "recall_iou30": 0.8699,
+        "f1_iou30": 0.9205,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "sticky": {
+        "photos": 339,
+        "true_flies": 15616,
+        "detected": 2776,
+        "mae": 38.501,
+        "bias": -37.876,
+        "precision_iou30": 0.755,
+        "recall_iou30": 0.1342,
+        "f1_iou30": 0.2279,
+        "tiled_photos": 62,
+        "forwards_per_photo": 1.73
+      }
+    },
+    "auto24-full": {
+      "lure": {
+        "photos": 518,
+        "true_flies": 6612,
+        "detected": 5885,
+        "mae": 1.446,
+        "bias": -1.403,
+        "precision_iou30": 0.9774,
+        "recall_iou30": 0.8699,
+        "f1_iou30": 0.9205,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "sticky": {
+        "photos": 339,
+        "true_flies": 15616,
+        "detected": 1058,
+        "mae": 43.162,
+        "bias": -42.944,
+        "precision_iou30": 0.6522,
+        "recall_iou30": 0.0442,
+        "f1_iou30": 0.0828,
+        "tiled_photos": 9,
+        "forwards_per_photo": 1.11
+      }
+    }
+  },
+  "results_by_set": {
+    "off": {
+      "demo-30d / lure": {
+        "photos": 388,
+        "true_flies": 2476,
+        "detected": 2089,
+        "mae": 1.039,
+        "bias": -0.997,
+        "precision_iou30": 0.9785,
+        "recall_iou30": 0.8255,
+        "f1_iou30": 0.8955,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "demo-30d / sticky": {
+        "photos": 129,
+        "true_flies": 5151,
+        "detected": 425,
+        "mae": 36.667,
+        "bias": -36.636,
+        "precision_iou30": 0.8329,
+        "recall_iou30": 0.0687,
+        "f1_iou30": 0.127,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "pool / lure": {
+        "photos": 130,
+        "true_flies": 4136,
+        "detected": 3796,
+        "mae": 2.662,
+        "bias": -2.615,
+        "precision_iou30": 0.9768,
+        "recall_iou30": 0.8965,
+        "f1_iou30": 0.9349,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "pool / sticky": {
+        "photos": 210,
+        "true_flies": 10465,
+        "detected": 560,
+        "mae": 47.214,
+        "bias": -47.167,
+        "precision_iou30": 0.5446,
+        "recall_iou30": 0.0291,
+        "f1_iou30": 0.0553,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      }
+    },
+    "on": {
+      "demo-30d / lure": {
+        "photos": 388,
+        "true_flies": 2476,
+        "detected": 2706,
+        "mae": 0.912,
+        "bias": 0.593,
+        "precision_iou30": 0.8507,
+        "recall_iou30": 0.9297,
+        "f1_iou30": 0.8885,
+        "tiled_photos": 388,
+        "forwards_per_photo": 4.0
+      },
+      "demo-30d / sticky": {
+        "photos": 129,
+        "true_flies": 5151,
+        "detected": 4954,
+        "mae": 4.953,
+        "bias": -1.527,
+        "precision_iou30": 0.849,
+        "recall_iou30": 0.8165,
+        "f1_iou30": 0.8325,
+        "tiled_photos": 129,
+        "forwards_per_photo": 4.0
+      },
+      "pool / lure": {
+        "photos": 130,
+        "true_flies": 4136,
+        "detected": 4098,
+        "mae": 1.692,
+        "bias": -0.292,
+        "precision_iou30": 0.9307,
+        "recall_iou30": 0.9221,
+        "f1_iou30": 0.9264,
+        "tiled_photos": 130,
+        "forwards_per_photo": 4.0
+      },
+      "pool / sticky": {
+        "photos": 210,
+        "true_flies": 10465,
+        "detected": 9708,
+        "mae": 5.195,
+        "bias": -3.605,
+        "precision_iou30": 0.873,
+        "recall_iou30": 0.8098,
+        "f1_iou30": 0.8402,
+        "tiled_photos": 210,
+        "forwards_per_photo": 4.0
+      }
+    },
+    "sticky": {
+      "demo-30d / lure": {
+        "photos": 388,
+        "true_flies": 2476,
+        "detected": 2089,
+        "mae": 1.039,
+        "bias": -0.997,
+        "precision_iou30": 0.9785,
+        "recall_iou30": 0.8255,
+        "f1_iou30": 0.8955,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "demo-30d / sticky": {
+        "photos": 129,
+        "true_flies": 5151,
+        "detected": 4954,
+        "mae": 4.953,
+        "bias": -1.527,
+        "precision_iou30": 0.849,
+        "recall_iou30": 0.8165,
+        "f1_iou30": 0.8325,
+        "tiled_photos": 129,
+        "forwards_per_photo": 4.0
+      },
+      "pool / lure": {
+        "photos": 130,
+        "true_flies": 4136,
+        "detected": 3796,
+        "mae": 2.662,
+        "bias": -2.615,
+        "precision_iou30": 0.9768,
+        "recall_iou30": 0.8965,
+        "f1_iou30": 0.9349,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "pool / sticky": {
+        "photos": 210,
+        "true_flies": 10465,
+        "detected": 9708,
+        "mae": 5.195,
+        "bias": -3.605,
+        "precision_iou30": 0.873,
+        "recall_iou30": 0.8098,
+        "f1_iou30": 0.8402,
+        "tiled_photos": 210,
+        "forwards_per_photo": 4.0
+      }
+    },
+    "auto20": {
+      "demo-30d / lure": {
+        "photos": 388,
+        "true_flies": 2476,
+        "detected": 2089,
+        "mae": 1.039,
+        "bias": -0.997,
+        "precision_iou30": 0.9785,
+        "recall_iou30": 0.8255,
+        "f1_iou30": 0.8955,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "demo-30d / sticky": {
+        "photos": 129,
+        "true_flies": 5151,
+        "detected": 478,
+        "mae": 36.612,
+        "bias": -36.225,
+        "precision_iou30": 0.7866,
+        "recall_iou30": 0.073,
+        "f1_iou30": 0.1336,
+        "tiled_photos": 7,
+        "forwards_per_photo": 1.22
+      },
+      "pool / lure": {
+        "photos": 130,
+        "true_flies": 4136,
+        "detected": 3796,
+        "mae": 2.662,
+        "bias": -2.615,
+        "precision_iou30": 0.9768,
+        "recall_iou30": 0.8965,
+        "f1_iou30": 0.9349,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "pool / sticky": {
+        "photos": 210,
+        "true_flies": 10465,
+        "detected": 566,
+        "mae": 47.243,
+        "bias": -47.138,
+        "precision_iou30": 0.5389,
+        "recall_iou30": 0.0291,
+        "f1_iou30": 0.0553,
+        "tiled_photos": 1,
+        "forwards_per_photo": 1.02
+      }
+    },
+    "auto24": {
+      "demo-30d / lure": {
+        "photos": 388,
+        "true_flies": 2476,
+        "detected": 2089,
+        "mae": 1.039,
+        "bias": -0.997,
+        "precision_iou30": 0.9785,
+        "recall_iou30": 0.8255,
+        "f1_iou30": 0.8955,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "demo-30d / sticky": {
+        "photos": 129,
+        "true_flies": 5151,
+        "detected": 478,
+        "mae": 36.612,
+        "bias": -36.225,
+        "precision_iou30": 0.7866,
+        "recall_iou30": 0.073,
+        "f1_iou30": 0.1336,
+        "tiled_photos": 7,
+        "forwards_per_photo": 1.22
+      },
+      "pool / lure": {
+        "photos": 130,
+        "true_flies": 4136,
+        "detected": 3796,
+        "mae": 2.662,
+        "bias": -2.615,
+        "precision_iou30": 0.9768,
+        "recall_iou30": 0.8965,
+        "f1_iou30": 0.9349,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "pool / sticky": {
+        "photos": 210,
+        "true_flies": 10465,
+        "detected": 580,
+        "mae": 47.186,
+        "bias": -47.071,
+        "precision_iou30": 0.5414,
+        "recall_iou30": 0.03,
+        "f1_iou30": 0.0569,
+        "tiled_photos": 2,
+        "forwards_per_photo": 1.04
+      }
+    },
+    "auto28": {
+      "demo-30d / lure": {
+        "photos": 388,
+        "true_flies": 2476,
+        "detected": 2089,
+        "mae": 1.039,
+        "bias": -0.997,
+        "precision_iou30": 0.9785,
+        "recall_iou30": 0.8255,
+        "f1_iou30": 0.8955,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "demo-30d / sticky": {
+        "photos": 129,
+        "true_flies": 5151,
+        "detected": 1965,
+        "mae": 26.062,
+        "bias": -24.698,
+        "precision_iou30": 0.8285,
+        "recall_iou30": 0.3161,
+        "f1_iou30": 0.4576,
+        "tiled_photos": 47,
+        "forwards_per_photo": 2.46
+      },
+      "pool / lure": {
+        "photos": 130,
+        "true_flies": 4136,
+        "detected": 3796,
+        "mae": 2.662,
+        "bias": -2.615,
+        "precision_iou30": 0.9768,
+        "recall_iou30": 0.8965,
+        "f1_iou30": 0.9349,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "pool / sticky": {
+        "photos": 210,
+        "true_flies": 10465,
+        "detected": 811,
+        "mae": 46.143,
+        "bias": -45.971,
+        "precision_iou30": 0.5771,
+        "recall_iou30": 0.0447,
+        "f1_iou30": 0.083,
+        "tiled_photos": 15,
+        "forwards_per_photo": 1.29
+      }
+    },
+    "auto24-full": {
+      "demo-30d / lure": {
+        "photos": 388,
+        "true_flies": 2476,
+        "detected": 2089,
+        "mae": 1.039,
+        "bias": -0.997,
+        "precision_iou30": 0.9785,
+        "recall_iou30": 0.8255,
+        "f1_iou30": 0.8955,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "demo-30d / sticky": {
+        "photos": 129,
+        "true_flies": 5151,
+        "detected": 478,
+        "mae": 36.612,
+        "bias": -36.225,
+        "precision_iou30": 0.7866,
+        "recall_iou30": 0.073,
+        "f1_iou30": 0.1336,
+        "tiled_photos": 7,
+        "forwards_per_photo": 1.22
+      },
+      "pool / lure": {
+        "photos": 130,
+        "true_flies": 4136,
+        "detected": 3796,
+        "mae": 2.662,
+        "bias": -2.615,
+        "precision_iou30": 0.9768,
+        "recall_iou30": 0.8965,
+        "f1_iou30": 0.9349,
+        "tiled_photos": 0,
+        "forwards_per_photo": 1.0
+      },
+      "pool / sticky": {
+        "photos": 210,
+        "true_flies": 10465,
+        "detected": 580,
+        "mae": 47.186,
+        "bias": -47.071,
+        "precision_iou30": 0.5414,
+        "recall_iou30": 0.03,
+        "f1_iou30": 0.0569,
+        "tiled_photos": 2,
+        "forwards_per_photo": 1.04
+      }
+    }
+  },
+  "forward_ms": {
+    "whole_frame_p50": 278.1,
+    "four_windows_p50": 1134.3,
+    "note": "cv2.dnn forward() only, summed over the 4 windows; dev laptop (CPU) shared with other jobs, not the Lambda"
+  },
+  "run_s": 2820.6,
+  "handler": {
+    "off": {
+      "set": "demo-30d",
+      "photos": 600,
+      "prev_photo": true,
+      "at": "2026-10-19T12:53:10+07:00",
+      "lure": {
+        "photos": 388,
+        "true_flies": 2476,
+        "detected": 2089,
+        "mae": 1.039,
+        "bias": -0.997,
+        "precision_iou30": 0.9785,
+        "recall_iou30": 0.8255,
+        "f1_iou30": 0.8955,
+        "dnn_ms_p50": 269.4,
+        "total_ms_p50": 1584.7
+      },
+      "sticky": {
+        "photos": 129,
+        "true_flies": 5151,
+        "detected": 425,
+        "mae": 36.667,
+        "bias": -36.636,
+        "precision_iou30": 0.8329,
+        "recall_iou30": 0.0687,
+        "f1_iou30": 0.127,
+        "dnn_ms_p50": 240.4,
+        "total_ms_p50": 1585.2
+      }
+    },
+    "sticky": {
+      "set": "demo-30d",
+      "photos": 600,
+      "prev_photo": true,
+      "at": "2026-10-19T13:15:22+07:00",
+      "lure": {
+        "photos": 388,
+        "true_flies": 2476,
+        "detected": 2089,
+        "mae": 1.039,
+        "bias": -0.997,
+        "precision_iou30": 0.9785,
+        "recall_iou30": 0.8255,
+        "f1_iou30": 0.8955,
+        "dnn_ms_p50": 319.7,
+        "total_ms_p50": 1746.4
+      },
+      "sticky": {
+        "photos": 129,
+        "true_flies": 5151,
+        "detected": 4954,
+        "mae": 4.953,
+        "bias": -1.527,
+        "precision_iou30": 0.849,
+        "recall_iou30": 0.8165,
+        "f1_iou30": 0.8325,
+        "dnn_ms_p50": 456.4,
+        "total_ms_p50": 1619.0
+      }
+    }
+  },
+  "latency": {
+    "set": "demo-30d",
+    "photos": 30,
+    "size": "2304x1296",
+    "repeat": 3,
+    "off": {
+      "detect_ms_p50": 128.4,
+      "forward_ms_p50": 120.1
+    },
+    "sticky": {
+      "detect_ms_p50": 510.4,
+      "forward_ms_p50": 474.7
+    },
+    "note": "per photo, best of the repeats, dev laptop CPU (no other job running), not the Lambda; the handler also detects the previous photo, so a sticky request with prevPhoto pays the difference twice"
+  }
+}
