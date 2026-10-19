@@ -16,7 +16,8 @@ FlyBot-side tool the planners call is answered here with a *pending* acknowledge
 Guardrails (state machine, budgets, evidence, kill switch) still run in front of every call, so a proposal
 here is one the policy allowed. `requiresApproval` and `confidence` come from policy.yaml
 (`proposal_approval`, `proposal_confidence`): policy choices, not measurements. `reason` is written in the
-request's locale (vi / en) from the decision rule; the planner's English detail stays in `detail`.
+request's locale (vi / en) from the decision rule, and `reasonI18n` carries it in both languages so FlyBot shows each
+viewer their own; the planner's English detail stays in `detail`.
 """
 
 from __future__ import annotations
@@ -202,7 +203,9 @@ def proposals_from_trace(trace: Trace, policy: PolicyConfig, locale: str = "vi")
         approval = (policy.proposal_approval or {}).get(action, True)
         out.append({
             "id": f"p{len(out) + 1}", "action": action, "params": _params(call),
-            "reason": reason_for(rule, locale, detail or rule), "detail": detail[:500], "rule": rule,
+            "reason": reason_for(rule, locale, detail or rule),
+            "reasonI18n": {lang: reason_for(rule, lang, detail or rule) for lang in ("vi", "en")},
+            "detail": detail[:500], "rule": rule,
             "confidence": confidence_for(rule, policy), "requiresApproval": bool(approval),
             "evidence": [e for e in (call.result or {}).get("evidence", []) if isinstance(e, str) and not e.startswith("tool:")][:10],
             "toolCall": call.index, "by": call.by,

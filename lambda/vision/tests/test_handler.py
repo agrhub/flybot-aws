@@ -243,6 +243,8 @@ def test_quality_issue_becomes_a_proposal_in_vietnamese(fake_det, no_bucket):
     p = out["proposals"][0]
     assert p["requiresApproval"] is False and p["confidence"] == 0.9 and p["rule"] == "quality.recapture"
     assert "chụp lại" in p["reason"] and "dark" in p["detail"] and p["params"]["purpose"] == "recapture"
+    # Both languages, so FlyBot shows each viewer theirs whatever the owner's language was
+    assert p["reasonI18n"]["vi"] == p["reason"] and p["reasonI18n"]["en"].startswith("Photo quality is not good enough")
     assert "dark" in out["quality"]["flags"]
     assert any(d["rule"] == "quality.awaiting_photo" for d in out["trace"]["decisions"])
 
