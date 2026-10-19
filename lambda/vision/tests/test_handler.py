@@ -126,7 +126,7 @@ def test_s3_photo_and_evidence_upload(fake_det, monkeypatch, tmp_path):
     monkeypatch.setattr("sentinel.common.aws.client", lambda name, **kw: s3)
     monkeypatch.setenv("PHOTOS_BUCKET", "flybot-photos-test")
     monkeypatch.delenv("EVIDENCE_DIR", raising=False)
-    out = h.analyze(request(photo={"s3Bucket": "flybot-photos-test", "s3Key": "tenants/t1/cams/BE4089629/p.jpg"}))
+    out = h.analyze(request(photo={"s3Bucket": "flybot-photos-test", "s3Key": "tenants/t1/cams/BE4089629/p.jpg"}, evidence=True))
     assert out["counts"]["total"] == 3
     assert out["evidence"]["annotatedS3Key"] == "evidence/BE4089629/2026-10-16T08-00-00Z.annotated.jpg"
     assert s3.puts and s3.puts[0][:2] == ("flybot-photos-test", out["evidence"]["annotatedS3Key"])
@@ -138,9 +138,36 @@ def test_evidence_goes_to_the_request_photo_bucket(fake_det, monkeypatch):
     monkeypatch.setattr("sentinel.common.aws.client", lambda name, **kw: s3)
     monkeypatch.setenv("PHOTOS_BUCKET", "some-other-bucket")
     monkeypatch.delenv("EVIDENCE_DIR", raising=False)
-    out = h.analyze(request(photo={"s3Bucket": "flybot-photos-685527430355-dev", "s3Key": "snapshots/BE4089629/p.jpg"}))
+    out = h.analyze(request(photo={"s3Bucket": "flybot-photos-685527430355-dev", "s3Key": "snapshots/BE4089629/p.jpg"}, evidence=True))
     assert s3.puts[0][0] == "flybot-photos-685527430355-dev" and out["evidence"]["bucket"] == "flybot-photos-685527430355-dev"
     assert out["evidence"]["annotatedS3Key"].startswith("evidence/BE4089629/")
+
+
+def test_no_picture_is_stored_unless_the_request_asks(fake_det, monkeypatch):
+    """FlyBot keeps the photo and draws the boxes: a plain request writes nothing to S3, only returns the result."""
+    s3 = FakeS3({"snapshots/BE4089629/p.jpg": CUR.read_bytes()})
+    monkeypatch.setattr("sentinel.common.aws.client", lambda name, **kw: s3)
+    monkeypatch.setenv("PHOTOS_BUCKET", "flybot-photos-test")
+    monkeypatch.delenv("EVIDENCE_DIR", raising=False)
+    out = h.analyze(request(photo={"s3Bucket": "flybot-photos-test", "s3Key": "snapshots/BE4089629/p.jpg"}))
+    assert out["counts"]["total"] == 3 and out["boxes"]
+    assert not s3.puts and out["evidence"]["annotatedS3Key"] is None
+    assert out["privacy"]["person_suspected"] is False and "regions" not in out["privacy"]
+
+
+def test_a_suspected_person_comes_back_as_face_regions(monkeypatch):
+    """No stored picture to blur: the regions (normalised) go to FlyBot, or blurAll without the face model."""
+    from types import SimpleNamespace
+
+    import numpy as np
+
+    img = np.zeros((100, 200, 3), np.uint8)
+    obs = SimpleNamespace(privacy={"person_suspected": True, "faces": {"method": "yunet"}})
+    monkeypatch.setattr("sentinel.vision.motion.detect_faces", lambda im: [{"bbox": [20.0, 10.0, 60.0, 50.0], "score": 0.9}])
+    assert h.privacy_block(obs, img) == {"person_suspected": True, "regions": [{"x": 0.1, "y": 0.1, "w": 0.2, "h": 0.4}], "method": "yunet"}
+    monkeypatch.setattr("sentinel.vision.motion.detect_faces", lambda im: None)
+    assert h.privacy_block(obs, img)["blurAll"] is True
+    assert h.privacy_block(SimpleNamespace(privacy={"person_suspected": False}), img) == {"person_suspected": False}
 
 
 def test_optional_request_fields_from_flybot_are_accepted(fake_det, no_bucket):

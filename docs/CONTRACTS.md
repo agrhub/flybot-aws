@@ -38,13 +38,14 @@ Response (HTTP 200 / no FunctionError):
   // action: "capture_now" | "set_interval" {"minutes": n} | "set_isp" {"brightness": n, "wdr": bool} | "review_request" {} | "notify" {"message": s}
   "answer": "markdown text, deep mode only",
   "trace": {"planner": "rule|llm", "steps": [{"tool": "detect", "ms": 410}], "tokens": {"in": 0, "cachedIn": 0, "out": 0}, "ms": 1320},
-  "evidence": {"annotatedS3Key": "evidence/BE4089629/2026-10-16T08-00-00Z.annotated.jpg", "crops": []},
+  "privacy": {"person_suspected": false},
+  "evidence": {"annotatedS3Key": null, "crops": []},
   "timings": {"totalMs": 1320, "dnnMs": 410}
 }
 ```
 Error: `{"v": 1, "error": {"code": "photo_not_found" | "bad_request" | "model_unavailable" | "internal", "message": "..."}}` with a Lambda FunctionError (or HTTP 4xx/5xx locally). FlyBot keeps the photo, marks the analysis failed, and retries once after 30 s.
 
-FlyBot stores `counts`, `boxes`, `quality`, `diff`, `proposals`, `traceId`, `trace`, `model`, `evidence` on the snapshot document, shows proposals as confirm cards, and emits the `snapshot_analyzed` webhook unchanged.
+FlyBot stores `counts`, `boxes`, `quality`, `diff`, `proposals`, `traceId`, `trace`, `model`, `privacy` on the snapshot document, shows proposals as confirm cards, and emits the `snapshot_analyzed` webhook unchanged. The Lambda stores no picture: FlyBot shows its own photo and draws `boxes` on it.
 
 ### 1a. Errors, extra response fields and request options (additive to section 1)
 - Errors: the Lambda raises, so `Invoke` returns `FunctionError: Unhandled` and the payload is Lambda's `{"errorMessage": "<the contract JSON above as a string>", "errorType": "PhotoNotFound|BadRequest|ModelUnavailable|Internal", ...}`: FlyBot reads `JSON.parse(payload.errorMessage).error.code`. Locally (`uv run python -m sentinel.lambda_local`) the same JSON is the HTTP body with status 400 / 404 / 503 / 500.
@@ -52,7 +53,8 @@ FlyBot stores `counts`, `boxes`, `quality`, `diff`, `proposals`, `traceId`, `tra
 - `proposals[].params` per action: `capture_now {purpose, resolution}`, `set_isp {brightness?, contrast?, wdr: bool?, flicker?}`, `set_interval {minutes, from, to}`, `review_request {kind: review|card_change|treatment, ...}`, `notify {kind, at, message}`. `requiresApproval` and `confidence` are policy values (`lambda/vision/sentinel/agent/policy.yaml`), not measurements.
 - A missing or unreadable `prevPhoto` is not an error: `diff` is null and `warnings` says so. `camera.trapKind` defaults to `lure`. Optional request extras the planner uses: `camera.battery` (percent), `camera.isp` ({brightness, contrast, wdr, flicker} of a CamOS camera), `camera.alertThreshold`, `photoId` (echoed as `review_request.params.snapshotId`). Unknown keys and malformed `history` rows are ignored, never a `bad_request`.
 - `set_isp` is proposed only for `camera.platform == "camos"` (EZVIZ cameras expose no ISP through FlyBot, `kinesis` has no control channel); the other actions apply to every platform.
-- `evidence.annotatedS3Key` is written to the bucket the photo came from (`photo.s3Bucket`), so FlyBot serves it from its own bucket (`GET /api/sentinel/ui/evidence?key=`); for a `photo.url` request it goes to the Lambda's `PHOTOS_BUCKET`. The response also carries `evidence.bucket`.
+- Privacy: when the photo may show a person (`privacy.person_suspected`, a large occluder between two photos), `privacy.regions` lists the face regions `[{x, y, w, h}]` (normalised, YuNet) that FlyBot blurs wherever it shows the photo; `privacy.blurAll: true` when the face model is unavailable (blur the whole picture).
+- An annotated JPEG is stored only on request (`"evidence": true`, e.g. the benchmark or a debugging run): `evidence.annotatedS3Key` then goes to the bucket the photo came from (`photo.s3Bucket`), else the Lambda's `PHOTOS_BUCKET`, with `evidence.bucket`. Local runs with `EVIDENCE_DIR` write it there (`evidence.annotatedPath`). FlyBot never asks for it.
 
 ## 2. ESP32 camera -> FlyBot device API (HTTPS)
 Base URL and device token come from pairing (protocol v1 section 12). Header on every call: `X-Device-Token: <token>`; `X-Device-Serial: <serial>`.
