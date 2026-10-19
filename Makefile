@@ -3,12 +3,13 @@
 #   make models                     fetch the detector ONNX (SHA-256 checked) into models/
 #   make lambda-local               POST http://localhost:9001/invoke (CONTRACTS.md section 1) for FlyBot local dev
 #   make replay-sample              24 bundled trap photos through the handler -> data/replay/sample/
+#   make synth / synth-ahead / synth-pool / synth-check   SIMULATED demo photos (eval/synth) and their checks
 #   make build-lambda               build + push the arm64 Lambda image with AWS CodeBuild (infra/build-image.sh)
 #   make deploy / make destroy      ./deploy.sh / ./destroy.sh, settings in deploy.env (infra/DEPLOY_CHECKLIST.md)
 #   make hooks                      git pre-commit hook: infra/ops/secrets-scan.sh --staged
 #   make host CMD='...'             run a command on the FlyBot server through SSM (logs, systemctl, bootstrap re-run)
 #   make bench                      bench matrix (bench/run_matrix.sh)
-.PHONY: setup test test-fast lint lock-lambda models lambda-local replay-sample build-lambda deploy destroy provision-camera bench cold-start host hooks
+.PHONY: setup test test-fast lint lock-lambda models lambda-local replay-sample synth synth-ahead synth-pool synth-check build-lambda deploy destroy provision-camera bench cold-start host hooks
 PROFILE ?= sentinel
 REGION ?= ap-southeast-2
 STAGE ?= dev
@@ -47,6 +48,22 @@ lambda-local:
 replay-sample:
 	cd $(VISION) && EVIDENCE_DIR=../../data/replay/sample/evidence $(UV) run python ../../eval/replay_sample.py \
 	  --manifest ../../data/samples/samples_manifest.csv --out ../../data/replay/sample $(ARGS)
+
+# SIMULATED demo photos: real empty trap photos + pasted fruit flies, labelled (eval/synth/README.md); one day: ARGS='--day 2026-10-25 --out data/synth/day'
+synth:
+	$(UV) run --project $(VISION) python -m eval.synth.generate $(ARGS)
+
+synth-ahead:
+	$(UV) run --project $(VISION) python -m eval.synth.generate --from 2026-10-19 --to 2026-11-10 --out data/synth/demo-ahead $(ARGS)
+
+synth-pool:
+	$(UV) run --project $(VISION) python -m eval.synth.pool $(ARGS)
+
+# Vision handler (YOLO26n) on the showcase and the pool, then eval/SYNTHETIC_RESULTS.md and eval/SYNTHETIC_AGENT_EVAL.md
+synth-check:
+	DETECTOR=yolo26 $(UV) run --project $(VISION) python -m eval.synth.check --tiles --manifest data/synth/demo-30d/manifest.json
+	DETECTOR=yolo26 $(UV) run --project $(VISION) python -m eval.synth.check --manifest data/synth/pool/manifest.json
+	$(UV) run --project $(VISION) python -m eval.synth.report
 
 # Cold start + warm latency of the deployed function (needs the stack): writes bench/results/lambda_latency.json
 cold-start:

@@ -1,0 +1,513 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/agrhub/flybot-aws/eval/synth/manifest.schema.json",
+  "title": "FlyBot synthetic trap photo set (flybot-synth-manifest/1)",
+  "description": "manifest.json written by eval/synth/generate.py (series: a trap's photos at their capture times) and eval/synth/pool.py (pool: photos with no trap and no time, for the demo's virtual traps). Every photo is a SIMULATED composite (real empty trap photo + pasted fruit flies), never a field photo. Times are UTC ISO 8601 with Z; box fractions use the FlyBot contract convention (top-left x, y, width w, height h, fractions of the photo).",
+  "type": "object",
+  "required": [
+    "schema",
+    "synthetic",
+    "label",
+    "name",
+    "createdAt",
+    "generator",
+    "seed",
+    "config",
+    "credits",
+    "traps",
+    "photos"
+  ],
+  "properties": {
+    "schema": {
+      "const": "flybot-synth-manifest/1"
+    },
+    "synthetic": {
+      "const": true
+    },
+    "label": {
+      "type": "string",
+      "description": "Human-readable SIMULATED DATA label, to show wherever the set is shown"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "generator": {
+      "type": "object",
+      "required": [
+        "module",
+        "git",
+        "opencv"
+      ],
+      "properties": {
+        "module": {
+          "type": "string"
+        },
+        "git": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "opencv": {
+          "type": "string"
+        }
+      }
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "config": {
+      "type": "object",
+      "description": "The generator config as run (eval/synth/demo_30d.json plus CLI overrides)"
+    },
+    "credits": {
+      "type": "object",
+      "required": [
+        "flies",
+        "backgrounds",
+        "flyBank"
+      ],
+      "properties": {
+        "flies": {
+          "type": "string",
+          "description": "CC BY 4.0 attribution of the fly dataset; keep it with the images"
+        },
+        "backgrounds": {
+          "type": "string"
+        },
+        "flyBank": {
+          "type": "object",
+          "properties": {
+            "splits": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "crops": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "traps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "trapKind",
+          "backgroundCamera",
+          "cards",
+          "dailyLevels"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "trapKind": {
+            "enum": [
+              "lure",
+              "sticky"
+            ]
+          },
+          "lat": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "lon": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "backgroundCamera": {
+            "type": "string",
+            "description": "Real camera whose empty photos are the backgrounds"
+          },
+          "wave": {
+            "type": "object",
+            "description": "Count curve parameters (eval/synth/curve.py Wave)"
+          },
+          "cap": {
+            "type": "integer"
+          },
+          "cardDays": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "cards": {
+            "type": "array",
+            "description": "Sticky traps: one entry per card (card change = new card); empty for lure traps",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "from",
+                "quad"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "from": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "quad": {
+                  "type": "array"
+                },
+                "background": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "dailyLevels": {
+            "type": "array",
+            "description": "Expected flies per day from the curve (lure: per photo at slot weight 1; sticky: caught per day)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "level": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "platform": {
+            "enum": [
+              "ezviz",
+              "camos",
+              "kinesis"
+            ],
+            "description": "Camera platform the photos stand for"
+          }
+        }
+      }
+    },
+    "photos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "photoId",
+          "synthetic",
+          "file",
+          "trap",
+          "trapKind",
+          "platform",
+          "capturedAt",
+          "trueCount",
+          "visibleCount",
+          "newSincePrevious",
+          "width",
+          "height",
+          "boxes",
+          "defect",
+          "background",
+          "sha256"
+        ],
+        "properties": {
+          "photoId": {
+            "type": "string",
+            "pattern": "^synth-",
+            "description": "Series: synth-<trap>-<scheduled slot, UTC, YYYYmmddTHHMM>Z (stable: regenerating a day gives the same id); pool: synth-pool-..."
+          },
+          "synthetic": {
+            "const": true
+          },
+          "file": {
+            "type": "string",
+            "pattern": "(^|/)SYNTH_[^/]+\\.jpg$",
+            "description": "Relative to the manifest's folder"
+          },
+          "trap": {
+            "type": "string"
+          },
+          "trapKind": {
+            "enum": [
+              "lure",
+              "sticky"
+            ]
+          },
+          "capturedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "null in a pool (the demo assigns times)"
+          },
+          "localDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "slot": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "trueCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Flies on the trap (exact: the generator placed them)"
+          },
+          "newSincePrevious": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Lure: same as trueCount (resets every photo). Sticky: flies added since the previous photo of the card"
+          },
+          "curveNew": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "What the count curve asked for this photo"
+          },
+          "notPlaced": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "curveNew minus the flies actually placed (no room left)"
+          },
+          "cardId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cardChanged": {
+            "type": "boolean",
+            "description": "Sticky: this photo shows a new, clean card"
+          },
+          "previousPhotoId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "dailyLevel": {
+            "type": "number"
+          },
+          "boxes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "x",
+                "y",
+                "w",
+                "h",
+                "px",
+                "flyCrop"
+              ],
+              "properties": {
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                },
+                "w": {
+                  "type": "number"
+                },
+                "h": {
+                  "type": "number"
+                },
+                "px": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 4,
+                  "maxItems": 4,
+                  "description": "x, y, w, h in pixels (moved with the frame when the camera moved)"
+                },
+                "flyCrop": {
+                  "type": "string",
+                  "description": "<split>/<dataset image>#<label row> in camos/fruit-fly v3"
+                },
+                "angle": {
+                  "type": "number"
+                },
+                "longSidePx": {
+                  "type": "number"
+                },
+                "addedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Sticky: photo time when this fly first appears"
+                },
+                "hidden": {
+                  "type": "boolean",
+                  "description": "the fly cannot be seen in this photo (under an occluder, trap out of view)"
+                }
+              }
+            }
+          },
+          "background": {
+            "type": "object",
+            "required": [
+              "file",
+              "camera",
+              "capturedAt"
+            ],
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "camera": {
+                "type": "string"
+              },
+              "capturedAt": {
+                "type": "string"
+              },
+              "stickyCard": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "render": {
+            "type": "object"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "platform": {
+            "enum": [
+              "ezviz",
+              "camos",
+              "kinesis"
+            ]
+          },
+          "dayInCard": {
+            "type": "integer",
+            "description": "Pool sticky photos: day 1..7 of the card"
+          },
+          "visibleCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Flies visible in the photo: trueCount minus the flies an injected occluder or a trap out of view hides"
+          },
+          "defect": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "null for a clean photo; otherwise the damage injected on purpose (eval/synth/defects.py) and what the policy should do",
+            "required": [
+              "type",
+              "severity",
+              "unit",
+              "expected"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "blur",
+                  "dark",
+                  "glare",
+                  "dirty_lens",
+                  "occluded_hand",
+                  "occluded_leaf",
+                  "camera_moved",
+                  "no_trap"
+                ]
+              },
+              "severity": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "expected": {
+                "type": "object",
+                "required": [
+                  "flag",
+                  "rule",
+                  "actions",
+                  "counted",
+                  "needsPrev"
+                ],
+                "properties": {
+                  "flag": {
+                    "type": "string",
+                    "description": "quality flag (or op 2 issue) the response should raise"
+                  },
+                  "rule": {
+                    "type": "string",
+                    "description": "RulePlanner decision rule prefix the policy prescribes"
+                  },
+                  "actions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "proposal actions (docs/CONTRACTS.md)"
+                  },
+                  "counted": {
+                    "type": "boolean",
+                    "description": "false: the photo must not be counted"
+                  },
+                  "needsPrev": {
+                    "type": "boolean",
+                    "description": "only detectable against the previous photo (send prevPhoto)"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "dates": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "date"
+      },
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "Series: first and last local date generated"
+    },
+    "pool": {
+      "type": "boolean",
+      "description": "true for a pool (eval/synth/pool.py)"
+    }
+  }
+}

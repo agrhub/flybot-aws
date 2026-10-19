@@ -29,6 +29,7 @@ bench/results/*.json
 bench/build/
 infra/iot/.policy.*.json
 data/replay/
+data/synth/
 data/evidence*/
 lambda/vision/requirements-lambda.body
 infra/.build/

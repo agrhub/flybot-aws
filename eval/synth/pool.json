@@ -1,0 +1,24 @@
+{
+  "name": "pool",
+  "description": "SIMULATED DATA pool for the FlyBot demo's virtual traps: lure photos by fly count, 7-day sticky cards and damaged photos. The stamp names no trap and no time.",
+  "seed": 20261020,
+  "startDate": "2026-01-01",
+  "utcOffset": "+07:00",
+  "schedule": ["06:30", "09:00", "11:30", "14:00", "16:30"],
+  "blend": "multiply",
+  "flyScale": 0.11,
+  "maxOverlapIoU": 0.05,
+  "maxOverlapIoUSteps": [0.05, 0.15, 0.25],
+  "flyBank": {"splits": ["test", "valid"], "maxCrops": 1200, "seed": 7},
+  "backgrounds": "data/samples/samples_manifest.csv",
+  "lure": {
+    "max": 60, "bucket": 5, "perBucket": 10,
+    "traps": [
+      {"id": "pool-lure-a", "backgroundCamera": "BE4089629", "smallMaxCount": 40},
+      {"id": "pool-lure-b", "backgroundCamera": "BE4111159"}
+    ]
+  },
+  "sticky": {"backgroundCamera": "BE4111159", "cardDays": 7, "flyScale": 0.04, "cardCoverage": 0.84, "cap": 300,
+             "noise": 0.2, "dailyCatch": [3, 7, 12, 18, 24, 29]},
+  "defects": {"lure": 5, "sticky": 3}
+}

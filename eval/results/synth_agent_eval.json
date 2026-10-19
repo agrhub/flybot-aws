@@ -1,0 +1,909 @@
+{
+  "kind": "automatic evaluation of the agent's decisions against the generated truth of SYNTHETIC photos; not an expert review (no person gave these verdicts)",
+  "generated_at": "2026-10-19T05:54:10+00:00",
+  "sets": [
+    {
+      "manifest": "data/synth/demo-30d/manifest.json",
+      "set": "demo-30d",
+      "seed": 20261019,
+      "photos": 600,
+      "ok": 600,
+      "errors": [],
+      "generator_git": "eval/synth (feat(eval) labelled synthetic trap photos)",
+      "model": {
+        "name": "yolo26n",
+        "version": "2026-10-16",
+        "engine": "opencv-5.0.0-dnn-new",
+        "onnx": "fruitfly_yolo26n.onnx"
+      },
+      "tiles": true,
+      "prev_photo": true,
+      "transport": "in-process sentinel.handler.analyze (store=False)",
+      "flyScale": {
+        "demo-lure-a": 0.11,
+        "demo-lure-b": 0.11,
+        "demo-lure-c": 0.11,
+        "demo-sticky-d": 0.04
+      },
+      "fly_crops": {
+        "splits": [
+          "test",
+          "valid"
+        ],
+        "crops": 284
+      },
+      "run_s": 3420.2,
+      "at": "2026-10-19T12:53:10+07:00"
+    },
+    {
+      "manifest": "data/synth/pool/manifest.json",
+      "set": "pool",
+      "seed": 20261020,
+      "photos": 404,
+      "ok": 404,
+      "errors": [],
+      "generator_git": "eval/synth (feat(eval) labelled synthetic trap photos)",
+      "model": {
+        "name": "yolo26n",
+        "version": "2026-10-16",
+        "engine": "opencv-5.0.0-dnn-new",
+        "onnx": "fruitfly_yolo26n.onnx"
+      },
+      "tiles": false,
+      "prev_photo": true,
+      "transport": "in-process sentinel.handler.analyze (store=False)",
+      "flyScale": 0.11,
+      "fly_crops": {
+        "splits": [
+          "test",
+          "valid"
+        ],
+        "crops": 284
+      },
+      "run_s": 1068.5,
+      "at": "2026-10-19T11:56:02+07:00"
+    }
+  ],
+  "photos": {
+    "all": 1004,
+    "damaged": 147,
+    "clean": 857
+  },
+  "expected_source": "eval/synth/defects.py EXPECTED, written from sentinel/agent/policy.yaml and the RulePlanner",
+  "defects": {
+    "blur / lure": {
+      "photos": 9,
+      "expected": {
+        "flag": "blurry",
+        "rule": "quality.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": true,
+        "needsPrev": false
+      },
+      "flag_raised": 0,
+      "rule_taken": 2,
+      "actions_proposed": 6,
+      "not_counted_ok": 9,
+      "outcome_correct": 6,
+      "all_correct": 0,
+      "observed_flags": {
+        "camera_moved": 5,
+        "overexposed": 2,
+        "trap_missing": 4
+      },
+      "observed_actions": {
+        "capture_now": 6,
+        "review_request": 5
+      },
+      "with_prev": 9
+    },
+    "blur / sticky": {
+      "photos": 6,
+      "expected": {
+        "flag": "blurry",
+        "rule": "quality.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": true,
+        "needsPrev": false
+      },
+      "flag_raised": 6,
+      "rule_taken": 6,
+      "actions_proposed": 6,
+      "not_counted_ok": 6,
+      "outcome_correct": 6,
+      "all_correct": 6,
+      "observed_flags": {
+        "blurry": 6,
+        "camera_moved": 1,
+        "occluded": 3
+      },
+      "observed_actions": {
+        "capture_now": 6,
+        "review_request": 1
+      },
+      "with_prev": 6
+    },
+    "blur / all": {
+      "photos": 15,
+      "expected": {
+        "flag": "blurry",
+        "rule": "quality.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": true
+      },
+      "flag_raised": 6,
+      "rule_taken": 8,
+      "actions_proposed": 12,
+      "not_counted_ok": 15,
+      "outcome_correct": 12,
+      "all_correct": 6,
+      "observed_flags": {
+        "blurry": 6,
+        "camera_moved": 6,
+        "occluded": 3,
+        "overexposed": 2,
+        "trap_missing": 4
+      },
+      "observed_actions": {
+        "capture_now": 12,
+        "review_request": 6
+      },
+      "with_prev": 15
+    },
+    "dark / lure": {
+      "photos": 15,
+      "expected": {
+        "flag": "dark",
+        "rule": "quality.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": true,
+        "needsPrev": false
+      },
+      "flag_raised": 12,
+      "rule_taken": 14,
+      "actions_proposed": 15,
+      "not_counted_ok": 15,
+      "outcome_correct": 15,
+      "all_correct": 12,
+      "observed_flags": {
+        "camera_moved": 1,
+        "dark": 12,
+        "occluded": 1,
+        "overexposed": 3,
+        "trap_missing": 15
+      },
+      "observed_actions": {
+        "capture_now": 15,
+        "review_request": 1
+      },
+      "with_prev": 15
+    },
+    "dark / sticky": {
+      "photos": 4,
+      "expected": {
+        "flag": "dark",
+        "rule": "quality.isp_fix",
+        "actions": [
+          "set_isp"
+        ],
+        "counted": true,
+        "needsPrev": false
+      },
+      "flag_raised": 0,
+      "rule_taken": 0,
+      "actions_proposed": 0,
+      "not_counted_ok": 4,
+      "outcome_correct": 0,
+      "all_correct": 0,
+      "observed_flags": {},
+      "observed_actions": {
+        "review_request": 1
+      },
+      "with_prev": 4
+    },
+    "dark / all": {
+      "photos": 19,
+      "expected": {
+        "flag": "dark",
+        "rule": {
+          "ezviz": "quality.recapture",
+          "camos": "quality.isp_fix"
+        },
+        "actions": {
+          "ezviz": [
+            "capture_now"
+          ],
+          "camos": [
+            "set_isp"
+          ]
+        },
+        "counted": true
+      },
+      "flag_raised": 12,
+      "rule_taken": 14,
+      "actions_proposed": 15,
+      "not_counted_ok": 19,
+      "outcome_correct": 15,
+      "all_correct": 12,
+      "observed_flags": {
+        "camera_moved": 1,
+        "dark": 12,
+        "occluded": 1,
+        "overexposed": 3,
+        "trap_missing": 15
+      },
+      "observed_actions": {
+        "capture_now": 15,
+        "review_request": 2
+      },
+      "with_prev": 19
+    },
+    "glare / lure": {
+      "photos": 12,
+      "expected": {
+        "flag": "overexposed",
+        "rule": "quality.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": true,
+        "needsPrev": false
+      },
+      "flag_raised": 12,
+      "rule_taken": 12,
+      "actions_proposed": 12,
+      "not_counted_ok": 12,
+      "outcome_correct": 12,
+      "all_correct": 12,
+      "observed_flags": {
+        "overexposed": 12
+      },
+      "observed_actions": {
+        "capture_now": 12
+      },
+      "with_prev": 12
+    },
+    "glare / sticky": {
+      "photos": 5,
+      "expected": {
+        "flag": "overexposed",
+        "rule": "quality.isp_fix",
+        "actions": [
+          "set_isp"
+        ],
+        "counted": true,
+        "needsPrev": false
+      },
+      "flag_raised": 5,
+      "rule_taken": 5,
+      "actions_proposed": 5,
+      "not_counted_ok": 5,
+      "outcome_correct": 5,
+      "all_correct": 5,
+      "observed_flags": {
+        "occluded": 5,
+        "overexposed": 5
+      },
+      "observed_actions": {
+        "capture_now": 5,
+        "set_isp": 5
+      },
+      "with_prev": 5
+    },
+    "glare / all": {
+      "photos": 17,
+      "expected": {
+        "flag": "overexposed",
+        "rule": {
+          "ezviz": "quality.recapture",
+          "camos": "quality.isp_fix"
+        },
+        "actions": {
+          "ezviz": [
+            "capture_now"
+          ],
+          "camos": [
+            "set_isp"
+          ]
+        },
+        "counted": true
+      },
+      "flag_raised": 17,
+      "rule_taken": 17,
+      "actions_proposed": 17,
+      "not_counted_ok": 17,
+      "outcome_correct": 17,
+      "all_correct": 17,
+      "observed_flags": {
+        "occluded": 5,
+        "overexposed": 17
+      },
+      "observed_actions": {
+        "capture_now": 17,
+        "set_isp": 5
+      },
+      "with_prev": 17
+    },
+    "dirty_lens / lure": {
+      "photos": 15,
+      "expected": {
+        "flag": "dirty",
+        "rule": "quality.clean_lens",
+        "actions": [
+          "review_request"
+        ],
+        "counted": true,
+        "needsPrev": false
+      },
+      "flag_raised": 0,
+      "rule_taken": 0,
+      "actions_proposed": 1,
+      "not_counted_ok": 15,
+      "outcome_correct": 1,
+      "all_correct": 0,
+      "observed_flags": {
+        "camera_moved": 1,
+        "overexposed": 2,
+        "trap_missing": 1
+      },
+      "observed_actions": {
+        "capture_now": 3,
+        "notify": 1,
+        "review_request": 1
+      },
+      "with_prev": 15
+    },
+    "dirty_lens / sticky": {
+      "photos": 7,
+      "expected": {
+        "flag": "dirty",
+        "rule": "quality.clean_lens",
+        "actions": [
+          "review_request"
+        ],
+        "counted": true,
+        "needsPrev": false
+      },
+      "flag_raised": 0,
+      "rule_taken": 0,
+      "actions_proposed": 1,
+      "not_counted_ok": 7,
+      "outcome_correct": 1,
+      "all_correct": 0,
+      "observed_flags": {
+        "occluded": 5
+      },
+      "observed_actions": {
+        "capture_now": 1,
+        "review_request": 1
+      },
+      "with_prev": 7
+    },
+    "dirty_lens / all": {
+      "photos": 22,
+      "expected": {
+        "flag": "dirty",
+        "rule": "quality.clean_lens",
+        "actions": [
+          "review_request"
+        ],
+        "counted": true
+      },
+      "flag_raised": 0,
+      "rule_taken": 0,
+      "actions_proposed": 2,
+      "not_counted_ok": 22,
+      "outcome_correct": 2,
+      "all_correct": 0,
+      "observed_flags": {
+        "camera_moved": 1,
+        "occluded": 5,
+        "overexposed": 2,
+        "trap_missing": 1
+      },
+      "observed_actions": {
+        "capture_now": 4,
+        "notify": 1,
+        "review_request": 2
+      },
+      "with_prev": 22
+    },
+    "occluded_hand / lure": {
+      "photos": 19,
+      "expected": {
+        "flag": "occluded",
+        "rule": "occlusion.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": false,
+        "needsPrev": true
+      },
+      "flag_raised": 19,
+      "rule_taken": 15,
+      "actions_proposed": 17,
+      "not_counted_ok": 17,
+      "outcome_correct": 17,
+      "all_correct": 15,
+      "observed_flags": {
+        "occluded": 19,
+        "overexposed": 2,
+        "trap_missing": 6
+      },
+      "observed_actions": {
+        "capture_now": 17
+      },
+      "with_prev": 19
+    },
+    "occluded_hand / sticky": {
+      "photos": 6,
+      "expected": {
+        "flag": "occluded",
+        "rule": "occlusion.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": false,
+        "needsPrev": true
+      },
+      "flag_raised": 6,
+      "rule_taken": 6,
+      "actions_proposed": 6,
+      "not_counted_ok": 6,
+      "outcome_correct": 6,
+      "all_correct": 6,
+      "observed_flags": {
+        "occluded": 6
+      },
+      "observed_actions": {
+        "capture_now": 6
+      },
+      "with_prev": 6
+    },
+    "occluded_hand / all": {
+      "photos": 25,
+      "expected": {
+        "flag": "occluded",
+        "rule": "occlusion.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": false
+      },
+      "flag_raised": 25,
+      "rule_taken": 21,
+      "actions_proposed": 23,
+      "not_counted_ok": 23,
+      "outcome_correct": 23,
+      "all_correct": 21,
+      "observed_flags": {
+        "occluded": 25,
+        "overexposed": 2,
+        "trap_missing": 6
+      },
+      "observed_actions": {
+        "capture_now": 23
+      },
+      "with_prev": 25
+    },
+    "occluded_leaf / lure": {
+      "photos": 11,
+      "expected": {
+        "flag": "occluded",
+        "rule": "occlusion.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": false,
+        "needsPrev": true
+      },
+      "flag_raised": 11,
+      "rule_taken": 9,
+      "actions_proposed": 11,
+      "not_counted_ok": 11,
+      "outcome_correct": 11,
+      "all_correct": 9,
+      "observed_flags": {
+        "occluded": 11,
+        "overexposed": 2,
+        "trap_missing": 8
+      },
+      "observed_actions": {
+        "capture_now": 11
+      },
+      "with_prev": 11
+    },
+    "occluded_leaf / sticky": {
+      "photos": 4,
+      "expected": {
+        "flag": "occluded",
+        "rule": "occlusion.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": false,
+        "needsPrev": true
+      },
+      "flag_raised": 4,
+      "rule_taken": 4,
+      "actions_proposed": 4,
+      "not_counted_ok": 4,
+      "outcome_correct": 4,
+      "all_correct": 4,
+      "observed_flags": {
+        "occluded": 4,
+        "trap_missing": 2
+      },
+      "observed_actions": {
+        "capture_now": 4
+      },
+      "with_prev": 4
+    },
+    "occluded_leaf / all": {
+      "photos": 15,
+      "expected": {
+        "flag": "occluded",
+        "rule": "occlusion.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": false
+      },
+      "flag_raised": 15,
+      "rule_taken": 13,
+      "actions_proposed": 15,
+      "not_counted_ok": 15,
+      "outcome_correct": 15,
+      "all_correct": 13,
+      "observed_flags": {
+        "occluded": 15,
+        "overexposed": 2,
+        "trap_missing": 10
+      },
+      "observed_actions": {
+        "capture_now": 15
+      },
+      "with_prev": 15
+    },
+    "camera_moved / lure": {
+      "photos": 8,
+      "expected": {
+        "flag": "camera_moved",
+        "rule": "motion.camera_moved",
+        "actions": [
+          "review_request"
+        ],
+        "counted": true,
+        "needsPrev": true
+      },
+      "flag_raised": 7,
+      "rule_taken": 7,
+      "actions_proposed": 7,
+      "not_counted_ok": 8,
+      "outcome_correct": 7,
+      "all_correct": 7,
+      "observed_flags": {
+        "camera_moved": 7,
+        "overexposed": 2
+      },
+      "observed_actions": {
+        "capture_now": 2,
+        "review_request": 7
+      },
+      "with_prev": 8
+    },
+    "camera_moved / sticky": {
+      "photos": 8,
+      "expected": {
+        "flag": "camera_moved",
+        "rule": "motion.camera_moved",
+        "actions": [
+          "review_request"
+        ],
+        "counted": true,
+        "needsPrev": true
+      },
+      "flag_raised": 7,
+      "rule_taken": 7,
+      "actions_proposed": 7,
+      "not_counted_ok": 8,
+      "outcome_correct": 7,
+      "all_correct": 7,
+      "observed_flags": {
+        "camera_moved": 7
+      },
+      "observed_actions": {
+        "review_request": 9
+      },
+      "with_prev": 8
+    },
+    "camera_moved / all": {
+      "photos": 16,
+      "expected": {
+        "flag": "camera_moved",
+        "rule": "motion.camera_moved",
+        "actions": [
+          "review_request"
+        ],
+        "counted": true
+      },
+      "flag_raised": 14,
+      "rule_taken": 14,
+      "actions_proposed": 14,
+      "not_counted_ok": 16,
+      "outcome_correct": 14,
+      "all_correct": 14,
+      "observed_flags": {
+        "camera_moved": 14,
+        "overexposed": 2
+      },
+      "observed_actions": {
+        "capture_now": 2,
+        "review_request": 16
+      },
+      "with_prev": 16
+    },
+    "no_trap / lure": {
+      "photos": 13,
+      "expected": {
+        "flag": "trap_missing",
+        "rule": "trap_missing.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": false,
+        "needsPrev": false
+      },
+      "flag_raised": 11,
+      "rule_taken": 8,
+      "actions_proposed": 8,
+      "not_counted_ok": 11,
+      "outcome_correct": 8,
+      "all_correct": 8,
+      "observed_flags": {
+        "camera_moved": 10,
+        "occluded": 3,
+        "trap_missing": 11
+      },
+      "observed_actions": {
+        "capture_now": 8,
+        "review_request": 7
+      },
+      "with_prev": 13
+    },
+    "no_trap / sticky": {
+      "photos": 5,
+      "expected": {
+        "flag": "trap_missing",
+        "rule": "trap_missing.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": false,
+        "needsPrev": false
+      },
+      "flag_raised": 5,
+      "rule_taken": 5,
+      "actions_proposed": 5,
+      "not_counted_ok": 5,
+      "outcome_correct": 5,
+      "all_correct": 5,
+      "observed_flags": {
+        "camera_moved": 2,
+        "trap_missing": 5
+      },
+      "observed_actions": {
+        "capture_now": 5,
+        "review_request": 2
+      },
+      "with_prev": 5
+    },
+    "no_trap / all": {
+      "photos": 18,
+      "expected": {
+        "flag": "trap_missing",
+        "rule": "trap_missing.recapture",
+        "actions": [
+          "capture_now"
+        ],
+        "counted": false
+      },
+      "flag_raised": 16,
+      "rule_taken": 13,
+      "actions_proposed": 13,
+      "not_counted_ok": 16,
+      "outcome_correct": 13,
+      "all_correct": 13,
+      "observed_flags": {
+        "camera_moved": 12,
+        "occluded": 3,
+        "trap_missing": 16
+      },
+      "observed_actions": {
+        "capture_now": 13,
+        "review_request": 9
+      },
+      "with_prev": 18
+    }
+  },
+  "clean": {
+    "untouched_backgrounds": {
+      "source": "eval/results/replay_sample_yolo26.json",
+      "photos": 24,
+      "quality_flags": {
+        "overexposed": 10
+      }
+    },
+    "lure_backgrounds_flagged": 13,
+    "lure_backgrounds": 24,
+    "photos": 857,
+    "with_quality_flag": 161,
+    "flags": {
+      "camera_moved": 2,
+      "occluded": 7,
+      "overexposed": 156
+    },
+    "with_quality_action": 177,
+    "actions": {
+      "capture_now": 157,
+      "review_request": 21
+    },
+    "not_counted": 157,
+    "by_kind": {
+      "lure": {
+        "photos": 518,
+        "with_quality_flag": 160,
+        "with_quality_action": 158
+      },
+      "sticky": {
+        "photos": 339,
+        "with_quality_flag": 1,
+        "with_quality_action": 19
+      }
+    }
+  },
+  "surge": {
+    "demo-lure-a": {
+      "trapKind": "lure",
+      "photos": 150,
+      "truth_photos": 32,
+      "agent_photos": 20,
+      "tp": 15,
+      "fp": 5,
+      "fn": 17,
+      "precision": 0.75,
+      "recall": 0.4688,
+      "truth_days": [
+        "2026-09-30",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-10",
+        "2026-10-11"
+      ],
+      "agent_days": [
+        "2026-10-03",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-10",
+        "2026-10-11",
+        "2026-10-12",
+        "2026-10-17",
+        "2026-10-18"
+      ],
+      "days_both": 6,
+      "days_agent_only": 4,
+      "days_truth_only": 3
+    },
+    "demo-lure-b": {
+      "trapKind": "lure",
+      "photos": 150,
+      "truth_photos": 32,
+      "agent_photos": 20,
+      "tp": 17,
+      "fp": 3,
+      "fn": 15,
+      "precision": 0.85,
+      "recall": 0.5312,
+      "truth_days": [
+        "2026-09-29",
+        "2026-09-30",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09"
+      ],
+      "agent_days": [
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-09"
+      ],
+      "days_both": 7,
+      "days_agent_only": 0,
+      "days_truth_only": 3
+    },
+    "demo-lure-c": {
+      "trapKind": "lure",
+      "photos": 150,
+      "truth_photos": 23,
+      "agent_photos": 11,
+      "tp": 8,
+      "fp": 3,
+      "fn": 15,
+      "precision": 0.7273,
+      "recall": 0.3478,
+      "truth_days": [
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-12",
+        "2026-10-13",
+        "2026-10-15"
+      ],
+      "agent_days": [
+        "2026-10-04",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08",
+        "2026-10-13",
+        "2026-10-18"
+      ],
+      "days_both": 4,
+      "days_agent_only": 2,
+      "days_truth_only": 2
+    },
+    "demo-sticky-d": {
+      "trapKind": "sticky",
+      "photos": 150,
+      "truth_photos": 45,
+      "agent_photos": 15,
+      "tp": 0,
+      "fp": 15,
+      "fn": 45,
+      "precision": 0.0,
+      "recall": 0.0,
+      "truth_days": [
+        "2026-09-22",
+        "2026-09-23",
+        "2026-09-24",
+        "2026-09-25",
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-08",
+        "2026-10-09",
+        "2026-10-15"
+      ],
+      "agent_days": [
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-13"
+      ],
+      "days_both": 0,
+      "days_agent_only": 4,
+      "days_truth_only": 9
+    }
+  },
+  "surge_rule": "sentinel.agent.domain.detect_surge (FlyBot surgeService: 3 days, ratio 1.5, rise >= 3, count >= 5) on the true counts, card changes known; the agent sees the handler's counts as history, without card-change dates (the contract's history has none)"
+}
