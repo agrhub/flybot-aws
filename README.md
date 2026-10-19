@@ -90,7 +90,7 @@ traces and the chatbot. A self-registered ESP32-S3 camera can be claimed at `/cl
 Prerequisites: an AWS account where you can create IAM roles, the [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html),
 the [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html),
 [uv](https://docs.astral.sh/uv/) or Python 3.9+, Node.js 22.12+ with npm, git, curl, and a checkout of the FlyBot app
-(AGPL-3.0, repository private for now: see "Repository" below). No Docker anywhere: the server runs a prebuilt FlyBot release and the
+(public, AGPL-3.0: the `flybot/` submodule or https://github.com/agrhub/flybot, branch `feat/aws`). No Docker anywhere: the server runs a prebuilt FlyBot release and the
 Lambda image is built by CodeBuild.
 
 ```
@@ -274,12 +274,12 @@ photos** on Lambda. Details and sources: `infra/COST.md`.
 | Contracts between the parts, design decisions | `docs/CONTRACTS.md`, `docs/DECISIONS.md` | this repo |
 | Evidence cited by the reports (vision checks, failure injection, expert review sheet, benchmark build info) | `docs/evidence/` | this repo; `python infra/ops/check-links.py` checks every cited file exists |
 | ESP32-S3 trap camera firmware | `firmware-esp32/` (agrhub/camos-esp32-trap) | public submodule, AGPL-3.0 |
-| FlyBot web app (API, Vue client, chatbot, camera platforms) | `flybot/` (agrhub/flybot) | submodule, AGPL-3.0; repository private for now, access on request |
+| FlyBot web app (API, Vue client, chatbot, camera platforms) | `flybot/` (agrhub/flybot, branch `feat/aws`) | public submodule, AGPL-3.0 |
 | AMB82 camera firmware, production datasets, production model weights | not published | |
 
-`git clone --recurse-submodules` stops at `flybot/` without access to that repository; the clone and the public submodule are
-still complete: `git submodule update --init firmware-esp32`. Everything in "Run locally" works without the FlyBot app.
-Deploying needs a FlyBot checkout on your computer (`FLYBOT_SRC`); the server never needs GitHub access.
+`git clone --recurse-submodules https://github.com/agrhub/flybot-aws.git` fetches both submodules. Everything in "Run
+locally" works without the FlyBot app. Deploying needs a FlyBot checkout on your computer (`FLYBOT_SRC`, for example the
+`flybot/` submodule); the server never needs GitHub access.
 
 License: AGPL-3.0 (LICENSE, NOTICE); the YOLO26n weights derive from Ultralytics YOLO26 (AGPL-3.0). FlyBot
 (`flybot/`, AGPL-3.0-only from the release after 1.5.0) and the camera firmware (`firmware-esp32/`, AGPL-3.0) carry
