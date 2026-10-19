@@ -1,0 +1,2464 @@
+{
+ "schema": "flybot-synth-manifest/1",
+ "synthetic": true,
+ "label": "SIMULATED DATA: synthetic composite (real empty trap photo + pasted fruit flies), not a field photo",
+ "name": "demo-30d",
+ "description": "SIMULATED DATA for the FlyBot demo farm: 4 traps, 5 photos a day from 2026-09-19 (30 days by default; --to 2026-11-10 continues it), about 10% damaged on purpose. Not field data. Sample: 7 photos copied from the full set.",
+ "createdAt": "2026-10-19T04:23:35Z",
+ "generator": {
+  "module": "eval.synth.generate",
+  "git": "eval/synth (feat(eval) labelled synthetic trap photos)",
+  "opencv": "5.0.0"
+ },
+ "seed": 20261019,
+ "config": {
+  "name": "demo-30d",
+  "description": "SIMULATED DATA for the FlyBot demo farm: 4 traps, 5 photos a day from 2026-09-19 (30 days by default; --to 2026-11-10 continues it), about 10% damaged on purpose. Not field data.",
+  "seed": 20261019,
+  "startDate": "2026-09-19",
+  "days": 30,
+  "utcOffset": "+07:00",
+  "schedule": [
+   "06:30",
+   "09:00",
+   "11:30",
+   "14:00",
+   "16:30"
+  ],
+  "blend": "multiply",
+  "stamp": "full",
+  "defects": {
+   "rate": 0.1,
+   "types": [
+    "blur",
+    "dark",
+    "glare",
+    "dirty_lens",
+    "occluded_hand",
+    "occluded_leaf",
+    "camera_moved",
+    "no_trap"
+   ]
+  },
+  "flyScale": 0.11,
+  "maxOverlapIoU": 0.05,
+  "flyBank": {
+   "splits": [
+    "test",
+    "valid"
+   ],
+   "maxCrops": 1200,
+   "seed": 7
+  },
+  "backgrounds": "data/samples/samples_manifest.csv",
+  "traps": [
+   {
+    "id": "demo-lure-a",
+    "name": "Demo lure trap A",
+    "trapKind": "lure",
+    "backgroundCamera": "BE4089629",
+    "lat": 11.15012,
+    "lon": 106.40021,
+    "cap": 45,
+    "wave": {
+     "baseline": 0.6,
+     "amplitude": 14,
+     "peak_day": 17,
+     "rise_days": 3.5,
+     "decline_days": 6,
+     "noise": 0.3
+    }
+   },
+   {
+    "id": "demo-lure-b",
+    "name": "Demo lure trap B",
+    "trapKind": "lure",
+    "backgroundCamera": "BE4111159",
+    "lat": 11.15048,
+    "lon": 106.40066,
+    "cap": 60,
+    "wave": {
+     "baseline": 1.0,
+     "amplitude": 22,
+     "peak_day": 19,
+     "rise_days": 4,
+     "decline_days": 7,
+     "noise": 0.25
+    }
+   },
+   {
+    "id": "demo-lure-c",
+    "name": "Demo lure trap C",
+    "trapKind": "lure",
+    "backgroundCamera": "BE4089629",
+    "lat": 11.14975,
+    "lon": 106.40074,
+    "cap": 45,
+    "wave": {
+     "baseline": 0.4,
+     "amplitude": 9,
+     "peak_day": 21,
+     "rise_days": 4,
+     "decline_days": 5,
+     "noise": 0.35
+    }
+   },
+   {
+    "id": "demo-sticky-d",
+    "name": "Demo sticky card D",
+    "trapKind": "sticky",
+    "backgroundCamera": "BE4111159",
+    "lat": 11.1503,
+    "lon": 106.39985,
+    "cardDays": 7,
+    "cap": 300,
+    "flyScale": 0.04,
+    "cardCoverage": 0.84,
+    "wave": {
+     "baseline": 1.5,
+     "amplitude": 26,
+     "peak_day": 18,
+     "rise_days": 4,
+     "decline_days": 6,
+     "noise": 0.25
+    }
+   }
+  ]
+ },
+ "dates": [
+  "2026-09-19",
+  "2026-10-18"
+ ],
+ "credits": {
+  "flies": "\"fruit-fly\" dataset by CamOS on Roboflow Universe, https://universe.roboflow.com/camos/fruit-fly-wmcqi/dataset/3, licensed CC BY 4.0",
+  "backgrounds": "Empty lure-trap photos from AGRHUB's orchard cameras (FlyBot), data/samples in this repository",
+  "flyBank": {
+   "splits": [
+    "test",
+    "valid"
+   ],
+   "crops": 284
+  }
+ },
+ "traps": [
+  {
+   "id": "demo-lure-a",
+   "name": "Demo lure trap A",
+   "trapKind": "lure",
+   "platform": "ezviz",
+   "lat": 11.15012,
+   "lon": 106.40021,
+   "backgroundCamera": "BE4089629",
+   "wave": {
+    "baseline": 0.6,
+    "amplitude": 14,
+    "peak_day": 17,
+    "rise_days": 3.5,
+    "decline_days": 6,
+    "noise": 0.3
+   },
+   "cap": 45,
+   "cardDays": null,
+   "cards": [],
+   "dailyLevels": [
+    {
+     "date": "2026-09-19",
+     "level": 0.372
+    },
+    {
+     "date": "2026-09-20",
+     "level": 0.326
+    },
+    {
+     "date": "2026-09-21",
+     "level": 0.468
+    },
+    {
+     "date": "2026-09-22",
+     "level": 0.428
+    },
+    {
+     "date": "2026-09-23",
+     "level": 0.713
+    },
+    {
+     "date": "2026-09-24",
+     "level": 0.641
+    },
+    {
+     "date": "2026-09-25",
+     "level": 0.805
+    },
+    {
+     "date": "2026-09-26",
+     "level": 1.046
+    },
+    {
+     "date": "2026-09-27",
+     "level": 1.319
+    },
+    {
+     "date": "2026-09-28",
+     "level": 1.27
+    },
+    {
+     "date": "2026-09-29",
+     "level": 2.408
+    },
+    {
+     "date": "2026-09-30",
+     "level": 3.392
+    },
+    {
+     "date": "2026-10-01",
+     "level": 5.952
+    },
+    {
+     "date": "2026-10-02",
+     "level": 5.957
+    },
+    {
+     "date": "2026-10-03",
+     "level": 8.517
+    },
+    {
+     "date": "2026-10-04",
+     "level": 6.233
+    },
+    {
+     "date": "2026-10-05",
+     "level": 7.434
+    },
+    {
+     "date": "2026-10-06",
+     "level": 13.624
+    },
+    {
+     "date": "2026-10-07",
+     "level": 11.73
+    },
+    {
+     "date": "2026-10-08",
+     "level": 11.206
+    },
+    {
+     "date": "2026-10-09",
+     "level": 16.271
+    },
+    {
+     "date": "2026-10-10",
+     "level": 18.737
+    },
+    {
+     "date": "2026-10-11",
+     "level": 16.485
+    },
+    {
+     "date": "2026-10-12",
+     "level": 10.463
+    },
+    {
+     "date": "2026-10-13",
+     "level": 8.764
+    },
+    {
+     "date": "2026-10-14",
+     "level": 5.895
+    },
+    {
+     "date": "2026-10-15",
+     "level": 6.082
+    },
+    {
+     "date": "2026-10-16",
+     "level": 6.671
+    },
+    {
+     "date": "2026-10-17",
+     "level": 3.881
+    },
+    {
+     "date": "2026-10-18",
+     "level": 3.81
+    }
+   ]
+  },
+  {
+   "id": "demo-lure-b",
+   "name": "Demo lure trap B",
+   "trapKind": "lure",
+   "platform": "ezviz",
+   "lat": 11.15048,
+   "lon": 106.40066,
+   "backgroundCamera": "BE4111159",
+   "wave": {
+    "baseline": 1.0,
+    "amplitude": 22,
+    "peak_day": 19,
+    "rise_days": 4,
+    "decline_days": 7,
+    "noise": 0.25
+   },
+   "cap": 60,
+   "cardDays": null,
+   "cards": [],
+   "dailyLevels": [
+    {
+     "date": "2026-09-19",
+     "level": 1.244
+    },
+    {
+     "date": "2026-09-20",
+     "level": 1.371
+    },
+    {
+     "date": "2026-09-21",
+     "level": 1.079
+    },
+    {
+     "date": "2026-09-22",
+     "level": 1.0
+    },
+    {
+     "date": "2026-09-23",
+     "level": 0.97
+    },
+    {
+     "date": "2026-09-24",
+     "level": 0.738
+    },
+    {
+     "date": "2026-09-25",
+     "level": 1.321
+    },
+    {
+     "date": "2026-09-26",
+     "level": 1.402
+    },
+    {
+     "date": "2026-09-27",
+     "level": 1.284
+    },
+    {
+     "date": "2026-09-28",
+     "level": 1.764
+    },
+    {
+     "date": "2026-09-29",
+     "level": 2.927
+    },
+    {
+     "date": "2026-09-30",
+     "level": 3.616
+    },
+    {
+     "date": "2026-10-01",
+     "level": 4.892
+    },
+    {
+     "date": "2026-10-02",
+     "level": 6.8
+    },
+    {
+     "date": "2026-10-03",
+     "level": 8.882
+    },
+    {
+     "date": "2026-10-04",
+     "level": 14.123
+    },
+    {
+     "date": "2026-10-05",
+     "level": 12.411
+    },
+    {
+     "date": "2026-10-06",
+     "level": 14.159
+    },
+    {
+     "date": "2026-10-07",
+     "level": 22.145
+    },
+    {
+     "date": "2026-10-08",
+     "level": 25.058
+    },
+    {
+     "date": "2026-10-09",
+     "level": 23.289
+    },
+    {
+     "date": "2026-10-10",
+     "level": 23.0
+    },
+    {
+     "date": "2026-10-11",
+     "level": 21.42
+    },
+    {
+     "date": "2026-10-12",
+     "level": 18.207
+    },
+    {
+     "date": "2026-10-13",
+     "level": 18.295
+    },
+    {
+     "date": "2026-10-14",
+     "level": 15.429
+    },
+    {
+     "date": "2026-10-15",
+     "level": 21.516
+    },
+    {
+     "date": "2026-10-16",
+     "level": 14.986
+    },
+    {
+     "date": "2026-10-17",
+     "level": 12.582
+    },
+    {
+     "date": "2026-10-18",
+     "level": 8.842
+    }
+   ]
+  },
+  {
+   "id": "demo-lure-c",
+   "name": "Demo lure trap C",
+   "trapKind": "lure",
+   "platform": "ezviz",
+   "lat": 11.14975,
+   "lon": 106.40074,
+   "backgroundCamera": "BE4089629",
+   "wave": {
+    "baseline": 0.4,
+    "amplitude": 9,
+    "peak_day": 21,
+    "rise_days": 4,
+    "decline_days": 5,
+    "noise": 0.35
+   },
+   "cap": 45,
+   "cardDays": null,
+   "cards": [],
+   "dailyLevels": [
+    {
+     "date": "2026-09-19",
+     "level": 0.377
+    },
+    {
+     "date": "2026-09-20",
+     "level": 0.33
+    },
+    {
+     "date": "2026-09-21",
+     "level": 0.188
+    },
+    {
+     "date": "2026-09-22",
+     "level": 0.292
+    },
+    {
+     "date": "2026-09-23",
+     "level": 0.257
+    },
+    {
+     "date": "2026-09-24",
+     "level": 0.245
+    },
+    {
+     "date": "2026-09-25",
+     "level": 0.35
+    },
+    {
+     "date": "2026-09-26",
+     "level": 0.324
+    },
+    {
+     "date": "2026-09-27",
+     "level": 0.699
+    },
+    {
+     "date": "2026-09-28",
+     "level": 0.611
+    },
+    {
+     "date": "2026-09-29",
+     "level": 0.76
+    },
+    {
+     "date": "2026-09-30",
+     "level": 0.771
+    },
+    {
+     "date": "2026-10-01",
+     "level": 1.002
+    },
+    {
+     "date": "2026-10-02",
+     "level": 1.964
+    },
+    {
+     "date": "2026-10-03",
+     "level": 1.586
+    },
+    {
+     "date": "2026-10-04",
+     "level": 2.727
+    },
+    {
+     "date": "2026-10-05",
+     "level": 3.409
+    },
+    {
+     "date": "2026-10-06",
+     "level": 7.231
+    },
+    {
+     "date": "2026-10-07",
+     "level": 7.188
+    },
+    {
+     "date": "2026-10-08",
+     "level": 9.147
+    },
+    {
+     "date": "2026-10-09",
+     "level": 3.497
+    },
+    {
+     "date": "2026-10-10",
+     "level": 6.396
+    },
+    {
+     "date": "2026-10-11",
+     "level": 8.7
+    },
+    {
+     "date": "2026-10-12",
+     "level": 7.001
+    },
+    {
+     "date": "2026-10-13",
+     "level": 8.942
+    },
+    {
+     "date": "2026-10-14",
+     "level": 3.282
+    },
+    {
+     "date": "2026-10-15",
+     "level": 6.38
+    },
+    {
+     "date": "2026-10-16",
+     "level": 5.176
+    },
+    {
+     "date": "2026-10-17",
+     "level": 2.299
+    },
+    {
+     "date": "2026-10-18",
+     "level": 3.533
+    }
+   ]
+  },
+  {
+   "id": "demo-sticky-d",
+   "name": "Demo sticky card D",
+   "trapKind": "sticky",
+   "platform": "camos",
+   "lat": 11.1503,
+   "lon": 106.39985,
+   "backgroundCamera": "BE4111159",
+   "wave": {
+    "baseline": 1.5,
+    "amplitude": 26,
+    "peak_day": 18,
+    "rise_days": 4,
+    "decline_days": 6,
+    "noise": 0.25
+   },
+   "cap": 300,
+   "cardDays": 7,
+   "cards": [
+    {
+     "id": "demo-sticky-d-card-1",
+     "from": "2026-09-18T23:30:12Z",
+     "quad": [
+      [
+       224.0,
+       49.4
+      ],
+      [
+       2156.9,
+       94.5
+      ],
+      [
+       2129.8,
+       1254.2
+      ],
+      [
+       196.9,
+       1209.1
+      ]
+     ],
+     "background": "data/samples/images/BE4111159/6ac5e6ef4a6a99588b8c8a0b.jpg"
+    },
+    {
+     "id": "demo-sticky-d-card-2",
+     "from": "2026-09-25T23:30:03Z",
+     "quad": [
+      [
+       265.3,
+       50.1
+      ],
+      [
+       2150.7,
+       101.5
+      ],
+      [
+       2119.9,
+       1232.7
+      ],
+      [
+       234.5,
+       1181.3
+      ]
+     ],
+     "background": "data/samples/images/BE4111159/6ac5e6ed9d7333beb125be16.jpg"
+    },
+    {
+     "id": "demo-sticky-d-card-3",
+     "from": "2026-10-02T23:30:08Z",
+     "quad": [
+      [
+       221.2,
+       79.7
+      ],
+      [
+       2099.1,
+       113.7
+      ],
+      [
+       2078.7,
+       1240.5
+      ],
+      [
+       200.7,
+       1206.4
+      ]
+     ],
+     "background": "data/samples/images/BE4111159/6ac5dfe69d7333beb125be13.jpg"
+    },
+    {
+     "id": "demo-sticky-d-card-4",
+     "from": "2026-10-09T23:30:12Z",
+     "quad": [
+      [
+       233.8,
+       59.7
+      ],
+      [
+       2145.5,
+       40.5
+      ],
+      [
+       2157.0,
+       1187.5
+      ],
+      [
+       245.3,
+       1206.8
+      ]
+     ],
+     "background": "data/samples/images/BE4111159/6ac5cace9d7333beb125be0c.jpg"
+    },
+    {
+     "id": "demo-sticky-d-card-5",
+     "from": "2026-10-16T23:30:10Z",
+     "quad": [
+      [
+       193.7,
+       34.5
+      ],
+      [
+       2100.5,
+       122.3
+      ],
+      [
+       2047.8,
+       1266.4
+      ],
+      [
+       141.0,
+       1178.5
+      ]
+     ],
+     "background": "data/samples/images/BE4111159/6ac5e6ef4a6a99588b8c8a0b.jpg"
+    }
+   ],
+   "dailyLevels": [
+    {
+     "date": "2026-09-19",
+     "level": 1.206
+    },
+    {
+     "date": "2026-09-20",
+     "level": 1.749
+    },
+    {
+     "date": "2026-09-21",
+     "level": 1.406
+    },
+    {
+     "date": "2026-09-22",
+     "level": 1.363
+    },
+    {
+     "date": "2026-09-23",
+     "level": 1.44
+    },
+    {
+     "date": "2026-09-24",
+     "level": 1.643
+    },
+    {
+     "date": "2026-09-25",
+     "level": 1.51
+    },
+    {
+     "date": "2026-09-26",
+     "level": 2.194
+    },
+    {
+     "date": "2026-09-27",
+     "level": 2.465
+    },
+    {
+     "date": "2026-09-28",
+     "level": 4.53
+    },
+    {
+     "date": "2026-09-29",
+     "level": 7.474
+    },
+    {
+     "date": "2026-09-30",
+     "level": 10.838
+    },
+    {
+     "date": "2026-10-01",
+     "level": 9.105
+    },
+    {
+     "date": "2026-10-02",
+     "level": 12.159
+    },
+    {
+     "date": "2026-10-03",
+     "level": 17.948
+    },
+    {
+     "date": "2026-10-04",
+     "level": 27.447
+    },
+    {
+     "date": "2026-10-05",
+     "level": 17.327
+    },
+    {
+     "date": "2026-10-06",
+     "level": 23.379
+    },
+    {
+     "date": "2026-10-07",
+     "level": 38.016
+    },
+    {
+     "date": "2026-10-08",
+     "level": 37.772
+    },
+    {
+     "date": "2026-10-09",
+     "level": 27.52
+    },
+    {
+     "date": "2026-10-10",
+     "level": 28.99
+    },
+    {
+     "date": "2026-10-11",
+     "level": 15.404
+    },
+    {
+     "date": "2026-10-12",
+     "level": 21.133
+    },
+    {
+     "date": "2026-10-13",
+     "level": 16.993
+    },
+    {
+     "date": "2026-10-14",
+     "level": 12.298
+    },
+    {
+     "date": "2026-10-15",
+     "level": 8.376
+    },
+    {
+     "date": "2026-10-16",
+     "level": 5.875
+    },
+    {
+     "date": "2026-10-17",
+     "level": 5.714
+    },
+    {
+     "date": "2026-10-18",
+     "level": 5.701
+    }
+   ]
+  }
+ ],
+ "photos": [
+  {
+   "photoId": "synth-demo-lure-a-20260929T0430Z",
+   "synthetic": true,
+   "file": "images/demo-lure-a/SYNTH_demo-lure-a_20260929T0430Z.jpg",
+   "trap": "demo-lure-a",
+   "trapKind": "lure",
+   "platform": "ezviz",
+   "capturedAt": "2026-09-29T04:30:09Z",
+   "localDate": "2026-09-29",
+   "slot": 2,
+   "cardId": null,
+   "cardChanged": false,
+   "dailyLevel": 2.408,
+   "trueCount": 1,
+   "visibleCount": 1,
+   "newSincePrevious": 1,
+   "width": 768,
+   "height": 432,
+   "boxes": [
+    {
+     "x": 0.39193,
+     "y": 0.27778,
+     "w": 0.06901,
+     "h": 0.10648,
+     "px": [
+      301.0,
+      120.0,
+      53.0,
+      46.0
+     ],
+     "flyCrop": "valid/image_09447_jpg.rf.22bb55b8746c67f970ab7d08d0f8d6d6.jpg#7",
+     "angle": 62.2,
+     "longSidePx": 52.6,
+     "hidden": false
+    }
+   ],
+   "defect": {
+    "type": "occluded_hand",
+    "severity": 0.123,
+    "unit": "frame share covered",
+    "expected": {
+     "flag": "occluded",
+     "rule": "occlusion.recapture",
+     "actions": [
+      "capture_now"
+     ],
+     "counted": false,
+     "needsPrev": true
+    }
+   },
+   "background": {
+    "file": "data/samples/images/BE4089629/6ac327d44c3227d11cfbd084.jpg",
+    "camera": "BE4089629",
+    "capturedAt": "2026-10-05T04:30:12.318Z",
+    "stickyCard": null
+   },
+   "render": {
+    "blend": "multiply",
+    "jpegQuality": 89,
+    "gain": 1.0204,
+    "contrast": 1.0142,
+    "noiseSigma": 1.259
+   },
+   "sha256": "b85eb5a9a546a7290a3a5954c6a75b04cd3aeb9636f2b4991b1001dde45d04b0",
+   "curveNew": 1,
+   "notPlaced": 0,
+   "previousPhotoId": "synth-demo-lure-a-20260929T0200Z"
+  },
+  {
+   "photoId": "synth-demo-lure-a-20261010T0930Z",
+   "synthetic": true,
+   "file": "images/demo-lure-a/SYNTH_demo-lure-a_20261010T0930Z.jpg",
+   "trap": "demo-lure-a",
+   "trapKind": "lure",
+   "platform": "ezviz",
+   "capturedAt": "2026-10-10T09:30:10Z",
+   "localDate": "2026-10-10",
+   "slot": 4,
+   "cardId": null,
+   "cardChanged": false,
+   "dailyLevel": 18.737,
+   "trueCount": 26,
+   "visibleCount": 26,
+   "newSincePrevious": 26,
+   "width": 768,
+   "height": 432,
+   "boxes": [
+    {
+     "x": 0.51172,
+     "y": 0.67824,
+     "w": 0.06901,
+     "h": 0.10417,
+     "px": [
+      393.0,
+      293.0,
+      53.0,
+      45.0
+     ],
+     "flyCrop": "test/image_09371_jpg.rf.51a427dca0a923f8505dd82280d43b6f.jpg#6",
+     "angle": 344.7,
+     "longSidePx": 62.2
+    },
+    {
+     "x": 0.40755,
+     "y": 0.59954,
+     "w": 0.05078,
+     "h": 0.09028,
+     "px": [
+      313.0,
+      259.0,
+      39.0,
+      39.0
+     ],
+     "flyCrop": "valid/image_02516_jpg.rf.8b941c934955fc8d8079bf6de72539bd.jpg#14",
+     "angle": 307.7,
+     "longSidePx": 54.5
+    },
+    {
+     "x": 0.28385,
+     "y": 0.43056,
+     "w": 0.06641,
+     "h": 0.13426,
+     "px": [
+      218.0,
+      186.0,
+      51.0,
+      58.0
+     ],
+     "flyCrop": "valid/image_03412_jpg.rf.789f213f89b0b707125eb68d97c7f934.jpg#5",
+     "angle": 9.8,
+     "longSidePx": 62.8
+    },
+    {
+     "x": 0.44792,
+     "y": 0.42824,
+     "w": 0.07161,
+     "h": 0.12037,
+     "px": [
+      344.0,
+      185.0,
+      55.0,
+      52.0
+     ],
+     "flyCrop": "test/image_02206_jpg.rf.e04f67155ff62ee6b779edd7ef791ee0.jpg#9",
+     "angle": 45.4,
+     "longSidePx": 64.5
+    },
+    {
+     "x": 0.6901,
+     "y": 0.40046,
+     "w": 0.04167,
+     "h": 0.09028,
+     "px": [
+      530.0,
+      173.0,
+      32.0,
+      39.0
+     ],
+     "flyCrop": "test/image_09369_jpg.rf.cc9f6f0db652682b283f32eab82f713c.jpg#4",
+     "angle": 150.0,
+     "longSidePx": 49.2
+    },
+    {
+     "x": 0.55469,
+     "y": 0.23611,
+     "w": 0.07292,
+     "h": 0.11806,
+     "px": [
+      426.0,
+      102.0,
+      56.0,
+      51.0
+     ],
+     "flyCrop": "valid/image_03407_jpg.rf.9bbb8af804a8dd65b4da0bc306031440.jpg#0",
+     "angle": 316.0,
+     "longSidePx": 68.9
+    },
+    {
+     "x": 0.61979,
+     "y": 0.68519,
+     "w": 0.07943,
+     "h": 0.09028,
+     "px": [
+      476.0,
+      296.0,
+      61.0,
+      39.0
+     ],
+     "flyCrop": "valid/image_02263_jpg.rf.ec11ccf1e970bae4e369f597ae2dc15a.jpg#6",
+     "angle": 97.3,
+     "longSidePx": 58.0
+    },
+    {
+     "x": 0.30859,
+     "y": 0.64352,
+     "w": 0.0599,
+     "h": 0.11343,
+     "px": [
+      237.0,
+      278.0,
+      46.0,
+      49.0
+     ],
+     "flyCrop": "test/image_01437_jpg.rf.574b3b0a10d4851e0b799e4e1b2a10b0.jpg#25",
+     "angle": 348.7,
+     "longSidePx": 65.0
+    },
+    {
+     "x": 0.44271,
+     "y": 0.25926,
+     "w": 0.04557,
+     "h": 0.11574,
+     "px": [
+      340.0,
+      112.0,
+      35.0,
+      50.0
+     ],
+     "flyCrop": "valid/image_03420_jpg.rf.df2615ba8aa63a686c1e3c1ba2535d19.jpg#3",
+     "angle": 161.4,
+     "longSidePx": 62.4
+    },
+    {
+     "x": 0.77083,
+     "y": 0.40278,
+     "w": 0.06641,
+     "h": 0.13426,
+     "px": [
+      592.0,
+      174.0,
+      51.0,
+      58.0
+     ],
+     "flyCrop": "test/image_01500_jpg.rf.8a0af5647fc2329b61310d6dcf31c147.jpg#10",
+     "angle": 92.0,
+     "longSidePx": 51.0
+    },
+    {
+     "x": 0.59245,
+     "y": 0.47222,
+     "w": 0.07422,
+     "h": 0.17593,
+     "px": [
+      455.0,
+      204.0,
+      57.0,
+      76.0
+     ],
+     "flyCrop": "test/image_01389_jpg.rf.fbc9eae95f7bb488b7c15d4e0d56e061.jpg#13",
+     "angle": 95.2,
+     "longSidePx": 71.6
+    },
+    {
+     "x": 0.29167,
+     "y": 0.23611,
+     "w": 0.08464,
+     "h": 0.15972,
+     "px": [
+      224.0,
+      102.0,
+      65.0,
+      69.0
+     ],
+     "flyCrop": "test/image_02330_jpg.rf.415bd9d9b6e362ae90e1a1db03c1573c.jpg#10",
+     "angle": 161.2,
+     "longSidePx": 71.0
+    },
+    {
+     "x": 0.19531,
+     "y": 0.39352,
+     "w": 0.0599,
+     "h": 0.12963,
+     "px": [
+      150.0,
+      170.0,
+      46.0,
+      56.0
+     ],
+     "flyCrop": "valid/image_09424_jpg.rf.d188a3e0e3335adb8f298756862f0697.jpg#1",
+     "angle": 193.9,
+     "longSidePx": 60.3
+    },
+    {
+     "x": 0.76172,
+     "y": 0.19676,
+     "w": 0.04818,
+     "h": 0.11806,
+     "px": [
+      585.0,
+      85.0,
+      37.0,
+      51.0
+     ],
+     "flyCrop": "valid/image_02263_jpg.rf.ec11ccf1e970bae4e369f597ae2dc15a.jpg#6",
+     "angle": 325.1,
+     "longSidePx": 52.7
+    },
+    {
+     "x": 0.23307,
+     "y": 0.57639,
+     "w": 0.04818,
+     "h": 0.13426,
+     "px": [
+      179.0,
+      249.0,
+      37.0,
+      58.0
+     ],
+     "flyCrop": "test/image_02447_jpg.rf.e48e2319c6bd0ff29e229f49e92ff053.jpg#3",
+     "angle": 325.0,
+     "longSidePx": 59.8
+    },
+    {
+     "x": 0.23828,
+     "y": 0.13657,
+     "w": 0.0612,
+     "h": 0.12269,
+     "px": [
+      183.0,
+      59.0,
+      47.0,
+      53.0
+     ],
+     "flyCrop": "valid/image_03407_jpg.rf.9bbb8af804a8dd65b4da0bc306031440.jpg#0",
+     "angle": 68.5,
+     "longSidePx": 62.6
+    },
+    {
+     "x": 0.6888,
+     "y": 0.65046,
+     "w": 0.09245,
+     "h": 0.17593,
+     "px": [
+      529.0,
+      281.0,
+      71.0,
+      76.0
+     ],
+     "flyCrop": "test/image_01523_jpg.rf.c1221608459386cee01f1387e5c90347.jpg#6",
+     "angle": 237.4,
+     "longSidePx": 68.4
+    },
+    {
+     "x": 0.39844,
+     "y": 0.74769,
+     "w": 0.05208,
+     "h": 0.10417,
+     "px": [
+      306.0,
+      323.0,
+      40.0,
+      45.0
+     ],
+     "flyCrop": "valid/image_02263_jpg.rf.ec11ccf1e970bae4e369f597ae2dc15a.jpg#22",
+     "angle": 251.9,
+     "longSidePx": 50.1
+    },
+    {
+     "x": 0.64974,
+     "y": 0.1412,
+     "w": 0.04948,
+     "h": 0.13194,
+     "px": [
+      499.0,
+      61.0,
+      38.0,
+      57.0
+     ],
+     "flyCrop": "test/image_03411_jpg.rf.584319aaf8f79b74c1b3eb656fb6b5f0.jpg#5",
+     "angle": 160.1,
+     "longSidePx": 63.4
+    },
+    {
+     "x": 0.49349,
+     "y": 0.12037,
+     "w": 0.07552,
+     "h": 0.11111,
+     "px": [
+      379.0,
+      52.0,
+      58.0,
+      48.0
+     ],
+     "flyCrop": "test/image_09426_jpg.rf.f7fbbf6c4192df49ef7e2c80d41b0de3.jpg#2",
+     "angle": 69.7,
+     "longSidePx": 67.4
+    },
+    {
+     "x": 0.35547,
+     "y": 0.40046,
+     "w": 0.05859,
+     "h": 0.08565,
+     "px": [
+      273.0,
+      173.0,
+      45.0,
+      37.0
+     ],
+     "flyCrop": "test/image_09407_jpg.rf.09be072dc63109a3e96e6608245a8a26.jpg#0",
+     "angle": 220.0,
+     "longSidePx": 49.2
+    },
+    {
+     "x": 0.72786,
+     "y": 0.31944,
+     "w": 0.04557,
+     "h": 0.05556,
+     "px": [
+      559.0,
+      138.0,
+      35.0,
+      24.0
+     ],
+     "flyCrop": "valid/image_02277_jpg.rf.24918966d2c1271b23427cdf5d8e0267.jpg#17",
+     "angle": 129.9,
+     "longSidePx": 48.7
+    },
+    {
+     "x": 0.72917,
+     "y": 0.5463,
+     "w": 0.0651,
+     "h": 0.12269,
+     "px": [
+      560.0,
+      236.0,
+      50.0,
+      53.0
+     ],
+     "flyCrop": "test/image_02440_jpg.rf.0e0540d77b86ae2cd16cd3f7a542a724.jpg#8",
+     "angle": 299.7,
+     "longSidePx": 61.6
+    },
+    {
+     "x": 0.47917,
+     "y": 0.58565,
+     "w": 0.03906,
+     "h": 0.08102,
+     "px": [
+      368.0,
+      253.0,
+      30.0,
+      35.0
+     ],
+     "flyCrop": "test/image_09431_jpg.rf.7d26730f2b630734a70d0c9bb60ea14e.jpg#10",
+     "angle": 304.0,
+     "longSidePx": 49.2
+    },
+    {
+     "x": 0.19401,
+     "y": 0.28704,
+     "w": 0.0638,
+     "h": 0.1088,
+     "px": [
+      149.0,
+      124.0,
+      49.0,
+      47.0
+     ],
+     "flyCrop": "test/image_09389_jpg.rf.2f48628b0cde22dbac72a0a6b419e00b.jpg#4",
+     "angle": 116.0,
+     "longSidePx": 60.1
+    },
+    {
+     "x": 0.52995,
+     "y": 0.46528,
+     "w": 0.0625,
+     "h": 0.10648,
+     "px": [
+      407.0,
+      201.0,
+      48.0,
+      46.0
+     ],
+     "flyCrop": "test/image_02409_jpg.rf.0fe491e6211f2d15c2f144839accc601.jpg#14",
+     "angle": 101.2,
+     "longSidePx": 50.5
+    }
+   ],
+   "defect": null,
+   "background": {
+    "file": "data/samples/images/BE4089629/6ac3527e67f733147518e508.jpg",
+    "camera": "BE4089629",
+    "capturedAt": "2026-10-05T07:32:14.696Z",
+    "stickyCard": null
+   },
+   "render": {
+    "blend": "multiply",
+    "jpegQuality": 90,
+    "gain": 1.0562,
+    "contrast": 0.9728,
+    "noiseSigma": 1.861
+   },
+   "sha256": "0a6e3c31c18f9f0df367099d93fb53f9387bdae0ddf314fcf4808a0d704c83df",
+   "curveNew": 27,
+   "notPlaced": 1,
+   "previousPhotoId": "synth-demo-lure-a-20261010T0700Z"
+  },
+  {
+   "photoId": "synth-demo-lure-b-20261009T0930Z",
+   "synthetic": true,
+   "file": "images/demo-lure-b/SYNTH_demo-lure-b_20261009T0930Z.jpg",
+   "trap": "demo-lure-b",
+   "trapKind": "lure",
+   "platform": "ezviz",
+   "capturedAt": "2026-10-09T09:30:08Z",
+   "localDate": "2026-10-09",
+   "slot": 4,
+   "cardId": null,
+   "cardChanged": false,
+   "dailyLevel": 23.289,
+   "trueCount": 31,
+   "visibleCount": 31,
+   "newSincePrevious": 31,
+   "width": 2304,
+   "height": 1296,
+   "boxes": [
+    {
+     "x": 0.59245,
+     "y": 0.38657,
+     "w": 0.05252,
+     "h": 0.12191,
+     "px": [
+      1365.0,
+      501.0,
+      121.0,
+      158.0
+     ],
+     "flyCrop": "test/image_03421_jpg.rf.2248d2fc46901b08593c46a8e17f88d4.jpg#0",
+     "angle": 185.1,
+     "longSidePx": 164.3
+    },
+    {
+     "x": 0.52083,
+     "y": 0.5,
+     "w": 0.0855,
+     "h": 0.06944,
+     "px": [
+      1200.0,
+      648.0,
+      197.0,
+      90.0
+     ],
+     "flyCrop": "test/image_01485_jpg.rf.14e5e1d270d92674d779881194063888.jpg#10",
+     "angle": 101.7,
+     "longSidePx": 183.7
+    },
+    {
+     "x": 0.61415,
+     "y": 0.22531,
+     "w": 0.05729,
+     "h": 0.12191,
+     "px": [
+      1415.0,
+      292.0,
+      132.0,
+      158.0
+     ],
+     "flyCrop": "valid/image_09447_jpg.rf.22bb55b8746c67f970ab7d08d0f8d6d6.jpg#3",
+     "angle": 9.7,
+     "longSidePx": 167.6
+    },
+    {
+     "x": 0.76476,
+     "y": 0.7554,
+     "w": 0.04297,
+     "h": 0.1196,
+     "px": [
+      1762.0,
+      979.0,
+      99.0,
+      155.0
+     ],
+     "flyCrop": "valid/image_09387_jpg.rf.01399c38535b2a0a42b55588d6d487fd.jpg#2",
+     "angle": 352.4,
+     "longSidePx": 185.7
+    },
+    {
+     "x": 0.73307,
+     "y": 0.14892,
+     "w": 0.06076,
+     "h": 0.12654,
+     "px": [
+      1689.0,
+      193.0,
+      140.0,
+      164.0
+     ],
+     "flyCrop": "valid/image_02283_jpg.rf.a56c662c21338631877ff95c5687c072.jpg#15",
+     "angle": 199.7,
+     "longSidePx": 201.9
+    },
+    {
+     "x": 0.62977,
+     "y": 0.77855,
+     "w": 0.06641,
+     "h": 0.06173,
+     "px": [
+      1451.0,
+      1009.0,
+      153.0,
+      80.0
+     ],
+     "flyCrop": "test/image_02425_jpg.rf.20faee2a542aae586be48d9dc8c14b59.jpg#0",
+     "angle": 330.8,
+     "longSidePx": 150.7
+    },
+    {
+     "x": 0.26823,
+     "y": 0.47685,
+     "w": 0.08247,
+     "h": 0.12114,
+     "px": [
+      618.0,
+      618.0,
+      190.0,
+      157.0
+     ],
+     "flyCrop": "valid/image_01159_jpg.rf.2fe0b826a3bfbcd3fb555213befaee3c.jpg#35",
+     "angle": 46.7,
+     "longSidePx": 194.8
+    },
+    {
+     "x": 0.3151,
+     "y": 0.13889,
+     "w": 0.06727,
+     "h": 0.16127,
+     "px": [
+      726.0,
+      180.0,
+      155.0,
+      209.0
+     ],
+     "flyCrop": "test/image_03421_jpg.rf.2248d2fc46901b08593c46a8e17f88d4.jpg#2",
+     "angle": 36.9,
+     "longSidePx": 175.2
+    },
+    {
+     "x": 0.37674,
+     "y": 0.58873,
+     "w": 0.02778,
+     "h": 0.14738,
+     "px": [
+      868.0,
+      763.0,
+      64.0,
+      191.0
+     ],
+     "flyCrop": "valid/image_02301_jpg.rf.0c4bdfa412f8b935bed4bb147239574a.jpg#8",
+     "angle": 358.9,
+     "longSidePx": 208.3
+    },
+    {
+     "x": 0.78472,
+     "y": 0.58256,
+     "w": 0.03689,
+     "h": 0.10571,
+     "px": [
+      1808.0,
+      755.0,
+      85.0,
+      137.0
+     ],
+     "flyCrop": "valid/image_09330_jpg.rf.aaee10042695e5340c3e50ebdcf8bbf2.jpg#2",
+     "angle": 19.4,
+     "longSidePx": 149.1
+    },
+    {
+     "x": 0.63455,
+     "y": 0.51775,
+     "w": 0.06554,
+     "h": 0.11497,
+     "px": [
+      1462.0,
+      671.0,
+      151.0,
+      149.0
+     ],
+     "flyCrop": "valid/image_09448_jpg.rf.0fc4dc047fc5692a2d5f3cdd19725643.jpg#5",
+     "angle": 66.3,
+     "longSidePx": 173.3
+    },
+    {
+     "x": 0.55946,
+     "y": 0.74228,
+     "w": 0.04514,
+     "h": 0.11806,
+     "px": [
+      1289.0,
+      962.0,
+      104.0,
+      153.0
+     ],
+     "flyCrop": "valid/image_02288_jpg.rf.51a0fff6e904b4e666198c903bdccf08.jpg#1",
+     "angle": 359.6,
+     "longSidePx": 180.0
+    },
+    {
+     "x": 0.22786,
+     "y": 0.61883,
+     "w": 0.04601,
+     "h": 0.0733,
+     "px": [
+      525.0,
+      802.0,
+      106.0,
+      95.0
+     ],
+     "flyCrop": "valid/image_02301_jpg.rf.0c4bdfa412f8b935bed4bb147239574a.jpg#38",
+     "angle": 49.9,
+     "longSidePx": 186.8
+    },
+    {
+     "x": 0.4579,
+     "y": 0.41975,
+     "w": 0.06337,
+     "h": 0.10648,
+     "px": [
+      1055.0,
+      544.0,
+      146.0,
+      138.0
+     ],
+     "flyCrop": "valid/image_09448_jpg.rf.0fc4dc047fc5692a2d5f3cdd19725643.jpg#5",
+     "angle": 254.8,
+     "longSidePx": 162.9
+    },
+    {
+     "x": 0.47092,
+     "y": 0.6767,
+     "w": 0.06944,
+     "h": 0.11111,
+     "px": [
+      1085.0,
+      877.0,
+      160.0,
+      144.0
+     ],
+     "flyCrop": "test/image_01540_jpg.rf.e2c7df5667bf95949bc95f213eab197a.jpg#7",
+     "angle": 137.9,
+     "longSidePx": 145.1
+    },
+    {
+     "x": 0.72049,
+     "y": 0.61034,
+     "w": 0.03733,
+     "h": 0.13426,
+     "px": [
+      1660.0,
+      791.0,
+      86.0,
+      174.0
+     ],
+     "flyCrop": "test/image_01484_jpg.rf.02c50bdb2c534d3a144532bb4d7134b5.jpg#10",
+     "angle": 0.2,
+     "longSidePx": 164.6
+    },
+    {
+     "x": 0.45833,
+     "y": 0.54475,
+     "w": 0.05122,
+     "h": 0.1088,
+     "px": [
+      1056.0,
+      706.0,
+      118.0,
+      141.0
+     ],
+     "flyCrop": "valid/image_02301_jpg.rf.0c4bdfa412f8b935bed4bb147239574a.jpg#33",
+     "angle": 194.5,
+     "longSidePx": 172.1
+    },
+    {
+     "x": 0.3546,
+     "y": 0.34414,
+     "w": 0.07292,
+     "h": 0.09568,
+     "px": [
+      817.0,
+      446.0,
+      168.0,
+      124.0
+     ],
+     "flyCrop": "valid/image_03456_jpg.rf.876837d2acd9d2a288b13bd17574d8d9.jpg#0",
+     "angle": 265.8,
+     "longSidePx": 175.6
+    },
+    {
+     "x": 0.17795,
+     "y": 0.3804,
+     "w": 0.07248,
+     "h": 0.11651,
+     "px": [
+      410.0,
+      493.0,
+      167.0,
+      151.0
+     ],
+     "flyCrop": "valid/image_09311_jpg.rf.0852655a4bd05e3585b73ae2f1df6143.jpg#4",
+     "angle": 313.8,
+     "longSidePx": 175.0
+    },
+    {
+     "x": 0.70964,
+     "y": 0.44907,
+     "w": 0.05165,
+     "h": 0.06636,
+     "px": [
+      1635.0,
+      582.0,
+      119.0,
+      86.0
+     ],
+     "flyCrop": "test/image_01122_jpg.rf.5c351f1ad42c65e9e89c73dd5b8d297d.jpg#16",
+     "angle": 106.9,
+     "longSidePx": 158.0
+    },
+    {
+     "x": 0.51562,
+     "y": 0.14506,
+     "w": 0.05295,
+     "h": 0.14583,
+     "px": [
+      1188.0,
+      188.0,
+      122.0,
+      189.0
+     ],
+     "flyCrop": "valid/image_02274_jpg.rf.1435fc60829bbff19f2264f98c0dde90.jpg#29",
+     "angle": 137.8,
+     "longSidePx": 192.1
+    },
+    {
+     "x": 0.28299,
+     "y": 0.37346,
+     "w": 0.04644,
+     "h": 0.10031,
+     "px": [
+      652.0,
+      484.0,
+      107.0,
+      130.0
+     ],
+     "flyCrop": "valid/image_03429_jpg.rf.03abd6212faad17740ef0d8826c1384b.jpg#3",
+     "angle": 313.8,
+     "longSidePx": 156.1
+    },
+    {
+     "x": 0.69792,
+     "y": 0.28164,
+     "w": 0.05208,
+     "h": 0.07948,
+     "px": [
+      1608.0,
+      365.0,
+      120.0,
+      103.0
+     ],
+     "flyCrop": "test/image_09410_jpg.rf.5cb6de706a4f1bfd177609fbd5f07e5c.jpg#6",
+     "angle": 253.5,
+     "longSidePx": 148.6
+    },
+    {
+     "x": 0.37717,
+     "y": 0.47531,
+     "w": 0.07378,
+     "h": 0.10571,
+     "px": [
+      869.0,
+      616.0,
+      170.0,
+      137.0
+     ],
+     "flyCrop": "test/image_02458_jpg.rf.a03844a7c073d436383397b6fee7a568.jpg#0",
+     "angle": 125.3,
+     "longSidePx": 168.2
+    },
+    {
+     "x": 0.38108,
+     "y": 0.18904,
+     "w": 0.05382,
+     "h": 0.10571,
+     "px": [
+      878.0,
+      245.0,
+      124.0,
+      137.0
+     ],
+     "flyCrop": "test/image_09389_jpg.rf.2f48628b0cde22dbac72a0a6b419e00b.jpg#4",
+     "angle": 38.6,
+     "longSidePx": 160.0
+    },
+    {
+     "x": 0.75868,
+     "y": 0.30324,
+     "w": 0.0842,
+     "h": 0.10262,
+     "px": [
+      1748.0,
+      393.0,
+      194.0,
+      133.0
+     ],
+     "flyCrop": "valid/image_09394_jpg.rf.1f728b66840e03b83fe0bffcf439fd61.jpg#4",
+     "angle": 53.9,
+     "longSidePx": 206.2
+    },
+    {
+     "x": 0.22569,
+     "y": 0.21759,
+     "w": 0.07205,
+     "h": 0.09722,
+     "px": [
+      520.0,
+      282.0,
+      166.0,
+      126.0
+     ],
+     "flyCrop": "valid/image_09412_jpg.rf.4360b07ae8a2bf7eeec17b748b63ff3c.jpg#3",
+     "angle": 311.7,
+     "longSidePx": 176.3
+    },
+    {
+     "x": 0.41797,
+     "y": 0.78395,
+     "w": 0.03646,
+     "h": 0.07485,
+     "px": [
+      963.0,
+      1016.0,
+      84.0,
+      97.0
+     ],
+     "flyCrop": "valid/image_09342_jpg.rf.48625f68e15da4cfb7a062dde7c9ba36.jpg#1",
+     "angle": 225.0,
+     "longSidePx": 147.1
+    },
+    {
+     "x": 0.53125,
+     "y": 0.29552,
+     "w": 0.06033,
+     "h": 0.13657,
+     "px": [
+      1224.0,
+      383.0,
+      139.0,
+      177.0
+     ],
+     "flyCrop": "valid/image_01220_jpg.rf.8973ee487ed3ffef3b1eae28e274d4f5.jpg#39",
+     "angle": 197.9,
+     "longSidePx": 186.7
+    },
+    {
+     "x": 0.43403,
+     "y": 0.11343,
+     "w": 0.07509,
+     "h": 0.15201,
+     "px": [
+      1000.0,
+      147.0,
+      173.0,
+      197.0
+     ],
+     "flyCrop": "test/image_04856_jpg.rf.c4ca5014cfe3739946343e89b4b9d2ec.jpg#4",
+     "angle": 62.6,
+     "longSidePx": 178.2
+    },
+    {
+     "x": 0.77821,
+     "y": 0.43596,
+     "w": 0.03646,
+     "h": 0.11034,
+     "px": [
+      1793.0,
+      565.0,
+      84.0,
+      143.0
+     ],
+     "flyCrop": "valid/image_09394_jpg.rf.1f728b66840e03b83fe0bffcf439fd61.jpg#6",
+     "angle": 43.6,
+     "longSidePx": 146.9
+    }
+   ],
+   "defect": null,
+   "background": {
+    "file": "data/samples/images/BE4111159/6ac5e6ed9d7333beb125be16.jpg",
+    "camera": "BE4111159",
+    "capturedAt": "2026-10-07T06:30:05.959Z",
+    "stickyCard": null
+   },
+   "render": {
+    "blend": "multiply",
+    "jpegQuality": 89,
+    "gain": 0.9671,
+    "contrast": 1.0121,
+    "noiseSigma": 1.025
+   },
+   "sha256": "76e73567133e3ae114c24c889fea3b12287962595657b8105059c02a3061f780",
+   "curveNew": 33,
+   "notPlaced": 2,
+   "previousPhotoId": "synth-demo-lure-b-20261009T0700Z"
+  },
+  {
+   "photoId": "synth-demo-lure-c-20261015T0200Z",
+   "synthetic": true,
+   "file": "images/demo-lure-c/SYNTH_demo-lure-c_20261015T0200Z.jpg",
+   "trap": "demo-lure-c",
+   "trapKind": "lure",
+   "platform": "ezviz",
+   "capturedAt": "2026-10-15T02:00:14Z",
+   "localDate": "2026-10-15",
+   "slot": 1,
+   "cardId": null,
+   "cardChanged": false,
+   "dailyLevel": 6.38,
+   "trueCount": 16,
+   "visibleCount": 16,
+   "newSincePrevious": 16,
+   "width": 768,
+   "height": 432,
+   "boxes": [
+    {
+     "x": 0.72656,
+     "y": 0.32407,
+     "w": 0.09115,
+     "h": 0.09028,
+     "px": [
+      558.0,
+      140.0,
+      70.0,
+      39.0
+     ],
+     "flyCrop": "test/image_02289_jpg.rf.54f5592b8a2d85a7efbf0e854875e9eb.jpg#13",
+     "angle": 78.1,
+     "longSidePx": 67.0
+    },
+    {
+     "x": 0.6276,
+     "y": 0.2662,
+     "w": 0.04688,
+     "h": 0.14815,
+     "px": [
+      482.0,
+      115.0,
+      36.0,
+      64.0
+     ],
+     "flyCrop": "test/image_02289_jpg.rf.54f5592b8a2d85a7efbf0e854875e9eb.jpg#13",
+     "angle": 352.7,
+     "longSidePx": 60.9
+    },
+    {
+     "x": 0.47917,
+     "y": 0.69907,
+     "w": 0.05729,
+     "h": 0.15509,
+     "px": [
+      368.0,
+      302.0,
+      44.0,
+      67.0
+     ],
+     "flyCrop": "test/image_02447_jpg.rf.e48e2319c6bd0ff29e229f49e92ff053.jpg#3",
+     "angle": 157.1,
+     "longSidePx": 66.5
+    },
+    {
+     "x": 0.63281,
+     "y": 0.56944,
+     "w": 0.0625,
+     "h": 0.14815,
+     "px": [
+      486.0,
+      246.0,
+      48.0,
+      64.0
+     ],
+     "flyCrop": "valid/image_03429_jpg.rf.03abd6212faad17740ef0d8826c1384b.jpg#5",
+     "angle": 212.4,
+     "longSidePx": 70.4
+    },
+    {
+     "x": 0.73047,
+     "y": 0.63194,
+     "w": 0.08464,
+     "h": 0.125,
+     "px": [
+      561.0,
+      273.0,
+      65.0,
+      54.0
+     ],
+     "flyCrop": "test/image_02447_jpg.rf.e48e2319c6bd0ff29e229f49e92ff053.jpg#3",
+     "angle": 219.6,
+     "longSidePx": 70.2
+    },
+    {
+     "x": 0.36979,
+     "y": 0.47222,
+     "w": 0.05339,
+     "h": 0.11806,
+     "px": [
+      284.0,
+      204.0,
+      41.0,
+      51.0
+     ],
+     "flyCrop": "valid/image_09349_jpg.rf.d84b59eb1f86d54fce4ba07c7c077f75.jpg#3",
+     "angle": 37.7,
+     "longSidePx": 66.8
+    },
+    {
+     "x": 0.48307,
+     "y": 0.24769,
+     "w": 0.06901,
+     "h": 0.09491,
+     "px": [
+      371.0,
+      107.0,
+      53.0,
+      41.0
+     ],
+     "flyCrop": "valid/image_01159_jpg.rf.2fe0b826a3bfbcd3fb555213befaee3c.jpg#24",
+     "angle": 107.9,
+     "longSidePx": 64.8
+    },
+    {
+     "x": 0.35677,
+     "y": 0.16435,
+     "w": 0.0651,
+     "h": 0.11574,
+     "px": [
+      274.0,
+      71.0,
+      50.0,
+      50.0
+     ],
+     "flyCrop": "test/image_03421_jpg.rf.2248d2fc46901b08593c46a8e17f88d4.jpg#3",
+     "angle": 61.8,
+     "longSidePx": 58.8
+    },
+    {
+     "x": 0.54427,
+     "y": 0.39583,
+     "w": 0.09245,
+     "h": 0.10417,
+     "px": [
+      418.0,
+      171.0,
+      71.0,
+      45.0
+     ],
+     "flyCrop": "valid/image_02286_jpg.rf.5c06d8cbb2838d3fb9a4a5999336842b.jpg#13",
+     "angle": 227.6,
+     "longSidePx": 68.7
+    },
+    {
+     "x": 0.56641,
+     "y": 0.60417,
+     "w": 0.05599,
+     "h": 0.11806,
+     "px": [
+      435.0,
+      261.0,
+      43.0,
+      51.0
+     ],
+     "flyCrop": "test/image_02261_jpg.rf.79935cea8046a8692aab8ec1daff1aac.jpg#32",
+     "angle": 42.3,
+     "longSidePx": 51.3
+    },
+    {
+     "x": 0.68229,
+     "y": 0.18287,
+     "w": 0.06901,
+     "h": 0.11574,
+     "px": [
+      524.0,
+      79.0,
+      53.0,
+      50.0
+     ],
+     "flyCrop": "test/image_02330_jpg.rf.415bd9d9b6e362ae90e1a1db03c1573c.jpg#37",
+     "angle": 323.8,
+     "longSidePx": 57.2
+    },
+    {
+     "x": 0.61458,
+     "y": 0.74769,
+     "w": 0.04688,
+     "h": 0.09259,
+     "px": [
+      472.0,
+      323.0,
+      36.0,
+      40.0
+     ],
+     "flyCrop": "valid/image_02263_jpg.rf.ec11ccf1e970bae4e369f597ae2dc15a.jpg#22",
+     "angle": 317.5,
+     "longSidePx": 50.2
+    },
+    {
+     "x": 0.2474,
+     "y": 0.5787,
+     "w": 0.08073,
+     "h": 0.13889,
+     "px": [
+      190.0,
+      250.0,
+      62.0,
+      60.0
+     ],
+     "flyCrop": "test/image_02330_jpg.rf.415bd9d9b6e362ae90e1a1db03c1573c.jpg#10",
+     "angle": 255.4,
+     "longSidePx": 64.5
+    },
+    {
+     "x": 0.45703,
+     "y": 0.5,
+     "w": 0.04688,
+     "h": 0.10417,
+     "px": [
+      351.0,
+      216.0,
+      36.0,
+      45.0
+     ],
+     "flyCrop": "test/image_09410_jpg.rf.5cb6de706a4f1bfd177609fbd5f07e5c.jpg#6",
+     "angle": 347.1,
+     "longSidePx": 53.3
+    },
+    {
+     "x": 0.35286,
+     "y": 0.67824,
+     "w": 0.08724,
+     "h": 0.10648,
+     "px": [
+      271.0,
+      293.0,
+      67.0,
+      46.0
+     ],
+     "flyCrop": "test/image_02291_jpg.rf.05e32e364804070702966b1305e031ef.jpg#34",
+     "angle": 74.2,
+     "longSidePx": 71.9
+    },
+    {
+     "x": 0.42188,
+     "y": 0.34722,
+     "w": 0.03906,
+     "h": 0.12037,
+     "px": [
+      324.0,
+      150.0,
+      30.0,
+      52.0
+     ],
+     "flyCrop": "test/image_01484_jpg.rf.02c50bdb2c534d3a144532bb4d7134b5.jpg#15",
+     "angle": 205.9,
+     "longSidePx": 56.9
+    }
+   ],
+   "defect": null,
+   "background": {
+    "file": "data/samples/images/BE4089629/6ac350bb85650578c63d7bef.jpg",
+    "camera": "BE4089629",
+    "capturedAt": "2026-10-05T07:24:43.031Z",
+    "stickyCard": null
+   },
+   "render": {
+    "blend": "multiply",
+    "jpegQuality": 89,
+    "gain": 1.0599,
+    "contrast": 0.9792,
+    "noiseSigma": 1.532
+   },
+   "sha256": "335bf2a51ef4b636a4669a80579a6b489743b07fd872dc5a7ed2647d994787c0",
+   "curveNew": 16,
+   "notPlaced": 0,
+   "previousPhotoId": "synth-demo-lure-c-20261014T2330Z"
+  },
+  {
+   "photoId": "synth-demo-sticky-d-20260925T0930Z",
+   "synthetic": true,
+   "file": "images/demo-sticky-d/SYNTH_demo-sticky-d_20260925T0930Z.jpg",
+   "trap": "demo-sticky-d",
+   "trapKind": "sticky",
+   "platform": "camos",
+   "capturedAt": "2026-09-25T09:30:05Z",
+   "localDate": "2026-09-25",
+   "slot": 4,
+   "cardId": "demo-sticky-d-card-1",
+   "cardChanged": false,
+   "dailyLevel": 1.51,
+   "trueCount": 13,
+   "visibleCount": 13,
+   "newSincePrevious": 1,
+   "width": 2304,
+   "height": 1296,
+   "boxes": [
+    {
+     "x": 0.44358,
+     "y": 0.81636,
+     "w": 0.0204,
+     "h": 0.03858,
+     "px": [
+      1022.0,
+      1058.0,
+      47.0,
+      50.0
+     ],
+     "flyCrop": "valid/image_09311_jpg.rf.0852655a4bd05e3585b73ae2f1df6143.jpg#3",
+     "angle": 217.9,
+     "longSidePx": 65.8,
+     "addedAt": "2026-09-18T23:30:12Z"
+    },
+    {
+     "x": 0.19227,
+     "y": 0.5108,
+     "w": 0.02561,
+     "h": 0.0571,
+     "px": [
+      443.0,
+      662.0,
+      59.0,
+      74.0
+     ],
+     "flyCrop": "test/image_04856_jpg.rf.c4ca5014cfe3739946343e89b4b9d2ec.jpg#7",
+     "angle": 131.8,
+     "longSidePx": 84.5,
+     "addedAt": "2026-09-19T09:30:07Z"
+    },
+    {
+     "x": 0.42665,
+     "y": 0.66435,
+     "w": 0.0204,
+     "h": 0.02855,
+     "px": [
+      983.0,
+      861.0,
+      47.0,
+      37.0
+     ],
+     "flyCrop": "valid/image_02277_jpg.rf.24918966d2c1271b23427cdf5d8e0267.jpg#17",
+     "angle": 139.6,
+     "longSidePx": 66.3,
+     "addedAt": "2026-09-20T02:00:10Z"
+    },
+    {
+     "x": 0.63455,
+     "y": 0.62886,
+     "w": 0.01476,
+     "h": 0.04398,
+     "px": [
+      1462.0,
+      815.0,
+      34.0,
+      57.0
+     ],
+     "flyCrop": "valid/image_09448_jpg.rf.0fc4dc047fc5692a2d5f3cdd19725643.jpg#7",
+     "angle": 206.3,
+     "longSidePx": 68.7,
+     "addedAt": "2026-09-20T04:30:09Z"
+    },
+    {
+     "x": 0.30208,
+     "y": 0.40432,
+     "w": 0.0421,
+     "h": 0.05787,
+     "px": [
+      696.0,
+      524.0,
+      97.0,
+      75.0
+     ],
+     "flyCrop": "test/image_01511_jpg.rf.8d7391397cf4ff0b387b5ae0df29282e.jpg#6",
+     "angle": 219.3,
+     "longSidePx": 87.3,
+     "addedAt": "2026-09-20T23:30:05Z"
+    },
+    {
+     "x": 0.33898,
+     "y": 0.71682,
+     "w": 0.02474,
+     "h": 0.05093,
+     "px": [
+      781.0,
+      929.0,
+      57.0,
+      66.0
+     ],
+     "flyCrop": "valid/image_02277_jpg.rf.24918966d2c1271b23427cdf5d8e0267.jpg#30",
+     "angle": 1.0,
+     "longSidePx": 71.8,
+     "addedAt": "2026-09-21T02:00:13Z"
+    },
+    {
+     "x": 0.36545,
+     "y": 0.28704,
+     "w": 0.03342,
+     "h": 0.0625,
+     "px": [
+      842.0,
+      372.0,
+      77.0,
+      81.0
+     ],
+     "flyCrop": "test/image_01487_jpg.rf.7a1b4961af24503251e4d66f178d0c29.jpg#4",
+     "angle": 174.1,
+     "longSidePx": 78.2,
+     "addedAt": "2026-09-22T23:30:15Z"
+    },
+    {
+     "x": 0.44184,
+     "y": 0.33488,
+     "w": 0.03082,
+     "h": 0.03858,
+     "px": [
+      1018.0,
+      434.0,
+      71.0,
+      50.0
+     ],
+     "flyCrop": "valid/image_09361_jpg.rf.f75ea7a6dc7337f74d8a1ce1b5df5358.jpg#2",
+     "angle": 204.6,
+     "longSidePx": 77.8,
+     "addedAt": "2026-09-22T23:30:15Z"
+    },
+    {
+     "x": 0.39019,
+     "y": 0.83642,
+     "w": 0.02734,
+     "h": 0.03781,
+     "px": [
+      899.0,
+      1084.0,
+      63.0,
+      49.0
+     ],
+     "flyCrop": "valid/image_02516_jpg.rf.8b941c934955fc8d8079bf6de72539bd.jpg#14",
+     "angle": 52.0,
+     "longSidePx": 76.0,
+     "addedAt": "2026-09-22T23:30:15Z"
+    },
+    {
+     "x": 0.76172,
+     "y": 0.83796,
+     "w": 0.03516,
+     "h": 0.04784,
+     "px": [
+      1755.0,
+      1086.0,
+      81.0,
+      62.0
+     ],
+     "flyCrop": "test/image_03419_jpg.rf.d6ec06086060ed43e3c6892cadd59159.jpg#3",
+     "angle": 81.1,
+     "longSidePx": 92.4,
+     "addedAt": "2026-09-23T09:30:04Z"
+    },
+    {
+     "x": 0.61372,
+     "y": 0.48688,
+     "w": 0.03299,
+     "h": 0.04167,
+     "px": [
+      1414.0,
+      631.0,
+      76.0,
+      54.0
+     ],
+     "flyCrop": "valid/image_09446_jpg.rf.b61d59fa49b69415e48692ca269f72e9.jpg#7",
+     "angle": 43.7,
+     "longSidePx": 79.4,
+     "addedAt": "2026-09-24T07:00:15Z"
+    },
+    {
+     "x": 0.46875,
+     "y": 0.53086,
+     "w": 0.03255,
+     "h": 0.04244,
+     "px": [
+      1080.0,
+      688.0,
+      75.0,
+      55.0
+     ],
+     "flyCrop": "valid/image_03420_jpg.rf.df2615ba8aa63a686c1e3c1ba2535d19.jpg#3",
+     "angle": 311.1,
+     "longSidePx": 91.2,
+     "addedAt": "2026-09-25T02:00:07Z"
+    },
+    {
+     "x": 0.1263,
+     "y": 0.16049,
+     "w": 0.03038,
+     "h": 0.06404,
+     "px": [
+      291.0,
+      208.0,
+      70.0,
+      83.0
+     ],
+     "flyCrop": "valid/image_09446_jpg.rf.b61d59fa49b69415e48692ca269f72e9.jpg#4",
+     "angle": 303.3,
+     "longSidePx": 92.3,
+     "addedAt": "2026-09-25T09:30:05Z"
+    }
+   ],
+   "defect": null,
+   "background": {
+    "file": "data/samples/images/BE4111159/6ac5e6ef4a6a99588b8c8a0b.jpg",
+    "camera": "BE4111159",
+    "capturedAt": "2026-10-07T06:30:07.228Z",
+    "stickyCard": "synthetic yellow card (sentinel.vision.synth.make_card)"
+   },
+   "render": {
+    "blend": "multiply",
+    "jpegQuality": 90,
+    "gain": 1.0361,
+    "contrast": 0.9514,
+    "noiseSigma": 1.972
+   },
+   "sha256": "1753c05d5c819def695aa72a2db55ea1fb8c847cad22dc32a71fdd542183f009",
+   "curveNew": 1,
+   "notPlaced": 0,
+   "previousPhotoId": "synth-demo-sticky-d-20260925T0700Z"
+  },
+  {
+   "photoId": "synth-demo-sticky-d-20260925T2330Z",
+   "synthetic": true,
+   "file": "images/demo-sticky-d/SYNTH_demo-sticky-d_20260925T2330Z.jpg",
+   "trap": "demo-sticky-d",
+   "trapKind": "sticky",
+   "platform": "camos",
+   "capturedAt": "2026-09-25T23:30:03Z",
+   "localDate": "2026-09-26",
+   "slot": 0,
+   "cardId": "demo-sticky-d-card-2",
+   "cardChanged": true,
+   "dailyLevel": 2.194,
+   "trueCount": 0,
+   "visibleCount": 0,
+   "newSincePrevious": 0,
+   "width": 2304,
+   "height": 1296,
+   "boxes": [],
+   "defect": null,
+   "background": {
+    "file": "data/samples/images/BE4111159/6ac5e6ed9d7333beb125be16.jpg",
+    "camera": "BE4111159",
+    "capturedAt": "2026-10-07T06:30:05.959Z",
+    "stickyCard": "synthetic yellow card (sentinel.vision.synth.make_card)"
+   },
+   "render": {
+    "blend": "multiply",
+    "jpegQuality": 85,
+    "gain": 0.9876,
+    "contrast": 1.011,
+    "noiseSigma": 1.061
+   },
+   "sha256": "0416da86d5cd33b69c42532c6bf06d824f4e1cc8b974338e4792937bd83eb949",
+   "curveNew": 0,
+   "notPlaced": 0,
+   "previousPhotoId": "synth-demo-sticky-d-20260925T0930Z"
+  },
+  {
+   "photoId": "synth-demo-sticky-d-20260926T0430Z",
+   "synthetic": true,
+   "file": "images/demo-sticky-d/SYNTH_demo-sticky-d_20260926T0430Z.jpg",
+   "trap": "demo-sticky-d",
+   "trapKind": "sticky",
+   "platform": "camos",
+   "capturedAt": "2026-09-26T04:30:04Z",
+   "localDate": "2026-09-26",
+   "slot": 2,
+   "cardId": "demo-sticky-d-card-2",
+   "cardChanged": false,
+   "dailyLevel": 2.194,
+   "trueCount": 1,
+   "visibleCount": 1,
+   "newSincePrevious": 1,
+   "width": 2304,
+   "height": 1296,
+   "boxes": [
+    {
+     "x": 0.62187,
+     "y": 0.64954,
+     "w": 0.02509,
+     "h": 0.04383,
+     "px": [
+      1432.8,
+      841.8,
+      57.8,
+      56.8
+     ],
+     "flyCrop": "test/image_02409_jpg.rf.0fe491e6211f2d15c2f144839accc601.jpg#21",
+     "angle": 233.0,
+     "longSidePx": 65.3,
+     "addedAt": "2026-09-26T04:30:04Z"
+    }
+   ],
+   "defect": {
+    "type": "camera_moved",
+    "severity": 0.042,
+    "unit": "shift / diagonal",
+    "expected": {
+     "flag": "camera_moved",
+     "rule": "motion.camera_moved",
+     "actions": [
+      "review_request"
+     ],
+     "counted": true,
+     "needsPrev": true
+    }
+   },
+   "background": {
+    "file": "data/samples/images/BE4111159/6ac5e6ed9d7333beb125be16.jpg",
+    "camera": "BE4111159",
+    "capturedAt": "2026-10-07T06:30:05.959Z",
+    "stickyCard": "synthetic yellow card (sentinel.vision.synth.make_card)"
+   },
+   "render": {
+    "blend": "multiply",
+    "jpegQuality": 80,
+    "gain": 0.9553,
+    "contrast": 1.0186,
+    "noiseSigma": 1.084
+   },
+   "sha256": "88f2313f9a1e4a6e2bac0cbe34afa91cad54497be1108b64795215a49317cb05",
+   "curveNew": 1,
+   "notPlaced": 0,
+   "previousPhotoId": "synth-demo-sticky-d-20260926T0200Z"
+  }
+ ]
+}

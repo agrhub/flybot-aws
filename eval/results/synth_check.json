@@ -1,0 +1,479 @@
+{
+  "kind": "measurement on SYNTHETIC composites (eval/synth), not field photos",
+  "generated_at": "2026-10-19T05:54:10+00:00",
+  "sets": [
+    {
+      "manifest": "data/synth/demo-30d/manifest.json",
+      "set": "demo-30d",
+      "seed": 20261019,
+      "photos": 600,
+      "ok": 600,
+      "errors": [],
+      "generator_git": "eval/synth (feat(eval) labelled synthetic trap photos)",
+      "model": {
+        "name": "yolo26n",
+        "version": "2026-10-16",
+        "engine": "opencv-5.0.0-dnn-new",
+        "onnx": "fruitfly_yolo26n.onnx"
+      },
+      "tiles": true,
+      "prev_photo": true,
+      "transport": "in-process sentinel.handler.analyze (store=False)",
+      "flyScale": {
+        "demo-lure-a": 0.11,
+        "demo-lure-b": 0.11,
+        "demo-lure-c": 0.11,
+        "demo-sticky-d": 0.04
+      },
+      "fly_crops": {
+        "splits": [
+          "test",
+          "valid"
+        ],
+        "crops": 284
+      },
+      "run_s": 3420.2,
+      "at": "2026-10-19T12:53:10+07:00"
+    },
+    {
+      "manifest": "data/synth/pool/manifest.json",
+      "set": "pool",
+      "seed": 20261020,
+      "photos": 404,
+      "ok": 404,
+      "errors": [],
+      "generator_git": "eval/synth (feat(eval) labelled synthetic trap photos)",
+      "model": {
+        "name": "yolo26n",
+        "version": "2026-10-16",
+        "engine": "opencv-5.0.0-dnn-new",
+        "onnx": "fruitfly_yolo26n.onnx"
+      },
+      "tiles": false,
+      "prev_photo": true,
+      "transport": "in-process sentinel.handler.analyze (store=False)",
+      "flyScale": 0.11,
+      "fly_crops": {
+        "splits": [
+          "test",
+          "valid"
+        ],
+        "crops": 284
+      },
+      "run_s": 1068.5,
+      "at": "2026-10-19T11:56:02+07:00"
+    }
+  ],
+  "photos": {
+    "all": 1004,
+    "clean": 857,
+    "damaged_left_out": 147
+  },
+  "match": "greedy one-to-one, IoU >= 0.3 (primary) and 0.5; true boxes = pasted fly mask at alpha > 0.25",
+  "by_set": {
+    "demo-30d": {
+      "photos": 517,
+      "true_flies": 7627,
+      "detected": 2514,
+      "mae": 9.928,
+      "bias": -9.89,
+      "rmse": 27.789,
+      "within_2": 356,
+      "within_10pct_or_2": 356,
+      "count_r": 0.3131,
+      "iou30": {
+        "tp": 2398,
+        "precision": 0.9539,
+        "recall": 0.3144,
+        "f1": 0.4729
+      },
+      "iou50": {
+        "tp": 2276,
+        "precision": 0.9053,
+        "recall": 0.2984,
+        "f1": 0.4489
+      },
+      "empty_photos": {
+        "photos": 99,
+        "with_detections": 2,
+        "false_flies": 2
+      }
+    },
+    "pool": {
+      "photos": 340,
+      "true_flies": 14601,
+      "detected": 4356,
+      "mae": 30.179,
+      "bias": -30.132,
+      "rmse": 51.37,
+      "within_2": 87,
+      "within_10pct_or_2": 116,
+      "count_r": 0.0632,
+      "iou30": {
+        "tp": 4013,
+        "precision": 0.9213,
+        "recall": 0.2748,
+        "f1": 0.4234
+      },
+      "iou50": {
+        "tp": 3779,
+        "precision": 0.8675,
+        "recall": 0.2588,
+        "f1": 0.3987
+      },
+      "empty_photos": {
+        "photos": 4,
+        "with_detections": 2,
+        "false_flies": 3
+      }
+    }
+  },
+  "by_set_kind": {
+    "demo-30d / lure": {
+      "photos": 388,
+      "true_flies": 2476,
+      "detected": 2089,
+      "mae": 1.039,
+      "bias": -0.997,
+      "rmse": 1.621,
+      "within_2": 341,
+      "within_10pct_or_2": 341,
+      "count_r": 0.9852,
+      "iou30": {
+        "tp": 2044,
+        "precision": 0.9785,
+        "recall": 0.8255,
+        "f1": 0.8955
+      },
+      "iou50": {
+        "tp": 2012,
+        "precision": 0.9631,
+        "recall": 0.8126,
+        "f1": 0.8815
+      },
+      "empty_photos": {
+        "photos": 94,
+        "with_detections": 0,
+        "false_flies": 0
+      }
+    },
+    "demo-30d / sticky": {
+      "photos": 129,
+      "true_flies": 5151,
+      "detected": 425,
+      "mae": 36.667,
+      "bias": -36.636,
+      "rmse": 55.56,
+      "within_2": 15,
+      "within_10pct_or_2": 15,
+      "count_r": 0.7874,
+      "iou30": {
+        "tp": 354,
+        "precision": 0.8329,
+        "recall": 0.0687,
+        "f1": 0.127
+      },
+      "iou50": {
+        "tp": 264,
+        "precision": 0.6212,
+        "recall": 0.0513,
+        "f1": 0.0947
+      },
+      "empty_photos": {
+        "photos": 5,
+        "with_detections": 2,
+        "false_flies": 2
+      }
+    },
+    "pool / lure": {
+      "photos": 130,
+      "true_flies": 4136,
+      "detected": 3796,
+      "mae": 2.662,
+      "bias": -2.615,
+      "rmse": 3.499,
+      "within_2": 72,
+      "within_10pct_or_2": 101,
+      "count_r": 0.9936,
+      "iou30": {
+        "tp": 3708,
+        "precision": 0.9768,
+        "recall": 0.8965,
+        "f1": 0.9349
+      },
+      "iou50": {
+        "tp": 3584,
+        "precision": 0.9442,
+        "recall": 0.8665,
+        "f1": 0.9037
+      },
+      "empty_photos": {
+        "photos": 1,
+        "with_detections": 0,
+        "false_flies": 0
+      }
+    },
+    "pool / sticky": {
+      "photos": 210,
+      "true_flies": 10465,
+      "detected": 560,
+      "mae": 47.214,
+      "bias": -47.167,
+      "rmse": 65.306,
+      "within_2": 15,
+      "within_10pct_or_2": 15,
+      "count_r": 0.6103,
+      "iou30": {
+        "tp": 305,
+        "precision": 0.5446,
+        "recall": 0.0291,
+        "f1": 0.0553
+      },
+      "iou50": {
+        "tp": 195,
+        "precision": 0.3482,
+        "recall": 0.0186,
+        "f1": 0.0354
+      },
+      "empty_photos": {
+        "photos": 3,
+        "with_detections": 2,
+        "false_flies": 3
+      }
+    }
+  },
+  "by_trap": {
+    "demo-lure-a": {
+      "photos": 130,
+      "true_flies": 794,
+      "detected": 633,
+      "mae": 1.238,
+      "bias": -1.238,
+      "rmse": 1.867,
+      "within_2": 108,
+      "within_10pct_or_2": 108,
+      "count_r": 0.9767,
+      "iou30": {
+        "tp": 632,
+        "precision": 0.9984,
+        "recall": 0.796,
+        "f1": 0.8858
+      },
+      "iou50": {
+        "tp": 631,
+        "precision": 0.9968,
+        "recall": 0.7947,
+        "f1": 0.8844
+      },
+      "empty_photos": {
+        "photos": 30,
+        "with_detections": 0,
+        "false_flies": 0
+      }
+    },
+    "demo-lure-b": {
+      "photos": 127,
+      "true_flies": 1268,
+      "detected": 1148,
+      "mae": 1.071,
+      "bias": -0.945,
+      "rmse": 1.602,
+      "within_2": 111,
+      "within_10pct_or_2": 111,
+      "count_r": 0.9902,
+      "iou30": {
+        "tp": 1104,
+        "precision": 0.9617,
+        "recall": 0.8707,
+        "f1": 0.9139
+      },
+      "iou50": {
+        "tp": 1075,
+        "precision": 0.9364,
+        "recall": 0.8478,
+        "f1": 0.8899
+      },
+      "empty_photos": {
+        "photos": 23,
+        "with_detections": 0,
+        "false_flies": 0
+      }
+    },
+    "demo-lure-c": {
+      "photos": 131,
+      "true_flies": 414,
+      "detected": 308,
+      "mae": 0.809,
+      "bias": -0.809,
+      "rmse": 1.354,
+      "within_2": 122,
+      "within_10pct_or_2": 122,
+      "count_r": 0.966,
+      "iou30": {
+        "tp": 308,
+        "precision": 1.0,
+        "recall": 0.744,
+        "f1": 0.8532
+      },
+      "iou50": {
+        "tp": 306,
+        "precision": 0.9935,
+        "recall": 0.7391,
+        "f1": 0.8476
+      },
+      "empty_photos": {
+        "photos": 41,
+        "with_detections": 0,
+        "false_flies": 0
+      }
+    },
+    "demo-sticky-d": {
+      "photos": 129,
+      "true_flies": 5151,
+      "detected": 425,
+      "mae": 36.667,
+      "bias": -36.636,
+      "rmse": 55.56,
+      "within_2": 15,
+      "within_10pct_or_2": 15,
+      "count_r": 0.7874,
+      "iou30": {
+        "tp": 354,
+        "precision": 0.8329,
+        "recall": 0.0687,
+        "f1": 0.127
+      },
+      "iou50": {
+        "tp": 264,
+        "precision": 0.6212,
+        "recall": 0.0513,
+        "f1": 0.0947
+      },
+      "empty_photos": {
+        "photos": 5,
+        "with_detections": 2,
+        "false_flies": 2
+      }
+    }
+  },
+  "by_true_count": {
+    "0": {
+      "photos": 103,
+      "mae": 0.049,
+      "bias": 0.049
+    },
+    "1-5": {
+      "photos": 181,
+      "mae": 1.116,
+      "bias": -1.083
+    },
+    "6-15": {
+      "photos": 201,
+      "mae": 4.179,
+      "bias": -4.159
+    },
+    "16-40": {
+      "photos": 181,
+      "mae": 11.746,
+      "bias": -11.657
+    },
+    "41+": {
+      "photos": 191,
+      "mae": 63.984,
+      "bias": -63.984
+    }
+  },
+  "recall_by_fly_size_640": {
+    "0-12": {
+      "flies": 177,
+      "recall_iou30": 0.0
+    },
+    "12-16": {
+      "flies": 2933,
+      "recall_iou30": 0.0
+    },
+    "16-20": {
+      "flies": 6314,
+      "recall_iou30": 0.009
+    },
+    "20-28": {
+      "flies": 6006,
+      "recall_iou30": 0.0814
+    },
+    "28-": {
+      "flies": 6798,
+      "recall_iou30": 0.8628
+    }
+  },
+  "daily": {
+    "demo-lure-a": {
+      "days": 30,
+      "r_daily_sum": 0.9923,
+      "true_sum": 794,
+      "det_sum": 633
+    },
+    "demo-lure-b": {
+      "days": 30,
+      "r_daily_sum": 0.9956,
+      "true_sum": 1268,
+      "det_sum": 1148
+    },
+    "demo-lure-c": {
+      "days": 30,
+      "r_daily_sum": 0.9923,
+      "true_sum": 414,
+      "det_sum": 308
+    },
+    "demo-sticky-d": {
+      "days": 30,
+      "r_daily_sum": 0.8232,
+      "true_sum": 5151,
+      "det_sum": 425
+    }
+  },
+  "detector_only": {
+    "note": "YOLO26n alone on the whole frame vs on 2x2 overlapping tiles (12%), no trap ROI, no box rules: not the handler's count, a check of what tiling would change",
+    "full_lure": {
+      "photos": 388,
+      "true_flies": 2476,
+      "detected": 2350,
+      "mae": 0.871,
+      "bias": -0.325,
+      "precision_iou30": 0.9243,
+      "recall_iou30": 0.8772
+    },
+    "tiles2x2_lure": {
+      "photos": 388,
+      "true_flies": 2476,
+      "detected": 3513,
+      "mae": 2.683,
+      "bias": 2.673,
+      "precision_iou30": 0.6775,
+      "recall_iou30": 0.9612
+    },
+    "full_sticky": {
+      "photos": 129,
+      "true_flies": 5151,
+      "detected": 680,
+      "mae": 34.767,
+      "bias": -34.659,
+      "precision_iou30": 0.7809,
+      "recall_iou30": 0.1031
+    },
+    "tiles2x2_sticky": {
+      "photos": 129,
+      "true_flies": 5151,
+      "detected": 5757,
+      "mae": 5.457,
+      "bias": 4.698,
+      "precision_iou30": 0.7971,
+      "recall_iou30": 0.8909
+    }
+  },
+  "timings_ms": {
+    "total_p50": 1749.0,
+    "total_p95": 4204.5,
+    "dnn_p50": 288.9,
+    "note": "dev laptop shared with other jobs, not the Lambda"
+  }
+}

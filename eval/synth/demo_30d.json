@@ -1,0 +1,31 @@
+{
+  "name": "demo-30d",
+  "description": "SIMULATED DATA for the FlyBot demo farm: 4 traps, 5 photos a day from 2026-09-19 (30 days by default; --to 2026-11-10 continues it), about 10% damaged on purpose. Not field data.",
+  "seed": 20261019,
+  "startDate": "2026-09-19",
+  "days": 30,
+  "utcOffset": "+07:00",
+  "schedule": ["06:30", "09:00", "11:30", "14:00", "16:30"],
+  "blend": "multiply",
+  "stamp": "full",
+  "defects": {"rate": 0.1, "types": ["blur", "dark", "glare", "dirty_lens", "occluded_hand", "occluded_leaf", "camera_moved", "no_trap"]},
+  "flyScale": 0.11,
+  "maxOverlapIoU": 0.05,
+  "flyBank": {"splits": ["test", "valid"], "maxCrops": 1200, "seed": 7},
+  "backgrounds": "data/samples/samples_manifest.csv",
+  "traps": [
+    {"id": "demo-lure-a", "name": "Demo lure trap A", "trapKind": "lure", "backgroundCamera": "BE4089629",
+     "lat": 11.15012, "lon": 106.40021, "cap": 45,
+     "wave": {"baseline": 0.6, "amplitude": 14, "peak_day": 17, "rise_days": 3.5, "decline_days": 6, "noise": 0.3}},
+    {"id": "demo-lure-b", "name": "Demo lure trap B", "trapKind": "lure", "backgroundCamera": "BE4111159",
+     "lat": 11.15048, "lon": 106.40066, "cap": 60,
+     "wave": {"baseline": 1.0, "amplitude": 22, "peak_day": 19, "rise_days": 4, "decline_days": 7, "noise": 0.25}},
+    {"id": "demo-lure-c", "name": "Demo lure trap C", "trapKind": "lure", "backgroundCamera": "BE4089629",
+     "lat": 11.14975, "lon": 106.40074, "cap": 45,
+     "wave": {"baseline": 0.4, "amplitude": 9, "peak_day": 21, "rise_days": 4, "decline_days": 5, "noise": 0.35}},
+    {"id": "demo-sticky-d", "name": "Demo sticky card D", "trapKind": "sticky", "backgroundCamera": "BE4111159",
+     "lat": 11.15030, "lon": 106.39985, "cardDays": 7, "cap": 300,
+     "flyScale": 0.04, "cardCoverage": 0.84,
+     "wave": {"baseline": 1.5, "amplitude": 26, "peak_day": 18, "rise_days": 4, "decline_days": 6, "noise": 0.25}}
+  ]
+}
