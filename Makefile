@@ -4,12 +4,13 @@
 #   make lambda-local               POST http://localhost:9001/invoke (CONTRACTS.md section 1) for FlyBot local dev
 #   make replay-sample              24 bundled trap photos through the handler -> data/replay/sample/
 #   make synth / synth-ahead / synth-pool / synth-check   SIMULATED demo photos (eval/synth) and their checks
+#   make synth-tiles                DETECTOR_TILES variants on the synthetic sets (after synth-check)
 #   make build-lambda               build + push the arm64 Lambda image with AWS CodeBuild (infra/build-image.sh)
 #   make deploy / make destroy      ./deploy.sh / ./destroy.sh, settings in deploy.env (infra/DEPLOY_CHECKLIST.md)
 #   make hooks                      git pre-commit hook: infra/ops/secrets-scan.sh --staged
 #   make host CMD='...'             run a command on the FlyBot server through SSM (logs, systemctl, bootstrap re-run)
 #   make bench                      bench matrix (bench/run_matrix.sh)
-.PHONY: setup test test-fast lint lock-lambda models lambda-local replay-sample synth synth-ahead synth-pool synth-check build-lambda deploy destroy provision-camera bench cold-start host hooks
+.PHONY: setup test test-fast lint lock-lambda models lambda-local replay-sample synth synth-ahead synth-pool synth-check synth-tiles build-lambda deploy destroy provision-camera bench cold-start host hooks
 PROFILE ?= sentinel
 REGION ?= ap-southeast-2
 STAGE ?= dev
@@ -63,6 +64,15 @@ synth-pool:
 synth-check:
 	DETECTOR=yolo26 $(UV) run --project $(VISION) python -m eval.synth.check --tiles --manifest data/synth/demo-30d/manifest.json
 	DETECTOR=yolo26 $(UV) run --project $(VISION) python -m eval.synth.check --manifest data/synth/pool/manifest.json
+	$(UV) run --project $(VISION) python -m eval.synth.report
+
+# Tiled detection (DETECTOR_TILES): every variant on the detector step, then the handler with tiles on sticky traps
+# next to synth-check's run; writes eval/results/synth_tiles.json and its table in eval/SYNTHETIC_RESULTS.md
+synth-tiles:
+	DETECTOR=yolo26 $(UV) run --project $(VISION) python -m eval.synth.tiles
+	DETECTOR=yolo26 DETECTOR_TILES=sticky $(UV) run --project $(VISION) python -m eval.synth.check --manifest data/synth/demo-30d/manifest.json --out data/synth/demo-30d-tiles
+	$(UV) run --project $(VISION) python -m eval.synth.tiles --handler off=data/synth/demo-30d sticky=data/synth/demo-30d-tiles
+	$(UV) run --project $(VISION) python -m eval.synth.tiles --latency 30
 	$(UV) run --project $(VISION) python -m eval.synth.report
 
 # Cold start + warm latency of the deployed function (needs the stack): writes bench/results/lambda_latency.json

@@ -12,6 +12,9 @@
     DETECTOR_MIN_SCORE, DETECTOR_MAX_SIDE, DETECTOR_MIN_SIDE, DETECTOR_MAX_MEDIAN_RATIO, DETECTOR_MIN_MEDIAN_RATIO,
     DETECTOR_MEDIAN_MIN_BOXES, DETECTOR_MAX_ASPECT, DETECTOR_BOX_RULES
                              YOLO26 box rules (sentinel.vision.box_rules: defaults and their evidence)
+    DETECTOR_TILES           off | on | sticky | auto (default off), with DETECTOR_TILE_GRID, DETECTOR_TILE_OVERLAP,
+    DETECTOR_TILE_EDGE_PX, DETECTOR_TILE_AUTO_PX, DETECTOR_TILE_AUTO_MIN_SIDE, DETECTOR_TILE_KEEP_FULL
+                             YOLO26 tiled detection for small flies (sentinel.vision.tiling)
 
 `get_detector()` builds the detector once per process; `model_info()` is the contract's `model` object.
 `DetectorUnavailable` is raised when no ONNX can be found (-> the handler's `model_unavailable` error).
@@ -109,8 +112,10 @@ def build_detector(kind: str, onnx_path: Path, engine: str = "new"):
     if kind == "yolo26":
         from sentinel.vision.box_rules import BoxRules
         from sentinel.vision.detect_yolo26 import Yolo26Detector
+        from sentinel.vision.tiling import Tiling
 
-        return Yolo26Detector(onnx_path, engine=engine, conf=conf, iou=iou, rules=BoxRules.from_env())
+        return Yolo26Detector(onnx_path, engine=engine, conf=conf, iou=iou, rules=BoxRules.from_env(),
+                              tiles=Tiling.from_env())
     from sentinel.vision.detect_yolov7 import YoloV7Detector
 
     det = YoloV7Detector(onnx_path, engine=engine, conf=conf, iou=iou)

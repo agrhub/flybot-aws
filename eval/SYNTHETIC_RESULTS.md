@@ -80,6 +80,42 @@ YOLO26n alone on the whole frame vs on 2x2 overlapping tiles (12%), no trap ROI,
 
 Time per photo (whole handler) p50 1749.0 ms, p95 4204.5 ms; DNN p50 288.9 ms (dev laptop shared with other jobs, not the Lambda).
 
+## Tiled detection (DETECTOR_TILES)
+
+`uv run --project lambda/vision python -m eval.synth.tiles` on 2026-10-19T05:51:29+00:00, source `eval/results/synth_tiles.json`: detector step only (decoder conf 0.25, NMS 0.45, default box rules), whole frame, no trap ROI; clean photos (no injected defect); true flies = visible pasted flies; greedy one-to-one at IoU 0.3. Tiling: 2x2 windows, overlap 0.12 x frame / 2, a box within 2 detector-input px of an inner window edge is dropped, class-agnostic NMS 0.45 in full-frame pixels, then the box rules. Sets: `demo-30d` (517 clean photos), `pool` (340 clean photos); yolo26n on opencv-5.0.0-dnn-new.
+
+Variants: `off` whole frame (the default); `on` 2x2 windows on every photo; `sticky` windows on sticky traps only; `autoN` a whole-frame pass, then windows when the median box long side at the 640 input is under N px or no box was found on a frame >= 2 x 640 (whole-frame boxes join the merge; `-full`: they do not).
+
+| variant | trap | photos | tiled | forwards / photo | true flies | detected | MAE | bias | precision @0.3 | recall @0.3 | F1 @0.3 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| off | lure | 518 | 0 | 1.0 | 6612 | 5885 | 1.446 | -1.403 | 0.9774 | 0.8699 | 0.9205 |
+| off | sticky | 339 | 0 | 1.0 | 15616 | 985 | 43.201 | -43.159 | 0.669 | 0.0422 | 0.0794 |
+| on | lure | 518 | 518 | 4.0 | 6612 | 6804 | 1.108 | 0.371 | 0.8989 | 0.925 | 0.9117 |
+| on | sticky | 339 | 339 | 4.0 | 15616 | 14662 | 5.103 | -2.814 | 0.8649 | 0.8121 | 0.8376 |
+| sticky | lure | 518 | 0 | 1.0 | 6612 | 5885 | 1.446 | -1.403 | 0.9774 | 0.8699 | 0.9205 |
+| sticky | sticky | 339 | 339 | 4.0 | 15616 | 14662 | 5.103 | -2.814 | 0.8649 | 0.8121 | 0.8376 |
+| auto20 | lure | 518 | 0 | 1.0 | 6612 | 5885 | 1.446 | -1.403 | 0.9774 | 0.8699 | 0.9205 |
+| auto20 | sticky | 339 | 8 | 1.09 | 15616 | 1044 | 43.198 | -42.985 | 0.6523 | 0.0436 | 0.0818 |
+| auto24 | lure | 518 | 0 | 1.0 | 6612 | 5885 | 1.446 | -1.403 | 0.9774 | 0.8699 | 0.9205 |
+| auto24 | sticky | 339 | 9 | 1.11 | 15616 | 1058 | 43.162 | -42.944 | 0.6522 | 0.0442 | 0.0828 |
+| auto28 | lure | 518 | 0 | 1.0 | 6612 | 5885 | 1.446 | -1.403 | 0.9774 | 0.8699 | 0.9205 |
+| auto28 | sticky | 339 | 62 | 1.73 | 15616 | 2776 | 38.501 | -37.876 | 0.755 | 0.1342 | 0.2279 |
+| auto24-full | lure | 518 | 0 | 1.0 | 6612 | 5885 | 1.446 | -1.403 | 0.9774 | 0.8699 | 0.9205 |
+| auto24-full | sticky | 339 | 9 | 1.11 | 15616 | 1058 | 43.162 | -42.944 | 0.6522 | 0.0442 | 0.0828 |
+
+DNN forward p50 during this run: whole frame 278.1 ms, the 4 windows together 1134.3 ms (cv2.dnn forward() only, summed over the 4 windows; dev laptop (CPU) shared with other jobs, not the Lambda).
+
+Latency cost (`--latency`, 30 sticky photos of `demo-30d`, 2304x1296): `detect()` p50 128.4 ms whole frame vs 510.4 ms tiled (forwards 120.1 vs 474.7 ms); per photo, best of the repeats, dev laptop CPU (no other job running), not the Lambda; the handler also detects the previous photo, so a sticky request with prevPhoto pays the difference twice.
+
+Whole handler (trap ROI, box rules, quality ops, agent; prevPhoto sent, so a tiled photo costs 4 forwards for the photo and 4 for the previous one) on the clean photos, one run per DETECTOR_TILES value (its times come from runs that shared the laptop with other jobs; the latency line above is the cost):
+
+| DETECTOR_TILES | set | trap | photos | true flies | detected | MAE | bias | precision @0.3 | recall @0.3 | F1 @0.3 | DNN ms p50 (photo) | handler ms p50 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| off | demo-30d | lure | 388 | 2476 | 2089 | 1.039 | -0.997 | 0.9785 | 0.8255 | 0.8955 | 269.4 | 1584.7 |
+| off | demo-30d | sticky | 129 | 5151 | 425 | 36.667 | -36.636 | 0.8329 | 0.0687 | 0.127 | 240.4 | 1585.2 |
+| sticky | demo-30d | lure | 388 | 2476 | 2089 | 1.039 | -0.997 | 0.9785 | 0.8255 | 0.8955 | 319.7 | 1746.4 |
+| sticky | demo-30d | sticky | 129 | 5151 | 4954 | 4.953 | -1.527 | 0.849 | 0.8165 | 0.8325 | 456.4 | 1619.0 |
+
 ## Limits
 
 - The flies come from the same dataset family the detector was trained on (other images: test/valid splits),
