@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080" font-family="Segoe UI, Arial, Helvetica, sans-serif">
+<title>FlyBot on AWS: agent workflow</title>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/></marker><marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/></marker></defs>
+<rect width="1920" height="1080" fill="#ffffff"/>
+<text x="30" y="46" font-size="30" font-weight="bold" fill="#0f172a" text-anchor="start">Agent workflow: perception → decision → action → new visual input</text>
+<text x="30" y="78" font-size="18" font-weight="normal" fill="#475569" text-anchor="start">One guarded run per photo inside the vision Lambda; FlyBot turns its proposals into confirm cards and runs only what a person confirms</text>
+<rect x="30" y="120" width="300" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="42" y="146" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Photo or question</text>
+<text x="42" y="168" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">EZVIZ schedule (FlyBot cron),</text>
+<text x="42" y="187" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ESP32-S3 upload (device API),</text>
+<text x="42" y="206" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">confirmed capture_now,</text>
+<text x="42" y="225" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">chatbot question (deep mode)</text>
+<rect x="400" y="120" width="300" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="412" y="146" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">FlyBot request</text>
+<text x="412" y="168" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">photo + previous photo (S3 keys),</text>
+<text x="412" y="187" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">camera, trap kind, platform,</text>
+<text x="412" y="206" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">battery, 14 days of counts;</text>
+<text x="412" y="225" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">Lambda.Invoke, timeout 120 s</text>
+<rect x="770" y="120" width="300" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="782" y="146" font-size="17" font-weight="bold" fill="#0e7490" text-anchor="start">PERCEPTION</text>
+<text x="782" y="168" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">analyze_trap_photo → OpenCV 5:</text>
+<text x="782" y="187" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">count, quality, trap, diff,</text>
+<text x="782" y="206" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">crowding, occlusion, faces;</text>
+<text x="782" y="225" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">evidence JPEG to S3</text>
+<rect x="948" y="109" width="114" height="22" rx="11" fill="#a16207"/>
+<text x="1005" y="124" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">OPENCV 5 NEW</text>
+<rect x="1140" y="120" width="300" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1152" y="146" font-size="17" font-weight="bold" fill="#6d28d9" text-anchor="start">DECISION</text>
+<text x="1152" y="168" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">detect: rule planner</text>
+<text x="1152" y="187" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">deep: Claude Haiku 5.5 with tool</text>
+<text x="1152" y="206" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">use; error, refusal or timeout</text>
+<text x="1152" y="225" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">→ rule planner, traced</text>
+<rect x="1374" y="109" width="58" height="22" rx="11" fill="#6d28d9"/>
+<text x="1403" y="124" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">AGENT</text>
+<rect x="1510" y="120" width="380" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1522" y="146" font-size="17" font-weight="bold" fill="#6d28d9" text-anchor="start">GUARDRAILS check</text>
+<text x="1522" y="168" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">run-state whitelist, quiet hours</text>
+<text x="1522" y="187" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">20:00-05:00, capture budget,</text>
+<text x="1522" y="206" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">battery &lt; 40 %: half, &lt; 20 %: none,</text>
+<text x="1522" y="225" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">evidence refs, kill switch</text>
+<rect x="1824" y="109" width="58" height="22" rx="11" fill="#6d28d9"/>
+<text x="1853" y="124" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">AGENT</text>
+<path d="M 334 190 L 396 190" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<path d="M 704 190 L 766 190" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<path d="M 1074 190 L 1136 190" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<path d="M 1444 190 L 1506 190" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<path d="M 1630 252 L 1630 288 L 1340 288 L 1340 256" fill="none" stroke="#b91c1c" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ahr)"/>
+<text x="1355" y="310" font-size="15" font-weight="normal" fill="#b91c1c" text-anchor="start">blocked: the reason goes back to the planner and into the trace</text>
+<path d="M 1810 252 L 1810 368" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<text x="1822" y="330" font-size="15" font-weight="bold" fill="#475569" text-anchor="start">allowed</text>
+<rect x="1140" y="372" width="750" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1152" y="398" font-size="17" font-weight="bold" fill="#c2410c" text-anchor="start">ACTION = proposal in the response</text>
+<text x="1152" y="420" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">capture → capture_now · set_image → set_isp (CamOS only) · set_capture_schedule →</text>
+<text x="1152" y="439" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">set_interval · request_human_review → review_request · surge / threshold → notify</text>
+<text x="1152" y="458" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">each with reason, confidence, requiresApproval (policy.yaml) and the evidence it cites;</text>
+<text x="1152" y="477" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">the Lambda itself never touches a camera</text>
+<rect x="30" y="372" width="1060" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="42" y="398" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">RESPONSE + TRACE (every photo)</text>
+<text x="42" y="420" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">{traceId, model, counts, boxes, quality, diff, density, proposals[], answer,</text>
+<text x="42" y="439" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start"> trace {planner, decisions[{rule, action, reasons, evidence}], toolCalls[{name, args, status,</text>
+<text x="42" y="458" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start"> blocked_reason, state_before/after, ms}], tokens, fallback, outcome}, evidence, timings}</text>
+<text x="42" y="477" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start"> → FlyBot stores it on the photo; the trace is shown with the photo</text>
+<path d="M 1140 442 L 1094 442" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<rect x="30" y="560" width="340" height="141" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="42" y="586" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Confirm card → camera</text>
+<text x="42" y="608" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">FlyBot chat card + Telegram,</text>
+<text x="42" y="627" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">Confirm / Reject, 24 h expiry</text>
+<text x="42" y="646" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">→ EZVIZ capture, CamOS RPC</text>
+<text x="42" y="665" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">or IoT shadow (settings,</text>
+<text x="42" y="684" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">schedule) → new photo</text>
+<rect x="232" y="549" width="130" height="22" rx="11" fill="#c2410c"/>
+<text x="297" y="564" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">HUMAN APPROVAL</text>
+<rect x="400" y="560" width="340" height="141" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="412" y="586" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Chatbot (deep mode)</text>
+<text x="412" y="608" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">Gemini calls analyze_photo_deep</text>
+<text x="412" y="627" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">→ Lambda deep mode → answer</text>
+<text x="412" y="646" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">(numbers and flags as text,</text>
+<text x="412" y="665" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">never pixels) → propose_action</text>
+<text x="412" y="684" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">→ confirm card</text>
+<rect x="602" y="549" width="130" height="22" rx="11" fill="#c2410c"/>
+<text x="667" y="564" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">HUMAN APPROVAL</text>
+<rect x="770" y="560" width="340" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="782" y="586" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Alerts and review</text>
+<text x="782" y="608" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">FlyBot&#x27;s own rules on the stored</text>
+<text x="782" y="627" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">counts: thresholds, surges;</text>
+<text x="782" y="646" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">review_request puts the photo</text>
+<text x="782" y="665" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">in front of a person</text>
+<path d="M 1500 492 L 1500 535 L 200 535 L 200 554" fill="none" stroke="#475569" stroke-width="2.5" marker-end="url(#ah)"/>
+<path d="M 570 535 L 570 554" fill="none" stroke="#475569" stroke-width="2.5" marker-end="url(#ah)"/>
+<path d="M 940 535 L 940 554" fill="none" stroke="#475569" stroke-width="2.5" marker-end="url(#ah)"/>
+<path d="M 130 703 L 130 732 L 14 732 L 14 180 L 27 180" fill="none" stroke="#b91c1c" stroke-width="3" marker-end="url(#ahr)"/>
+<text x="22" y="765" font-size="16" font-weight="bold" fill="#b91c1c" text-anchor="start">LOOP: new visual input</text>
+<rect x="1140" y="560" width="750" height="198" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1152" y="586" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Rule planner order (lambda/vision/sentinel/agent/policy.yaml)</text>
+<text x="1152" y="608" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="start">1  ir → not counted, wait;  battery &lt; 20 % → no extra capture, no ISP change</text>
+<text x="1152" y="627" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="start">2  glare / dark / overexposed on a CamOS camera → set_isp, then a verification capture</text>
+<text x="1152" y="646" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="start">3  blurry, or glare on EZVIZ (no ISP control) → capture again (once per event)</text>
+<text x="1152" y="665" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="start">4  occluder (op 8) → not counted, one recapture;  trap missing → recapture, then review</text>
+<text x="1152" y="684" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="start">5  sticky card full or changed → review (card change)</text>
+<text x="1152" y="703" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="start">6  two counts apart by &gt; max(3, 20 %) (when a second count is given) → review</text>
+<text x="1152" y="722" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="start">7  surge (&gt;= 5 flies, +3, x 1.5 vs 3 days ago, from the request&#x27;s history) → notify /</text>
+<text x="1152" y="741" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="start">    review; no treatment is ever applied by the system</text>
+<text x="30" y="818" font-size="18" font-weight="bold" fill="#0f172a" text-anchor="start">Run states (guardrail whitelist)</text>
+<rect x="30" y="830" width="270" height="66" rx="33" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+<text x="165" y="858" font-size="16" font-weight="bold" fill="#3730a3" text-anchor="middle">INGESTED</text>
+<text x="165" y="880" font-size="14" font-weight="normal" fill="#475569" text-anchor="middle">read tools only</text>
+<path d="M 303 863 L 337 863" fill="none" stroke="#475569" stroke-width="2.5" marker-end="url(#ah)"/>
+<rect x="340" y="830" width="270" height="66" rx="33" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+<text x="475" y="858" font-size="16" font-weight="bold" fill="#3730a3" text-anchor="middle">ANALYZED</text>
+<text x="475" y="880" font-size="14" font-weight="normal" fill="#475569" text-anchor="middle">analyze ok</text>
+<path d="M 613 863 L 647 863" fill="none" stroke="#475569" stroke-width="2.5" marker-end="url(#ah)"/>
+<rect x="650" y="830" width="270" height="66" rx="33" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+<text x="785" y="858" font-size="16" font-weight="bold" fill="#3730a3" text-anchor="middle">DECIDED</text>
+<text x="785" y="880" font-size="14" font-weight="normal" fill="#475569" text-anchor="middle">planner decision</text>
+<path d="M 923 863 L 957 863" fill="none" stroke="#475569" stroke-width="2.5" marker-end="url(#ah)"/>
+<rect x="960" y="830" width="270" height="66" rx="33" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+<text x="1095" y="858" font-size="16" font-weight="bold" fill="#3730a3" text-anchor="middle">ACTED</text>
+<text x="1095" y="880" font-size="14" font-weight="normal" fill="#475569" text-anchor="middle">proposal accepted</text>
+<path d="M 1233 863 L 1267 863" fill="none" stroke="#475569" stroke-width="2.5" marker-end="url(#ah)"/>
+<rect x="1270" y="830" width="300" height="66" rx="33" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+<text x="1420" y="858" font-size="16" font-weight="bold" fill="#3730a3" text-anchor="middle">WAITING_APPROVAL</text>
+<text x="1420" y="880" font-size="14" font-weight="normal" fill="#475569" text-anchor="middle">no more device actions</text>
+<path d="M 1573 863 L 1607 863" fill="none" stroke="#475569" stroke-width="2.5" marker-end="url(#ah)"/>
+<rect x="1610" y="830" width="270" height="66" rx="33" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+<text x="1745" y="858" font-size="16" font-weight="bold" fill="#3730a3" text-anchor="middle">FOLLOWUP</text>
+<text x="1745" y="880" font-size="14" font-weight="normal" fill="#475569" text-anchor="middle">expired / decided</text>
+<text x="30" y="945" font-size="16" font-weight="normal" fill="#0f172a" text-anchor="start">Human control: every proposal from the Lambda becomes a confirm card, also the ones policy.yaml marks requiresApproval=false; nothing runs before a person presses Confirm.</text>
+<text x="30" y="972" font-size="16" font-weight="normal" fill="#0f172a" text-anchor="start">Evidence: docs/evidence/agent/trace_example.json (real photos, clean → no_op, glare → capture_now), eval/RESULTS.md section 4 (failure injection).</text>
+<rect x="30" y="1010" width="58" height="22" rx="11" fill="#6d28d9"/>
+<text x="59" y="1026" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">AGENT</text>
+<text x="96" y="1026" font-size="14" font-weight="normal" fill="#475569" text-anchor="start">agent component</text>
+<rect x="225" y="1010" width="130" height="22" rx="11" fill="#c2410c"/>
+<text x="290" y="1026" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">HUMAN APPROVAL</text>
+<text x="363" y="1026" font-size="14" font-weight="normal" fill="#475569" text-anchor="start">a person decides</text>
+<rect x="499" y="1010" width="114" height="22" rx="11" fill="#a16207"/>
+<text x="556" y="1026" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">OPENCV 5 NEW</text>
+<text x="621" y="1026" font-size="14" font-weight="normal" fill="#475569" text-anchor="start">OpenCV 5 feature</text>
+</svg>
