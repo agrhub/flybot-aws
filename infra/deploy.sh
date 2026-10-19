@@ -354,7 +354,17 @@ discover() {
       [ -z "$pick" ] && pick="$t"
     fi
   done
+  # this stack's own topic (made by an earlier deploy): its subscription may be confirmed already
+  local own own_state=""
+  own="$(awsx sns list-topics --query 'Topics[].TopicArn' --output text | tr '\t' '\n' | grep ":flybot-$STAGE-alarms\$" || true)"
+  if [ -z "$pick" ] && [ -n "$own" ] && [ -n "$ALARM_EMAIL" ]; then
+    own_state="$(awsx sns list-subscriptions-by-topic --topic-arn "$own" \
+                 --query "Subscriptions[?Protocol=='email'].[Endpoint,SubscriptionArn]" --output text 2>/dev/null || true)"
+    own_state="$(printf '%s\n' "$own_state" | awk -v w="${ALARM_EMAIL,,}" 'tolower($1) == w { print ($2 == "PendingConfirmation") ? "pending" : "confirmed"; exit }')"
+  fi
   if [ -n "$pick" ]; then ALARM_TOPIC_ARN="$pick"; ALARM_NOTE="reuse ${pick##*:} (confirmed email)"
+  elif [ "$own_state" = confirmed ]; then ALARM_NOTE="topic flybot-$STAGE-alarms, $ALARM_EMAIL confirmed"
+  elif [ "$own_state" = pending ]; then ALARM_NOTE="topic flybot-$STAGE-alarms; CONFIRM the email AWS sent to $ALARM_EMAIL (subscription pending)"
   elif [ -n "$ALARM_EMAIL" ]; then ALARM_NOTE="new topic flybot-$STAGE-alarms; CONFIRM the email AWS sends to the alarm address"
   else ALARM_NOTE="new topic flybot-$STAGE-alarms without subscriber (set ALARM_EMAIL to get alarms)"; fi
   ok "alarms: $ALARM_NOTE"
