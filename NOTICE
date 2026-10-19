@@ -8,7 +8,7 @@ YOLO26n detector (Ultralytics, AGPL-3.0) and is compatible with the GPL-3.0 YOLO
 
 Submodules and related parts (separate repositories, each under its own LICENSE file)
   flybot/ points at agrhub/flybot, the FlyBot web application: AGPL-3.0-only (releases up to 1.5.0 were MIT).
-  The repository is private for now; access on request. Its code is not part of this repository.
+  The repository is public; its code is not part of this repository.
   firmware-esp32/ points at agrhub/camos-esp32-trap, the ESP32-S3 trap camera firmware: AGPL-3.0, public.
   Not published: the AMB82 camera firmware, AGRHUB's production datasets and production model weights.
 
