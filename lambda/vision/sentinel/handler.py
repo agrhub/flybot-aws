@@ -7,14 +7,16 @@ proposals + trace out.
 Flow per request: validate -> fetch + decode the photo(s) (photo_not_found / bad_request before anything runs)
 -> OpenCV 5 pipeline (op 5 detector, op 2 quality, ops 1/3/4 diff, op 6 crowd, op 8 motion) inside the agent's
 `analyze_trap_photo` tool -> planner (RulePlanner; LLMPlanner for `deep` mode or SENTINEL_PLANNER=llm) drives
-the guarded tools -> every accepted action is a proposal for FlyBot -> annotated evidence JPEG to S3
-`evidence/<cameraId>/<capturedAt>.annotated.jpg` (faces blurred when a person is suspected) -> response.
+the guarded tools -> every accepted action is a proposal for FlyBot -> response. The Lambda stores no picture:
+FlyBot keeps the photo and draws the boxes; when a person is suspected the response lists the face regions to
+blur (`privacy.regions`). An annotated JPEG to S3 `evidence/<cameraId>/<capturedAt>.annotated.jpg` is written only
+when the request asks for it (`"evidence": true`, e.g. the benchmark), or to EVIDENCE_DIR on local runs.
 
 Errors raise `VisionError` subclasses: Lambda reports a FunctionError whose `errorMessage` is the contract's
 `{"v": 1, "error": {"code", "message"}}` JSON (errorType = the code in CamelCase).
 
-Env: PHOTOS_BUCKET (evidence uploads when the photo did not come from S3; the photo's own bucket wins), EVIDENCE_DIR (local runs: write the
-annotated JPEG there instead), DETECTOR / DETECTOR_ONNX / YOLO26_URL (sentinel.vision.detector), SENTINEL_PLANNER,
+Env: PHOTOS_BUCKET (requested evidence uploads when the photo did not come from S3; the photo's own bucket wins), EVIDENCE_DIR (local runs:
+write the annotated JPEG there), DETECTOR / DETECTOR_ONNX / YOLO26_URL (sentinel.vision.detector), SENTINEL_PLANNER,
 ANTHROPIC_SECRET_ARN / ANTHROPIC_API_KEY (sentinel.agent.wiring), SENTINEL_KILL_SWITCH, STAGE.
 """
 
@@ -155,7 +157,8 @@ def parse_request(event) -> dict:
             "question": question, "locale": locale,
             "photoBucket": (event["photo"].get("s3Bucket") if isinstance(event.get("photo"), dict) else None),
             "photoId": event.get("photoId") or (event["photo"].get("s3Key") if isinstance(event.get("photo"), dict) else None),
-            "prevRequested": bool(event.get("prevPhoto"))}
+            "prevRequested": bool(event.get("prevPhoto")),
+            "evidence": event.get("evidence") is True}
 
 
 # ---------------------------------------------------------------- images
@@ -335,6 +338,27 @@ def annotate(img, boxes: list[dict], obs, model: dict, locale: str):
     return out
 
 
+def privacy_block(obs, img) -> dict:
+    """obs.privacy plus, when a person is suspected, the face regions FlyBot blurs on the photo it shows:
+    `regions` [{x, y, w, h}] normalised (YuNet), or `blurAll` when the face model is unavailable."""
+    out = dict(obs.privacy or {"person_suspected": False})
+    out.pop("faces", None)
+    if not out.get("person_suspected") or img is None:
+        return out
+    from sentinel.vision.motion import detect_faces
+
+    h, w = img.shape[:2]
+    faces = detect_faces(img)
+    if faces is None:
+        return {**out, "blurAll": True, "method": "unavailable"}
+    regions = []
+    for f in faces:
+        x1, y1, x2, y2 = f["bbox"]
+        regions.append({"x": round(max(0.0, x1 / w), 4), "y": round(max(0.0, y1 / h), 4),
+                        "w": round(min(1.0, (x2 - x1) / w), 4), "h": round(min(1.0, (y2 - y1) / h), 4)})
+    return {**out, "regions": regions, "method": "yunet"}
+
+
 def store_evidence(img, req: dict, boxes: list[dict], obs, model: dict) -> dict:
     """Annotated JPEG to s3://<bucket>/evidence/<cameraId>/<capturedAt>.annotated.jpg (or EVIDENCE_DIR locally)."""
     import cv2
@@ -348,7 +372,7 @@ def store_evidence(img, req: dict, boxes: list[dict], obs, model: dict) -> dict:
         stamp = iso(req["capturedAt"] or datetime.now(UTC)).replace(":", "-")
         key = f"evidence/{SAFE.sub('_', req['camera']['id'])}/{stamp}.annotated.jpg"
         # The bucket the photo came from (FlyBot signs evidence keys against its own bucket), else the stack's
-        bucket = req.get("photoBucket") or os.environ.get("PHOTOS_BUCKET")
+        bucket = (req.get("photoBucket") or os.environ.get("PHOTOS_BUCKET")) if req.get("evidence") else None
         local_dir = os.environ.get("EVIDENCE_DIR")
         out: dict = {"annotatedS3Key": None, "crops": []}
         if bucket and not os.environ.get("EVIDENCE_LOCAL_ONLY"):
@@ -425,7 +449,9 @@ def analyze(request, *, llm=None, analyzer=None, clock=None, store: bool = True)
             raise ModelUnavailable("detector produced no result")
         proposals = proposals_from_trace(trace, rt.policy, req["locale"])
         img = vision.IMAGE_CACHE.get(req["photo"])
-        evidence = store_evidence(img, req, boxes, obs, model) if (store and img is not None) else {"annotatedS3Key": None, "crops": []}
+        wanted = req["evidence"] or bool(os.environ.get("EVIDENCE_DIR"))
+        evidence = store_evidence(img, req, boxes, obs, model) if (store and wanted and img is not None) else {"annotatedS3Key": None, "crops": []}
+        privacy = privacy_block(obs, img)
         dnn_ms = (res.get("detect") or {}).get("forward_ms") if res else None
         timings = {"loadMs": loaded.get("photo", {}).get("ms"), "dnnMs": dnn_ms, "visionMs": obs.vision_ms,
                    "agentMs": agent_ms, "evidenceMs": evidence.get("ms"),
@@ -442,7 +468,7 @@ def analyze(request, *, llm=None, analyzer=None, clock=None, store: bool = True)
             "trace": trace_block(trace, obs, timings, trace.planner.name),
             "evidence": evidence, "timings": timings, "opencv": cv, "mode": req["mode"],
             "crowd": {"saturation": obs.saturation} if obs.saturation is not None else None,
-            "privacy": obs.privacy, "photo": {"width": width, "height": height},
+            "privacy": privacy, "photo": {"width": width, "height": height},
         }
         if answer is not None:
             out["answer"] = answer
