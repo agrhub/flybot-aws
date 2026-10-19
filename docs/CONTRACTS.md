@@ -85,6 +85,12 @@ Topics, shadow and RPC exactly as docs/protocol-v1.md in camos-esp32-trap (CamOS
 - Shadow `desired`/`reported` keys: `capture.intervalMin` (int), `power.mode` ("auto"|"battery"|"powered"), `live.requested` (bool, FlyBot sets true to ask for a live session at the next wake), `kvs.channelName` (string), `location` (reported: `{lat,lng,fixAt}`), `net` (reported: "wifi"|"4g"), `battery` (reported: `{mv,pct,charging,solarMv}`).
 - RPC methods: `snapshot.now`, `live.start` `{"minutes": 5}`, `live.stop`, `gps.fix`, `reboot`, `ota.apply`.
 - LWT / `goodbye` carries `sleeping: true, wakeAt: <ms epoch>` so FlyBot can show "sleeping, next wake HH:MM".
+- Remote log (firmware 0.8.0): RPC `log.start {level, minutes, backlog}` / `log.stop`, or desired `log {level, until}`
+  for a camera that sleeps; the camera sends batches on `camos/<serial>/log`
+  `{v, session, seq, uptimeMs, at, lines: ["I (123) tag: msg"], dropped, end}` (QoS 0, secrets removed on the camera)
+  and reports `log {on, level, until, session}`. After a crash, watchdog or brownout reset it sends one `crash` event
+  `{reason, detail, fw, logTail, coredump {task, pc, backtrace, corrupted, elfSha256}}`. Without MQTT, both go to
+  `POST /api/device/logs {kind: crash | diag, fw, uptimeMs, lines, crash}` (device token).
 - FlyBot talks to IoT Core with the AWS SDK (shadow and publish through the data plane; device->cloud messages through an MQTT-over-WebSocket client with SigV4 from the instance role, or IoT rules to an HTTPS endpoint if the client proves unreliable; decision recorded in DECISIONS.md).
 
 ## 4. Live view (KVS WebRTC)

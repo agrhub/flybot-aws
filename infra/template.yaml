@@ -108,7 +108,7 @@ Parameters:
     Default: ''
     Description: >-
       Optional FlyBot HTTPS endpoint (e.g. https://flybot.agrhub.com/api/device/events) for the IoT rules that forward
-      camos/<serial>/{state,event,telemetry,rpc/res} and the lifecycle events as {topic, payload} (FlyBot IOT_EVENTS=rule).
+      camos/<serial>/{state,event,telemetry,rpc/res,log} and the lifecycle events as {topic, payload} (FlyBot IOT_EVENTS=rule).
       Empty = no rule: FlyBot subscribes over MQTT/WSS itself (IOT_EVENTS=mqtt, the default). The topic rule
       destination must be confirmed once (FlyBot answers the confirmation request on that URL).
   DeviceEventsSecret:
@@ -557,6 +557,24 @@ Resources:
       TopicRulePayload:
         AwsIotSqlVersion: '2016-03-23'
         Sql: "SELECT * AS payload, topic() AS topic FROM 'camos/+/rpc/res'"
+        RuleDisabled: false
+        Actions:
+          - Http:
+              Url: !Ref DeviceEventsWebhookUrl
+              ConfirmationUrl: !Ref DeviceEventsWebhookUrl
+              Headers:
+                - {Key: X-IoT-Rule-Secret, Value: !Ref DeviceEventsSecret}
+                - {Key: Content-Type, Value: application/json}
+
+  # Remote console log, sent by a camera only while FlyBot asked for it (camos-esp32-trap 0.8.0 logfwd.c)
+  DeviceEventsRuleLog:
+    Type: AWS::IoT::TopicRule
+    Condition: HasWebhook
+    Properties:
+      RuleName: !Sub 'flybot_${Stage}_camos_log'
+      TopicRulePayload:
+        AwsIotSqlVersion: '2016-03-23'
+        Sql: "SELECT * AS payload, topic() AS topic FROM 'camos/+/log'"
         RuleDisabled: false
         Actions:
           - Http:
