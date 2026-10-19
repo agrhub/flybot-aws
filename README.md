@@ -10,6 +10,17 @@ infrastructure with a one-command deploy, the benchmark and the evaluation.
 
 Live demo: **https://flybot.agrhub.com**
 
+## Submission documents (OpenCV AI Competition 2026)
+
+| Document | What it holds |
+|---|---|
+| [docs/REPORT.md](docs/REPORT.md) ([PDF](docs/REPORT.pdf)) | technical report: problem, users, architecture, OpenCV 5, AWS, evaluation, COOL and Agentic Vision evidence, limitations, responsible use |
+| [docs/diagrams/](docs/diagrams/) | [architecture](docs/diagrams/architecture.svg) (Input → OpenCV 5 → Perception → Agent → AWS → Decision/Action), [agent workflow](docs/diagrams/agent_workflow.svg), [trace example](docs/diagrams/trace_example.svg); PNGs beside them |
+| [docs/evidence/agent/trace_example.json](docs/evidence/agent/trace_example.json) | a real perception → decision → action trace of the Lambda's handler on orchard photos |
+| [docs/DEVPOST.md](docs/DEVPOST.md) | the Devpost submission text, with the COOL and Agentic Vision opt-ins |
+| [docs/VIDEO_SCRIPT.md](docs/VIDEO_SCRIPT.md) | the demo video script (≤ 5 minutes) and its recording checklist |
+| [docs/RESPONSIBLE_USE.md](docs/RESPONSIBLE_USE.md) | people in photos, human approval, security, data retention, bias |
+
 ## Architecture
 
 ```mermaid
@@ -207,7 +218,7 @@ Deep mode (`"mode":"deep","question":"Why did the count jump today?"`) answers i
 | YOLO26n on OpenCV 5 DNN, Roboflow test split (76 images, 2,349 flies) | mAP@50 0.953, mAP@50-95 0.700, P/R 0.913/0.898 | `models/MODEL_CARD.md`, `eval/results/yolo26n_test_metrics.json` |
 | OpenCV 5 DNN vs ONNX Runtime | identical detections on 20 test images and 20 trap photos | `eval/results/yolo26n_opencv_parity_colab.json`, `eval/results/yolo26_parity.json` |
 | YOLOv7-tiny baseline vs the production count, 1,293 real photos | MAE 0.84 flies | `eval/RESULTS.md` 1b |
-| Lambda latency (arm64, 2 GB, sample photo pair) | warm p50 1,087 ms | `bench/results/lambda_latency.json` |
+| Lambda latency (arm64, 2 GB, sample photo pair) | warm p50 1,091 ms | `bench/results/lambda_latency.json` |
 | COOL (Graviton4 AMI) vs pip OpenCV 5 on the same pipeline, 500 photo pairs x 5 | COOL 4.6 % slower per photo; cheapest: x86 c7i, USD 0.0155 per 1,000 photos | `bench/REPORT_COOL.md` |
 | Marginal cost on Lambda | ~USD 0.054 per 1,000 photos | `infra/COST.md` |
 

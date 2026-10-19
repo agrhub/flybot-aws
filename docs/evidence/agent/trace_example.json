@@ -1,0 +1,764 @@
+{
+ "what": "Real perception -> decision -> action traces of the vision Lambda's handler (sentinel.handler.analyze, the code the Lambda runs) on real orchard photos of the EZVIZ lure-trap camera BE4089629, 5 Oct 2026. Rule planner, YOLO26n on the OpenCV 5 DNN new engine, locale vi (so `reason` is Vietnamese; `detail` is the English rule text).",
+ "source": "rows 4 and 5 of data/replay/sample-yolo26/responses.jsonl (git-ignored), written by `make replay-sample` with DETECTOR=yolo26 on 2026-10-17; run summary: eval/results/replay_sample_yolo26.json. Local file paths shortened to repository paths; nothing else changed.",
+ "rerun": "cd lambda/vision && DETECTOR=yolo26 EVIDENCE_DIR=../../data/replay/sample-yolo26/evidence uv run python ../../eval/replay_sample.py --manifest ../../data/samples/samples_manifest.csv --out ../../data/replay/sample-yolo26 (needs models/yolo26/fruitfly_yolo26n.onnx, README 'Run locally')",
+ "limits": [
+  "Offline replay on a laptop: the handler is the Lambda's, but the action is only proposed (capture_now goes back to FlyBot as a confirm card); the replay cannot take a new photo.",
+  "The photos between 07:00 and 07:30 were not taken because of this proposal: they are the camera's own photos in the export.",
+  "Whether the `glare` flag is right is not measured (no human looked at these photos for this purpose). YOLO26n counts 0 where FlyBot's production model counted 6 (models/MODEL_CARD.md: small specks on the lid are missed)."
+ ],
+ "sequence_BE4089629": [
+  {
+   "photo": "data/samples/images/BE4089629/6ac327d44c3227d11cfbd084.jpg",
+   "capturedAt": "2026-10-05T04:30:12.318Z",
+   "opencv": {
+    "count": 0,
+    "qualityFlags": [],
+    "qualityIssues": [],
+    "qualityScore": 99.09,
+    "glareRatio": 0.0153,
+    "registrationOk": null,
+    "inliers": null
+   },
+   "decision": [
+    "no_op"
+   ],
+   "proposals": [],
+   "productionCount": 5
+  },
+  {
+   "photo": "data/samples/images/BE4089629/6ac32eda4c3227d11cfbd0b4.jpg",
+   "capturedAt": "2026-10-05T05:00:10.494Z",
+   "opencv": {
+    "count": 0,
+    "qualityFlags": [],
+    "qualityIssues": [],
+    "qualityScore": 99.97,
+    "glareRatio": 0.0,
+    "registrationOk": true,
+    "inliers": 26
+   },
+   "decision": [
+    "no_op"
+   ],
+   "proposals": [],
+   "productionCount": 3
+  },
+  {
+   "photo": "data/samples/images/BE4089629/6ac335e34c3227d11cfbd0cb.jpg",
+   "capturedAt": "2026-10-05T05:30:11.528Z",
+   "opencv": {
+    "count": 0,
+    "qualityFlags": [],
+    "qualityIssues": [],
+    "qualityScore": 99.84,
+    "glareRatio": 0.0,
+    "registrationOk": true,
+    "inliers": 38
+   },
+   "decision": [
+    "no_op"
+   ],
+   "proposals": [],
+   "productionCount": 6
+  },
+  {
+   "photo": "data/samples/images/BE4089629/6ac33ceb4c3227d11cfbd0f4.jpg",
+   "capturedAt": "2026-10-05T06:00:11.275Z",
+   "opencv": {
+    "count": 0,
+    "qualityFlags": [],
+    "qualityIssues": [],
+    "qualityScore": 99.77,
+    "glareRatio": 0.0,
+    "registrationOk": true,
+    "inliers": 18
+   },
+   "decision": [
+    "no_op"
+   ],
+   "proposals": [],
+   "productionCount": 6
+  },
+  {
+   "photo": "data/samples/images/BE4089629/6ac343f24c3227d11cfbd13a.jpg",
+   "capturedAt": "2026-10-05T06:30:10.819Z",
+   "opencv": {
+    "count": 0,
+    "qualityFlags": [],
+    "qualityIssues": [],
+    "qualityScore": 100.0,
+    "glareRatio": 0.0,
+    "registrationOk": true,
+    "inliers": 26
+   },
+   "decision": [
+    "no_op"
+   ],
+   "proposals": [],
+   "productionCount": 6
+  },
+  {
+   "photo": "data/samples/images/BE4089629/6ac34afa4c3227d11cfbd154.jpg",
+   "capturedAt": "2026-10-05T07:00:10.627Z",
+   "opencv": {
+    "count": 0,
+    "qualityFlags": [
+     "overexposed"
+    ],
+    "qualityIssues": [
+     "glare"
+    ],
+    "qualityScore": 78.25,
+    "glareRatio": 0.021,
+    "registrationOk": true,
+    "inliers": 36
+   },
+   "decision": [
+    "quality.recapture",
+    "quality.awaiting_photo"
+   ],
+   "proposals": [
+    "capture_now"
+   ],
+   "productionCount": 6
+  },
+  {
+   "photo": "data/samples/images/BE4089629/6ac34f1fe2041e0cbbd42bc8.jpg",
+   "capturedAt": "2026-10-05T07:17:51.987Z",
+   "opencv": {
+    "count": 0,
+    "qualityFlags": [
+     "overexposed"
+    ],
+    "qualityIssues": [
+     "glare"
+    ],
+    "qualityScore": 77.8,
+    "glareRatio": 0.0263,
+    "registrationOk": true,
+    "inliers": 36
+   },
+   "decision": [
+    "quality.recapture",
+    "quality.awaiting_photo"
+   ],
+   "proposals": [
+    "capture_now"
+   ],
+   "productionCount": 0
+  },
+  {
+   "photo": "data/samples/images/BE4089629/6ac350bb85650578c63d7bef.jpg",
+   "capturedAt": "2026-10-05T07:24:43.031Z",
+   "opencv": {
+    "count": 0,
+    "qualityFlags": [
+     "overexposed"
+    ],
+    "qualityIssues": [
+     "glare"
+    ],
+    "qualityScore": 77.59,
+    "glareRatio": 0.0287,
+    "registrationOk": true,
+    "inliers": 44
+   },
+   "decision": [
+    "quality.recapture",
+    "quality.awaiting_photo"
+   ],
+   "proposals": [
+    "capture_now"
+   ],
+   "productionCount": 0
+  },
+  {
+   "photo": "data/samples/images/BE4089629/6ac351ff85650578c63d7bf2.jpg",
+   "capturedAt": "2026-10-05T07:30:07.858Z",
+   "opencv": {
+    "count": 0,
+    "qualityFlags": [],
+    "qualityIssues": [],
+    "qualityScore": 100.0,
+    "glareRatio": 0.0,
+    "registrationOk": true,
+    "inliers": 24
+   },
+   "decision": [
+    "no_op"
+   ],
+   "proposals": [],
+   "productionCount": 0
+  },
+  {
+   "photo": "data/samples/images/BE4089629/6ac352024c3227d11cfbd183.jpg",
+   "capturedAt": "2026-10-05T07:30:10.493Z",
+   "opencv": {
+    "count": 0,
+    "qualityFlags": [],
+    "qualityIssues": [],
+    "qualityScore": 100.0,
+    "glareRatio": 0.0,
+    "registrationOk": true,
+    "inliers": 94
+   },
+   "decision": [
+    "no_op"
+   ],
+   "proposals": [],
+   "productionCount": 5
+  },
+  {
+   "photo": "data/samples/images/BE4089629/6ac3527e67f733147518e508.jpg",
+   "capturedAt": "2026-10-05T07:32:14.696Z",
+   "opencv": {
+    "count": 0,
+    "qualityFlags": [
+     "overexposed"
+    ],
+    "qualityIssues": [
+     "glare"
+    ],
+    "qualityScore": 77.36,
+    "glareRatio": 0.0315,
+    "registrationOk": true,
+    "inliers": 25
+   },
+   "decision": [
+    "quality.recapture",
+    "quality.awaiting_photo"
+   ],
+   "proposals": [
+    "capture_now"
+   ],
+   "productionCount": 0
+  },
+  {
+   "photo": "data/samples/images/BE4089629/6ac353356c04f29d44631756.jpg",
+   "capturedAt": "2026-10-05T07:35:17.565Z",
+   "opencv": {
+    "count": 0,
+    "qualityFlags": [
+     "overexposed"
+    ],
+    "qualityIssues": [
+     "glare"
+    ],
+    "qualityScore": 77.23,
+    "glareRatio": 0.0332,
+    "registrationOk": true,
+    "inliers": 40
+   },
+   "decision": [
+    "quality.recapture",
+    "quality.awaiting_photo"
+   ],
+   "proposals": [
+    "capture_now"
+   ],
+   "productionCount": 0
+  }
+ ],
+ "responses": {
+  "clean_no_op": {
+   "v": 1,
+   "traceId": "tr_20261005_063010_a4jh",
+   "model": {
+    "name": "yolo26n",
+    "version": "2026-10-16",
+    "engine": "opencv-5.0.0-dnn-new",
+    "onnx": "fruitfly_yolo26n.onnx"
+   },
+   "counts": {
+    "total": 0,
+    "byClass": {
+     "fruit_fly": 0
+    }
+   },
+   "boxes": [],
+   "quality": {
+    "ok": true,
+    "flags": [],
+    "issues": [],
+    "blur": 0.0,
+    "exposure": 0.601,
+    "score": 100.0,
+    "scores": {
+     "brightness": 153.25,
+     "contrast": 31.07,
+     "sharpness": 276.18,
+     "edge_ratio": 0.28611,
+     "clip_low": 0.0,
+     "clip_high": 0.0,
+     "saturation_mean": 13.24,
+     "glare_ratio": 0.0,
+     "flat_share": 0.0304,
+     "card_found": true,
+     "card_coverage": 0.6828,
+     "card_partial": false,
+     "card_brightness": 164.88,
+     "card_contrast": 23.48,
+     "floor_sharpness": 27.39
+    }
+   },
+   "diff": {
+    "newCount": 0,
+    "goneCount": 0,
+    "persistedCount": 0,
+    "cardMoved": false,
+    "cardChangeSuspected": false,
+    "meaning": "activity",
+    "registrationOk": true,
+    "inliers": 26,
+    "changeRatio": 0.0063
+   },
+   "density": {
+    "gridRows": 4,
+    "gridCols": 4,
+    "cells": [
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0
+     ]
+    ]
+   },
+   "proposals": [],
+   "trace": {
+    "planner": "rule",
+    "steps": [
+     {
+      "tool": "load",
+      "ms": 3.0
+     },
+     {
+      "tool": "analyze_trap_photo",
+      "ms": 1589.64,
+      "status": "ok",
+      "by": "planner",
+      "index": 0,
+      "dnnMs": 331.7
+     },
+     {
+      "tool": "get_trap_history",
+      "ms": 0.24,
+      "status": "ok",
+      "by": "planner",
+      "index": 1
+     }
+    ],
+    "tokens": {
+     "in": 0,
+     "cachedIn": 0,
+     "out": 0,
+     "llmCalls": 0
+    },
+    "ms": 1604.4,
+    "model": null,
+    "fallback": false,
+    "fallbackReason": null,
+    "llmTurns": 0,
+    "state": "DECIDED",
+    "outcome": "no_op",
+    "reasoning": "[no_op] quality ok, no card issue, counts agree, no surge",
+    "decisions": [
+     {
+      "rule": "no_op",
+      "action": "no_op",
+      "reasons": [
+       "quality ok, no card issue, counts agree, no surge"
+      ],
+      "evidence": [
+       "data/samples/images/BE4089629/6ac343f24c3227d11cfbd13a.jpg"
+      ]
+     }
+    ],
+    "events": [],
+    "toolCalls": [
+     {
+      "index": 0,
+      "name": "analyze_trap_photo",
+      "args": {
+       "camera": "BE4089629"
+      },
+      "status": "ok",
+      "blocked_reason": null,
+      "result": {
+       "evidence": [
+        "data/samples/images/BE4089629/6ac343f24c3227d11cfbd13a.jpg",
+        "tool:0"
+       ]
+      },
+      "state_before": "INGESTED",
+      "state_after": "ANALYZED",
+      "started_at": "2026-10-05T06:30:10.819000Z",
+      "ms": 1589.64,
+      "by": "planner",
+      "decisions_before": 0
+     },
+     {
+      "index": 1,
+      "name": "get_trap_history",
+      "args": {
+       "camera": "BE4089629",
+       "days": 4
+      },
+      "status": "ok",
+      "blocked_reason": null,
+      "result": {
+       "camera": "BE4089629",
+       "trap_kind": "lure",
+       "basis": "daily_average",
+       "today": "2026-10-05",
+       "daily": {
+        "2026-10-05": {
+         "peak": 6,
+         "total": 20,
+         "scans": 5
+        }
+       },
+       "card_replaced_days": [],
+       "last_treatment": null,
+       "treatments": [],
+       "surge": null,
+       "evidence": [
+        "history://BE4089629/2026-10-05/4d",
+        "tool:1"
+       ]
+      },
+      "state_before": "ANALYZED",
+      "state_after": "ANALYZED",
+      "started_at": "2026-10-05T06:30:10.819000Z",
+      "ms": 0.24,
+      "by": "planner",
+      "decisions_before": 0
+     }
+    ],
+    "killSwitch": false,
+    "policyVersion": "1",
+    "eventId": "tr_20261005_063010_a4jh"
+   },
+   "evidence": {
+    "annotatedS3Key": null,
+    "crops": [],
+    "annotatedPath": "data/replay/sample-yolo26/evidence/evidence/BE4089629/2026-10-05T06-30-10.819000Z.annotated.jpg",
+    "ms": 4.1
+   },
+   "timings": {
+    "loadMs": 3.0,
+    "dnnMs": 331.7,
+    "visionMs": 1520.9,
+    "agentMs": 1590.7,
+    "evidenceMs": 4.1,
+    "totalMs": 1604.4
+   },
+   "opencv": "5.0.0",
+   "mode": "detect",
+   "crowd": null,
+   "privacy": {
+    "person_suspected": false,
+    "faces": null
+   },
+   "photo": {
+    "width": 768,
+    "height": 432
+   },
+   "_replay": {
+    "snapshot_id": "6ac343f24c3227d11cfbd13a",
+    "production_count": "6",
+    "wall_ms": 1607.2,
+    "index": 5
+   }
+  },
+  "glare_capture_now": {
+   "v": 1,
+   "traceId": "tr_20261005_070010_ang2",
+   "model": {
+    "name": "yolo26n",
+    "version": "2026-10-16",
+    "engine": "opencv-5.0.0-dnn-new",
+    "onnx": "fruitfly_yolo26n.onnx"
+   },
+   "counts": {
+    "total": 0,
+    "byClass": {
+     "fruit_fly": 0
+    }
+   },
+   "boxes": [],
+   "quality": {
+    "ok": false,
+    "flags": [
+     "overexposed"
+    ],
+    "issues": [
+     "glare"
+    ],
+    "blur": 0.0,
+    "exposure": 0.601,
+    "score": 78.25,
+    "scores": {
+     "brightness": 153.23,
+     "contrast": 30.49,
+     "sharpness": 264.3,
+     "edge_ratio": 0.28432,
+     "clip_low": 0.0,
+     "clip_high": 0.014,
+     "saturation_mean": 14.02,
+     "glare_ratio": 0.021,
+     "flat_share": 0.0236,
+     "card_found": true,
+     "card_coverage": 0.6861,
+     "card_partial": false,
+     "card_brightness": 163.72,
+     "card_contrast": 25.75,
+     "floor_sharpness": 38.0
+    }
+   },
+   "diff": {
+    "newCount": 0,
+    "goneCount": 0,
+    "persistedCount": 0,
+    "cardMoved": false,
+    "cardChangeSuspected": false,
+    "meaning": "activity",
+    "registrationOk": true,
+    "inliers": 36,
+    "changeRatio": 0.0295
+   },
+   "density": {
+    "gridRows": 4,
+    "gridCols": 4,
+    "cells": [
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0
+     ]
+    ]
+   },
+   "proposals": [
+    {
+     "id": "p1",
+     "action": "capture_now",
+     "params": {
+      "purpose": "recapture",
+      "resolution": "main"
+     },
+     "reason": "Ảnh không đạt chất lượng (tối, chói, mờ hoặc thiếu tương phản): chụp lại",
+     "detail": "['glare']: capture again",
+     "rule": "quality.recapture",
+     "confidence": 0.9,
+     "requiresApproval": false,
+     "evidence": [
+      "proposal://BE4089629/prop-capture-1"
+     ],
+     "toolCall": 1,
+     "by": "planner"
+    }
+   ],
+   "trace": {
+    "planner": "rule",
+    "steps": [
+     {
+      "tool": "load",
+      "ms": 2.9
+     },
+     {
+      "tool": "analyze_trap_photo",
+      "ms": 1120.6,
+      "status": "ok",
+      "by": "planner",
+      "index": 0,
+      "dnnMs": 172.5
+     },
+     {
+      "tool": "capture",
+      "ms": 0.43,
+      "status": "ok",
+      "by": "planner",
+      "index": 1
+     }
+    ],
+    "tokens": {
+     "in": 0,
+     "cachedIn": 0,
+     "out": 0,
+     "llmCalls": 0
+    },
+    "ms": 1134.8,
+    "model": null,
+    "fallback": false,
+    "fallbackReason": null,
+    "llmTurns": 0,
+    "state": "ACTED",
+    "outcome": "quality.recapture, quality.awaiting_photo",
+    "reasoning": "[quality.recapture] ['glare']: capture again [quality.awaiting_photo] capture requested; the photo arrives as a new event",
+    "decisions": [
+     {
+      "rule": "quality.recapture",
+      "action": "capture",
+      "reasons": [
+       "['glare']: capture again"
+      ],
+      "evidence": [
+       "data/samples/images/BE4089629/6ac34afa4c3227d11cfbd154.jpg"
+      ]
+     },
+     {
+      "rule": "quality.awaiting_photo",
+      "action": "wait",
+      "reasons": [
+       "capture requested; the photo arrives as a new event"
+      ],
+      "evidence": []
+     }
+    ],
+    "events": [
+     {
+      "at": "2026-10-05T07:00:10.627000Z",
+      "kind": "photo_not_counted",
+      "detail": {
+       "camera": "BE4089629",
+       "image": "data/samples/images/BE4089629/6ac34afa4c3227d11cfbd154.jpg",
+       "why": [
+        "glare"
+       ]
+      }
+     }
+    ],
+    "toolCalls": [
+     {
+      "index": 0,
+      "name": "analyze_trap_photo",
+      "args": {
+       "camera": "BE4089629"
+      },
+      "status": "ok",
+      "blocked_reason": null,
+      "result": {
+       "evidence": [
+        "data/samples/images/BE4089629/6ac34afa4c3227d11cfbd154.jpg",
+        "tool:0"
+       ]
+      },
+      "state_before": "INGESTED",
+      "state_after": "ANALYZED",
+      "started_at": "2026-10-05T07:00:10.627000Z",
+      "ms": 1120.6,
+      "by": "planner",
+      "decisions_before": 0
+     },
+     {
+      "index": 1,
+      "name": "capture",
+      "args": {
+       "camera": "BE4089629",
+       "resolution": "main",
+       "purpose": "recapture",
+       "reason": "quality issues ['glare']"
+      },
+      "status": "ok",
+      "blocked_reason": null,
+      "result": {
+       "ok": true,
+       "camera": "BE4089629",
+       "purpose": "recapture",
+       "resolution": "main",
+       "image": null,
+       "pending": true,
+       "transport": "flybot_proposal",
+       "request_id": "prop-capture-1",
+       "npu_count": null,
+       "error": null,
+       "evidence": [
+        "proposal://BE4089629/prop-capture-1",
+        "tool:1"
+       ],
+       "note": "photo will arrive through FlyBot's snapshot_analyzed webhook (new per-photo run)"
+      },
+      "state_before": "DECIDED",
+      "state_after": "ACTED",
+      "started_at": "2026-10-05T07:00:10.627000Z",
+      "ms": 0.43,
+      "by": "planner",
+      "decisions_before": 1
+     }
+    ],
+    "killSwitch": false,
+    "policyVersion": "1",
+    "eventId": "tr_20261005_070010_ang2"
+   },
+   "evidence": {
+    "annotatedS3Key": null,
+    "crops": [],
+    "annotatedPath": "data/replay/sample-yolo26/evidence/evidence/BE4089629/2026-10-05T07-00-10.627000Z.annotated.jpg",
+    "ms": 4.9
+   },
+   "timings": {
+    "loadMs": 2.9,
+    "dnnMs": 172.5,
+    "visionMs": 1068.6,
+    "agentMs": 1122.6,
+    "evidenceMs": 4.9,
+    "totalMs": 1134.8
+   },
+   "opencv": "5.0.0",
+   "mode": "detect",
+   "crowd": null,
+   "privacy": {
+    "person_suspected": false,
+    "faces": null
+   },
+   "photo": {
+    "width": 768,
+    "height": 432
+   },
+   "_replay": {
+    "snapshot_id": "6ac34afa4c3227d11cfbd154",
+    "production_count": "6",
+    "wall_ms": 1136.2,
+    "index": 6
+   }
+  }
+ }
+}

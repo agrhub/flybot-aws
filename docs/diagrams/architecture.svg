@@ -1,0 +1,250 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080" font-family="Segoe UI, Arial, Helvetica, sans-serif">
+<title>FlyBot on AWS: architecture</title>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/></marker><marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/></marker></defs>
+<rect width="1920" height="1080" fill="#ffffff"/>
+<text x="30" y="40" font-size="28" font-weight="bold" fill="#0f172a" text-anchor="start">FlyBot on AWS: architecture</text>
+<text x="30" y="68" font-size="18" font-weight="normal" fill="#475569" text-anchor="start">Input → OpenCV 5 → Vision/Perception layer → AI/Agent layer → AWS infrastructure → Decision/Action; a confirmed action produces the next photo</text>
+<rect x="30" y="84" width="280" height="56" rx="8" fill="#1e293b"/>
+<text x="42" y="108" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="start">1  INPUT</text>
+<text x="42" y="130" font-size="14" font-weight="normal" fill="#cbd5e1" text-anchor="start">trap cameras, grower questions</text>
+<rect x="30" y="148" width="280" height="787" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+<path d="M 314 112 L 340 112" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<path d="M 314 540 L 340 540" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<rect x="344" y="84" width="280" height="56" rx="8" fill="#1e293b"/>
+<text x="356" y="108" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="start">2  OPENCV 5</text>
+<text x="356" y="130" font-size="14" font-weight="normal" fill="#cbd5e1" text-anchor="start">opencv-python-headless 5.0.0</text>
+<rect x="344" y="148" width="280" height="787" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+<path d="M 628 112 L 654 112" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<path d="M 628 540 L 654 540" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<rect x="658" y="84" width="280" height="56" rx="8" fill="#1e293b"/>
+<text x="670" y="108" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="start">3  VISION / PERCEPTION</text>
+<text x="670" y="130" font-size="14" font-weight="normal" fill="#cbd5e1" text-anchor="start">lambda/vision/sentinel/vision</text>
+<rect x="658" y="148" width="280" height="787" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+<path d="M 942 112 L 968 112" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<path d="M 942 540 L 968 540" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<rect x="972" y="84" width="280" height="56" rx="8" fill="#1e293b"/>
+<text x="984" y="108" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="start">4  AI / AGENT</text>
+<text x="984" y="130" font-size="14" font-weight="normal" fill="#cbd5e1" text-anchor="start">sentinel/agent, same Lambda</text>
+<rect x="972" y="148" width="280" height="787" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+<path d="M 1256 112 L 1282 112" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<path d="M 1256 540 L 1282 540" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<rect x="1286" y="84" width="280" height="56" rx="8" fill="#1e293b"/>
+<text x="1298" y="108" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="start">5  AWS INFRASTRUCTURE</text>
+<text x="1298" y="130" font-size="14" font-weight="normal" fill="#cbd5e1" text-anchor="start">ap-southeast-2, one SAM stack</text>
+<rect x="1286" y="148" width="280" height="787" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+<path d="M 1570 112 L 1596 112" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<path d="M 1570 540 L 1596 540" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#ah)"/>
+<rect x="1600" y="84" width="280" height="56" rx="8" fill="#1e293b"/>
+<text x="1612" y="108" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="start">6  DECISION / ACTION</text>
+<text x="1612" y="130" font-size="14" font-weight="normal" fill="#cbd5e1" text-anchor="start">a person confirms, FlyBot acts</text>
+<rect x="1600" y="148" width="280" height="787" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+<rect x="38" y="166" width="264" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="192" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">EZVIZ trap cameras x 2</text>
+<text x="50" y="214" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">lure traps BE4089629, BE4111159</text>
+<text x="50" y="233" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">in an orchard, southern Vietnam;</text>
+<text x="50" y="252" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">FlyBot captures on schedule</text>
+<text x="50" y="271" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">through EZVIZ Open Platform</text>
+<rect x="38" y="302" width="264" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="328" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">ESP32-S3 trap camera</text>
+<text x="50" y="350" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">firmware-esp32 v0.6.2 (public)</text>
+<text x="50" y="369" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">Wi-Fi or 4G, GPS, solar + LiPo,</text>
+<text x="50" y="388" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">deep sleep; HTTPS photo upload,</text>
+<text x="50" y="407" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">MQTT to IoT Core, KVS master</text>
+<rect x="212" y="291" width="82" height="22" rx="11" fill="#78350f"/>
+<text x="253" y="306" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">FIRMWARE</text>
+<rect x="38" y="438" width="264" height="103" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="464" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Grower in FlyBot</text>
+<text x="50" y="486" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">web app, chatbot question about</text>
+<text x="50" y="505" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">a photo (&quot;why did it jump?&quot;),</text>
+<text x="50" y="524" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">confirm cards, Telegram</text>
+<rect x="38" y="555" width="264" height="103" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="581" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Replay (no hardware)</text>
+<text x="50" y="603" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">24 real photos in data/samples,</text>
+<text x="50" y="622" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">make replay-sample: the same</text>
+<text x="50" y="641" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">handler, rule planner, offline</text>
+<rect x="352" y="166" width="264" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="364" y="192" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">dnn, new engine</text>
+<text x="364" y="214" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">readNet(..., ENGINE_NEW),</text>
+<text x="364" y="233" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">YOLO26n ONNX [1, 300, 6],</text>
+<text x="364" y="252" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">NMSBoxes; the engine used</text>
+<text x="364" y="271" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">is recorded in every answer</text>
+<rect x="494" y="155" width="114" height="22" rx="11" fill="#a16207"/>
+<text x="551" y="170" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">OPENCV 5 NEW</text>
+<rect x="352" y="302" width="264" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="364" y="328" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">imgproc</text>
+<text x="364" y="350" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">HSV inRange, contours,</text>
+<text x="364" y="369" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">approxPolyDP, warpPerspective,</text>
+<text x="364" y="388" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">Laplacian, histograms,</text>
+<text x="364" y="407" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">adaptiveThreshold, watershed</text>
+<rect x="352" y="438" width="264" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="364" y="464" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">features</text>
+<text x="364" y="486" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">SIFT + FLANN + findHomography</text>
+<text x="364" y="505" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">(USAC_MAGSAC) per photo;</text>
+<text x="364" y="524" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ALIKED + LightGlueMatcher</text>
+<text x="364" y="543" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">on demand</text>
+<rect x="494" y="427" width="114" height="22" rx="11" fill="#a16207"/>
+<text x="551" y="442" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">OPENCV 5 NEW</text>
+<rect x="352" y="574" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="364" y="600" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">video + objdetect</text>
+<text x="364" y="622" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">MOG2, phaseCorrelate,</text>
+<text x="364" y="641" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">FaceDetectorYN (YuNet) blur</text>
+<rect x="352" y="672" width="264" height="103" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="364" y="698" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">COOL on Graviton4</text>
+<text x="364" y="720" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">AMI, OpenCV 5.1.0-dev, c8g;</text>
+<text x="364" y="739" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">benchmarked on 500 real pairs,</text>
+<text x="364" y="758" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">not in the serving path</text>
+<rect x="558" y="661" width="50" height="22" rx="11" fill="#0f766e"/>
+<text x="583" y="676" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">COOL</text>
+<rect x="666" y="166" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="678" y="192" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Fly count (op 5)</text>
+<text x="678" y="214" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">YOLO26n + box rules,</text>
+<text x="678" y="233" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">test F1 0.9006 (OpenCV path)</text>
+<rect x="808" y="155" width="114" height="22" rx="11" fill="#a16207"/>
+<text x="865" y="170" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">OPENCV 5 NEW</text>
+<rect x="666" y="261" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="678" y="287" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Quality gate (op 2)</text>
+<text x="678" y="309" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">blur, glare, dark, IR, trap</text>
+<text x="678" y="328" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">missing; flags + 0-100 score</text>
+<rect x="666" y="356" width="264" height="65" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="678" y="382" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Trap find (op 1)</text>
+<text x="678" y="404" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">lure tray floor or sticky card</text>
+<rect x="666" y="432" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="678" y="458" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Registration + diff (ops 3-4)</text>
+<text x="678" y="480" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">new vs persisted boxes,</text>
+<text x="678" y="499" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">card moved / changed</text>
+<rect x="666" y="527" width="264" height="65" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="678" y="553" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Crowding · density (ops 6-7)</text>
+<text x="678" y="575" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">card saturation, 4 x 4 grid</text>
+<rect x="666" y="603" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="678" y="629" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Occlusion + privacy (op 8)</text>
+<text x="678" y="651" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">hand / animal in front, camera</text>
+<text x="678" y="670" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">moved, faces blurred</text>
+<rect x="666" y="698" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="678" y="724" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Output</text>
+<text x="678" y="746" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">contract JSON (CONTRACTS.md §1)</text>
+<text x="678" y="765" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">+ annotated evidence JPEG</text>
+<rect x="980" y="166" width="264" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="992" y="192" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Planner</text>
+<text x="992" y="214" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">detect mode: rule planner</text>
+<text x="992" y="233" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">(policy.yaml), deterministic</text>
+<text x="992" y="252" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">deep mode: Claude Haiku 5.5</text>
+<text x="992" y="271" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">(Anthropic API), rule fallback</text>
+<rect x="1178" y="155" width="58" height="22" rx="11" fill="#6d28d9"/>
+<text x="1207" y="170" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">AGENT</text>
+<rect x="980" y="301" width="264" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="992" y="327" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">14 typed tools</text>
+<text x="992" y="349" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">analyze_trap_photo, history,</text>
+<text x="992" y="368" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">capture, set_image, schedule,</text>
+<text x="992" y="387" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">review, follow-up, proposals;</text>
+<text x="992" y="406" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">device tools return proposals</text>
+<rect x="1178" y="290" width="58" height="22" rx="11" fill="#6d28d9"/>
+<text x="1207" y="306" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">AGENT</text>
+<rect x="980" y="436" width="264" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="992" y="462" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Guardrails</text>
+<text x="992" y="484" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">run-state whitelist, budgets,</text>
+<text x="992" y="503" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">quiet hours, battery, evidence-</text>
+<text x="992" y="522" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">grounded proposals, untrusted-</text>
+<text x="992" y="541" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">text filter, kill switch</text>
+<rect x="1178" y="425" width="58" height="22" rx="11" fill="#6d28d9"/>
+<text x="1207" y="440" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">AGENT</text>
+<rect x="980" y="571" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="992" y="597" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Trace per photo</text>
+<text x="992" y="619" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">decisions, tool calls, tokens,</text>
+<text x="992" y="638" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">timings → stored by FlyBot</text>
+<rect x="980" y="668" width="264" height="103" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="992" y="694" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">FlyBot chatbot</text>
+<text x="992" y="716" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">Gemini (Vertex AI) with tools</text>
+<text x="992" y="735" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">analyze_photo_deep and</text>
+<text x="992" y="754" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">propose_action</text>
+<rect x="1178" y="657" width="58" height="22" rx="11" fill="#6d28d9"/>
+<text x="1207" y="672" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">AGENT</text>
+<rect x="980" y="784" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="992" y="810" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">MCP</text>
+<text x="992" y="832" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">none in this entry: tools are</text>
+<text x="992" y="851" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">called in-process</text>
+<rect x="1294" y="166" width="264" height="103" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1306" y="192" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">EC2 t4g.micro + Elastic IP</text>
+<text x="1306" y="214" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">FlyBot (Node 22, Vue 3),</text>
+<text x="1306" y="233" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">MongoDB 7, Caddy TLS:</text>
+<text x="1306" y="252" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">flybot.agrhub.com</text>
+<rect x="1294" y="282" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1306" y="308" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Lambda arm64, 2 GB, 120 s</text>
+<text x="1306" y="330" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">container from ECR, built by</text>
+<text x="1306" y="349" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">CodeBuild; one Invoke per photo</text>
+<rect x="1294" y="379" width="264" height="103" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1306" y="405" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">AWS IoT Core</text>
+<text x="1306" y="427" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">thing type camos-camera, one</text>
+<text x="1306" y="446" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">policy, shadow, RPC, presence;</text>
+<text x="1306" y="465" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">role alias for KVS keys</text>
+<rect x="1468" y="368" width="82" height="22" rx="11" fill="#15803d"/>
+<text x="1509" y="384" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">IOT CORE</text>
+<rect x="1294" y="495" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1306" y="521" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Kinesis Video Streams</text>
+<text x="1306" y="543" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">WebRTC channel per camera,</text>
+<text x="1306" y="562" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">15-min viewer credentials</text>
+<rect x="1294" y="592" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1306" y="618" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">S3</text>
+<text x="1306" y="640" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">photos, evidence (90 days),</text>
+<text x="1306" y="659" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">releases, build context</text>
+<rect x="1294" y="689" width="264" height="103" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1306" y="715" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Ops</text>
+<text x="1306" y="737" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">Secrets Manager, CloudWatch</text>
+<text x="1306" y="756" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">alarms → SNS, SSM, IAM,</text>
+<text x="1306" y="775" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">CloudFormation (SAM)</text>
+<rect x="1608" y="166" width="264" height="122" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1620" y="192" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Proposals → confirm cards</text>
+<text x="1620" y="214" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">capture_now, set_isp (CamOS),</text>
+<text x="1620" y="233" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">set_interval, review_request,</text>
+<text x="1620" y="252" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">notify; in FlyBot chat</text>
+<text x="1620" y="271" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">+ Telegram; expire after 24 h</text>
+<rect x="1734" y="155" width="130" height="22" rx="11" fill="#c2410c"/>
+<text x="1799" y="170" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">HUMAN APPROVAL</text>
+<rect x="1608" y="301" width="264" height="103" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1620" y="327" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Confirmed: camera action</text>
+<text x="1620" y="349" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">EZVIZ capture API, or CamOS</text>
+<text x="1620" y="368" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">RPC snapshot.now / shadow</text>
+<text x="1620" y="387" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">(image settings, schedule)</text>
+<rect x="1782" y="290" width="82" height="22" rx="11" fill="#15803d"/>
+<text x="1823" y="306" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">IOT CORE</text>
+<rect x="1608" y="417" width="264" height="65" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1620" y="443" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">New photo</text>
+<text x="1620" y="465" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">→ Lambda again (the loop)</text>
+<rect x="1608" y="495" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1620" y="521" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Chatbot answer</text>
+<text x="1620" y="543" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">deep-mode markdown + its</text>
+<text x="1620" y="562" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">proposals as cards</text>
+<rect x="1734" y="484" width="130" height="22" rx="11" fill="#c2410c"/>
+<text x="1799" y="500" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">HUMAN APPROVAL</text>
+<rect x="1608" y="592" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1620" y="618" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Alerts</text>
+<text x="1620" y="640" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">FlyBot thresholds and surges:</text>
+<text x="1620" y="659" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">Telegram, email, web push</text>
+<rect x="1608" y="689" width="264" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1620" y="715" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Live view</text>
+<text x="1620" y="737" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">KVS WebRTC to the browser,</text>
+<text x="1620" y="756" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">on request</text>
+<path d="M 1740 935 L 1740 952 L 170 952 L 170 939" fill="none" stroke="#b91c1c" stroke-width="3" marker-end="url(#ahr)"/>
+<text x="960" y="978" font-size="17" font-weight="bold" fill="#b91c1c" text-anchor="middle">LOOP: a confirmed capture produces a new photo, which is perceived again</text>
+<rect x="30" y="996" width="50" height="22" rx="11" fill="#0f766e"/>
+<text x="55" y="1012" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">COOL</text>
+<text x="88" y="1012" font-size="14" font-weight="normal" fill="#475569" text-anchor="start">Cloud-Optimized OpenCV</text>
+<rect x="266" y="996" width="58" height="22" rx="11" fill="#6d28d9"/>
+<text x="295" y="1012" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">AGENT</text>
+<text x="332" y="1012" font-size="14" font-weight="normal" fill="#475569" text-anchor="start">agent component</text>
+<rect x="461" y="996" width="42" height="22" rx="11" fill="#1d4ed8"/>
+<text x="482" y="1012" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">MCP</text>
+<text x="511" y="1012" font-size="14" font-weight="normal" fill="#475569" text-anchor="start">none in this entry</text>
+<rect x="661" y="996" width="130" height="22" rx="11" fill="#c2410c"/>
+<text x="726" y="1012" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">HUMAN APPROVAL</text>
+<text x="799" y="1012" font-size="14" font-weight="normal" fill="#475569" text-anchor="start">a person decides</text>
+<rect x="935" y="996" width="82" height="22" rx="11" fill="#15803d"/>
+<text x="976" y="1012" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">IOT CORE</text>
+<text x="1025" y="1012" font-size="14" font-weight="normal" fill="#475569" text-anchor="start">AWS IoT Core</text>
+<rect x="1133" y="996" width="82" height="22" rx="11" fill="#78350f"/>
+<text x="1174" y="1012" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">FIRMWARE</text>
+<text x="1223" y="1012" font-size="14" font-weight="normal" fill="#475569" text-anchor="start">our device firmware</text>
+<rect x="1380" y="996" width="114" height="22" rx="11" fill="#a16207"/>
+<text x="1437" y="1012" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">OPENCV 5 NEW</text>
+<text x="1502" y="1012" font-size="14" font-weight="normal" fill="#475569" text-anchor="start">OpenCV 5 feature</text>
+<text x="30" y="1052" font-size="14" font-weight="normal" fill="#475569" text-anchor="start">Columns 2-4 run inside one Lambda invocation per photo. Numbers: models/MODEL_CARD.md, bench/REPORT_COOL.md, infra/template.yaml.</text>
+</svg>

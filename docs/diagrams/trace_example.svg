@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 830" width="1920" height="830" font-family="Segoe UI, Arial, Helvetica, sans-serif">
+<title>FlyBot on AWS: a real perception, decision and action trace</title>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/></marker><marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/></marker></defs>
+<rect width="1920" height="830" fill="#ffffff"/>
+<text x="30" y="46" font-size="28" font-weight="bold" fill="#0f172a" text-anchor="start">Trace: OpenCV 5 output changes the next action (real photos, camera BE4089629, 5 Oct 2026)</text>
+<text x="30" y="78" font-size="18" font-weight="normal" fill="#475569" text-anchor="start">The vision Lambda&#x27;s handler on 12 consecutive photos of one lure trap (make replay-sample, YOLO26n, rule planner); source docs/evidence/agent/trace_example.json</text>
+<rect x="20" y="112" width="1880" height="34" rx="6" fill="#1e293b"/>
+<text x="30" y="135" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="start">photo (UTC)</text>
+<text x="200" y="135" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="start">OpenCV count</text>
+<text x="330" y="135" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="start">FlyBot count</text>
+<text x="460" y="135" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="start">quality score</text>
+<text x="600" y="135" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="start">glare share</text>
+<text x="730" y="135" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="start">flags</text>
+<text x="900" y="135" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="start">decision (rule)</text>
+<text x="1240" y="135" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="start">proposal</text>
+<text x="1400" y="135" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="start">registration</text>
+<rect x="20" y="146" width="1880" height="30" fill="#ffffff"/>
+<text x="30" y="167" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">04:30:12</text>
+<text x="200" y="167" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="330" y="167" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">5</text>
+<text x="460" y="167" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">99.09</text>
+<text x="600" y="167" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0.0153</text>
+<text x="730" y="167" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">none</text>
+<text x="900" y="167" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">no_op</text>
+<text x="1240" y="167" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">-</text>
+<text x="1400" y="167" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">-</text>
+<rect x="20" y="176" width="1880" height="30" fill="#f8fafc"/>
+<text x="30" y="197" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">05:00:10</text>
+<text x="200" y="197" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="330" y="197" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">3</text>
+<text x="460" y="197" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">99.97</text>
+<text x="600" y="197" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0.0000</text>
+<text x="730" y="197" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">none</text>
+<text x="900" y="197" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">no_op</text>
+<text x="1240" y="197" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">-</text>
+<text x="1400" y="197" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ok, 26 inliers</text>
+<rect x="20" y="206" width="1880" height="30" fill="#ffffff"/>
+<text x="30" y="227" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">05:30:11</text>
+<text x="200" y="227" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="330" y="227" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">6</text>
+<text x="460" y="227" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">99.84</text>
+<text x="600" y="227" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0.0000</text>
+<text x="730" y="227" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">none</text>
+<text x="900" y="227" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">no_op</text>
+<text x="1240" y="227" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">-</text>
+<text x="1400" y="227" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ok, 38 inliers</text>
+<rect x="20" y="236" width="1880" height="30" fill="#f8fafc"/>
+<text x="30" y="257" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">06:00:11</text>
+<text x="200" y="257" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="330" y="257" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">6</text>
+<text x="460" y="257" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">99.77</text>
+<text x="600" y="257" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0.0000</text>
+<text x="730" y="257" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">none</text>
+<text x="900" y="257" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">no_op</text>
+<text x="1240" y="257" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">-</text>
+<text x="1400" y="257" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ok, 18 inliers</text>
+<rect x="20" y="266" width="1880" height="30" fill="#ffffff"/>
+<text x="30" y="287" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">06:30:10</text>
+<text x="200" y="287" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="330" y="287" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">6</text>
+<text x="460" y="287" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">100.00</text>
+<text x="600" y="287" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0.0000</text>
+<text x="730" y="287" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">none</text>
+<text x="900" y="287" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">no_op</text>
+<text x="1240" y="287" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">-</text>
+<text x="1400" y="287" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ok, 26 inliers</text>
+<rect x="20" y="296" width="1880" height="30" fill="#fff7ed"/>
+<text x="30" y="317" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">07:00:10</text>
+<text x="200" y="317" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="330" y="317" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">6</text>
+<text x="460" y="317" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">78.25</text>
+<text x="600" y="317" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0.0210</text>
+<text x="730" y="317" font-size="15" font-weight="bold" fill="#c2410c" text-anchor="start">glare</text>
+<text x="900" y="317" font-size="15" font-weight="normal" fill="#c2410c" text-anchor="start">quality.recapture + quality.awaiting_photo</text>
+<text x="1240" y="317" font-size="15" font-weight="bold" fill="#c2410c" text-anchor="start">capture_now</text>
+<text x="1400" y="317" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ok, 36 inliers</text>
+<rect x="20" y="326" width="1880" height="30" fill="#fff7ed"/>
+<text x="30" y="347" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">07:17:51</text>
+<text x="200" y="347" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="330" y="347" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="460" y="347" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">77.80</text>
+<text x="600" y="347" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0.0263</text>
+<text x="730" y="347" font-size="15" font-weight="bold" fill="#c2410c" text-anchor="start">glare</text>
+<text x="900" y="347" font-size="15" font-weight="normal" fill="#c2410c" text-anchor="start">quality.recapture + quality.awaiting_photo</text>
+<text x="1240" y="347" font-size="15" font-weight="bold" fill="#c2410c" text-anchor="start">capture_now</text>
+<text x="1400" y="347" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ok, 36 inliers</text>
+<rect x="20" y="356" width="1880" height="30" fill="#fff7ed"/>
+<text x="30" y="377" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">07:24:43</text>
+<text x="200" y="377" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="330" y="377" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="460" y="377" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">77.59</text>
+<text x="600" y="377" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0.0287</text>
+<text x="730" y="377" font-size="15" font-weight="bold" fill="#c2410c" text-anchor="start">glare</text>
+<text x="900" y="377" font-size="15" font-weight="normal" fill="#c2410c" text-anchor="start">quality.recapture + quality.awaiting_photo</text>
+<text x="1240" y="377" font-size="15" font-weight="bold" fill="#c2410c" text-anchor="start">capture_now</text>
+<text x="1400" y="377" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ok, 44 inliers</text>
+<rect x="20" y="386" width="1880" height="30" fill="#ffffff"/>
+<text x="30" y="407" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">07:30:07</text>
+<text x="200" y="407" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="330" y="407" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="460" y="407" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">100.00</text>
+<text x="600" y="407" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0.0000</text>
+<text x="730" y="407" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">none</text>
+<text x="900" y="407" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">no_op</text>
+<text x="1240" y="407" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">-</text>
+<text x="1400" y="407" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ok, 24 inliers</text>
+<rect x="20" y="416" width="1880" height="30" fill="#f8fafc"/>
+<text x="30" y="437" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">07:30:10</text>
+<text x="200" y="437" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="330" y="437" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">5</text>
+<text x="460" y="437" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">100.00</text>
+<text x="600" y="437" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0.0000</text>
+<text x="730" y="437" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">none</text>
+<text x="900" y="437" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">no_op</text>
+<text x="1240" y="437" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">-</text>
+<text x="1400" y="437" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ok, 94 inliers</text>
+<rect x="20" y="446" width="1880" height="30" fill="#fff7ed"/>
+<text x="30" y="467" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">07:32:14</text>
+<text x="200" y="467" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="330" y="467" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="460" y="467" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">77.36</text>
+<text x="600" y="467" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0.0315</text>
+<text x="730" y="467" font-size="15" font-weight="bold" fill="#c2410c" text-anchor="start">glare</text>
+<text x="900" y="467" font-size="15" font-weight="normal" fill="#c2410c" text-anchor="start">quality.recapture + quality.awaiting_photo</text>
+<text x="1240" y="467" font-size="15" font-weight="bold" fill="#c2410c" text-anchor="start">capture_now</text>
+<text x="1400" y="467" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ok, 25 inliers</text>
+<rect x="20" y="476" width="1880" height="30" fill="#fff7ed"/>
+<text x="30" y="497" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">07:35:17</text>
+<text x="200" y="497" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="330" y="497" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0</text>
+<text x="460" y="497" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">77.23</text>
+<text x="600" y="497" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">0.0332</text>
+<text x="730" y="497" font-size="15" font-weight="bold" fill="#c2410c" text-anchor="start">glare</text>
+<text x="900" y="497" font-size="15" font-weight="normal" fill="#c2410c" text-anchor="start">quality.recapture + quality.awaiting_photo</text>
+<text x="1240" y="497" font-size="15" font-weight="bold" fill="#c2410c" text-anchor="start">capture_now</text>
+<text x="1400" y="497" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ok, 40 inliers</text>
+<text x="30" y="532" font-size="15" font-weight="normal" fill="#475569" text-anchor="start">Orange rows: op 2 sees glare, so the planner asks for a new photo; the same camera minutes earlier and later gets no_op. FlyBot&#x27;s count is its production model&#x27;s, not a human count.</text>
+<rect x="30" y="558" width="580" height="179" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="42" y="584" font-size="17" font-weight="bold" fill="#0e7490" text-anchor="start">PERCEPTION (OpenCV 5)</text>
+<text x="42" y="606" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">photo 6ac34afa4c3227d11cfbd154.jpg, 768 x 432</text>
+<text x="42" y="625" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">op 5 YOLO26n: 0 flies, DNN 172.5 ms (laptop)</text>
+<text x="42" y="644" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">op 2: issues [&#x27;glare&#x27;] → flag [&#x27;overexposed&#x27;], score 78.25</text>
+<text x="42" y="663" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">   glare share 0.021, clipped highs 0.014, sharpness 264.3</text>
+<text x="42" y="682" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">op 1: lure floor found, covers 0.6861 of the frame</text>
+<text x="42" y="701" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">ops 3-4: registered (36 SIFT inliers), new 0, gone 0</text>
+<text x="42" y="720" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">op 8: person suspected False</text>
+<rect x="488" y="547" width="114" height="22" rx="11" fill="#a16207"/>
+<text x="545" y="562" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">OPENCV 5 NEW</text>
+<rect x="630" y="558" width="580" height="179" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="642" y="584" font-size="17" font-weight="bold" fill="#6d28d9" text-anchor="start">DECISION (agent)</text>
+<text x="642" y="606" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">planner: rule, fallback false, LLM calls 0</text>
+<text x="642" y="625" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">1 quality.recapture → capture</text>
+<text x="642" y="644" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">   &quot;[&#x27;glare&#x27;]: capture again&quot;</text>
+<text x="642" y="663" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">2 quality.awaiting_photo → wait</text>
+<text x="642" y="682" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">   the new photo arrives as a new event</text>
+<text x="642" y="701" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">event: photo_not_counted, why [&#x27;glare&#x27;]</text>
+<text x="642" y="720" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">outcome: quality.recapture, quality.awaiting_photo</text>
+<rect x="1144" y="547" width="58" height="22" rx="11" fill="#6d28d9"/>
+<text x="1173" y="562" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">AGENT</text>
+<rect x="1230" y="558" width="660" height="179" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="1242" y="584" font-size="17" font-weight="bold" fill="#c2410c" text-anchor="start">ACTION (guarded tool calls)</text>
+<text x="1242" y="606" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">tool 0 analyze_trap_photo: ok, INGESTED → ANALYZED, 1120.6 ms</text>
+<text x="1242" y="625" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">tool 1 capture(recapture, main): ok,</text>
+<text x="1242" y="644" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">   DECIDED → ACTED, transport flybot_proposal</text>
+<text x="1242" y="663" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">proposal capture_now: confidence 0.9, requiresApproval false</text>
+<text x="1242" y="682" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">FlyBot: a confirm card + Telegram; Confirm runs the</text>
+<text x="1242" y="701" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">EZVIZ capture → a new photo → this loop again</text>
+<text x="1242" y="720" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">total 1134.8 ms on the laptop (Lambda warm p50 1,091 ms)</text>
+<rect x="1752" y="547" width="130" height="22" rx="11" fill="#c2410c"/>
+<text x="1817" y="562" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">HUMAN APPROVAL</text>
+<text x="30" y="782" font-size="15" font-weight="normal" fill="#475569" text-anchor="start">Not measured: whether these glare flags are right (no human look) and the confirm-to-new-photo time on AWS. The replay cannot take photos: the 07:17-07:35 photos are the camera&#x27;s own.</text>
+<text x="30" y="806" font-size="15" font-weight="normal" fill="#475569" text-anchor="start">Lambda warm p50: bench/results/lambda_latency.json. Small specks on the lid are missed by YOLO26n (models/MODEL_CARD.md), so FlyBot&#x27;s production count is higher here.</text>
+</svg>
