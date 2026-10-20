@@ -165,7 +165,7 @@
 <text x="1242" y="663" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">proposal capture_now: confidence 0.9, requiresApproval false</text>
 <text x="1242" y="682" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">FlyBot: a confirm card + Telegram; Confirm runs the</text>
 <text x="1242" y="701" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">EZVIZ capture → a new photo → this loop again</text>
-<text x="1242" y="720" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">total 1134.8 ms on the laptop (Lambda warm p50 1,091 ms)</text>
+<text x="1242" y="720" font-size="15" font-weight="normal" fill="#0f172a" text-anchor="start">total 1134.8 ms on the laptop (Lambda warm p50 980 ms)</text>
 <rect x="1752" y="547" width="130" height="22" rx="11" fill="#c2410c"/>
 <text x="1817" y="562" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">HUMAN APPROVAL</text>
 <text x="30" y="782" font-size="15" font-weight="normal" fill="#475569" text-anchor="start">Not measured: whether these glare flags are right (no human look) and the confirm-to-new-photo time on AWS. The replay cannot take photos: the 07:17-07:35 photos are the camera&#x27;s own.</text>

@@ -162,7 +162,7 @@ YOLOv7-tiny detector); *laptop* timings are from a shared 4-core laptop and are 
 | 6 | Crowding on sticky cards (`crowd.py`) | `adaptiveThreshold`, `distanceTransform`, `watershed`, `connectedComponentsWithStats` | Pearson r 0.931 (test) / 0.987 (valid) blob count vs labels, white-disc pictures (`docs/evidence/vision/crowd_eval.json`, `crowd_eval_valid.json`) |
 | 7 | Density (`density.py`, handler 4 x 4 grid) | grid counts; orchard map: IDW, `inpaint`, `GaussianBlur`, `applyColorMap` | Validation **not measured** (synthetic layouts only, `docs/evidence/vision/density/density_synthetic.json`) |
 | 8 | Occlusion, camera moved, privacy (`motion.py`) | illumination-normalized ratio difference, `createBackgroundSubtractorMOG2`, `phaseCorrelate`, `FaceDetectorYN` (YuNet): face regions returned for FlyBot to blur | Synthetic occluders: recall 0.94; camera moved: recall 1.0; 0/200 false occluder flags on real pairs (`docs/evidence/vision/motion_eval.json`); face detection accuracy **not measured** (no photo with a person); 91.5 ms (c8g) |
-| - | Whole call on Lambda | decode both photos, ops 1-6 and 8, agent | Warm p50 1,091 ms over 5 calls, cold 3,735 ms + 205 ms init, 2,048 MB arm64, max memory 442 MB, on a lure pair on 16 Oct with whole-frame detection, when the Lambda still wrote an evidence JPEG; not re-measured since (`bench/results/lambda_latency.json`) |
+| - | Whole call on Lambda | decode both photos, ops 1-6 and 8, agent | Warm p50 980 ms over 5 calls, cold 3,633 ms + 133 ms init, 2,048 MB arm64, max memory 426 MB, on a lure pair on 20 Oct (whole-frame detection on lure traps; the Lambda stores no picture) (`bench/results/lambda_latency.json`); a synthetic sticky card with 2 x 2 tiles: handler p50 1,007 ms, DNN 851 ms (`bench/results/lambda_latency_sticky_tiles.json`) |
 
 ### What we learned about OpenCV 5
 
@@ -203,7 +203,7 @@ README "Deploy your own", `infra/DEPLOY_CHECKLIST.md`.
 | IAM, SSM, CloudFormation | least-privilege roles, remote commands without SSH, the stack |
 
 **Cost.** About 17 USD per month for the demo (the t4g.micro, its public IPv4 and its disk are 85 % of it) and about
-0.054 USD per 1,000 photos on Lambda (`infra/COST.md`). The Anthropic API (deep mode) and Vertex AI (FlyBot's chatbot)
+0.046 USD per 1,000 photos on Lambda (`infra/COST.md`). The Anthropic API (deep mode) and Vertex AI (FlyBot's chatbot)
 are billed outside AWS and are not in these numbers.
 
 **Observability.** Every Lambda answer carries a trace (planner, decisions, tool calls with status and timing, LLM
@@ -248,7 +248,7 @@ See the table in section 4 (all rows from `eval/RESULTS.md` section 2 and the fi
 Lambda's handler on a laptop (`eval/results/replay_sample_yolo26.json`): 24/24 answers, rule planner on all 24,
 10 photos flagged for glare and given a `capture_now` proposal, 14 `no_op`, 22 with a diff against the previous photo,
 total p50 1,134.8 ms and DNN p50 171.6 ms on the laptop. Whether the 10 glare flags are right is **not measured** (no
-human looked at them for this purpose). On AWS, the deployed function answers in 1,091 ms warm p50 and 3,735 ms cold
+human looked at them for this purpose). On AWS, the deployed function answers in 980 ms warm p50 and 3,633 ms cold
 (`bench/results/lambda_latency.json`).
 
 ### 6.4 Agent task success (earlier build)

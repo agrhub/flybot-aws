@@ -245,12 +245,12 @@ Deep mode (`"mode":"deep","question":"Why did the count jump today?"`) answers i
 | YOLO26n on OpenCV 5 DNN, Roboflow test split (76 images, 2,349 flies) | mAP@50 0.953, mAP@50-95 0.700, P/R 0.913/0.898 | `models/MODEL_CARD.md`, `eval/results/yolo26n_test_metrics.json` |
 | OpenCV 5 DNN vs ONNX Runtime | identical detections on 20 test images and 20 trap photos | `eval/results/yolo26n_opencv_parity_colab.json`, `eval/results/yolo26_parity.json` |
 | YOLOv7-tiny baseline vs the production count, 1,293 real photos | MAE 0.84 flies | `eval/RESULTS.md` 1b |
-| Lambda latency (arm64, 2 GB, sample photo pair) | warm p50 1,091 ms | `bench/results/lambda_latency.json` |
+| Lambda latency (arm64, 2 GB, sample photo pair) | warm p50 980 ms | `bench/results/lambda_latency.json` |
 | SIMULATED: tiled detection on synthetic sticky cards (whole handler, 129 clean photos) | recall 0.07 → 0.82, MAE 36.7 → 5.0 flies; lure unchanged | `eval/SYNTHETIC_RESULTS.md` |
 | SIMULATED: agent on 147 synthetic photos damaged on purpose (automatic check, not an expert review) | the policy's action on 111 | `eval/SYNTHETIC_AGENT_EVAL.md` |
 | Human ground truth | 0 count labels, 0/50 expert verdicts: not measured | `eval/GROUND_TRUTH.md`, `eval/results/expert_review.json` |
 | COOL (Graviton4 AMI) vs pip OpenCV 5 on the same pipeline, 500 photo pairs x 5 | COOL 4.6 % slower per photo; cheapest: x86 c7i, USD 0.0155 per 1,000 photos | `bench/REPORT_COOL.md` |
-| Marginal cost on Lambda | ~USD 0.054 per 1,000 photos | `infra/COST.md` |
+| Marginal cost on Lambda | ~USD 0.046 per 1,000 photos | `infra/COST.md` |
 
 Reproduce:
 - Evaluation: `eval/RESULTS.md` was rendered by `eval/run_eval.py` from the result files in `eval/results/` (each table
@@ -265,7 +265,7 @@ Reproduce:
 
 ## Costs
 
-About **17 USD per month** for the demo (t4g.micro, its public IPv4 and disk are 85 % of it) and **~0.054 USD per 1,000
+About **17 USD per month** for the demo (t4g.micro, its public IPv4 and disk are 85 % of it) and **~0.046 USD per 1,000
 photos** on Lambda. Details and sources: `infra/COST.md`.
 
 ## Security and responsible use

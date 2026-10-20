@@ -72,8 +72,8 @@ on our DNN-heavy workload.
   Runtime; the box rules raised F1 on the held-out test split from 0.8788 to 0.9006.
 - 38 of 38 failure-injection runs passed with zero false actuations (image defects, prompt injection, LLM and camera
   failures).
-- One-command AWS deployment: about 17 USD a month for the demo, 0.054 USD per 1,000 photos, warm Lambda p50
-  1,091 ms.
+- One-command AWS deployment: about 17 USD a month for the demo, 0.046 USD per 1,000 photos, warm Lambda p50
+  980 ms.
 - An honest COOL benchmark on 500 real photo pairs.
 - Guest access with a labelled simulated network of 114 traps on 47 farms; its 2,852 seed photos went through the
   real Lambda.

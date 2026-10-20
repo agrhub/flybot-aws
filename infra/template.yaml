@@ -77,7 +77,7 @@ Parameters:
     Description: >-
       Where FlyBot keeps photos. stack = the bucket flybot-photos-<account>-<stage> of this stack; aws = an existing AWS
       bucket named S3BucketName (the roles get access, no bucket resource); external = an S3-compatible service at
-      S3Endpoint (MinIO, R2...): FlyBot sends the Lambda presigned URLs and the evidence JPEGs go to the stack bucket
+      S3Endpoint (MinIO, R2...): FlyBot sends the Lambda presigned URLs; evidence JPEGs, written only on request (the benchmark), go to the stack bucket
   S3BucketName:
     Type: String
     Default: ''
@@ -169,7 +169,7 @@ Conditions:
   ExternalStorage: !Equals [!Ref StorageMode, external]
   HasS3Region: !Not [!Equals [!Ref S3Region, '']]
   HasAcme: !Not [!Equals [!Ref AcmeEmail, '']]
-  # the stack bucket holds the photos (stack) or only the Lambda's evidence JPEGs (external); never with an AWS bucket
+  # the stack bucket holds the photos (stack) or only requested evidence JPEGs (external); never with an AWS bucket
   CreatePhotosBucket: !And [!Not [!Condition AwsStorage], !Equals [!Ref PhotosBucketExists, 'false']]
   StackBucketPolicy: !Not [!Condition AwsStorage]
 

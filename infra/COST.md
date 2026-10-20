@@ -38,13 +38,13 @@ on a t4g.micro saves ~7.7 USD/month.
 
 | Item | USD per 1,000 photos |
 |---|---|
-| Lambda compute: 1,000 x 1.09 s x 2 GB = 2,174 GB-s x 0.0000133334 | 0.029 |
+| Lambda compute: 1,000 x 0.98 s x 2 GB = 1,960 GB-s x 0.0000133334 | 0.026 |
 | Lambda requests | 0.0002 |
-| S3: 2,000 PUT (photo + evidence) x 0.0055/1k, 2,000 GET x 0.00044/1k, 0.5 GB stored for a month | 0.011 + 0.001 + 0.013 |
+| S3: 1,000 PUT (the photo; the Lambda stores no picture) x 0.0055/1k, 2,000 GET x 0.00044/1k, 0.5 GB stored for a month | 0.0055 + 0.001 + 0.013 |
 | Data transfer inside the region (EC2 -> S3 -> Lambda) | 0 |
-| **Total** | **~ 0.054 USD** (0.000054 per photo) |
+| **Total** | **~ 0.046 USD** (0.000046 per photo) |
 
 Source of the duration: warm p50 of 5 calls with a sample photo pair, 2048 MB arm64 (`bench/results/lambda_latency.json`,
 measured by `./deploy.sh`'s coldstart step). The function is CPU-bound by the DNN forward and the SIFT registration;
-a 10x larger farm (15,000 photos per month) adds about 0.8 USD per month. The COOL / Graviton / x86 comparison of the
+a 10x larger farm (15,000 photos per month) adds about 0.7 USD per month. The COOL / Graviton / x86 comparison of the
 same pipeline on EC2 uses the same unit: `bench/REPORT_COOL.md`.

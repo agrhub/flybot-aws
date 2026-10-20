@@ -365,7 +365,7 @@ def trace_example() -> str:
         f"proposal {p['action']}: confidence {p['confidence']}, requiresApproval {str(p['requiresApproval']).lower()}",
         "FlyBot: a confirm card + Telegram; Confirm runs the",
         "EZVIZ capture → a new photo → this loop again",
-        f"total {glare['timings']['totalMs']} ms on the laptop (Lambda warm p50 1,091 ms)",
+        f"total {glare['timings']['totalMs']} ms on the laptop (Lambda warm p50 980 ms)",
     ], title="ACTION (guarded tool calls)", title_fill="#c2410c", badges=("HUMAN",), size=15)
     s.text(30, 782, "Not measured: whether these glare flags are right (no human look) and the confirm-to-new-photo "
            "time on AWS. The replay cannot take photos: the 07:17-07:35 photos are the camera's own.", size=15, fill=MUTED)
