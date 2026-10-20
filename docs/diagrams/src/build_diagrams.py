@@ -133,13 +133,16 @@ def architecture() -> str:
     col(0, [
         ("EZVIZ trap cameras x 2", ["lure traps BE4089629, BE4111159", "in an orchard, southern Vietnam;",
                                     "FlyBot captures on schedule", "through EZVIZ Open Platform"]),
-        ("ESP32-S3 trap camera", ["firmware-esp32 v0.6.2 (public)", "Wi-Fi or 4G, GPS, solar + LiPo,",
-                                  "deep sleep; HTTPS photo upload,", "MQTT to IoT Core, KVS master"], ("FW",)),
+        ("ESP32-S3 trap camera", ["firmware-esp32 v0.8.0 (public)", "Wi-Fi or 4G, GPS, solar + LiPo,",
+                                  "deep sleep; HTTPS photo upload,", "MQTT to IoT Core, KVS master,",
+                                  "remote log + crash reports"], ("FW",)),
         ("Grower in FlyBot", ["web app, chatbot question about", "a photo (\"why did it jump?\"),",
                               "confirm cards, Telegram"]),
+        ("Guest access (judges)", ["read-only demo account, 2 h:", "the 2 real traps + a simulated",
+                                   "farm network, every item", "labelled Simulated"]),
         ("Replay (no hardware)", ["24 real photos in data/samples,", "make replay-sample: the same",
                                   "handler, rule planner, offline"]),
-    ])
+    ], gap=12)
     col(1, [
         ("dnn, new engine", ["readNet(..., ENGINE_NEW),", "YOLO26n ONNX [1, 300, 6],", "NMSBoxes; the engine used",
                              "is recorded in every answer"], ("V5",)),
@@ -152,13 +155,13 @@ def architecture() -> str:
          ("COOL",)),
     ])
     col(2, [
-        ("Fly count (op 5)", ["YOLO26n + box rules,", "test F1 0.9006 (OpenCV path)"], ("V5",)),
+        ("Fly count (op 5)", ["YOLO26n + box rules, test F1", "0.9006; 2 x 2 tiles on sticky traps"], ("V5",)),
         ("Quality gate (op 2)", ["blur, glare, dark, IR, trap", "missing; flags + 0-100 score"]),
         ("Trap find (op 1)", ["lure tray floor or sticky card"]),
         ("Registration + diff (ops 3-4)", ["new vs persisted boxes,", "card moved / changed"]),
         ("Crowding · density (ops 6-7)", ["card saturation, 4 x 4 grid"]),
         ("Occlusion + privacy (op 8)", ["hand / animal in front, camera", "moved, faces blurred"]),
-        ("Output", ["contract JSON (CONTRACTS.md §1)", "+ annotated evidence JPEG"]),
+        ("Output", ["contract JSON: boxes, flags, face", "regions; no picture stored"]),
     ], gap=11)
     col(3, [
         ("Planner", ["detect mode: rule planner", "(policy.yaml), deterministic", "deep mode: Claude Haiku 5.5",
@@ -174,22 +177,24 @@ def architecture() -> str:
     col(4, [
         ("EC2 t4g.micro + Elastic IP", ["FlyBot (Node 22, Vue 3),", "MongoDB 7, Caddy TLS:", "flybot.agrhub.com"]),
         ("Lambda arm64, 2 GB, 120 s", ["container from ECR, built by", "CodeBuild; one Invoke per photo"]),
-        ("AWS IoT Core", ["thing type camos-camera, one", "policy, shadow, RPC, presence;", "role alias for KVS keys"],
+        ("AWS IoT Core", ["thing type camos-camera, one", "policy, shadow, RPC, presence,", "log topic; KVS role alias"],
          ("IOT",)),
         ("Kinesis Video Streams", ["WebRTC channel per camera,", "15-min viewer credentials"]),
-        ("S3", ["photos, evidence (90 days),", "releases, build context"]),
+        ("S3", ["photos, FlyBot releases,", "Lambda build context"]),
         ("Ops", ["Secrets Manager, CloudWatch", "alarms → SNS, SSM, IAM,", "CloudFormation (SAM)"]),
     ], gap=13)
     col(5, [
-        ("Proposals → confirm cards", ["capture_now, set_isp (CamOS),", "set_interval, review_request,", "notify; in FlyBot chat",
-                                       "+ Telegram; expire after 24 h"], ("HUMAN",)),
+        ("Proposals → confirm cards", ["capture_now, set_isp (CamOS),", "set_interval, review_request,", "notify; reason in vi + en;",
+                                       "chat + Telegram; 24 h expiry"], ("HUMAN",)),
         ("Confirmed: camera action", ["EZVIZ capture API, or CamOS", "RPC snapshot.now / shadow", "(image settings, schedule)"],
          ("IOT",)),
         ("New photo", ["→ Lambda again (the loop)"]),
         ("Chatbot answer", ["deep-mode markdown + its", "proposals as cards"], ("HUMAN",)),
         ("Alerts", ["FlyBot thresholds and surges:", "Telegram, email, web push"]),
         ("Live view", ["KVS WebRTC to the browser,", "on request"]),
-    ], gap=13)
+        ("Camera fleet (admin)", ["firmware from GitHub (alpha /", "beta / stable), OTA rollouts,", "pause, battery guard, remote log"],
+         ("IOT",)),
+    ], gap=11)
     s.arrow([(X[5] + 140, 935), (X[5] + 140, 952), (X[0] + 140, 952), (X[0] + 140, 939)], color=RED, width=3)
     s.text(960, 978, "LOOP: a confirmed capture produces a new photo, which is perceived again",
            size=17, weight="bold", fill=RED, anchor="middle")
@@ -216,7 +221,7 @@ def agent_workflow() -> str:
     s.box(xs[1], Y, W, ["photo + previous photo (S3 keys),", "camera, trap kind, platform,", "battery, 14 days of counts;",
                         "Lambda.Invoke, timeout 120 s"], title="FlyBot request")
     s.box(xs[2], Y, W, ["analyze_trap_photo → OpenCV 5:", "count, quality, trap, diff,", "crowding, occlusion, faces;",
-                        "evidence JPEG to S3"], title="PERCEPTION", title_fill="#0e7490", badges=("V5",))
+                        "no picture is stored"], title="PERCEPTION", title_fill="#0e7490", badges=("V5",))
     s.box(xs[3], Y, W, ["detect: rule planner", "deep: Claude Haiku 5.5 with tool", "use; error, refusal or timeout",
                         "→ rule planner, traced"], title="DECISION", title_fill="#6d28d9", badges=("AGENT",))
     s.box(xs[4], Y, 380, ["run-state whitelist, quiet hours", "20:00-05:00, capture budget,", "battery < 40 %: half, < 20 %: none,",
@@ -231,18 +236,18 @@ def agent_workflow() -> str:
     AY = 372
     s.box(1140, AY, 750, ["capture → capture_now · set_image → set_isp (CamOS only) · set_capture_schedule →",
                           "set_interval · request_human_review → review_request · surge / threshold → notify",
-                          "each with reason, confidence, requiresApproval (policy.yaml) and the evidence it cites;",
+                          "each with reason (vi + en), confidence, requiresApproval (policy.yaml) and its evidence;",
                           "the Lambda itself never touches a camera"],
           title="ACTION = proposal in the response", title_fill="#c2410c")
     s.box(30, AY, 1060, ["{traceId, model, counts, boxes, quality, diff, density, proposals[], answer,",
                          " trace {planner, decisions[{rule, action, reasons, evidence}], toolCalls[{name, args, status,",
-                         " blocked_reason, state_before/after, ms}], tokens, fallback, outcome}, evidence, timings}",
-                         " → FlyBot stores it on the photo; the trace is shown with the photo"],
+                         " blocked_reason, state_before/after, ms}], tokens, fallback, outcome}, privacy {regions}, timings}",
+                         " → FlyBot stores it, draws the boxes and blurs face regions on its own photo"],
           title="RESPONSE + TRACE (every photo)", title_fill=INK)
     s.arrow([(1140, AY + 70), (1094, AY + 70)], width=3)
     LY = 560
     lanes = [
-        ("Confirm card → camera", ["FlyBot chat card + Telegram,", "Confirm / Reject, 24 h expiry", "→ EZVIZ capture, CamOS RPC",
+        ("Confirm card → camera", ["chat card + Telegram, reason in", "vi + en; Confirm / Reject (24 h)", "→ EZVIZ capture, CamOS RPC",
                                    "or IoT shadow (settings,", "schedule) → new photo"], ("HUMAN",)),
         ("Chatbot (deep mode)", ["Gemini calls analyze_photo_deep", "→ Lambda deep mode → answer", "(numbers and flags as text,",
                                  "never pixels) → propose_action", "→ confirm card"], ("HUMAN",)),
@@ -283,9 +288,10 @@ def agent_workflow() -> str:
             s.arrow([(sx + w + 3, SY + 33), (sx + w + 37, SY + 33)], width=2.5)
         sx += w + 40
     s.text(30, 945, "Human control: every proposal from the Lambda becomes a confirm card, also the ones policy.yaml "
-           "marks requiresApproval=false; nothing runs before a person presses Confirm.", size=16)
+           "marks requiresApproval=false; nothing runs before a person presses Confirm. Guests read traces and cards, "
+           "never confirm.", size=16)
     s.text(30, 972, "Evidence: docs/evidence/agent/trace_example.json (real photos, clean → no_op, glare → capture_now), "
-           "eval/RESULTS.md section 4 (failure injection).", size=16)
+           "eval/RESULTS.md section 4 (failure injection), eval/SYNTHETIC_AGENT_EVAL.md (simulated photos).", size=16)
     legend(s, 1010, ["AGENT", "HUMAN", "V5"], ["agent component", "a person decides", "OpenCV 5 feature"])
     return s.render()
 
