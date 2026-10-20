@@ -301,7 +301,7 @@ EOF
       if [ -z "$s3code" ] || [ "$s3code" = 000 ]; then warn "S3_ENDPOINT $S3_ENDPOINT does not answer from this computer: the Lambda and the server must reach it from the internet"
       else ok "S3_ENDPOINT answers (HTTP $s3code without credentials)"; fi
       [[ "$S3_ENDPOINT" == http://* ]] && warn "S3_ENDPOINT is plain http: photos, and the presigned URLs FlyBot gives the Lambda, travel unencrypted between AWS and $s3host"
-      ok "photos: S3-compatible $S3_ENDPOINT bucket $S3_BUCKET_NAME (the Lambda gets presigned URLs; evidence in the stack bucket)" ;;
+      ok "photos: S3-compatible $S3_ENDPOINT bucket $S3_BUCKET_NAME (the Lambda gets presigned URLs and stores no picture)" ;;
     *) ok "photos: the stack bucket flybot-photos-$ACCOUNT-$STAGE" ;;
   esac
   local free; free="$(df -Pk . | awk 'NR==2 {print int($4/1024)}')"
@@ -374,10 +374,10 @@ discover() {
   if [ "$STORAGE_MODE" = aws ]; then
     ok "photos bucket $S3_BUCKET_NAME (yours; the stack creates no photo bucket)"
   elif awsx cloudformation describe-stack-resource --stack-name "$STACK" --logical-resource-id PhotosBucket >/dev/null 2>&1; then
-    ok "stack bucket $PHOTOS (owned by the stack$([ "$STORAGE_MODE" = external ] && echo ', evidence only'))"
+    ok "stack bucket $PHOTOS (owned by the stack$([ "$STORAGE_MODE" = external ] && echo ', for requested evidence only'))"
   elif awsx s3api head-bucket --bucket "$PHOTOS" >/dev/null 2>&1; then
     PHOTOS_EXISTS=true; ok "stack bucket $PHOTOS exists outside the stack (kept by destroy --keep-photos): reused"
-  else ok "stack bucket $PHOTOS: will be created$([ "$STORAGE_MODE" = external ] && echo ' (evidence only)')"; fi
+  else ok "stack bucket $PHOTOS: will be created$([ "$STORAGE_MODE" = external ] && echo ' (for requested evidence only)')"; fi
   if [ "$LOCAL_MONGO" = true ]; then MONGO_NOTE="MongoDB 7 on the instance (cache 0.25 GB, data on its EBS volume)"
   else MONGO_NOTE="external (MONGO_URI in $APP_SECRET); no MongoDB on the instance"; fi
   ok "database: $MONGO_NOTE"

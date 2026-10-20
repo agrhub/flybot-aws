@@ -97,7 +97,7 @@ check "external storage detected" "photos: S3-compatible http://minio.example.co
 check "S3 endpoint probed" "S3_ENDPOINT answers \(HTTP 403 without credentials\)"
 check "plain http warned" "S3_ENDPOINT is plain http"
 check "stack param S3Endpoint" "S3Endpoint=http://minio.example.com:8080"
-check "evidence bucket of the stack" "will be created \(evidence only\)"
+check "evidence bucket of the stack" "will be created \(for requested evidence only\)"
 check "external database" "database: external \(MONGO_URI in flybot-citest-app\)"
 check "stack params external" "StorageMode=external"
 check "stack params no local mongo" "LocalMongo=false"

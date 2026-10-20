@@ -1,19 +1,19 @@
 {
   "function": "flybot-vision-dev",
-  "measured_at": "2026-10-16T23:58:05Z",
+  "measured_at": "2026-10-20T03:15:46Z",
   "memory_mb_configured": 2048,
   "cold": {
-    "init_ms": 205.04,
-    "duration_ms": 3734.57,
-    "billed_ms": 3940,
-    "max_memory_mb": 417,
+    "init_ms": 133.09,
+    "duration_ms": 3633.19,
+    "billed_ms": 3767,
+    "max_memory_mb": 419,
     "count": "0"
   },
   "warm": {
     "n": 5,
-    "duration_ms_p50": 1090.97,
-    "duration_ms_max": 1121.26,
-    "max_memory_mb": 442
+    "duration_ms_p50": 980.15,
+    "duration_ms_max": 3420.2,
+    "max_memory_mb": 426
   },
   "request": "data/samples BE4089629 cur+prev (lure), detect mode, S3 photo",
   "source": "CloudWatch REPORT lines via lambda invoke --log-type Tail"
