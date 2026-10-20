@@ -83,9 +83,38 @@ The score is `correct / (correct + incorrect)`; `unsure` rows are counted separa
 `unsure` counted as incorrect). Rows marked `reviewer=agent-example` are never scored. With 0 verdicts the report says "0
 verdicts, not measured": nothing is filled in on your behalf.
 
+## The online review page (how the advisor answered)
+
+The project's agronomy advisor, MSc Trương Quốc Ánh (Institute of Agricultural Science for Southern Vietnam), reviews in
+Vietnamese, without the CSV: a phone page on FlyBot (`flybot/client/public/review/<token>/`, no account, not indexed) shows
+the same 50 rows with the photo, the measurements, the decision and the reason in plain Vietnamese, the original English
+text one tap away, and the 5 examples apart. The English `opencv_summary`, `agent_decision` and `agent_reason` in the CSV
+are the source of that presentation. The page saves as he goes (`GET/POST /api/public/expert-review/<token>`); "send" also
+emails the answers to the operator.
+
+The sheet was built on 14-17 Oct 2026 from the earlier Sentinel pipeline. Its decision names map to the current Lambda's
+FlyBot actions: `capture` -> `capture_now`, `request_human_review` -> `review_request`, `propose_treatment` -> a
+`review_request` of kind `treatment` (a proposal waiting for a person), `no_op` -> nothing sent.
+
+Bring the answers into the sheet:
+
+```
+uv run python -m eval.import_expert_review --url https://flybot.agrhub.com/api/public/expert-review/<token> --translations notes_en.json
+```
+
+- `expert_verdict`: the verdict code as he gave it (`correct` / `incorrect` / `unsure`, no language).
+- `expert_note`: `reviewer=Trương Quốc Ánh;` and then his note **verbatim, in Vietnamese**.
+- `expert_note_en`: an English translation of that note, **made afterwards by the team, not written by the reviewer**
+  (`notes_en.json`, `{row id: text}`). Reports quote this column and point to `expert_note` for his own words.
+
+The import refuses an `incorrect` without a note, a note without a translation, and (without `--force`) a row that already
+has a verdict; it never touches the `EX-*` rows.
+
 ## Notes for the people building the sheet
 
 - Built by `eval/expert_review.py` (seeded stratified sample: 15 live AWS, 12 replay, 8 staged, 15 failure injection). Rebuilding
   refuses to overwrite a sheet that already has verdicts.
 - Real photos are from fixed trap cameras (no people are expected in them). The only hand in the sheet is a synthetic one.
+  Before the photos went on the review page, the YuNet face detector (`lambda/vision/sentinel/vision/models/`) found no
+  face in any of the 55.
 - One reviewer gives a policy-correct rate, not inter-rater agreement; a second reviewer on the same sheet would add that.

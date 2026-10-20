@@ -11,6 +11,8 @@ Empty = not reviewed yet.
 
 Policy-correct rate = correct / (correct + incorrect), with a 95 % Wilson interval. `unsure` is not counted as correct: the
 "worst case" rate counts every `unsure` as incorrect and is reported next to it.
+Optional column `expert_note_en`: an English translation of `expert_note`, made afterwards by the team (the reviewer writes
+in Vietnamese; `expert_note` keeps his words verbatim). It is carried into the result, never scored.
 Rows whose `expert_note` starts with `reviewer=agent-example` are worked examples written by the agent that built the sheet:
 they are shown to the expert as a format guide and are EXCLUDED from every number here.
 Nothing is filled in: with 0 verdicts the result says "0 verdicts, not measured".
@@ -31,6 +33,8 @@ CSV_PATH = ROOT / "docs" / "evidence" / "eval" / "expert_review.csv"
 OUT = ROOT / "eval" / "results" / "expert_review.json"
 COLUMNS = ["id", "source", "camera", "captured_at", "evidence_link", "opencv_summary", "agent_decision", "agent_reason",
            "expert_verdict", "expert_note"]
+# Not required: a sheet without it still scores
+OPTIONAL_COLUMNS = ["expert_note_en"]
 EXAMPLE_TAG = "reviewer=agent-example"
 SYNONYMS = {"correct": "correct", "c": "correct", "yes": "correct", "y": "correct", "ok": "correct", "agree": "correct",
             "incorrect": "incorrect", "i": "incorrect", "wrong": "incorrect", "no": "incorrect", "n": "incorrect", "disagree": "incorrect",
@@ -84,7 +88,7 @@ def score(csv_path: Path = CSV_PATH) -> dict:
     real = [r for r in rows if not is_example(r)]
     allc, by_src, by_dec, by_cam = Counter(), defaultdict(Counter), defaultdict(Counter), defaultdict(Counter)
     pending, invalid, ids = 0, [], Counter(r["id"] for r in rows)
-    incorrect_rows = []
+    incorrect_rows, unsure_rows = [], []
     for r in real:
         v = normalize(r.get("expert_verdict"))
         if v is None:
@@ -97,8 +101,10 @@ def score(csv_path: Path = CSV_PATH) -> dict:
         by_src[r["source"]][v] += 1
         by_dec[r["agent_decision"]][v] += 1
         by_cam[r["camera"]][v] += 1
-        if v == "incorrect":
-            incorrect_rows.append({"id": r["id"], "source": r["source"], "decision": r["agent_decision"], "note": r.get("expert_note", "")})
+        if v in ("incorrect", "unsure"):
+            (incorrect_rows if v == "incorrect" else unsure_rows).append(
+                {"id": r["id"], "source": r["source"], "decision": r["agent_decision"], "note": r.get("expert_note", ""),
+                 "note_en": r.get("expert_note_en") or ""})
     verdicts = sum(allc.values())
     out = {"source": shown, "rows": len(rows), "rows_scored_pool": len(real), "agent_example_rows_excluded": len(examples),
            "duplicate_ids": [k for k, v in ids.items() if v > 1], "pending": pending, "invalid_verdicts": invalid,
@@ -111,7 +117,7 @@ def score(csv_path: Path = CSV_PATH) -> dict:
                 "by_source": {k: _rate(v) for k, v in sorted(by_src.items())},
                 "by_decision": {k: _rate(v) for k, v in sorted(by_dec.items())},
                 "by_camera": {k: _rate(v) for k, v in sorted(by_cam.items())},
-                "incorrect_rows": incorrect_rows})
+                "incorrect_rows": incorrect_rows, "unsure_rows": unsure_rows})
     return out
 
 

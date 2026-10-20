@@ -1005,9 +1005,12 @@ def _table(head: list[str], rows: list[list]) -> str:
 
 def aws_live_section(results_dir: Path) -> dict | None:
     """Re-summarize data/eval/aws_traces.jsonl (offline); fall back to the last aws_live.json."""
-    from eval import aws_traces
+    try:
+        from eval import aws_traces
+    except ImportError:  # the Sentinel-era trace puller is not in this repo: keep the saved summary
+        aws_traces = None
 
-    if aws_traces.JSONL.exists():
+    if aws_traces is not None and aws_traces.JSONL.exists():
         res = aws_traces.summarize(aws_traces.JSONL)
         pull = aws_traces.JSONL.parent / "aws_traces.pull.json"
         if pull.exists():
@@ -1087,8 +1090,14 @@ def render_expert(ex: dict | None) -> list[str]:
     for group in ("by_source", "by_decision"):
         rows += [[f"{group[3:]}: {k}", *[v[x] for x in ("correct", "incorrect", "unsure")], v["policy_correct_rate"], json.dumps(v["wilson95"]),
                   v["worst_case_rate_unsure_as_incorrect"]] for k, v in ex[group].items()]
-    return L + [_table(["group", "correct", "incorrect", "unsure", "policy-correct rate", "Wilson 95 %", "worst case (unsure = incorrect)"], rows), "",
-                (f"{ex['verdicts']} verdicts; {ex['agent_example_rows_excluded']} agent-example rows excluded; {ex['pending']} rows pending. Source: {src}."), ""]
+    L += [_table(["group", "correct", "incorrect", "unsure", "policy-correct rate", "Wilson 95 %", "worst case (unsure = incorrect)"], rows), "",
+          (f"{ex['verdicts']} verdicts; {ex['agent_example_rows_excluded']} agent-example rows excluded; {ex['pending']} rows pending. Source: {src}."), ""]
+    for key, title in (("incorrect_rows", "Rows judged incorrect"), ("unsure_rows", "Rows judged unsure")):
+        listed = ex.get(key) or []
+        if listed:
+            L += [f"{title} (the reviewer's note in English, translated afterwards by the team; his own words are in `expert_note`):", ""]
+            L += [f"- {r['id']} ({r['source']}, `{r['decision']}`): {r.get('note_en') or 'no English translation'}" for r in listed] + [""]
+    return L
 
 
 def render_results_md(meta: dict, det: dict | None, vis: dict | None, agent: dict | None, fail: dict | None,

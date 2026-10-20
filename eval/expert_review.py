@@ -32,7 +32,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from eval.aws_traces import read_rows
-from eval.score_expert_review import COLUMNS
+from eval.score_expert_review import COLUMNS, OPTIONAL_COLUMNS
 
 OUT_DIR = ROOT / "docs" / "evidence" / "eval"
 CSV_PATH = OUT_DIR / "expert_review.csv"
@@ -289,7 +289,7 @@ def build(fetch: bool) -> list[dict]:
 def write(rows: list[dict]) -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     with open(CSV_PATH, "w", encoding="utf-8", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=COLUMNS, extrasaction="ignore")
+        w = csv.DictWriter(fh, fieldnames=COLUMNS + OPTIONAL_COLUMNS, extrasaction="ignore")
         w.writeheader()
         w.writerows(rows)
     # a contact sheet: image + decision per row (static, relative links)
