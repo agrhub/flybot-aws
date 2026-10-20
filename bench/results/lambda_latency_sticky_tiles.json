@@ -1,0 +1,16 @@
+{
+  "function": "flybot-vision-dev",
+  "measured_at": "2026-10-20T03:20:00Z",
+  "memory_mb_configured": 2048,
+  "detector_tiles": "sticky",
+  "request": "eval/synth/sample SYNTH_demo-sticky-d_20260925T0930Z.jpg (synthetic sticky card, 13 flies drawn), detect mode, S3 photo, no previous photo",
+  "warm": {
+    "n": 6,
+    "handler_total_ms": [1014.7, 973.1, 996.2, 996.8, 1038.9, 1018.5],
+    "handler_total_ms_p50": 1006.6,
+    "dnn_ms_p50": 851.1,
+    "count": 16
+  },
+  "note": "timings.totalMs and timings.dnnMs of the handler's answer (2x2 tiles = 4 DNN forwards), not the Lambda billed duration. For comparison, a lure photo pair (no tiles) in lambda_latency.json: warm p50 980 ms billed. The count is a single synthetic photo, not an accuracy measure: see eval/SYNTHETIC_RESULTS.md.",
+  "source": "aws lambda invoke, 6 calls after the coldstart step of deploy.sh"
+}
