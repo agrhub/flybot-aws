@@ -8,7 +8,8 @@ ask a person to review, alert the grower) that FlyBot shows as confirm cards, an
 FlyBot's chatbot. This repository is the OpenCV AI Competition 2026 entry: the vision Lambda, the agent, the AWS
 infrastructure with a one-command deploy, the benchmark and the evaluation.
 
-Live demo: **https://flybot.agrhub.com**
+Live demo: **https://flybot.agrhub.com** (press **Guest access** on the sign-in page: a read-only demo account for two
+hours; see "Try it")
 
 ## Submission documents (OpenCV AI Competition 2026)
 
@@ -17,6 +18,7 @@ Live demo: **https://flybot.agrhub.com**
 | [docs/REPORT.md](docs/REPORT.md) ([PDF](docs/REPORT.pdf)) | technical report: problem, users, architecture, OpenCV 5, AWS, evaluation, COOL and Agentic Vision evidence, limitations, responsible use |
 | [docs/diagrams/](docs/diagrams/) | [architecture](docs/diagrams/architecture.svg) (Input → OpenCV 5 → Perception → Agent → AWS → Decision/Action), [agent workflow](docs/diagrams/agent_workflow.svg), [trace example](docs/diagrams/trace_example.svg); PNGs beside them |
 | [docs/evidence/agent/trace_example.json](docs/evidence/agent/trace_example.json) | a real perception → decision → action trace of the Lambda's handler on orchard photos |
+| [eval/SYNTHETIC_RESULTS.md](eval/SYNTHETIC_RESULTS.md), [eval/SYNTHETIC_AGENT_EVAL.md](eval/SYNTHETIC_AGENT_EVAL.md) | SIMULATED data, kept apart from the real-photo `eval/RESULTS.md`: counts and tiled detection on synthetic photos with a known truth, and an automatic check of the agent on photos damaged on purpose |
 | [docs/DEVPOST.md](docs/DEVPOST.md) | the Devpost submission text, with the COOL and Agentic Vision opt-ins |
 | [docs/VIDEO_SCRIPT.md](docs/VIDEO_SCRIPT.md) | the demo video script (≤ 5 minutes) and its recording checklist |
 | [docs/RESPONSIBLE_USE.md](docs/RESPONSIBLE_USE.md) | people in photos, human approval, security, data retention, bias |
@@ -28,10 +30,11 @@ flowchart LR
   subgraph IN["Input"]
     CAM1["EZVIZ trap cameras<br/>(cloud API)"]
     CAM2["ESP32-S3 trap camera<br/>(firmware-esp32/)"]
+    GUEST["Guest access (judges)<br/>read-only, 2 h"]
   end
   subgraph CV["OpenCV 5"]
-    DNN["DNN new engine<br/>YOLO26n ONNX"]
-    OPS["image ops: quality gate,<br/>SIFT registration, diff,<br/>motion, density, face blur"]
+    DNN["DNN new engine<br/>YOLO26n ONNX,<br/>2x2 tiles on sticky traps"]
+    OPS["image ops: quality gate,<br/>SIFT registration, diff,<br/>motion, density, face regions"]
   end
   subgraph PER["Perception"]
     P1["count + boxes, quality flags,<br/>new catch vs previous photo,<br/>card moved, 4x4 density"]
@@ -40,8 +43,8 @@ flowchart LR
     A1["rule planner / LLM planner<br/>+ guardrails + trace"]
   end
   subgraph AWS["AWS (ap-southeast-2)"]
-    IOT["IoT Core<br/>shadow, RPC, presence"]
-    S3["S3<br/>photos, evidence"]
+    IOT["IoT Core<br/>shadow, RPC, presence,<br/>OTA RPC, log topic"]
+    S3["S3<br/>photos, releases"]
     L["Lambda arm64<br/>(container, ECR)"]
     EC2["EC2 t4g.micro<br/>FlyBot web + API, Caddy TLS"]
     KVS["Kinesis Video Streams<br/>WebRTC live view"]
@@ -51,16 +54,18 @@ flowchart LR
   end
   subgraph ACT["Decision / Action"]
     D1["alerts (Telegram, email, push),<br/>confirm cards: capture_now, set_isp,<br/>set_interval, review, notify;<br/>chatbot answers"]
+    D2["camera fleet: firmware channels,<br/>OTA rollouts, pause, remote log"]
   end
   CAM1 -->|photo| EC2
   CAM2 -->|MQTT| IOT --> EC2
   CAM2 -->|HTTPS photo| EC2
+  GUEST -->|read only| EC2
   EC2 -->|store| S3
   EC2 -->|Invoke| L
   L --> DNN --> P1
   L --> OPS --> P1
   P1 --> A1 --> ACT
-  ACT -->|approved action| IOT
+  ACT -->|approved action, OTA| IOT
   EC2 --- KVS
   EC2 --- SM
   CB --> L
@@ -70,9 +75,9 @@ flowchart LR
 | AWS service | What it does here |
 |---|---|
 | **Lambda** (arm64 container, 2 GB) | the OpenCV 5 vision pipeline + agent, one synchronous call per photo (`docs/CONTRACTS.md` section 1) |
-| **S3** | photos (FlyBot), annotated evidence pictures (Lambda), FlyBot releases and the Lambda build context |
+| **S3** | photos (FlyBot's, and the simulated demo farm's), FlyBot releases and the Lambda build context; the Lambda stores no picture (FlyBot draws the boxes and blurs the face regions it returns) |
 | **EC2** t4g.micro + Elastic IP | FlyBot (Node 22, prebuilt release from S3, systemd), Caddy (automatic TLS), MongoDB 7 unless you bring your own |
-| **IoT Core** | the CamOS camera hub: device shadow (schedule, image settings), RPC, presence; one certificate per camera |
+| **IoT Core** | the CamOS camera hub: device shadow (schedule, image settings, pause), RPC (capture, live, firmware update `ota.apply`, `log.start`), presence, the remote log topic `camos/<serial>/log`; one certificate per camera |
 | **Kinesis Video Streams** | WebRTC live view of CamOS cameras, 15-minute viewer credentials per browser session |
 | **CodeBuild** | builds the Lambda image (ARM) and pushes it to **ECR**; nothing is built on the server |
 | **Secrets Manager** | every application secret (JWT, EZVIZ, SMTP, Telegram, MongoDB URI, storage keys, Google key) |
@@ -176,7 +181,7 @@ stack stuck in ROLLBACK_COMPLETE). Log: `infra/.build/deploy-<stage>.log`. Remov
 | `MONGO_URI` (secret) | empty = MongoDB 7 on the server | an external database (e.g. MongoDB Atlas: allow the Elastic IP); a shared database also gets FlyBot's start-up migrations |
 | `S3_BUCKET_NAME` | empty = a stack bucket | an existing AWS bucket (the roles get access; it is never deleted) or the bucket on `S3_ENDPOINT` |
 | `S3_REGION` | looked up | the bucket's region (`auto` for S3-compatible services) |
-| `S3_ENDPOINT` | empty | S3-compatible storage (MinIO, R2, ...), `https://` or `http://`, reachable from the internet: the Lambda then gets presigned URLs and evidence goes to a stack bucket |
+| `S3_ENDPOINT` | empty | S3-compatible storage (MinIO, R2, ...), `https://` or `http://`, reachable from the internet: the Lambda then gets presigned URLs (an annotated picture, written only on request, goes to a stack bucket) |
 | `S3_ACCESS_KEY`, `S3_SECRET_KEY` (secrets) | empty = the server's role | keys for `S3_ENDPOINT` |
 | `DETECTOR` | `yolo26` | `yolo26` or `yolov7` (baseline) |
 | `PLANNER_MODE` | `rule` | `rule` (deterministic) or `llm` (Anthropic per photo) for detect mode; deep mode uses the LLM when a key exists |
@@ -241,6 +246,9 @@ Deep mode (`"mode":"deep","question":"Why did the count jump today?"`) answers i
 | OpenCV 5 DNN vs ONNX Runtime | identical detections on 20 test images and 20 trap photos | `eval/results/yolo26n_opencv_parity_colab.json`, `eval/results/yolo26_parity.json` |
 | YOLOv7-tiny baseline vs the production count, 1,293 real photos | MAE 0.84 flies | `eval/RESULTS.md` 1b |
 | Lambda latency (arm64, 2 GB, sample photo pair) | warm p50 1,091 ms | `bench/results/lambda_latency.json` |
+| SIMULATED: tiled detection on synthetic sticky cards (whole handler, 129 clean photos) | recall 0.07 → 0.82, MAE 36.7 → 5.0 flies; lure unchanged | `eval/SYNTHETIC_RESULTS.md` |
+| SIMULATED: agent on 147 synthetic photos damaged on purpose (automatic check, not an expert review) | the policy's action on 111 | `eval/SYNTHETIC_AGENT_EVAL.md` |
+| Human ground truth | 0 count labels, 0/50 expert verdicts: not measured | `eval/GROUND_TRUTH.md`, `eval/results/expert_review.json` |
 | COOL (Graviton4 AMI) vs pip OpenCV 5 on the same pipeline, 500 photo pairs x 5 | COOL 4.6 % slower per photo; cheapest: x86 c7i, USD 0.0155 per 1,000 photos | `bench/REPORT_COOL.md` |
 | Marginal cost on Lambda | ~USD 0.054 per 1,000 photos | `infra/COST.md` |
 
@@ -269,9 +277,11 @@ photos** on Lambda. Details and sources: `infra/COST.md`.
 - Least-privilege IAM: the server reads only its release pointer, host script and videos, its photo bucket, invokes only its Lambda, manages only
   `camos-camera` things and their certificates, and hands browsers 15-minute KVS viewer credentials scoped to one
   channel. Each camera certificate can only use its own MQTT topics. IMDSv2 is required; no SSH key is needed.
-- People and privacy: the LLM planner receives the pipeline's numbers and flags as text, never a photo. When the
-  pipeline suspects a person, faces are blurred in the stored evidence picture. Evidence pictures in the stack bucket
-  expire after 90 days.
+- People and privacy: the LLM planner receives the pipeline's numbers and flags as text, never a photo. The Lambda
+  stores no picture; when it suspects a person it returns the face regions, which FlyBot's Sentinel console blurs.
+  Camera logs leave the camera with passwords and codes removed.
+- Guests: the guest account is read-only and ends after two hours; the simulated demo farm is labelled on every item and
+  never enters reports, alerts or `eval/RESULTS.md`.
 - People decide: the agent proposes, a person confirms camera changes and schedule changes in FlyBot; guardrails cap
   extra captures per camera and day.
 - Self-registered demo cameras are limited (cameras per user, photos per day, unclaimed devices; `docs/CONTRACTS.md` 2a).
@@ -283,8 +293,9 @@ photos** on Lambda. Details and sources: `infra/COST.md`.
 - Detection accuracy is measured on the Roboflow test split; counts on the orchard traps are compared with the production
   model, not with human counts (none labeled yet, `eval/RESULTS.md`). The demo traps were mostly empty in October 2026.
 - The DNS record is added by hand at the registrar; Caddy gets the certificate once it resolves.
-- S3-compatible storage must be reachable from AWS (the Lambda fetches presigned URLs), and FlyBot's console shows
-  evidence pictures only from its own bucket.
+- S3-compatible storage must be reachable from AWS (the Lambda fetches presigned URLs).
+- Sticky-card counting and tiled detection are measured on synthetic cards only (`eval/SYNTHETIC_RESULTS.md`); the
+  tiled detector's latency on Lambda is not measured.
 
 ## Repository
 
