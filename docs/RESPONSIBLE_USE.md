@@ -1,7 +1,7 @@
 # Responsible use
 
 The rules FlyBot on AWS runs by, and their limits. Section 10 of the technical report ([REPORT.md](REPORT.md)) is the
-short version. State: 19 October 2026. Sources are named in each item; "not measured" means nobody measured it.
+short version. State: 20 October 2026. Sources are named in each item; "not measured" means nobody measured it.
 
 ## People in photos
 
@@ -9,9 +9,12 @@ short version. State: 19 October 2026. Sources are named in each item; "not meas
 - Op 8 (`lambda/vision/sentinel/vision/motion.py`) flags large objects in front of the trap and suspected people.
   A photo with an occluder or a suspected person is **not counted** and gets at most one recapture proposal
   (`eval/RESULTS.md` section 4, case `occluder_hand`).
-- When op 8 suspects a person, faces are blurred with OpenCV's YuNet (`cv2.FaceDetectorYN`) before the annotated
-  evidence picture is stored (`lambda/vision/sentinel/handler.py`, `annotate`). Face-detection accuracy on real people
-  is **not measured**: no photo with a person exists in our data.
+- The vision Lambda stores no picture. When op 8 suspects a person, it returns the face regions found by OpenCV's
+  YuNet (`cv2.FaceDetectorYN`) as `privacy.regions`, or `privacy.blurAll` when the face model is missing
+  (`docs/CONTRACTS.md` section 1a); FlyBot's Sentinel console blurs those regions on its own photo
+  ([AnnotatedPhoto.vue](https://github.com/agrhub/flybot/blob/feat/aws/client/src/components/sentinel/AnnotatedPhoto.vue)). Other photo views in FlyBot show
+  the photo as the camera took it. Face-detection accuracy on real people is **not measured**: no photo with a person
+  exists in our data.
 - **No photo is sent to an LLM.** The rule planner and the Claude Haiku 5.5 planner receive OpenCV's numbers and flags
   as text, never pixels; device names and on-screen text reach the LLM only quoted as untrusted text
   (`docs/DECISIONS.md`, `lambda/vision/sentinel/agent/guardrails.py`). FlyBot's chatbot (Gemini on Vertex AI) gets the
@@ -37,6 +40,19 @@ short version. State: 19 October 2026. Sources are named in each item; "not meas
 - The kill switch (`SENTINEL_KILL_SWITCH=1` on the Lambda) keeps the analysis on and turns every proposal off
   (`lambda/vision/sentinel/agent/guardrails.py`).
 
+## Guests and simulated data
+
+- **Guest access** opens one shared, read-only account for two hours; the server refuses every write request from it
+  except chatbot messages and sign-out (no settings, captures, sharing, deleting or approvals), each guest session has
+  its own chatbot conversation, and turning the switch off ends every guest session at once
+  ([guestAccess.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/services/guestAccess.js), [auth.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/middlewares/auth.js)).
+- The **simulated farm network** shown to guests is labelled on every item: "SIM ·" trap names, "(simulated)" farm
+  names, a banner on every page, a line in exported PDFs, and the number of flies drawn on each synthetic photo.
+  Simulated data never enters emailed reports, alerts or webhooks, and one command removes all of it
+  ([DEPLOY.md](https://github.com/agrhub/flybot/blob/feat/aws/DEPLOY.md)). Its photos are synthetic (`eval/synth`), stamped SIMULATED and contain no person.
+- Synthetic results are never reported as field results: `eval/RESULTS.md` holds real photos only, and the synthetic
+  checks are `eval/SYNTHETIC_RESULTS.md` and `eval/SYNTHETIC_AGENT_EVAL.md`, each headed "SIMULATED DATA".
+
 ## Cameras and power
 
 - Guardrails inside each run: one recapture per event, at most 4 extra captures per camera per farm day, halved below
@@ -49,6 +65,14 @@ short version. State: 19 October 2026. Sources are named in each item; "not meas
   7 days; LLM deep analysis is for claimed cameras only (`docs/CONTRACTS.md` section 2a).
 - Each camera has its own certificate and can publish only on its own topics; it generates its key on the device and no
   secret is compiled into the public firmware (`docs/DECISIONS.md`, "Cameras and live view").
+- Firmware updates: releases are checked against their `SHA256SUMS`; a camera downloads its image from a one-hour
+  signed link; the battery guard holds an update below 40 % (or 3,700 mV) unless the camera is on mains or charging,
+  and the camera also refuses on low battery; a camera that cannot connect with new firmware goes back to the old one
+  ([firmwareService.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/services/firmwareService.js), [CHANGELOG.md](https://github.com/agrhub/flybot/blob/feat/aws/CHANGELOG.md) 1.6.0). An
+  administrator can pause a camera: no photos, uploads or live view, and its owner sees why.
+- The remote console log is off unless a camera's owner or an administrator turns it on, for at most an hour; the
+  camera replaces the device token, Wi-Fi and access point passwords, SIM PIN, provisioning token and label code with
+  `***` before sending ([PROTOCOL_ADDITIONS.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/dev/PROTOCOL_ADDITIONS.md) section 11).
 - Battery life, solar charging and 4G operation of the ESP32-S3 camera are **not measured**; its power budget is an
   estimate ([POWER_BUDGET.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/dev/POWER_BUDGET.md)).
 
@@ -65,7 +89,9 @@ short version. State: 19 October 2026. Sources are named in each item; "not meas
 
 | Data | Retention |
 |---|---|
-| Annotated evidence pictures in the stack bucket (`evidence/`) | expire after 90 days (`infra/template.yaml`) |
+| Annotated evidence pictures | not written by the Lambda (only on request, e.g. the benchmark); the stack bucket's `evidence/` prefix expires after 90 days (`infra/template.yaml`) |
+| Camera console logs / crash reports | 24 hours / 30 days ([cameraLogService.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/services/cameraLogService.js), [CameraCrash.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/models/CameraCrash.js)) |
+| Guest sessions | 2 hours, never extended (see "Guests and simulated data") |
 | Lambda build context in the artifacts bucket (`lambda/`) | 14 days (same file) |
 | Lambda logs / CodeBuild logs (CloudWatch) | 30 days / 14 days (same file) |
 | Photos of unclaimed cameras | 24 hours (`docs/CONTRACTS.md` section 2a) |
@@ -74,6 +100,8 @@ short version. State: 19 October 2026. Sources are named in each item; "not meas
 ## Dataset and evaluation bias
 
 - One farm, two EZVIZ lure-trap cameras, one month of photos, one region; the traps were empty from 7 October 2026.
+- Sticky-card counting and tiled detection are measured only on synthetic cards; the synthetic flies come from the
+  same dataset family as the training data, so field accuracy may be lower (`eval/SYNTHETIC_RESULTS.md`, "Limits").
 - The public training set (camos/fruit-fly-wmcqi, CC BY 4.0) shows flies on white discs, not yellow sticky cards or
   lure-trap lids; YOLO26n misses the small flies on a full lure-trap view (`models/MODEL_CARD.md`).
 - 0 human count labels and 0 expert verdicts (`eval/results/expert_review.json`, `eval/GROUND_TRUTH.md`): every

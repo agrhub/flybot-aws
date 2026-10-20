@@ -1,13 +1,14 @@
 # FlyBot on AWS: technical report
 
 **Fruit-fly trap monitoring that looks before it counts: OpenCV 5 and a guarded agent on AWS.** OpenCV AI Competition
-2026, powered by AWS. Team: AGRHUB, makers of FlyBot. State of the system: 19 October 2026.
+2026, powered by AWS. Team: AGRHUB, makers of FlyBot. State of the system: 20 October 2026.
 
-- Live app: https://flybot.agrhub.com (FlyBot on EC2, vision on Lambda, cameras on IoT Core and Kinesis Video Streams)
+- Live app: https://flybot.agrhub.com (FlyBot on EC2, vision on Lambda, cameras on IoT Core and Kinesis Video Streams).
+  Judges: press **Guest access** on the sign-in page for a read-only demo account (two hours, section 3.2).
 - Code: this repository, [agrhub/flybot-aws](https://github.com/agrhub/flybot-aws) (vision Lambda, agent,
   infrastructure, benchmark, evaluation), with two public submodules: the FlyBot app
   ([agrhub/flybot](https://github.com/agrhub/flybot), branch `feat/aws`) and the ESP32-S3 trap camera firmware
-  ([agrhub/camos-esp32-trap](https://github.com/agrhub/camos-esp32-trap), v0.6.2). All three are AGPL-3.0.
+  ([agrhub/camos-esp32-trap](https://github.com/agrhub/camos-esp32-trap), v0.8.0). All three are AGPL-3.0.
 - Diagrams: [architecture](diagrams/architecture.svg), [agent workflow](diagrams/agent_workflow.svg),
   [trace example](diagrams/trace_example.svg). Companion texts: [DEVPOST.md](DEVPOST.md),
   [VIDEO_SCRIPT.md](VIDEO_SCRIPT.md), [RESPONSIBLE_USE.md](RESPONSIBLE_USE.md).
@@ -46,8 +47,10 @@ camera with 4G, GPS, battery and solar at about 1,130,000 VND plus the board
 
 **Agronomy advisor.** MSc Trương Quốc Ánh, Principal Researcher and Deputy Head of the Biotechnology Department, Institute of Agricultural Science for Southern Vietnam (IAS, under VAAS), Ho Chi Minh City; research in plant breeding genetics, plant biotechnology and DNA barcoding, and applied projects on smart agriculture and IoT for pest control (https://iasvn.org/bo-mon-cong-nghe-sinh-hoc/). The advisor is the intended reviewer of the agent's decisions (section 6.7); no review has been done yet.
 
-The demo traps are two EZVIZ lure-trap cameras in an orchard in southern Vietnam (`data/samples/README.md`). Number of
-farms, users and hours of counting saved: **not measured**.
+The demo traps are two EZVIZ lure-trap cameras in an orchard in southern Vietnam (`data/samples/README.md`). They are
+new and caught few flies in October, so the guest account also shows a clearly labelled simulated farm network
+(section 3.2); it is a demonstration, never field evidence. Number of real farms, users and hours of counting saved:
+**not measured**.
 
 ## 3. Architecture
 
@@ -58,21 +61,24 @@ MCP (none in this entry), HUMAN APPROVAL, IOT CORE, FIRMWARE, OPENCV 5 NEW.*
 
 1. **Input.** FlyBot captures the EZVIZ cameras on schedule through the EZVIZ Open Platform and stores each photo in
    S3. The ESP32-S3 trap camera uploads its photos over HTTPS to FlyBot's device API and talks MQTT to AWS IoT Core
-   (`docs/CONTRACTS.md` sections 2-3). A grower can also ask FlyBot's chatbot about a photo. Without hardware, the
-   24 bundled photos in `data/samples/` go through the same handler (`make replay-sample`).
+   (`docs/CONTRACTS.md` sections 2-3). A grower can also ask FlyBot's chatbot about a photo, and a judge can open the
+   read-only guest account (section 3.2). Without hardware, the 24 bundled photos in `data/samples/` go through the
+   same handler (`make replay-sample`).
 2. **OpenCV 5.** `opencv-python-headless==5.0.0.93` (`lambda/vision/requirements-lambda.txt`) in a Python 3.12 arm64
    Lambda container; `sentinel.require_opencv5()` refuses any 4.x build. The COOL build (OpenCV 5.1.0-dev) ran the
    benchmark on a Graviton4 instance (section 7).
 3. **Vision/Perception.** `lambda/vision/sentinel/vision/` runs the ops of section 4 once per photo, together with the
-   previous photo of the same camera, and returns JSON plus an annotated evidence JPEG.
+   previous photo of the same camera, and returns JSON. It stores no picture: FlyBot draws the returned boxes on its
+   own photo and blurs the face regions the Lambda returns (`privacy.regions`, `docs/CONTRACTS.md` section 1a).
 4. **AI/Agent.** `lambda/vision/sentinel/agent/`, in the same invocation: a deterministic rule planner for every photo
    (`detect` mode) and a Claude Haiku 5.5 planner for grower questions (`deep` mode), 14 typed tools, guardrails and a
    trace. FlyBot's own chatbot (Gemini on Vertex AI) reaches the agent through two tools, `analyze_photo_deep` and
    `propose_action` ([sentinelTools.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/agent/tools/sentinelTools.js)).
 5. **AWS infrastructure.** One SAM stack in ap-southeast-2 (`infra/template.yaml`), section 5.
 6. **Decision/Action.** The Lambda never touches a camera: every action it accepts comes back as a **proposal**
-   (`capture_now`, `set_isp`, `set_interval`, `review_request`, `notify`). FlyBot shows each one as a confirm card in
-   the owner's chat panel and on Telegram; only a person's **Confirm** runs it (an EZVIZ capture, an IoT Core RPC, or
+   (`capture_now`, `set_isp`, `set_interval`, `review_request`, `notify`), with its reason in Vietnamese and English
+   (`reasonI18n`). FlyBot shows each one as a confirm card in the owner's chat panel and on Telegram, in the reader's
+   language; only a person's **Confirm** runs it (an EZVIZ capture, an IoT Core RPC, or
    a device-shadow change), and an unanswered card expires after 24 hours
    ([sentinelService.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/services/sentinelService.js)
    `createLambdaProposals`). This is the **human-approval** step. A confirmed capture produces a new photo, which goes
@@ -80,15 +86,15 @@ MCP (none in this entry), HUMAN APPROVAL, IOT CORE, FIRMWARE, OPENCV 5 NEW.*
 
 The contract between FlyBot and the Lambda is one synchronous `Lambda.Invoke` per photo: photo and previous photo by
 S3 key, camera, trap kind, platform, battery, 14 days of counts; response with counts, boxes, quality, diff, density,
-proposals, trace, evidence and timings (`docs/CONTRACTS.md` section 1). The Lambda is stateless: FlyBot (MongoDB) owns
+proposals, trace, privacy and timings (`docs/CONTRACTS.md` section 1). The Lambda is stateless: FlyBot (MongoDB) owns
 cameras, photos, cards and traces (`docs/DECISIONS.md`).
 
-### 3.1 Cameras and live view
+### 3.1 Cameras, live view and the camera fleet
 
 | Camera | Path into FlyBot | What FlyBot can change | Live view |
 |---|---|---|---|
 | EZVIZ (2 in the orchard, lure traps) | FlyBot's schedule, EZVIZ Open Platform | extra capture, capture interval | EZVIZ's own player |
-| ESP32-S3 trap camera, firmware v0.6.2 | HTTPS photo upload (device token) + MQTT over mutual TLS to IoT Core | shadow: capture interval, image settings, live request; RPC: `snapshot.now`, `live.start`, `gps.fix`, `ota.apply` (`docs/CONTRACTS.md` section 3) | KVS WebRTC: the camera is the master, the browser the viewer |
+| ESP32-S3 trap camera, firmware v0.8.0 | HTTPS photo upload (device token) + MQTT over mutual TLS to IoT Core | shadow: capture interval, image settings, live request; RPC: `snapshot.now`, `live.start`, `gps.fix`, `ota.apply`, `log.start` (`docs/CONTRACTS.md` section 3) | KVS WebRTC: the camera is the master, the browser the viewer |
 
 Zero-touch registration: the camera generates its own key, FlyBot signs its CSR through IoT Core, creates the thing
 and its KVS channel, and the owner claims it by QR code or serial and verify code (`docs/CONTRACTS.md` section 2a).
@@ -96,9 +102,49 @@ Each certificate can use only its own topics; the camera gets KVS master credent
 each browser gets 15-minute viewer credentials for one channel (`docs/DECISIONS.md`, "Cameras and live view").
 Measured on the bench board over Wi-Fi with a viewer on the same network: JPEG 640x480 at 14.8-15.3 fps in a dark room
 (17 Oct) and 8.6-11.1 fps in a lit room (18 Oct); the 4G uplink and a remote viewer through a TURN relay are **not
-measured** ([LIVE_VIEW.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/dev/LIVE_VIEW.md)). Battery
+measured** ([LIVE_VIEW.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/dev/LIVE_VIEW.md)). Firmware 0.6.3 turned the OV5640's night mode off by default
+for streams (it had stretched each frame to four frame times even in room light) and switched "auto" white balance to
+the sensor's simple AWB: under LED room light, live JPEG 640x480 went from 2.1 to 5.4 fps
+([WEB_CONSOLE.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/WEB_CONSOLE.md), 19 Oct). Battery
 currents are **not measured**; the power budget is an estimate
 ([POWER_BUDGET.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/dev/POWER_BUDGET.md)).
+
+**Camera fleet** (FlyBot Admin; administrators act, support accounts only read). A serial registry (one by one, from a
+CSV file or from the label QR text); firmware releases imported from the camos-esp32-trap GitHub releases and checked
+against their `SHA256SUMS`, on alpha, beta and stable channels (a camera takes the newest release of its channel or of
+a more stable one); rollouts to chosen serials or to every camera of a model, with each camera's progress and result;
+a pause that stops a camera's photos, uploads and live view. An update is the RPC `ota.apply` over IoT Core (no IoT
+Jobs): the camera fetches the image from a one-hour signed link and reports `ota_progress` and `ota_result`. A battery
+guard holds the update below 40 % (or 3,700 mV when the camera reports no percentage) unless the camera is on mains or
+charging ([firmwareService.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/services/firmwareService.js), [CHANGELOG.md](https://github.com/agrhub/flybot/blob/feat/aws/CHANGELOG.md) 1.6.0).
+
+**Remote console log and crash reports** (firmware 0.8.0). A camera's owner or an administrator turns on its console
+log for up to an hour; the camera sends batches on `camos/<serial>/log` (allowed by the device policy and forwarded by
+the optional topic rule, `infra/iot/camera-policy.json`, `infra/template.yaml`), with passwords and codes replaced by
+`***` on the camera; FlyBot keeps 24 hours. After a crash, a watchdog or a brownout reset, the camera reports the
+reason, its last log lines and, when installed with the 0.8.0 image, a coredump summary (task, PC, backtrace) from a new
+`coredump` partition. Over OTA on the older partition table 0.8.0 stays safe: app, OTA data and NVS offsets do not
+move, later updates work, and crash reports come without the coredump (checked on the board on 19 Oct,
+[PROTOCOL_ADDITIONS.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/dev/PROTOCOL_ADDITIONS.md) section 11).
+
+### 3.2 Guest access and the simulated demo farm
+
+A **Guest access** button on the sign-in page opens one shared, read-only demo account for two hours (the session is
+never extended; turning the switch off in Admin > System > Demo access ends it at once; 20 sessions per hour per IP).
+The server refuses every write request from it except chatbot messages and sign-out, so settings, captures, sharing,
+deleting and approvals are refused; each guest session keeps its own chatbot conversation; guests read the Sentinel
+console (traces and proposals) but cannot decide on a proposal
+([guestAccess.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/services/guestAccess.js), [guestAccess.test.js](https://github.com/agrhub/flybot/blob/feat/aws/server/tests/guestAccess.test.js)).
+
+The guest account shows the two real EZVIZ traps and a **simulated farm network**: 114 sticky and lure traps on 47
+farms, in every province of Vietnam and in a dozen fruit regions abroad, with English names, plots, a field log and a
+month of history ([DEPLOY.md](https://github.com/agrhub/flybot/blob/feat/aws/DEPLOY.md), "Demo access and the simulated demo farm"). Its photos are the labelled
+synthetic trap pictures of `eval/synth` (a real empty-trap photo, or a synthetic sticky card, with pasted flies and a
+visible SIMULATED stamp); the seed run sends 2,852 of them through the real vision Lambda (same file) and a daily job
+adds more, so the counts, boxes, flags, traces and proposals are the pipeline's own. Every item is marked: "SIM ·" trap
+names, "(simulated)" farm names, a banner on every page, a line in exported PDFs, and the number of flies drawn
+("Drawn: N") beside the AI's count; simulated data never enters emailed reports, alerts or webhooks. **It is not field
+evidence:** `eval/RESULTS.md` holds real photos only; the synthetic measurements are in section 6.8.
 
 ## 4. OpenCV 5 implementation
 
@@ -108,15 +154,15 @@ YOLOv7-tiny detector); *laptop* timings are from a shared 4-core laptop and are 
 
 | # | Op (file in `lambda/vision/sentinel/vision/`) | OpenCV 5 modules and calls | Measured (source) |
 |---|---|---|---|
-| 5 | Fly count (`detect_yolo26.py`, `box_rules.py`, `detector.py`) | **dnn, new engine**: `readNet(..., ENGINE_NEW)` on the YOLO26n ONNX (`[1, 300, 6]`, no NMS in the graph), letterbox 640, `NMSBoxes` (IoU 0.45), fruit-fly box rules (score, size, aspect, median size); the engine actually used is recorded | Roboflow test split, OpenCV path: precision 0.9025, recall 0.8987, F1 0.9006 (`models/MODEL_CARD.md`, `eval/results/yolo26_box_rules.json`). Same detections as ONNX Runtime on 20 test images and 20 trap photos (`eval/results/yolo26n_opencv_parity_colab.json`, `eval/results/yolo26_parity.json`). DNN p50 171.6 ms (laptop, `eval/results/replay_sample_yolo26.json`) |
+| 5 | Fly count (`detect_yolo26.py`, `box_rules.py`, `detector.py`) | **dnn, new engine**: `readNet(..., ENGINE_NEW)` on the YOLO26n ONNX (`[1, 300, 6]`, no NMS in the graph), letterbox 640, `NMSBoxes` (IoU 0.45), fruit-fly box rules (score, size, aspect, median size); the engine actually used is recorded. **Tiled on sticky traps** (`tiling.py`, `DETECTOR_TILES=sticky` in production): 2 x 2 windows with 12 % overlap, boxes cut by an inner window edge dropped, NMS and box rules in full-frame pixels | Roboflow test split, OpenCV path: precision 0.9025, recall 0.8987, F1 0.9006 (`models/MODEL_CARD.md`, `eval/results/yolo26_box_rules.json`). Same detections as ONNX Runtime on 20 test images and 20 trap photos (`eval/results/yolo26n_opencv_parity_colab.json`, `eval/results/yolo26_parity.json`). DNN p50 171.6 ms (laptop, `eval/results/replay_sample_yolo26.json`). Tiles on the synthetic sticky card (simulated), whole handler: recall 0.0687 → 0.8165, MAE 36.7 → 5.0 flies, lure unchanged; `detect()` p50 128.4 → 510.4 ms on a laptop, on Lambda **not measured** (`eval/SYNTHETIC_RESULTS.md`, `eval/results/synth_tiles.json`) |
 | 2 | Quality gate (`quality.py`, `quality_thresholds.yaml`) | `Laplacian` variance, histogram clipping, specular mask, `boxFilter` flat patches, IR detection, per-camera baseline | Agreement with FlyBot's own quality flags 0.903 on 3,000 photos, 0.914 on 537 (`docs/evidence/vision/quality_calibration.json`); 0 of 42 clean photos flagged (`eval/RESULTS.md` section 4); 4.8 ms (c8g) |
 | 1 | Trap find (`card.py`, `card_check.py`) | `cvtColor` HSV, `inRange`, `morphologyEx`, `findContours`, `approxPolyDP`, `fitLine`, `convexHull`, `getPerspectiveTransform`, `warpPerspective` | Lure tray floor found 50/50, held-out quad 45/50 (`docs/evidence/vision/card_check_lure/results.json`, `holdout_results.json`); sticky card on synthetic composites: hit rate 0.975, corner error p50 1.83 px (`docs/evidence/vision/card_synth.json`); no real sticky-card photo exists (`docs/evidence/vision/card_check.md`); 28.4 ms (c8g) |
 | 3 | Registration with the previous photo (`register.py`) | **features**: `SIFT_create` + `FlannBasedMatcher` + `findHomography(USAC_MAGSAC)` per photo; `ALIKED_create` + `LightGlueMatcher_create` (new in OpenCV 5) on demand | 6 real pairs: inliers p50 348.5 (ALIKED + LightGlue) vs 105.5 (SIFT) at 5,749 vs 174 ms per pair, laptop (`docs/evidence/vision/diff_eval.json`); SIFT 69.2 ms (c8g) |
 | 4 | Change since the previous photo (`diff.py`) | `perspectiveTransform` of the boxes, Hungarian matching, `absdiff` heat map, `applyColorMap` | Card-change recall 1.0 on the single real event with interim boxes (129 false flags), 0.0 with YOLOv7 boxes (7 false flags) (`docs/evidence/vision/diff_eval.json`, `eval/results/diff_with_yolo_boxes.json`); new-catch accuracy **not measured** (no labels); 2.6 ms (c8g) |
 | 6 | Crowding on sticky cards (`crowd.py`) | `adaptiveThreshold`, `distanceTransform`, `watershed`, `connectedComponentsWithStats` | Pearson r 0.931 (test) / 0.987 (valid) blob count vs labels, white-disc pictures (`docs/evidence/vision/crowd_eval.json`, `crowd_eval_valid.json`) |
 | 7 | Density (`density.py`, handler 4 x 4 grid) | grid counts; orchard map: IDW, `inpaint`, `GaussianBlur`, `applyColorMap` | Validation **not measured** (synthetic layouts only, `docs/evidence/vision/density/density_synthetic.json`) |
-| 8 | Occlusion, camera moved, privacy (`motion.py`) | illumination-normalized ratio difference, `createBackgroundSubtractorMOG2`, `phaseCorrelate`, `FaceDetectorYN` (YuNet) face blur | Synthetic occluders: recall 0.94; camera moved: recall 1.0; 0/200 false occluder flags on real pairs (`docs/evidence/vision/motion_eval.json`); face detection accuracy **not measured** (no photo with a person); 91.5 ms (c8g) |
-| - | Whole call on Lambda | decode both photos, ops 1-6 and 8, agent, evidence JPEG | Warm p50 1,091 ms over 5 calls, cold 3,735 ms + 205 ms init, 2,048 MB arm64, max memory 442 MB (`bench/results/lambda_latency.json`) |
+| 8 | Occlusion, camera moved, privacy (`motion.py`) | illumination-normalized ratio difference, `createBackgroundSubtractorMOG2`, `phaseCorrelate`, `FaceDetectorYN` (YuNet): face regions returned for FlyBot to blur | Synthetic occluders: recall 0.94; camera moved: recall 1.0; 0/200 false occluder flags on real pairs (`docs/evidence/vision/motion_eval.json`); face detection accuracy **not measured** (no photo with a person); 91.5 ms (c8g) |
+| - | Whole call on Lambda | decode both photos, ops 1-6 and 8, agent | Warm p50 1,091 ms over 5 calls, cold 3,735 ms + 205 ms init, 2,048 MB arm64, max memory 442 MB, on a lure pair on 16 Oct with whole-frame detection, when the Lambda still wrote an evidence JPEG; not re-measured since (`bench/results/lambda_latency.json`) |
 
 ### What we learned about OpenCV 5
 
@@ -127,6 +173,9 @@ YOLOv7-tiny detector); *laptop* timings are from a shared 4-core laptop and are 
   the 24 bundled orchard photos it removed 15 false flies (the trap's lens) (`models/MODEL_CARD.md`). The engines
   agree on detections but order tied low-score rows differently, so parity is checked on detections, not raw rows
   (same file).
+- **Small objects.** Letterboxing a 2304x1296 frame to 640 leaves sticky-card flies at 16-20 px, where YOLO26n's
+  recall is 0.009, against 0.8628 above 28 px (synthetic sets, `eval/SYNTHETIC_RESULTS.md`). Running the same network
+  on 2 x 2 tiles of the frame fixed this without retraining, at four forwards per sticky photo.
 - **New features module.** ALIKED + LightGlue gives 3.3x the inliers of SIFT at 33x the time on CPU
   (`docs/evidence/vision/diff_eval.json`), so SIFT stays the per-photo default and ALIKED + LightGlue is the on-demand
   method.
@@ -146,9 +195,9 @@ README "Deploy your own", `infra/DEPLOY_CHECKLIST.md`.
 | **Lambda** (container, arm64, 2,048 MB, 120 s) | `flybot-vision-<stage>`: the OpenCV 5 pipeline and the agent, one synchronous call per photo |
 | **ECR** + **CodeBuild** | the Lambda image, built on ARM by CodeBuild and tagged with a hash of its inputs; nothing is built on the server |
 | **EC2** t4g.micro + Elastic IP | FlyBot (Node 22 API + Vue 3 client) as a prebuilt release, MongoDB 7, Caddy with automatic TLS for flybot.agrhub.com |
-| **IoT Core** | thing type `camos-camera`, one device policy with per-thing topics, device shadow, RPC, presence; optional topic rules to FlyBot; role alias for KVS credentials |
+| **IoT Core** | thing type `camos-camera`, one device policy with per-thing topics, device shadow, RPC (also `ota.apply` for firmware updates and `log.start`), presence, the remote log topic `camos/<serial>/log`; optional topic rules to FlyBot; role alias for KVS credentials |
 | **Kinesis Video Streams** | one WebRTC signaling channel per CamOS camera (created by FlyBot), viewer role limited to one channel for 15 minutes |
-| **S3** | photos, annotated evidence (expires after 90 days), FlyBot releases, the Lambda build context |
+| **S3** | photos (FlyBot's, and the simulated farm's under `simulated/`), FlyBot releases, the Lambda build context; the Lambda stores no picture (an annotated JPEG only on request, e.g. the benchmark) |
 | **Secrets Manager** | every application secret (JWT, EZVIZ, SMTP, Telegram, MongoDB URI, Anthropic key, Google key) |
 | **CloudWatch** + **SNS** | logs, alarms on Lambda errors, Lambda duration and EC2 status, by email |
 | IAM, SSM, CloudFormation | least-privilege roles, remote commands without SSH, the stack |
@@ -173,7 +222,8 @@ Two builds share the vision and agent package. The **current build** (YOLO26n, s
 measured by the detector tests, the Lambda latency and the 24-photo replay. The **earlier build** (15 Oct, YOLOv7-tiny,
 a queue-based stack that has since been removed) produced the scenario suite, the failure injection, the 30-day replays
 and the first live traces in `eval/RESULTS.md`; those runs exercise the same planner, guardrails and vision ops, with
-the earlier detector and with fake devices. Each number below says which build it comes from.
+the earlier detector and with fake devices. Section 6.8 is **simulated**: synthetic photos with a known truth, kept
+apart from the real-photo results. Each number below says which build and which data it comes from.
 
 ### 6.1 Detection (current build)
 
@@ -244,6 +294,28 @@ Expert review of 50 stratified agent decisions by the project's agronomy advisor
 (`eval/results/expert_review.json`). Human count labels: **0, not measured**. Proposals confirmed or rejected by
 growers on the live site, and the time from a confirmed capture to the new photo: **not measured** in a published file.
 
+### 6.8 Synthetic photos (simulated data, not field evidence)
+
+`eval/synth` pastes fruit flies cut from the public dataset's test and valid splits onto real photos of *empty* lure
+traps or onto a synthetic sticky card, so the true count of every photo is known; 147 of the 1,004 photos are damaged
+on purpose (blur, darkness, glare, dirty lens, a hand or a leaf in front, a moved camera, no trap). All of them went
+through the Lambda's handler in-process with the rule planner (`eval/SYNTHETIC_RESULTS.md`,
+`eval/SYNTHETIC_AGENT_EVAL.md`, `eval/results/synth_check.json`, `eval/results/synth_agent_eval.json`).
+
+| Counting, clean photos of `demo-30d` | photos | true flies | MAE | precision / recall @ IoU 0.3 |
+|---|---|---|---|---|
+| lure, whole frame | 388 | 2,476 | 1.039 | 0.9785 / 0.8255 |
+| sticky, whole frame | 129 | 5,151 | 36.667 | 0.8329 / 0.0687 |
+| sticky, `DETECTOR_TILES=sticky` | 129 | 5,151 | 4.953 | 0.849 / 0.8165 |
+
+The agent on the damaged photos, compared automatically with the action `policy.yaml` prescribes for each defect (not
+an expert review): the expected action was proposed for glare 17/17, a hand or a leaf in front 38/40, a moved camera
+14/16, darkness 15/19, blur 12/15, no trap in view 13/18, and a dirty lens only 2/22. On the 857 clean photos, 161
+raised a quality flag (156 of them `overexposed`, on lure backgrounds whose real photos already get that flag) and 177
+got a recapture or review proposal. Surges detected by the agent against the surge rule on the true counts: precision
+0.73-0.85 and recall 0.35-0.53 on the three lure traps, 0 on the sticky trap, whose counts came from whole-frame
+detection in this run.
+
 ## 7. COOL evidence
 
 | Item | Value (`bench/REPORT_COOL.md`, `bench/results/`, `docs/evidence/bench/`) |
@@ -305,6 +377,9 @@ proposal    capture_now, rule quality.recapture, confidence 0.9 -> FlyBot confir
 outcome     quality.recapture, quality.awaiting_photo; photo_not_counted (glare)
 ```
 
+**On synthetic photos with a known defect** (simulated, section 6.8), the agent proposed the action the policy
+prescribes for 111 of the 147 damaged photos and missed most dirty lenses, a defect op 2 rarely flags.
+
 **Orchestration and autonomy.** Read tools are free; device tools need an analysed photo and respect the run's state
 machine, quiet hours (20:00-05:00), the extra-capture budget (4 per camera per farm day; halved below 40 % battery,
 none below 20 %), and one recapture per event; proposals must cite evidence from earlier tool results of the same
@@ -324,8 +399,9 @@ MCP, and that server is not part of this repository.
 **Failure handling, observability, human control.** Failure injection 38/38 with 0 false actuations (section 6.5);
 planner fallbacks are traced; every tool call records its status, blocked reason, state before and after, and timing;
 FlyBot stores the trace with the photo. Human control: every Lambda proposal becomes a confirm card in FlyBot and on
-Telegram, including the ones `policy.yaml` marks `requiresApproval: false`; cards expire after 24 hours; the kill
-switch (`SENTINEL_KILL_SWITCH=1`) leaves analysis on and turns every proposal off.
+Telegram, including the ones `policy.yaml` marks `requiresApproval: false`, with the reason in the reader's
+language; cards expire after 24 hours; guests can read traces and proposals but never decide; the kill switch
+(`SENTINEL_KILL_SWITCH=1`) leaves analysis on and turns every proposal off.
 
 ## 9. Limitations
 
@@ -335,13 +411,18 @@ switch (`SENTINEL_KILL_SWITCH=1`) leaves analysis on and turns every proposal of
   production model counts up to 6; small specks on the trap lid are missed after the letterbox to 640
   (`models/MODEL_CARD.md`). The box rules remove false boxes; they add no recall.
 - **Empty traps:** the orchard traps were empty from 7 October, so surge and new-catch paths ran only on scenarios,
-  staged replays and failure injection. No real yellow sticky-card photo exists; ops 1 (sticky) and 6 are measured on
-  synthetic cards and public pictures.
-- **Glare flags may be too eager:** 10 of the 24 bundled photos get a glare flag and a recapture proposal; whether they
-  are right is not measured, and each one costs the grower a tap.
+  staged replays, failure injection and synthetic photos. No real yellow sticky-card photo exists: sticky counting,
+  tiled detection, ops 1 (sticky) and 6 are measured on synthetic cards and public pictures only.
+- **Synthetic is not field:** the simulated farm and section 6.8 use flies from the training dataset's family pasted
+  on real empty traps; field flies (pose, dust, decay, light) may differ. The tiled detector's cost on Lambda is not
+  measured, and a dirty lens is almost never flagged (2/22).
+- **Glare flags may be too eager:** 10 of the 24 bundled photos get a glare flag and a recapture proposal (and 156
+  of 857 clean synthetic photos, on the same backgrounds); whether they are right is not measured, and each one costs
+  the grower a tap.
 - **Agent evidence is mostly from the earlier build** (scenario suite, failure injection, replays, live traces) and from
   fake devices; the current build's loop on AWS (confirm → camera → new photo) has no published measurement.
-- **ESP32-S3 field operation is not measured:** 4G uplink, battery life, solar charging and live view through a relay.
+- **ESP32-S3 field operation is not measured:** 4G uplink, battery life, solar charging and live view through a relay;
+  the fleet features (OTA rollouts, battery guard, remote log) were checked on one bench board, not on a fleet.
 - **COOL** is slower than the pip wheel on this DNN-heavy workload, and it was measured with the earlier detector.
 - **One region, one server:** no high availability; MongoDB on the server is backed up only with its disk unless an
   external `MONGO_URI` is used (README "Limits").
@@ -352,14 +433,17 @@ switch (`SENTINEL_KILL_SWITCH=1`) leaves analysis on and turns every proposal of
 
 Full text: [RESPONSIBLE_USE.md](RESPONSIBLE_USE.md). In short:
 
-- **People in photos.** Op 8 flags large occluders and suspected people; faces are blurred with YuNet before the
-  evidence picture is stored; a photo with a suspected person is not counted. No photo is ever sent to an LLM: the
+- **People in photos.** Op 8 flags large occluders and suspected people; the Lambda stores no picture and returns
+  the YuNet face regions, which FlyBot's Sentinel console blurs; a photo with a suspected person is not counted. No photo is ever sent to an LLM: the
   planners receive OpenCV's numbers as text. The camera that filmed a building is excluded from every dataset and path
   (`data/excluded_cameras.csv`).
 - **People decide.** The system proposes; a person confirms every camera change and extra photo; no answer in 24
   hours means no action. There is no actuator for treatments: spraying stays the grower's decision.
 - **Security and data.** Secrets in Secrets Manager only, least-privilege roles, one certificate per camera, 15-minute
-  viewer credentials; evidence pictures expire after 90 days; self-registered cameras are rate-limited.
+  viewer credentials; camera logs have passwords and codes removed on the camera; self-registered cameras are
+  rate-limited.
+- **Guests and simulated data.** The guest account is read-only and ends after two hours; simulated items are labelled
+  everywhere and kept out of reports, alerts and the real-photo evaluation.
 - **Bias.** One farm, two lure traps, one month; the detector's training pictures are flies on white discs. Results do
   not transfer to other farms, trap types or pests without new labels.
 
@@ -371,6 +455,7 @@ Full text: [RESPONSIBLE_USE.md](RESPONSIBLE_USE.md). In short:
 | The Lambda on 24 real photos, offline | `make models && make replay-sample` (YOLO26n: README "Run locally") | nothing else |
 | Local Lambda endpoint | `make lambda-local` (same JSON as `Lambda.Invoke`) | |
 | Detector training and parity | `models/colab_train_yolo26.ipynb`, `models/verify_yolo26.py`, `eval/detector_box_rules.py` | Colab T4, the public dataset |
+| Synthetic photos and their checks (simulated) | `make synth`, `make synth-pool`, `make synth-check`, `make synth-tiles` (`eval/synth/README.md`) | the public dataset, a detector |
 | COOL benchmark | `bash bench/run_matrix.sh --dry-run`, then `--only b,c` and `--only cool` (`bench/REPORT_COOL.md` section 7) | an AWS account, a COOL subscription |
 | The whole system on AWS | `cp deploy.env.example deploy.env`, `./deploy.sh` | AWS CLI, SAM CLI, Node 22, a FlyBot checkout |
 | This report's diagrams and PDF | `uv run --no-project python docs/diagrams/src/build_diagrams.py`, then `uv run --no-project --with markdown==3.7 python docs/diagrams/src/render.py` | Chrome or Edge |
