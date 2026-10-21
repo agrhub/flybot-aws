@@ -1,11 +1,13 @@
-"""Render the diagrams to PNG and docs/REPORT.md to docs/REPORT.pdf (through docs/REPORT.html) with Chrome headless.
+"""Render the diagrams to PNG, and the report, the system architecture, the system requirements (A4) and the slides
+(16:9) to PDF in docs/ with Chrome headless.
 
     uv run --no-project python docs/diagrams/src/build_diagrams.py              # SVGs first
-    uv run --no-project --with markdown==3.7 python docs/diagrams/src/render.py  # PNGs (1920 px wide) + HTML + PDF (A4)
+    uv run --no-project --with markdown==3.7 python docs/diagrams/src/render.py  # PNGs (1920 px wide) + the PDFs
     ... render.py --png | --pdf [--keep-html]                                    # one of the two
 
-Needs a local Chrome or Edge (CHROME_PATH overrides the search). docs/REPORT.html is an intermediate step (it embeds
-the SVG diagrams by relative path) and is removed after printing unless --keep-html is given.
+Needs a local Chrome or Edge (CHROME_PATH overrides the search). docs/<NAME>.html is an intermediate step (it embeds
+the SVG diagrams by relative path) and is removed after printing unless --keep-html is given. The slides are
+docs/slides/slides.html as written.
 """
 
 from __future__ import annotations
@@ -75,20 +77,35 @@ def pngs() -> None:
         print("wrote", out.relative_to(DOCS.parent).as_posix())
 
 
-def report() -> None:
+DOCUMENTS = {
+    "REPORT": "FlyBot on AWS: technical report",
+    "SYSTEM_ARCHITECTURE": "FlyBot on AWS: system architecture",
+    "SYSTEM_REQUIREMENTS": "FlyBot on AWS: system requirements",
+}
+
+
+def document(name: str, title: str) -> None:
     import markdown
 
-    md = (DOCS / "REPORT.md").read_text(encoding="utf-8")
+    md = (DOCS / f"{name}.md").read_text(encoding="utf-8")
     body = markdown.markdown(md, extensions=["tables", "fenced_code"])
-    html = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><title>FlyBot on AWS: technical report'
+    html = (f'<!doctype html><html lang="en"><head><meta charset="utf-8"><title>{title}'
             f'</title><style>{CSS}</style></head><body>{body}</body></html>\n')
-    (DOCS / "REPORT.html").write_text(html, encoding="utf-8", newline="\n")
-    print("wrote docs/REPORT.html")
-    out = DOCS / "REPORT.pdf"
-    run_chrome([f"--print-to-pdf={out}", "--no-pdf-header-footer", (DOCS / "REPORT.html").as_uri()])
-    print("wrote docs/REPORT.pdf", out.stat().st_size, "bytes")
+    page = DOCS / f"{name}.html"
+    page.write_text(html, encoding="utf-8", newline="\n")
+    print(f"wrote docs/{name}.html")
+    out = DOCS / f"{name}.pdf"
+    run_chrome([f"--print-to-pdf={out}", "--no-pdf-header-footer", page.as_uri()])
+    print(f"wrote docs/{name}.pdf", out.stat().st_size, "bytes")
     if "--keep-html" not in sys.argv:
-        (DOCS / "REPORT.html").unlink()
+        page.unlink()
+
+
+def slides() -> None:
+    # 16:9 pages from the page size in slides.html; the pictures are the PNGs of pngs()
+    out = DOCS / "SLIDES.pdf"
+    run_chrome([f"--print-to-pdf={out}", "--no-pdf-header-footer", (DOCS / "slides" / "slides.html").as_uri()])
+    print("wrote docs/SLIDES.pdf", out.stat().st_size, "bytes")
 
 
 def main() -> None:
@@ -96,7 +113,9 @@ def main() -> None:
     if not args or "--png" in args:
         pngs()
     if not args or "--pdf" in args:
-        report()
+        for name, title in DOCUMENTS.items():
+            document(name, title)
+        slides()
 
 
 if __name__ == "__main__":

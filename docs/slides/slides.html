@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FlyBot on AWS: slides</title>
+<!-- Printed to docs/SLIDES.pdf by docs/diagrams/src/render.py --pdf. Every number comes from docs/REPORT.md. -->
+<style>
+@page { size: 1280px 720px; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { font-family: "Segoe UI", Arial, Helvetica, sans-serif; color: #0f172a; background: #fff; }
+.slide { width: 1280px; height: 720px; padding: 52px 64px 40px; position: relative; overflow: hidden;
+         page-break-after: always; break-after: page; display: flex; flex-direction: column; }
+.slide:last-child { page-break-after: auto; break-after: auto; }
+.kicker { font-size: 15px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #15803d; margin: 0 0 8px; }
+h1 { font-size: 40px; line-height: 1.15; margin: 0 0 18px; }
+h2 { font-size: 20px; margin: 0 0 8px; }
+p, li { font-size: 20px; line-height: 1.42; margin: 0 0 8px; }
+ul { margin: 0; padding-left: 26px; }
+.small, .small li { font-size: 16px; }
+.src { position: absolute; left: 64px; right: 64px; bottom: 18px; font-size: 12.5px; color: #64748b; }
+.foot { position: absolute; right: 64px; top: 22px; font-size: 13px; color: #94a3b8; }
+.cols { display: flex; gap: 36px; flex: 1; min-height: 0; }
+.cols > div { flex: 1; min-width: 0; }
+.fig { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+.fig img { max-width: 100%; max-height: 100%; border: 1px solid #e2e8f0; border-radius: 6px; }
+.card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; background: #f8fafc; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.num { font-size: 34px; font-weight: 700; color: #15803d; line-height: 1.1; }
+.lbl { font-size: 15.5px; color: #334155; margin-top: 4px; line-height: 1.35; }
+.loop { display: flex; align-items: stretch; gap: 10px; margin: 18px 0 22px; }
+.loop .step { flex: 1; border-radius: 10px; padding: 14px 14px; color: #fff; }
+.loop .step b { display: block; font-size: 21px; margin-bottom: 4px; }
+.loop .step span { font-size: 15.5px; line-height: 1.35; display: block; }
+.arrow { align-self: center; font-size: 26px; color: #94a3b8; }
+.s1 { background: #0e7490; } .s2 { background: #6d28d9; } .s3 { background: #c2410c; } .s4 { background: #15803d; }
+.title { background: #0f172a; color: #f8fafc; justify-content: center; }
+.title h1 { font-size: 64px; margin-bottom: 14px; }
+.title .tag { font-size: 25px; color: #cbd5e1; max-width: 1000px; line-height: 1.4; }
+.title .meta { margin-top: 44px; font-size: 18px; color: #94a3b8; line-height: 1.7; }
+.title .meta b { color: #e2e8f0; font-weight: 600; }
+.title .kicker { color: #4ade80; }
+table { border-collapse: collapse; width: 100%; font-size: 16px; }
+th, td { border-bottom: 1px solid #e2e8f0; padding: 7px 8px; text-align: left; vertical-align: top; }
+th { color: #475569; font-weight: 600; }
+.muted { color: #64748b; }
+</style>
+</head>
+<body>
+
+<section class="slide title">
+  <p class="kicker">OpenCV AI Competition 2026 · powered by AWS</p>
+  <h1>FlyBot on AWS</h1>
+  <p class="tag">Trap cameras that look before they count: OpenCV 5 and a guarded agent on AWS for fruit-fly monitoring.</p>
+  <div class="meta">
+    <b>Team:</b> AGRHUB, makers of FlyBot · <b>Agronomy advisor:</b> MSc Trương Quốc Ánh (IAS, VAAS)<br>
+    <b>Live app:</b> flybot.agrhub.com (press Guest access) · <b>Code:</b> github.com/agrhub/flybot-aws<br>
+    State of the system: 21 October 2026
+  </div>
+</section>
+
+<section class="slide">
+  <span class="foot">FlyBot on AWS</span>
+  <p class="kicker">1 · Problem</p>
+  <h1>A fly count alone has three blind spots</h1>
+  <div class="cols">
+    <div>
+      <ul>
+        <li><b>Every photo is counted as it comes.</b> Glare, blur, a dark or infrared frame, a hand in front of the
+          trap or a camera that no longer sees it all produce a number. One camera in our data filmed a building:
+          every "fly" it reported was false.</li>
+        <li><b>A count is not a catch.</b> Flies stay in the trap; the signal is what changed since the previous
+          photo.</li>
+        <li><b>The camera never reacts.</b> Nothing asks for a better photo, changes the exposure or the schedule, or
+          shows a doubtful photo to a person.</li>
+      </ul>
+    </div>
+    <div class="card" style="flex:.8;align-self:flex-start">
+      <h2>Who it is for</h2>
+      <p class="small">Fruit growers and farm managers in Vietnam who watch the oriental fruit fly (<i>Bactrocera</i>
+        spp.) with lure traps and yellow sticky cards, and the agronomists who advise them.</p>
+      <p class="small">They use FlyBot's web app in Vietnamese or English, its chatbot and Telegram, with EZVIZ cloud
+        cameras they already own or our open ESP32-S3 trap camera.</p>
+    </div>
+  </div>
+  <p class="src">docs/REPORT.md sections 1-2; data/excluded_cameras.csv</p>
+</section>
+
+<section class="slide">
+  <span class="foot">FlyBot on AWS</span>
+  <p class="kicker">2 · Solution</p>
+  <h1>Perceive, decide, let a person confirm, act, look again</h1>
+  <div class="loop">
+    <div class="step s1"><b>Perceive</b><span>OpenCV 5 on each photo and the previous one: count, quality, trap, change, occlusion, faces</span></div>
+    <div class="arrow">→</div>
+    <div class="step s2"><b>Decide</b><span>an agent under guardrails: a new photo, other image settings, a review, an alert, or nothing</span></div>
+    <div class="arrow">→</div>
+    <div class="step s3"><b>Confirm</b><span>a confirm card in FlyBot and on Telegram; nothing reaches a camera without a person</span></div>
+    <div class="arrow">→</div>
+    <div class="step s4"><b>Act</b><span>FlyBot captures or changes the camera; the new photo starts the loop again</span></div>
+  </div>
+  <ul>
+    <li>Bad photos are <b>not counted</b>, and the reason is shown.</li>
+    <li>Every decision leaves a <b>trace</b>: what OpenCV measured, what the agent decided, which tools it called.</li>
+    <li>Growers can ask the chatbot "why did the count jump?": the answer comes from OpenCV's numbers, never from the
+      pixels.</li>
+  </ul>
+  <p class="src">docs/REPORT.md section 1 and 8</p>
+</section>
+
+<section class="slide">
+  <span class="foot">FlyBot on AWS</span>
+  <p class="kicker">3 · Architecture</p>
+  <h1 style="margin-bottom:10px">Input → OpenCV 5 → Perception → Agent → AWS → Decision</h1>
+  <div class="fig"><img src="../diagrams/architecture.png" alt="Architecture diagram"></div>
+  <p class="src">docs/diagrams/architecture.svg; docs/SYSTEM_ARCHITECTURE.md</p>
+</section>
+
+<section class="slide">
+  <span class="foot">FlyBot on AWS</span>
+  <p class="kicker">4 · OpenCV 5</p>
+  <h1>Eight vision ops in one Lambda call per photo</h1>
+  <table>
+    <tr><th style="width:24%">Op</th><th>OpenCV 5</th><th style="width:30%">Measured</th></tr>
+    <tr><td>Fly count</td><td><b>dnn, new engine</b>: YOLO26n ONNX, <code>NMSBoxes</code>, box rules; 2 x 2 tiles on sticky cards</td><td>test mAP@50 0.953, F1 0.9006</td></tr>
+    <tr><td>Quality gate</td><td>Laplacian variance, histogram clipping, specular mask, IR detection</td><td>0 of 42 clean photos flagged</td></tr>
+    <tr><td>Trap find</td><td>HSV <code>inRange</code>, contours, <code>approxPolyDP</code>, <code>warpPerspective</code></td><td>lure floor found 50/50</td></tr>
+    <tr><td>Registration</td><td><b>features</b>: SIFT + FLANN + <code>findHomography(USAC_MAGSAC)</code>; ALIKED + LightGlue on demand</td><td>SIFT 69.2 ms on Graviton4</td></tr>
+    <tr><td>Change, crowding, density</td><td><code>absdiff</code>, <code>adaptiveThreshold</code>, <code>watershed</code>, grid counts</td><td>crowding r 0.931 vs labels</td></tr>
+    <tr><td>Occlusion, privacy</td><td>MOG2, <code>phaseCorrelate</code>, <code>FaceDetectorYN</code> (YuNet)</td><td>occluder recall 0.94 (synthetic)</td></tr>
+  </table>
+  <p class="small" style="margin-top:12px">Learned: <code>ENGINE_AUTO</code> can fall back silently, so the engine used is recorded. Letterboxing to
+    640 shrinks sticky-card flies below 20 px; tiling the frame took recall from 0.07 to 0.82 on synthetic cards,
+    without retraining.</p>
+  <p class="src">docs/REPORT.md section 4; models/MODEL_CARD.md; eval/SYNTHETIC_RESULTS.md (simulated)</p>
+</section>
+
+<section class="slide">
+  <span class="foot">FlyBot on AWS</span>
+  <p class="kicker">5 · Agent and human approval</p>
+  <h1 style="margin-bottom:10px">A guarded agent that only proposes</h1>
+  <div class="fig"><img src="../diagrams/agent_workflow.png" alt="Agent workflow"></div>
+  <div class="cols" style="flex:0 0 auto;margin:12px 0 22px">
+    <ul class="small" style="flex:1">
+      <li>Rule planner on every photo; Claude Haiku 5.5 for grower questions, with a rule fallback.</li>
+      <li>14 typed tools; guardrails: run states, budgets, quiet hours, battery, grounded proposals, kill switch.</li>
+    </ul>
+    <ul class="small" style="flex:1">
+      <li>Every action is a proposal; only a person's Confirm runs it; cards expire after 24 h.</li>
+      <li>No photo ever goes to an LLM: it gets OpenCV's numbers as text.</li>
+    </ul>
+  </div>
+  <p class="src">docs/REPORT.md section 8; lambda/vision/sentinel/agent/</p>
+</section>
+
+<section class="slide">
+  <span class="foot">FlyBot on AWS</span>
+  <p class="kicker">6 · Agentic vision evidence</p>
+  <h1 style="margin-bottom:10px">OpenCV 5 output changes the next action</h1>
+  <div class="fig"><img src="../diagrams/trace_example.png" alt="Trace example"></div>
+  <p class="src">12 real photos of one trap; docs/evidence/agent/trace_example.json; docs/diagrams/trace_example.svg</p>
+</section>
+
+<section class="slide">
+  <span class="foot">FlyBot on AWS</span>
+  <p class="kicker">7 · Our open trap camera</p>
+  <h1 style="margin-bottom:10px">ESP32-S3 trap camera, managed from FlyBot</h1>
+  <div class="cols">
+    <div class="fig" style="flex:1.25"><img src="img/esp32-hardware.jpg" alt="ESP32-S3 trap camera hardware"></div>
+    <div>
+      <ul class="small">
+        <li>Freenove ESP32-S3 + OV5640, Wi-Fi or 4G (A7680C), GPS, Li-ion cell and solar; open firmware v0.8.0.</li>
+        <li>About 430,000 VND plus the US$19.99 board for Wi-Fi; about 1,130,000 VND plus the board with 4G, GPS,
+          battery and solar.</li>
+        <li>Zero-touch registration through AWS IoT Core, QR claim, shadow and RPC control.</li>
+        <li>Live view over Kinesis Video Streams WebRTC (JPEG 640x480).</li>
+        <li>Fleet: OTA on alpha, beta and stable channels with a battery guard, remote log, crash reports.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="src">docs/REPORT.md section 3.1; camos-esp32-trap README and docs/BOM.md (prices read on 17 Oct 2026)</p>
+</section>
+
+<section class="slide">
+  <span class="foot">FlyBot on AWS</span>
+  <p class="kicker">8 · AWS</p>
+  <h1>One SAM stack, one command</h1>
+  <div class="cols">
+    <div>
+      <table>
+        <tr><td><b>Lambda</b> arm64 container</td><td>OpenCV 5 pipeline + agent, one call per photo</td></tr>
+        <tr><td><b>ECR + CodeBuild</b></td><td>the Lambda image, built on ARM</td></tr>
+        <tr><td><b>EC2</b> t4g.micro</td><td>FlyBot (Node 22, Vue 3), MongoDB 7, Caddy TLS</td></tr>
+        <tr><td><b>IoT Core</b></td><td>camera things, shadow, RPC, presence, log topic</td></tr>
+        <tr><td><b>Kinesis Video Streams</b></td><td>WebRTC live view, 15-minute viewer credentials</td></tr>
+        <tr><td><b>S3, Secrets Manager</b></td><td>photos, releases; every secret</td></tr>
+        <tr><td><b>CloudWatch + SNS</b></td><td>logs and alarms by email</td></tr>
+      </table>
+    </div>
+    <div style="flex:.7">
+      <div class="grid" style="grid-template-columns:1fr">
+        <div class="card"><div class="num">./deploy.sh</div><div class="lbl">creates or updates the whole system, ends with a health check and a latency measurement</div></div>
+        <div class="card"><div class="num">980 ms</div><div class="lbl">Lambda warm p50 per photo (cold 3,633 ms)</div></div>
+        <div class="card"><div class="num">≈ 17 USD</div><div class="lbl">a month for the demo; ≈ 0.046 USD per 1,000 photos</div></div>
+      </div>
+    </div>
+  </div>
+  <p class="src">docs/REPORT.md section 5; infra/template.yaml; bench/results/lambda_latency.json; infra/COST.md</p>
+</section>
+
+<section class="slide">
+  <span class="foot">FlyBot on AWS</span>
+  <p class="kicker">9 · Results</p>
+  <h1>What we measured</h1>
+  <div class="grid">
+    <div class="card"><div class="num">0.953</div><div class="lbl">YOLO26n test mAP@50 on the OpenCV 5 DNN engine; same detections as ONNX Runtime</div></div>
+    <div class="card"><div class="num">0.9006</div><div class="lbl">F1 through the Lambda's OpenCV path (box rules raised it from 0.8788)</div></div>
+    <div class="card"><div class="num">38 / 38</div><div class="lbl">failure-injection runs, 0 false actuations (earlier build, fake devices)</div></div>
+    <div class="card"><div class="num">0.07 → 0.82</div><div class="lbl">sticky-card recall with 2 x 2 tiles (synthetic photos, simulated)</div></div>
+    <div class="card"><div class="num">−4.6 %</div><div class="lbl">COOL on Graviton4 vs the pip wheel per photo, 500 real pairs: we serve with pip</div></div>
+    <div class="card"><div class="num">111 / 147</div><div class="lbl">damaged synthetic photos got the action the policy prescribes (not an expert review)</div></div>
+  </div>
+  <p class="small" style="margin-top:26px"><b>Not measured yet:</b> counts against human labels (0 labels), the agronomy advisor's verdicts
+    on 50 agent decisions (review under way), approval times on the live site, and the ESP32-S3 camera's battery and 4G
+    in the field. Every number names its source file in the report; synthetic results are kept apart from real photos.</p>
+  <p class="src">models/MODEL_CARD.md; eval/RESULTS.md; eval/SYNTHETIC_RESULTS.md; bench/REPORT_COOL.md; eval/SYNTHETIC_AGENT_EVAL.md</p>
+</section>
+
+<section class="slide">
+  <span class="foot">FlyBot on AWS</span>
+  <p class="kicker">10 · Try it</p>
+  <h1 style="margin-bottom:10px">Guest access: no account, two hours, read-only</h1>
+  <div class="cols">
+    <div class="fig"><img src="img/guest-dashboard.jpg" alt="Guest dashboard"></div>
+    <div class="fig"><img src="img/sentinel-approvals.jpg" alt="Sentinel approvals"></div>
+  </div>
+  <p class="small" style="margin:12px 0 26px">flybot.agrhub.com/auth/login → <b>Guest access</b>: the two real traps, a labelled simulated farm network
+    (114 traps on 47 farms, counted by the real Lambda), the Sentinel console with traces and proposals, and the chatbot.
+    Offline: <code>make replay-sample</code> runs 24 real orchard photos through the Lambda's handler.</p>
+  <p class="src">docs/REPORT.md section 3.2; README "Try it"</p>
+</section>
+
+<section class="slide">
+  <span class="foot">FlyBot on AWS</span>
+  <p class="kicker">11 · Limits and next steps</p>
+  <h1>What is not done yet</h1>
+  <div class="cols">
+    <div>
+      <h2>Limitations</h2>
+      <ul class="small">
+        <li>No human ground truth yet: 0 count labels; the advisor's review of 50 agent decisions is under way.</li>
+        <li>YOLO26n misses small flies in full lure-trap views; no real sticky-card photo yet.</li>
+        <li>Agent evidence mostly from the earlier build and fake devices.</li>
+        <li>ESP32-S3 field operation (4G, battery, solar) not measured; one region, one server.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Next</h2>
+      <ul class="small">
+        <li>Label 150 trap photos; publish the advisor's verdicts.</li>
+        <li>Better recall on small flies in lure-trap views.</li>
+        <li>The ESP32-S3 camera in the orchard on 4G and solar, with its battery measured.</li>
+        <li>Yellow sticky cards; OpenCV 5's in-library VLM as a second opinion on doubtful photos.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="src">docs/REPORT.md sections 9-10; docs/RESPONSIBLE_USE.md</p>
+</section>
+
+</body>
+</html>

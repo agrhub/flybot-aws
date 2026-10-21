@@ -10,7 +10,7 @@
   ([agrhub/flybot](https://github.com/agrhub/flybot), branch `feat/aws`) and the ESP32-S3 trap camera firmware
   ([agrhub/camos-esp32-trap](https://github.com/agrhub/camos-esp32-trap), v0.8.0). All three are AGPL-3.0.
 - Diagrams: [architecture](diagrams/architecture.svg), [agent workflow](diagrams/agent_workflow.svg),
-  [trace example](diagrams/trace_example.svg). Companion texts: [DEVPOST.md](DEVPOST.md),
+  [trace example](diagrams/trace_example.svg). Companion texts: [SYSTEM_ARCHITECTURE.md](SYSTEM_ARCHITECTURE.md), [SYSTEM_REQUIREMENTS.md](SYSTEM_REQUIREMENTS.md), [slides](SLIDES.pdf), [DEVPOST.md](DEVPOST.md),
   [VIDEO_SCRIPT.md](VIDEO_SCRIPT.md), [RESPONSIBLE_USE.md](RESPONSIBLE_USE.md).
 
 Rule for this report: every number names the file it comes from (under `eval/`, `bench/`, `models/`, `infra/` or
@@ -458,4 +458,4 @@ Full text: [RESPONSIBLE_USE.md](RESPONSIBLE_USE.md). In short:
 | Synthetic photos and their checks (simulated) | `make synth`, `make synth-pool`, `make synth-check`, `make synth-tiles` (`eval/synth/README.md`) | the public dataset, a detector |
 | COOL benchmark | `bash bench/run_matrix.sh --dry-run`, then `--only b,c` and `--only cool` (`bench/REPORT_COOL.md` section 7) | an AWS account, a COOL subscription |
 | The whole system on AWS | `cp deploy.env.example deploy.env`, `./deploy.sh` | AWS CLI, SAM CLI, Node 22, a FlyBot checkout |
-| This report's diagrams and PDF | `uv run --no-project python docs/diagrams/src/build_diagrams.py`, then `uv run --no-project --with markdown==3.7 python docs/diagrams/src/render.py` | Chrome or Edge |
+| This report's diagrams and the PDFs (report, architecture, requirements, slides) | `uv run --no-project python docs/diagrams/src/build_diagrams.py`, then `uv run --no-project --with markdown==3.7 python docs/diagrams/src/render.py` | Chrome or Edge |

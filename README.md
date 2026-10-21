@@ -16,6 +16,9 @@ hours; see "Try it")
 | Document | What it holds |
 |---|---|
 | [docs/REPORT.md](docs/REPORT.md) ([PDF](docs/REPORT.pdf)) | technical report: problem, users, architecture, OpenCV 5, AWS, evaluation, COOL and Agentic Vision evidence, limitations, responsible use |
+| [docs/SLIDES.pdf](docs/SLIDES.pdf) | 12 slides (16:9): problem, solution, architecture, OpenCV 5, agent, trace, the trap camera, AWS, results, Guest access, limits; source [docs/slides/slides.html](docs/slides/slides.html) |
+| [docs/SYSTEM_ARCHITECTURE.md](docs/SYSTEM_ARCHITECTURE.md) ([PDF](docs/SYSTEM_ARCHITECTURE.pdf)) | components, the photo, approval, question and camera flows, deployment, security, limits |
+| [docs/SYSTEM_REQUIREMENTS.md](docs/SYSTEM_REQUIREMENTS.md) ([PDF](docs/SYSTEM_REQUIREMENTS.pdf)) | functional and quality requirements with their status, and what you need to try, run, deploy or build a trap camera |
 | [docs/diagrams/](docs/diagrams/) | [architecture](docs/diagrams/architecture.svg) (Input → OpenCV 5 → Perception → Agent → AWS → Decision/Action), [agent workflow](docs/diagrams/agent_workflow.svg), [trace example](docs/diagrams/trace_example.svg); PNGs beside them |
 | [docs/evidence/agent/trace_example.json](docs/evidence/agent/trace_example.json) | a real perception → decision → action trace of the Lambda's handler on orchard photos |
 | [eval/SYNTHETIC_RESULTS.md](eval/SYNTHETIC_RESULTS.md), [eval/SYNTHETIC_AGENT_EVAL.md](eval/SYNTHETIC_AGENT_EVAL.md) | SIMULATED data, kept apart from the real-photo `eval/RESULTS.md`: counts and tiled detection on synthetic photos with a known truth, and an automatic check of the agent on photos damaged on purpose |
