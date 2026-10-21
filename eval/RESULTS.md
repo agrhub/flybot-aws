@@ -244,7 +244,48 @@ Lambda duration and cold starts are not in the trace (CloudWatch, not read here)
 
 ## 6. Expert review of agent decisions
 
-**0 verdicts, not measured (50 rows waiting for the expert, 5 agent-example rows excluded).** Sheet: 55 rows ({"aws_live": 15, "replay_30d_review": 12, "staged_proposal": 8, "failure_injection": 15} to review + 5 worked examples written by the agent, excluded from scoring). Instructions: `eval/EXPERT_REVIEW.md`. Source: `eval/results/expert_review.json` (from `docs/evidence/eval/expert_review.csv` via `eval/score_expert_review.py`).
+Reviewer: the project's agronomy advisor (`eval/EXPERT_REVIEW.md`), on a Vietnamese presentation of the same rows (the English `opencv_summary`, `agent_decision` and `agent_reason` in the CSV are its source). The rows are decisions of the earlier Sentinel pipeline (sheet built 14-17 Oct); their action names map to the current Lambda's (`capture` -> `capture_now`, `request_human_review` -> `review_request`, `propose_treatment` -> a treatment proposal waiting for a person).
+
+| group | correct | incorrect | unsure | policy-correct rate | Wilson 95 % | worst case (unsure = incorrect) |
+|---|---|---|---|---|---|---|
+| all | 43 | 6 | 1 | 0.8776 | [0.7576, 0.9427] | 0.86 |
+| source: aws_live | 8 | 6 | 1 | 0.5714 | [0.3259, 0.7862] | 0.5333 |
+| source: failure_injection | 15 | 0 | 0 | 1.0 | [0.7961, 1.0] | 1.0 |
+| source: replay_30d_review | 12 | 0 | 0 | 1.0 | [0.7575, 1.0] | 1.0 |
+| source: staged_proposal | 8 | 0 | 0 | 1.0 | [0.6756, 1.0] | 1.0 |
+| decision: battery.critical | 1 | 0 | 0 | 1.0 | [0.2065, 1.0] | 1.0 |
+| decision: capture (quality.recapture) | 1 | 6 | 1 | 0.1429 | [0.0257, 0.5131] | 0.125 |
+| decision: device calls after 1st delivery=2, after 3rd=2; FlyBot posts 1 -> 1; traces stored=1 | 1 | 0 | 0 | 1.0 | [0.2065, 1.0] | 1.0 |
+| decision: guardrail.llm_ungrounded; blocked: propose_treatment(downgraded) | 1 | 0 | 0 | 1.0 | [0.2065, 1.0] | 1.0 |
+| decision: neighbour_check (surge.detected) + schedule_followup (surge.unconfirmed) | 1 | 0 | 0 | 1.0 | [0.2065, 1.0] | 1.0 |
+| decision: neighbour_check (surge.detected) + treatment_check (surge.confirmed) + propose_treatment (treatment.treat_now) | 1 | 0 | 0 | 1.0 | [0.2065, 1.0] | 1.0 |
+| decision: neighbour_check (surge.detected) + treatment_check (surge.confirmed) + schedule_followup (treatment.wait_check) | 4 | 0 | 0 | 1.0 | [0.5101, 1.0] | 1.0 |
+| decision: no_op | 1 | 0 | 0 | 1.0 | [0.2065, 1.0] | 1.0 |
+| decision: no_op (no_op) | 9 | 0 | 0 | 1.0 | [0.7008, 1.0] | 1.0 |
+| decision: occlusion.recapture, occlusion.cleared | 1 | 0 | 0 | 1.0 | [0.2065, 1.0] | 1.0 |
+| decision: quality.isp_fix | 1 | 0 | 0 | 1.0 | [0.2065, 1.0] | 1.0 |
+| decision: quality.isp_fix, quality.fixed | 3 | 0 | 0 | 1.0 | [0.4385, 1.0] | 1.0 |
+| decision: quality.isp_fix; blocked: set_image(quiet_hours) | 1 | 0 | 0 | 1.0 | [0.2065, 1.0] | 1.0 |
+| decision: quality.postpone | 1 | 0 | 0 | 1.0 | [0.2065, 1.0] | 1.0 |
+| decision: quality.recapture, quality.awaiting_photo | 1 | 0 | 0 | 1.0 | [0.2065, 1.0] | 1.0 |
+| decision: quality.recapture, quality.fixed | 2 | 0 | 0 | 1.0 | [0.3424, 1.0] | 1.0 |
+| decision: request_human_review (disagreement.review) | 12 | 0 | 0 | 1.0 | [0.7575, 1.0] | 1.0 |
+| decision: trap_missing.recapture, trap_missing.review | 1 | 0 | 0 | 1.0 | [0.2065, 1.0] | 1.0 |
+
+50 verdicts; 5 agent-example rows excluded; 0 rows pending. Source: `eval/results/expert_review.json` (from `docs/evidence/eval/expert_review.csv` via `eval/score_expert_review.py`).
+
+Rows judged incorrect (the reviewer's note in English, translated afterwards by the team; his own words are in `expert_note`):
+
+- AWS-06 (aws_live, `capture (quality.recapture)`): The photo is sharp. The fly count is 0.
+- AWS-08 (aws_live, `capture (quality.recapture)`): The photo is sharp. The correct fly count is 0.
+- AWS-12 (aws_live, `capture (quality.recapture)`): There is light on the photo, but the glare is not so strong that it cannot be counted. The fly count is 0.
+- AWS-13 (aws_live, `capture (quality.recapture)`): The photo is sharp. The fly count is 0.
+- AWS-14 (aws_live, `capture (quality.recapture)`): The photo is sharp. The fly count is 0.
+- AWS-15 (aws_live, `capture (quality.recapture)`): The photo is sharp. The fly count is 0.
+
+Rows judged unsure (the reviewer's note in English, translated afterwards by the team; his own words are in `expert_note`):
+
+- AWS-09 (aws_live, `capture (quality.recapture)`): The photo has some glare, but it can still be read. The fly count is 0.
 
 ## Limitations (everything not measured, and what limits what was)
 
@@ -264,8 +305,8 @@ Lambda duration and cold starts are not in the trace (CloudWatch, not read here)
 - The LLM planner (Bedrock) on real photos: no live trace uses it (planner mode `rule`); LLM behaviour is exercised only with scripted fake models.
 - Cost per 1,000 photos: see bench/REPORT_COOL.md, not part of this run. Lambda duration, cold starts and queue delay: not in the traces, not measured here (CloudWatch).
 - Failure injection perturbs 3 photo pairs from one camera (BE4089629) with synthetic effects: ISP effects are not simulated in pixels, a recapture returns an unperturbed frame, devices are fakes; it shows how the code reacts, not how a real camera or a real person behaves.
-- Op 2 `blurry` on the agent path: flag rate by blur strength is in section 4; whether the live `blurry` flags in section 5 are real blur or false alarms is not measured (no human looked at all of them; some are in the expert sheet).
+- Op 2 `blurry` on the agent path: flag rate by blur strength is in section 4; whether the live `blurry` flags in section 5 are real blur or false alarms is judged only for the flagged frames in the expert sheet (section 6: each recapture he marked incorrect followed a `blurry` or `glare` flag on a frame he found usable); the other flags are not checked.
 - Live AWS traces: 76 photos (traces created within one 35-minute poller sweep on 15 Oct, photos captured 14-15 Oct), 2 EZVIZ cameras, rule planner, FlyBot actions not wired (every recapture blocked `unknown_camera`): no live proposal, approval, ISP change or surge; the sample says the loop runs and how fast, not that its decisions are right.
-- Policy-correct decision rate judged by an AgriHub agronomist on 50 cases: the sheet is ready (`docs/evidence/eval/expert_review.csv`, `eval/EXPERT_REVIEW.md`), 0 verdicts, not measured.
+- Expert review: one reviewer (the project's agronomy advisor), 50 verdicts on a stratified sample of 50; confidence interval in section 6; inter-rater agreement not measured (no second reviewer). The sheet holds decisions of the earlier Sentinel pipeline (14-17 Oct), shown to him in Vietnamese; the action names have changed since (`eval/EXPERT_REVIEW.md`).
 - Sample sizes and scope: 2 cameras, 1 region, 30 days, traps empty since 2026-10-07; no seasonal or multi-farm variation; no yellow sticky cards.
 - Timings come from a shared 4-core dev laptop and a dev stack: they are not benchmarks (see bench/).

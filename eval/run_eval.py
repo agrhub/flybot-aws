@@ -1090,7 +1090,11 @@ def render_expert(ex: dict | None) -> list[str]:
     for group in ("by_source", "by_decision"):
         rows += [[f"{group[3:]}: {k}", *[v[x] for x in ("correct", "incorrect", "unsure")], v["policy_correct_rate"], json.dumps(v["wilson95"]),
                   v["worst_case_rate_unsure_as_incorrect"]] for k, v in ex[group].items()]
-    L += [_table(["group", "correct", "incorrect", "unsure", "policy-correct rate", "Wilson 95 %", "worst case (unsure = incorrect)"], rows), "",
+    L += [("Reviewer: the project's agronomy advisor (`eval/EXPERT_REVIEW.md`), on a Vietnamese presentation of the same rows (the English "
+           "`opencv_summary`, `agent_decision` and `agent_reason` in the CSV are its source). The rows are decisions of the earlier Sentinel pipeline "
+           "(sheet built 14-17 Oct); their action names map to the current Lambda's (`capture` -> `capture_now`, `request_human_review` -> "
+           "`review_request`, `propose_treatment` -> a treatment proposal waiting for a person)."), "",
+          _table(["group", "correct", "incorrect", "unsure", "policy-correct rate", "Wilson 95 %", "worst case (unsure = incorrect)"], rows), "",
           (f"{ex['verdicts']} verdicts; {ex['agent_example_rows_excluded']} agent-example rows excluded; {ex['pending']} rows pending. Source: {src}."), ""]
     for key, title in (("incorrect_rows", "Rows judged incorrect"), ("unsure_rows", "Rows judged unsure")):
         listed = ex.get(key) or []
@@ -1265,7 +1269,9 @@ def render_results_md(meta: dict, det: dict | None, vis: dict | None, agent: dic
         nm += [("Failure injection perturbs 3 photo pairs from one camera (BE4089629) with synthetic effects: ISP effects are not simulated in pixels, a recapture "
                 "returns an unperturbed frame, devices are fakes; it shows how the code reacts, not how a real camera or a real person behaves."),
                ("Op 2 `blurry` on the agent path: flag rate by blur strength is in section 4; whether the live `blurry` flags in section 5 are real blur or false alarms "
-               "is not measured (no human looked at all of them; some are in the expert sheet).")]
+                + ("is judged only for the flagged frames in the expert sheet (section 6: each recapture he marked incorrect followed a `blurry` or `glare` flag on a frame he found usable); "
+                   "the other flags are not checked." if expert and expert.get("status") == "measured"
+                   else "is not measured (no human looked at all of them; some are in the expert sheet)."))]
     if aws:
         nm += [(f"Live AWS traces: {aws.get('photos')} photos (traces created within one 35-minute poller sweep on 15 Oct, photos captured 14-15 Oct), 2 EZVIZ cameras, rule planner, FlyBot actions not wired (every recapture blocked `unknown_camera`): "
                "no live proposal, approval, ISP change or surge; the sample says the loop runs and how fast, not that its decisions are right.")]
@@ -1273,7 +1279,9 @@ def render_results_md(meta: dict, det: dict | None, vis: dict | None, agent: dic
         nm += [("Policy-correct decision rate judged by an AgriHub agronomist on 50 cases: the sheet is ready (`docs/evidence/eval/expert_review.csv`, "
                "`eval/EXPERT_REVIEW.md`), 0 verdicts, not measured.")]
     else:
-        nm += [f"Expert review: one reviewer panel, {expert['verdicts']} verdicts; confidence interval in section 6; inter-rater agreement not measured."]
+        nm += [(f"Expert review: one reviewer (the project's agronomy advisor), {expert['verdicts']} verdicts on a stratified sample of 50; confidence interval "
+                "in section 6; inter-rater agreement not measured (no second reviewer). The sheet holds decisions of the earlier Sentinel pipeline (14-17 Oct), "
+                "shown to him in Vietnamese; the action names have changed since (`eval/EXPERT_REVIEW.md`).")]
     nm += ["Sample sizes and scope: 2 cameras, 1 region, 30 days, traps empty since 2026-10-07; no seasonal or multi-farm variation; no yellow sticky cards.",
            "Timings come from a shared 4-core dev laptop and a dev stack: they are not benchmarks (see bench/)."]
     L += [f"- {x}" for x in nm] + [""]

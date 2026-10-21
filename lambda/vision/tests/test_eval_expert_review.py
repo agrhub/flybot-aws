@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-import shutil
+import csv
 import sys
 from pathlib import Path
 
@@ -21,8 +21,17 @@ SHEET = ROOT / "docs" / "evidence" / "eval" / "expert_review.csv"
 
 @pytest.fixture
 def sheet(tmp_path: Path) -> Path:
+    """The real sheet as it was before any review: reviewer columns empty (examples kept), no English column."""
+    with open(SHEET, encoding="utf-8", newline="") as fh:
+        rows = list(csv.DictReader(fh))
+    for r in rows:
+        if not ser.is_example(r):
+            r["expert_verdict"] = r["expert_note"] = ""
     dst = tmp_path / "expert_review.csv"
-    shutil.copy(SHEET, dst)
+    with open(dst, "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=ser.COLUMNS, extrasaction="ignore")
+        w.writeheader()
+        w.writerows(rows)
     return dst
 
 
@@ -34,6 +43,8 @@ def _fill(sheet: Path, answers: list[dict], translations: dict[str, str]) -> dic
 
 
 def test_a_sheet_without_the_english_column_still_scores(sheet: Path):
+    with open(sheet, encoding="utf-8") as fh:
+        assert "expert_note_en" not in fh.readline()
     res = ser.score(sheet)
     assert res["verdicts"] == 0 and "not measured" in res["status"]
     assert res["agent_example_rows_excluded"] == 5 and res["rows_scored_pool"] == 50
@@ -87,3 +98,11 @@ def test_an_existing_verdict_needs_force(sheet: Path):
     res = imp.apply(rows, [{"id": "FIJ-01", "verdict": "unsure"}], {})
     assert res["written"] == [] and "already has a verdict" in res["skipped"][0]
     assert imp.apply(rows, [{"id": "FIJ-01", "verdict": "unsure"}], {}, force=True)["written"] == ["FIJ-01"]
+
+
+def test_the_committed_sheet_holds_the_advisors_verdicts():
+    s = ser.score(SHEET)
+    assert s["status"] == "measured" and s["verdicts"] == 50 and s["pending"] == 0
+    rows = [r for r in imp.read_rows(SHEET) if not ser.is_example(r)]
+    assert all(r["expert_note"].startswith(f"reviewer={imp.REVIEWER};") for r in rows)
+    assert all(r["expert_note_en"] for r in rows if r["expert_note"] != f"reviewer={imp.REVIEWER};")

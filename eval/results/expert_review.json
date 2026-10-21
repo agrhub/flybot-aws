@@ -4,7 +4,7 @@
   "rows_scored_pool": 50,
   "agent_example_rows_excluded": 5,
   "duplicate_ids": [],
-  "pending": 50,
+  "pending": 0,
   "invalid_verdicts": [],
   "rows_per_source": {
     "aws_live": 15,
@@ -12,6 +12,365 @@
     "staged_proposal": 8,
     "failure_injection": 15
   },
-  "status": "0 verdicts, not measured (50 rows waiting for the expert, 5 agent-example rows excluded)",
-  "verdicts": 0
+  "status": "measured",
+  "verdicts": 50,
+  "overall": {
+    "correct": 43,
+    "incorrect": 6,
+    "unsure": 1,
+    "judged": 49,
+    "policy_correct_rate": 0.8776,
+    "wilson95": [
+      0.7576,
+      0.9427
+    ],
+    "worst_case_rate_unsure_as_incorrect": 0.86
+  },
+  "by_source": {
+    "aws_live": {
+      "correct": 8,
+      "incorrect": 6,
+      "unsure": 1,
+      "judged": 14,
+      "policy_correct_rate": 0.5714,
+      "wilson95": [
+        0.3259,
+        0.7862
+      ],
+      "worst_case_rate_unsure_as_incorrect": 0.5333
+    },
+    "failure_injection": {
+      "correct": 15,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 15,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.7961,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "replay_30d_review": {
+      "correct": 12,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 12,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.7575,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "staged_proposal": {
+      "correct": 8,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 8,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.6756,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    }
+  },
+  "by_decision": {
+    "battery.critical": {
+      "correct": 1,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 1,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "capture (quality.recapture)": {
+      "correct": 1,
+      "incorrect": 6,
+      "unsure": 1,
+      "judged": 7,
+      "policy_correct_rate": 0.1429,
+      "wilson95": [
+        0.0257,
+        0.5131
+      ],
+      "worst_case_rate_unsure_as_incorrect": 0.125
+    },
+    "device calls after 1st delivery=2, after 3rd=2; FlyBot posts 1 -> 1; traces stored=1": {
+      "correct": 1,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 1,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "guardrail.llm_ungrounded; blocked: propose_treatment(downgraded)": {
+      "correct": 1,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 1,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "neighbour_check (surge.detected) + schedule_followup (surge.unconfirmed)": {
+      "correct": 1,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 1,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "neighbour_check (surge.detected) + treatment_check (surge.confirmed) + propose_treatment (treatment.treat_now)": {
+      "correct": 1,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 1,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "neighbour_check (surge.detected) + treatment_check (surge.confirmed) + schedule_followup (treatment.wait_check)": {
+      "correct": 4,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 4,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.5101,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "no_op": {
+      "correct": 1,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 1,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "no_op (no_op)": {
+      "correct": 9,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 9,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.7008,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "occlusion.recapture, occlusion.cleared": {
+      "correct": 1,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 1,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "quality.isp_fix": {
+      "correct": 1,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 1,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "quality.isp_fix, quality.fixed": {
+      "correct": 3,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 3,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.4385,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "quality.isp_fix; blocked: set_image(quiet_hours)": {
+      "correct": 1,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 1,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "quality.postpone": {
+      "correct": 1,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 1,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "quality.recapture, quality.awaiting_photo": {
+      "correct": 1,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 1,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "quality.recapture, quality.fixed": {
+      "correct": 2,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 2,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.3424,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "request_human_review (disagreement.review)": {
+      "correct": 12,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 12,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.7575,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "trap_missing.recapture, trap_missing.review": {
+      "correct": 1,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 1,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.2065,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    }
+  },
+  "by_camera": {
+    "BE4089629": {
+      "correct": 33,
+      "incorrect": 0,
+      "unsure": 0,
+      "judged": 33,
+      "policy_correct_rate": 1.0,
+      "wilson95": [
+        0.8957,
+        1.0
+      ],
+      "worst_case_rate_unsure_as_incorrect": 1.0
+    },
+    "BE4111159": {
+      "correct": 10,
+      "incorrect": 6,
+      "unsure": 1,
+      "judged": 16,
+      "policy_correct_rate": 0.625,
+      "wilson95": [
+        0.3864,
+        0.8152
+      ],
+      "worst_case_rate_unsure_as_incorrect": 0.5882
+    }
+  },
+  "incorrect_rows": [
+    {
+      "id": "AWS-06",
+      "source": "aws_live",
+      "decision": "capture (quality.recapture)",
+      "note": "reviewer=Trương Quốc Ánh; Ảnh rõ nét. Số ruồi là 0",
+      "note_en": "The photo is sharp. The fly count is 0."
+    },
+    {
+      "id": "AWS-08",
+      "source": "aws_live",
+      "decision": "capture (quality.recapture)",
+      "note": "reviewer=Trương Quốc Ánh; Ảnh rõ nét. Số ruồi đúng là 0",
+      "note_en": "The photo is sharp. The correct fly count is 0."
+    },
+    {
+      "id": "AWS-12",
+      "source": "aws_live",
+      "decision": "capture (quality.recapture)",
+      "note": "reviewer=Trương Quốc Ánh; Ảnh có ánh sáng tuy nhiên không chói sáng quá đến nỗi không đếm được. Số ruồi là 0",
+      "note_en": "There is light on the photo, but the glare is not so strong that it cannot be counted. The fly count is 0."
+    },
+    {
+      "id": "AWS-13",
+      "source": "aws_live",
+      "decision": "capture (quality.recapture)",
+      "note": "reviewer=Trương Quốc Ánh; Ảnh rõ nét. Số ruồi là 0",
+      "note_en": "The photo is sharp. The fly count is 0."
+    },
+    {
+      "id": "AWS-14",
+      "source": "aws_live",
+      "decision": "capture (quality.recapture)",
+      "note": "reviewer=Trương Quốc Ánh; Ảnh rõ nét. Số ruồi là 0",
+      "note_en": "The photo is sharp. The fly count is 0."
+    },
+    {
+      "id": "AWS-15",
+      "source": "aws_live",
+      "decision": "capture (quality.recapture)",
+      "note": "reviewer=Trương Quốc Ánh; Ảnh rõ nét. Số ruồi là 0",
+      "note_en": "The photo is sharp. The fly count is 0."
+    }
+  ],
+  "unsure_rows": [
+    {
+      "id": "AWS-09",
+      "source": "aws_live",
+      "decision": "capture (quality.recapture)",
+      "note": "reviewer=Trương Quốc Ánh; Ảnh tuy chói sáng một phần. Nhưng vẫn nhận dạng được. Số ruồi là 0",
+      "note_en": "The photo has some glare, but it can still be read. The fly count is 0."
+    }
+  ]
 }
