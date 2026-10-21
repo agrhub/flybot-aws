@@ -154,8 +154,8 @@ YOLOv7-tiny detector); *laptop* timings are from a shared 4-core laptop and are 
 
 | # | Op (file in `lambda/vision/sentinel/vision/`) | OpenCV 5 modules and calls | Measured (source) |
 |---|---|---|---|
-| 5 | Fly count (`detect_yolo26.py`, `box_rules.py`, `detector.py`) | **dnn, new engine**: `readNet(..., ENGINE_NEW)` on the YOLO26n ONNX (`[1, 300, 6]`, no NMS in the graph), letterbox 640, `NMSBoxes` (IoU 0.45), fruit-fly box rules (score, size, aspect, median size); the engine actually used is recorded. **Tiled on sticky traps** (`tiling.py`, `DETECTOR_TILES=sticky` in production): 2 x 2 windows with 12 % overlap, boxes cut by an inner window edge dropped, NMS and box rules in full-frame pixels | Roboflow test split, OpenCV path: precision 0.9025, recall 0.8987, F1 0.9006 (`models/MODEL_CARD.md`, `eval/results/yolo26_box_rules.json`). Same detections as ONNX Runtime on 20 test images and 20 trap photos (`eval/results/yolo26n_opencv_parity_colab.json`, `eval/results/yolo26_parity.json`). DNN p50 171.6 ms (laptop, `eval/results/replay_sample_yolo26.json`). Tiles on the synthetic sticky card (simulated), whole handler: recall 0.0687 → 0.8165, MAE 36.7 → 5.0 flies, lure unchanged; `detect()` p50 128.4 → 510.4 ms on a laptop, on Lambda **not measured** (`eval/SYNTHETIC_RESULTS.md`, `eval/results/synth_tiles.json`) |
-| 2 | Quality gate (`quality.py`, `quality_thresholds.yaml`) | `Laplacian` variance, histogram clipping, specular mask, `boxFilter` flat patches, IR detection, per-camera baseline | Agreement with FlyBot's own quality flags 0.903 on 3,000 photos, 0.914 on 537 (`docs/evidence/vision/quality_calibration.json`); 0 of 42 clean photos flagged (`eval/RESULTS.md` section 4); 4.8 ms (c8g) |
+| 5 | Fly count (`detect_yolo26.py`, `box_rules.py`, `detector.py`) | **dnn, new engine**: `readNet(..., ENGINE_NEW)` on the YOLO26n ONNX (`[1, 300, 6]`, no NMS in the graph), letterbox 640, `NMSBoxes` (IoU 0.45), fruit-fly box rules (score, size, aspect, median size); the engine actually used is recorded. **Tiled on sticky traps** (`tiling.py`, `DETECTOR_TILES=sticky` in production): 2 x 2 windows with 12 % overlap, boxes cut by an inner window edge dropped, NMS and box rules in full-frame pixels | Roboflow test split, OpenCV path: precision 0.9025, recall 0.8987, F1 0.9006 (`models/MODEL_CARD.md`, `eval/results/yolo26_box_rules.json`). Same detections as ONNX Runtime on 20 test images and 20 trap photos (`eval/results/yolo26n_opencv_parity_colab.json`, `eval/results/yolo26_parity.json`). DNN p50 116.0 ms (laptop, `eval/results/replay_sample_yolo26.json`). Tiles on the synthetic sticky card (simulated), whole handler: recall 0.0687 → 0.8165, MAE 36.7 → 5.0 flies, lure unchanged; `detect()` p50 128.4 → 510.4 ms on a laptop, on Lambda **not measured** (`eval/SYNTHETIC_RESULTS.md`, `eval/results/synth_tiles.json`) |
+| 2 | Quality gate (`quality.py`, `quality_thresholds.yaml`) | `Laplacian` variance, histogram clipping, specular mask, `boxFilter` flat patches, IR detection, per-camera baseline | Agreement with FlyBot's own quality flags 0.903 on 3,000 photos, 0.914 on 537 (`docs/evidence/vision/quality_calibration.json`); 0 of 42 clean photos flagged (`eval/RESULTS.md` section 4); glare on a lure tray floor judged at 5 % of the floor since the advisor's review (sticky card 2 %): glare flags on the 1,293-photo export 91 → 41, on the 24 bundled photos 10 → 4 (`eval/results/glare_rule_ab.json`); 4.8 ms (c8g) |
 | 1 | Trap find (`card.py`, `card_check.py`) | `cvtColor` HSV, `inRange`, `morphologyEx`, `findContours`, `approxPolyDP`, `fitLine`, `convexHull`, `getPerspectiveTransform`, `warpPerspective` | Lure tray floor found 50/50, held-out quad 45/50 (`docs/evidence/vision/card_check_lure/results.json`, `holdout_results.json`); sticky card on synthetic composites: hit rate 0.975, corner error p50 1.83 px (`docs/evidence/vision/card_synth.json`); no real sticky-card photo exists (`docs/evidence/vision/card_check.md`); 28.4 ms (c8g) |
 | 3 | Registration with the previous photo (`register.py`) | **features**: `SIFT_create` + `FlannBasedMatcher` + `findHomography(USAC_MAGSAC)` per photo; `ALIKED_create` + `LightGlueMatcher_create` (new in OpenCV 5) on demand | 6 real pairs: inliers p50 348.5 (ALIKED + LightGlue) vs 105.5 (SIFT) at 5,749 vs 174 ms per pair, laptop (`docs/evidence/vision/diff_eval.json`); SIFT 69.2 ms (c8g) |
 | 4 | Change since the previous photo (`diff.py`) | `perspectiveTransform` of the boxes, Hungarian matching, `absdiff` heat map, `applyColorMap` | Card-change recall 1.0 on the single real event with interim boxes (129 false flags), 0.0 with YOLOv7 boxes (7 false flags) (`docs/evidence/vision/diff_eval.json`, `eval/results/diff_with_yolo_boxes.json`); new-catch accuracy **not measured** (no labels); 2.6 ms (c8g) |
@@ -246,9 +246,10 @@ See the table in section 4 (all rows from `eval/RESULTS.md` section 2 and the fi
 
 `make replay-sample` with `DETECTOR=yolo26` sends the 24 bundled photos of the two orchard cameras through the
 Lambda's handler on a laptop (`eval/results/replay_sample_yolo26.json`): 24/24 answers, rule planner on all 24,
-10 photos flagged for glare and given a `capture_now` proposal, 14 `no_op`, 22 with a diff against the previous photo,
-total p50 1,134.8 ms and DNN p50 171.6 ms on the laptop. Whether the 10 glare flags are right is **not measured** (no
-human looked at them for this purpose). On AWS, the deployed function answers in 980 ms warm p50 and 3,633 ms cold
+4 photos flagged for glare and given a `capture_now` proposal (10 before the lure-floor glare limit of section 6.7),
+20 `no_op`, 22 with a diff against the previous photo, total p50 825.9 ms and DNN p50 116.0 ms on the laptop. Whether
+the 4 glare flags are right is **not measured** (no human looked at them for this purpose; 7 to 38 % of the tray floor
+is specular on them). On AWS, the deployed function answers in 980 ms warm p50 and 3,633 ms cold
 (`bench/results/lambda_latency.json`).
 
 ### 6.4 Agent task success (earlier build)
@@ -280,6 +281,17 @@ section 4): real photos perturbed in pixels, the real pipeline and planners, fak
 Quality-gate sweep on 42 clean real photos (same section): 0/42 clean photos flagged; glare covering at least 3 % of
 the frame flagged on all photos, gamma-5 darkness on 0.952, strong blur (sigma 1.6 % of the width) on all; but medium
 blur (sigma 0.8 %) on only 0.357 and gamma-4 darkness on 0.286.
+
+After the lure-floor glare limit (section 6.7), the same cases and a fixed set of 42 clean photos were run before and
+after the change in this repository (`eval/results/glare_rule_ab.json`, `eval/RESULTS.md` section 7): 33 of 38 runs
+pass in both, with 0 false actuations; the other 5 fail in both for harness reasons (three need IoT test doubles of
+the earlier build, two feed it event formats the current agent no longer accepts). Every image case passes after the
+change, glare on EZVIZ and on a CamOS camera included. 0/42 clean photos are flagged in both runs. A reflection
+covering 6 % or 12 % of the frame is still flagged on 42/42; one covering 3 % of the frame (mostly under 5 % of the tray
+floor) now on 1/42 instead of 42/42: the price of not recapturing photos like the one the advisor judged countable. The
+same run shows that the current gate, without a camera baseline, flags blur only from sigma 1.6 % of the width (0/42
+at 0.2-0.8 %; with a baseline of the camera's earlier frames 0.43-1.0), lower than the earlier build's rates above,
+whose sticky-card sharpness rule also fired on lure trays; this change does not touch blur.
 
 ### 6.6 Live traces (earlier build)
 
@@ -313,6 +325,19 @@ confirms what `eval/RESULTS.md` section 5 suspected from the numbers: on that ca
 needless photo request (those recaptures were never sent), not a wrong treatment: he judged every proposal, review
 and guardrail decision correct.
 
+**What his rejections changed** (`eval/RESULTS.md` section 7, `eval/results/glare_rule_ab.json`). The five blur flags
+came from a sticky-card sharpness floor that the reviewed build applied to the lure tray crop (`card_sharpness`
+10.9-13.2 < 15 in the live traces); that rule was dropped for lure traps on 15 Oct, just after the live run, so the
+current gate already counts those photos. The glare flag came from the 2 % limit for a specular share, which suits a
+yellow card but not a white tray floor in the sun. A lure tray floor now has its own limit of 5 %: at even fly
+density, glare on 5 % of the floor hides at most 1 fly in 20, under one fly at every lure count in the export (max
+10). It is a policy choice, not a calibration (no human glare labels exist); sticky cards keep 2 %. Re-scored on the
+same photos with the current Lambda handler (the advisor did not re-review them): of the 7 recaptures he rejected or
+was unsure about, 2 were still requested before this change (both glare) and **1 after**: AWS-09, the unsure one, with
+18 % of the floor glared. **None of the 43 decisions he judged correct changed**: the recapture with no trap and 30 %
+glare stays, and the 15 failure-injection photos keep their flags. On the 1,293-photo export, glare flags fall from
+91 to 41.
+
 What he reviewed: the sheet was built on 14-17 Oct from the earlier Sentinel pipeline, so the decisions carry its
 action names (`capture`, `request_human_review`, `propose_treatment`), which the current Lambda sends to FlyBot as
 `capture_now`, `review_request` and a treatment proposal. He answered in Vietnamese on a phone page that presents the
@@ -343,7 +368,11 @@ The agent on the damaged photos, compared automatically with the action `policy.
 an expert review): the expected action was proposed for glare 17/17, a hand or a leaf in front 38/40, a moved camera
 14/16, darkness 15/19, blur 12/15, no trap in view 13/18, and a dirty lens only 2/22. On the 857 clean photos, 161
 raised a quality flag (156 of them `overexposed`, on lure backgrounds whose real photos already get that flag) and 177
-got a recapture or review proposal. Surges detected by the agent against the surge rule on the true counts: precision
+got a recapture or review proposal; this run predates the lure-floor glare limit (section 6.7). Op 2 alone on the same
+photos with that limit: 54 of the 857 clean photos `overexposed` instead of 156, and all 17 photos with injected glare
+still flagged (`eval/results/glare_rule_ab.json`); the whole handler was not re-run on them. Two of the 9 blurred
+lure photos lose an incidental glare flag; blur itself is flagged on 0 of them, before and after. Surges detected by
+the agent against the surge rule on the true counts: precision
 0.73-0.85 and recall 0.35-0.53 on the three lure traps, 0 on the sticky trap, whose counts came from whole-frame
 detection in this run.
 
@@ -384,12 +413,14 @@ energy.
 *Figure 2. `docs/diagrams/agent_workflow.svg`, drawn from `lambda/vision/sentinel/agent/policy.yaml`,
 `guardrails.py` and FlyBot's `sentinelService.js`.*
 
-**OpenCV output changes the next action.** Twelve consecutive real photos of one trap through the Lambda's handler
-(`docs/evidence/agent/trace_example.json`, from the replay of section 6.3): photos with a quality score of 99-100 get
-`no_op`; the photo at 07:00 UTC, where op 2 measures a glare share of 0.021 and the score falls to 78.25, gets
-`quality.recapture` → a `capture_now` proposal; the clean photos at 07:30 get `no_op` again. The failure injection
-shows the same on one photo with different perturbations (section 6.5): clean → `no_op`, blur → recapture, glare on a
-CamOS camera → image-setting change and verification, IR → not counted, occluder → not counted and recaptured.
+**OpenCV output changes the next action.** Twelve consecutive real photos of one trap (BE4111159, 7 Oct) through the
+Lambda's handler (`docs/evidence/agent/trace_example.json`, from the replay of section 6.3): photos with a quality
+score of 97-100 get `no_op`; the photo at 06:00 UTC, where op 2 measures glare on 10.8 % of the tray floor and the
+score falls to 71.28, gets `quality.recapture` → a `capture_now` proposal, as do the next one and the two at 07:00
+(6.7-37.6 %); the photos at 06:30 and 07:30 get `no_op` again, one of them with 4.8 % glare, under the lure-floor
+limit of 5 % (section 6.7). The failure injection shows the same on one photo with different perturbations (section
+6.5): clean → `no_op`, blur → recapture, glare on a CamOS camera → image-setting change and verification, IR → not
+counted, occluder → not counted and recaptured.
 
 ![Trace example](diagrams/trace_example.svg)
 
@@ -398,11 +429,11 @@ CamOS camera → image-setting change and verification, IR → not counted, occl
 Excerpt of the glare photo's trace (same file):
 
 ```text
-perception  YOLO26n 0 flies (DNN 172.5 ms) | op 2 issues [glare] -> flag overexposed, score 78.25, glare share 0.021
-            op 1 lure floor found (coverage 0.6861) | ops 3-4 registered, 36 SIFT inliers, new 0 | op 8 no person
+perception  YOLO26n 0 flies (DNN 99.3 ms) | op 2 issues [glare] -> flag overexposed, score 71.28, glare share 0.1076
+            op 1 lure floor found (coverage 0.5684) | ops 3-4 registered, 28 SIFT inliers, new 0 | op 8 no person
 decisions   quality.recapture -> capture ("['glare']: capture again")
             quality.awaiting_photo -> wait ("the photo arrives as a new event")
-tool_calls  0 analyze_trap_photo ok INGESTED->ANALYZED 1120.6 ms | 1 capture(recapture, main) ok DECIDED->ACTED
+tool_calls  0 analyze_trap_photo ok INGESTED->ANALYZED 775.3 ms | 1 capture(recapture, main) ok DECIDED->ACTED
             transport flybot_proposal
 proposal    capture_now, rule quality.recapture, confidence 0.9 -> FlyBot confirm card + Telegram
 outcome     quality.recapture, quality.awaiting_photo; photo_not_counted (glare)
@@ -414,7 +445,9 @@ prescribes for 111 of the 147 damaged photos and missed most dirty lenses, a def
 **Judged by an agronomist.** The project's agronomy advisor rated 43 of 49 decided agent decisions correct (87.8 %,
 95 % interval 75.8-94.3 %, 1 unsure; section 6.7). Every proposal, human review, neighbour check, wait after a
 treatment and guardrail block he saw was right; the six he rejected are needless recaptures after false blur and glare
-flags on one camera, which points the next fix at op 2's thresholds, not at the planner.
+flags on one camera, which pointed the fix at op 2, not at the planner. The blur cause was already gone in the current
+gate; lure tray floors now get their own glare limit, and on the same photos 1 of the 7 rejected or unsure
+recaptures remains (an 18 % glare he was unsure about), with none of the 43 correct decisions changed (section 6.7).
 
 **Orchestration and autonomy.** Read tools are free; device tools need an analysed photo and respect the run's state
 machine, quiet hours (20:00-05:00), the extra-capture budget (4 per camera per farm day; halved below 40 % battery,
@@ -453,10 +486,11 @@ language; cards expire after 24 hours; guests can read traces and proposals but 
 - **Synthetic is not field:** the simulated farm and section 6.8 use flies from the training dataset's family pasted
   on real empty traps; field flies (pose, dust, decay, light) may differ. The tiled detector's cost on Lambda is not
   measured, and a dirty lens is almost never flagged (2/22).
-- **Glare flags may be too eager:** 10 of the 24 bundled photos get a glare flag and a recapture proposal (and 156
-  of 857 clean synthetic photos, on the same backgrounds). The advisor rejected 6 of the 8 live recaptures he saw
-  after blur and glare flags as needless (section 6.7); the 10 flags here were not reviewed. Each one costs the grower
-  a tap.
+- **Glare limits are a policy choice, not a calibration:** after the advisor's review, glare on a lure tray floor
+  counts above 5 % of the floor (section 6.7). 4 of the 24 bundled photos still get a glare flag and a recapture
+  proposal (10 before), and 54 of 857 clean synthetic photos (156 before, op 2 alone). Nobody has reviewed these flags,
+  and the one recapture left on the advisor's photos is the 18 % glare he was unsure about. Each flag costs the grower
+  a tap; an EZVIZ camera cannot change its exposure, so a recapture in the same sun may show the same glare.
 - **Agent evidence is mostly from the earlier build** (scenario suite, failure injection, replays, live traces) and from
   fake devices; the current build's loop on AWS (confirm → camera → new photo) has no published measurement.
 - **ESP32-S3 field operation is not measured:** 4G uplink, battery life, solar charging and live view through a relay;

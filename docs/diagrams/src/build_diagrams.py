@@ -9,6 +9,7 @@ nothing is computed except the layout.
 
 from __future__ import annotations
 
+import datetime
 import html
 import json
 from pathlib import Path
@@ -300,10 +301,12 @@ def agent_workflow() -> str:
 
 def trace_example() -> str:
     t = json.loads((ROOT / "docs" / "evidence" / "agent" / "trace_example.json").read_text(encoding="utf-8"))
-    seq = t["sequence_BE4089629"]
+    seq = t["sequence"]
     glare = t["responses"]["glare_capture_now"]
+    first = next(r for r in seq if r["proposals"])
+    day = datetime.date.fromisoformat(t["date"])
     s = Svg(1920, 830, "FlyBot on AWS: a real perception, decision and action trace")
-    s.text(30, 46, "Trace: OpenCV 5 output changes the next action (real photos, camera BE4089629, 5 Oct 2026)",
+    s.text(30, 46, f"Trace: OpenCV 5 output changes the next action (real photos, camera {t['camera']}, {day.day} {day:%b %Y})",
            size=28, weight="bold")
     s.text(30, 78, "The vision Lambda's handler on 12 consecutive photos of one lure trap (make replay-sample, "
            "YOLO26n, rule planner); source docs/evidence/agent/trace_example.json", size=18, fill=MUTED)
@@ -339,12 +342,13 @@ def trace_example() -> str:
     p = glare["proposals"][0]
     w = 600
     s.box(30, dy, w - 20, [
-        f"photo {seq[5]['photo'].split('/')[-1]}, 768 x 432",
+        f"photo {first['photo'].split('/')[-1]}, 768 x 432",
         f"op 5 YOLO26n: {glare['counts']['total']} flies, DNN {glare['timings']['dnnMs']} ms (laptop)",
         f"op 2: issues {q['issues']} → flag {q['flags']}, score {q['score']}",
         f"   glare share {sc['glare_ratio']}, clipped highs {sc['clip_high']}, sharpness {sc['sharpness']}",
         f"op 1: lure floor found, covers {sc['card_coverage']} of the frame",
-        f"ops 3-4: registered ({glare['diff']['inliers']} SIFT inliers), new 0, gone 0",
+        (f"ops 3-4: registered ({glare['diff']['inliers']} SIFT inliers), new {glare['diff']['newCount']}, "
+         f"gone {glare['diff']['goneCount']}"),
         f"op 8: person suspected {glare['privacy']['person_suspected']}",
     ], title="PERCEPTION (OpenCV 5)", title_fill="#0e7490", badges=("V5",), size=15)
     s.box(30 + w, dy, w - 20, [
@@ -368,7 +372,7 @@ def trace_example() -> str:
         f"total {glare['timings']['totalMs']} ms on the laptop (Lambda warm p50 980 ms)",
     ], title="ACTION (guarded tool calls)", title_fill="#c2410c", badges=("HUMAN",), size=15)
     s.text(30, 782, "Not measured: whether these glare flags are right (no human look) and the confirm-to-new-photo "
-           "time on AWS. The replay cannot take photos: the 07:17-07:35 photos are the camera's own.", size=15, fill=MUTED)
+           "time on AWS. The replay cannot take photos: the photos after a proposal are the camera's own.", size=15, fill=MUTED)
     s.text(30, 806, "Lambda warm p50: bench/results/lambda_latency.json. Small specks on the lid are missed by "
            "YOLO26n (models/MODEL_CARD.md), so FlyBot's production count is higher here.", size=15, fill=MUTED)
     return s.render()

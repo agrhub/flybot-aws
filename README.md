@@ -252,6 +252,7 @@ Deep mode (`"mode":"deep","question":"Why did the count jump today?"`) answers i
 | SIMULATED: tiled detection on synthetic sticky cards (whole handler, 129 clean photos) | recall 0.07 → 0.82, MAE 36.7 → 5.0 flies; lure unchanged | `eval/SYNTHETIC_RESULTS.md` |
 | SIMULATED: agent on 147 synthetic photos damaged on purpose (automatic check, not an expert review) | the policy's action on 111 | `eval/SYNTHETIC_AGENT_EVAL.md` |
 | Agent decisions judged by the agronomy advisor (50, earlier build) | 43 correct, 6 incorrect, 1 unsure: 87.8 % (95 % interval 75.8-94.3 %); the 6 are needless recaptures after false blur / glare flags | `eval/RESULTS.md` 6, `eval/results/expert_review.json` |
+| The same photos re-scored after the lure-floor glare limit (not re-reviewed) | 1 of the 7 rejected or unsure recaptures remains (2 before); none of the 43 correct decisions changed; glare flags on the 1,293-photo export 91 → 41 | `eval/RESULTS.md` 7, `eval/results/glare_rule_ab.json` |
 | Human count labels | 0: not measured | `eval/GROUND_TRUTH.md` |
 | COOL (Graviton4 AMI) vs pip OpenCV 5 on the same pipeline, 500 photo pairs x 5 | COOL 4.6 % slower per photo; cheapest: x86 c7i, USD 0.0155 per 1,000 photos | `bench/REPORT_COOL.md` |
 | Marginal cost on Lambda | ~USD 0.046 per 1,000 photos | `infra/COST.md` |

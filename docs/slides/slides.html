@@ -218,11 +218,11 @@ th { color: #475569; font-weight: 600; }
     <div class="card"><div class="num">38 / 38</div><div class="lbl">failure-injection runs, 0 false actuations (earlier build, fake devices)</div></div>
     <div class="card"><div class="num">0.07 → 0.82</div><div class="lbl">sticky-card recall with 2 x 2 tiles (synthetic photos, simulated)</div></div>
     <div class="card"><div class="num">−4.6 %</div><div class="lbl">COOL on Graviton4 vs the pip wheel per photo, 500 real pairs: we serve with pip</div></div>
-    <div class="card"><div class="num">43 / 49</div><div class="lbl">agent decisions judged correct by our agronomy advisor: 87.8 %, 95 % interval 75.8-94.3 %, 1 unsure; the 6 misses are needless recaptures</div></div>
+    <div class="card"><div class="num">43 / 49</div><div class="lbl">agent decisions judged correct by our agronomy advisor: 87.8 %, 95 % interval 75.8-94.3 %, 1 unsure; the 6 misses were needless recaptures, and after a glare limit for lure traps 1 of those 7 remains on the same photos</div></div>
   </div>
   <p class="small" style="margin-top:26px"><b>Not measured yet:</b> counts against human labels (0 labels), a second reviewer, approval times on the live site, and the ESP32-S3 camera's battery and 4G
     in the field. Every number names its source file in the report; synthetic results are kept apart from real photos.</p>
-  <p class="src">models/MODEL_CARD.md; eval/RESULTS.md; eval/SYNTHETIC_RESULTS.md; bench/REPORT_COOL.md; eval/results/expert_review.json</p>
+  <p class="src">models/MODEL_CARD.md; eval/RESULTS.md; eval/SYNTHETIC_RESULTS.md; bench/REPORT_COOL.md; eval/results/expert_review.json; eval/results/glare_rule_ab.json</p>
 </section>
 
 <section class="slide">
@@ -247,7 +247,7 @@ th { color: #475569; font-weight: 600; }
     <div>
       <h2>Limitations</h2>
       <ul class="small">
-        <li>Little human ground truth: one reviewer's 50 verdicts (6 needless recaptures, 1 unsure), 0 count labels.</li>
+        <li>Little human ground truth: one reviewer's 50 verdicts (6 needless recaptures, 1 unsure; fix re-scored, not re-reviewed), 0 count labels.</li>
         <li>YOLO26n misses small flies in full lure-trap views; no real sticky-card photo yet.</li>
         <li>Agent evidence mostly from the earlier build and fake devices.</li>
         <li>ESP32-S3 field operation (4G, battery, solar) not measured; one region, one server.</li>
@@ -256,7 +256,7 @@ th { color: #475569; font-weight: 600; }
     <div>
       <h2>Next</h2>
       <ul class="small">
-        <li>Per-camera blur and glare thresholds (the advisor's six rejections); label 150 trap photos.</li>
+        <li>The advisor reviews the new lure-trap glare limit on fresh photos; label 150 trap photos.</li>
         <li>Better recall on small flies in lure-trap views.</li>
         <li>The ESP32-S3 camera in the orchard on 4G and solar, with its battery measured.</li>
         <li>Yellow sticky cards; OpenCV 5's in-library VLM as a second opinion on doubtful photos.</li>

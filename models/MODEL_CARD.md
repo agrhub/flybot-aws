@@ -18,7 +18,7 @@ source file; "not measured" means not measured.
 | Precision / recall | 0.913 / 0.898 (YOLOv7-tiny: 0.928 / 0.908) | same |
 | OpenCV 5 (new engine) vs ONNX Runtime, Colab | 20 test images: same detections at conf 0.25 (IoU 1.0, score diff < 4e-5, count diff 0) for both graphs | `eval/results/yolo26n_opencv_parity_colab.json` |
 | OpenCV 5 vs ONNX Runtime, laptop | 20 FlyBot sample photos: 0 mismatches, worst box diff 0.0 px | `eval/results/yolo26_parity.json` |
-| 24 sample photos through the Lambda handler (laptop CPU) | 0 flies, MAE 1.54 vs production RF-DETR with the box rules (before them: 15 flies, all of them the trap's lens on BE4111159, MAE 2.17, like YOLOv7-tiny's 15); DNN p50 171.6 ms on a busy laptop (YOLOv7-tiny 189.1 ms in an earlier run), not a benchmark | `eval/results/replay_sample_yolo26.json`, `replay_sample_yolov7.json`, `yolo26_box_rules.json` |
+| 24 sample photos through the Lambda handler (laptop CPU) | 0 flies, MAE 1.54 vs production RF-DETR with the box rules (before them: 15 flies, all of them the trap's lens on BE4111159, MAE 2.17, like YOLOv7-tiny's 15); DNN p50 116.0 ms on a laptop, 21 Oct (YOLOv7-tiny 189.1 ms in an earlier run), not a benchmark | `eval/results/replay_sample_yolo26.json`, `replay_sample_yolov7.json`, `yolo26_box_rules.json` |
 
 The raw-tensor check in the notebook reported "mismatch" (max abs diff 421): the end-to-end head's TopK orders
 tied low-score rows differently between engines. Detections above the threshold are identical, so the check now

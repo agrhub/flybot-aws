@@ -73,7 +73,9 @@ on our DNN-heavy workload.
 - 38 of 38 failure-injection runs passed with zero false actuations (image defects, prompt injection, LLM and camera
   failures).
 - Our agronomy advisor judged 43 of the 49 agent decisions he could decide correct (87.8 %, 95 % interval
-  75.8-94.3 %, 1 unsure); the 6 he rejected are needless recaptures on one camera, which tells us what to fix next.
+  75.8-94.3 %, 1 unsure); the 6 he rejected are needless recaptures on one camera. We acted on it: lure traps now get
+  their own glare limit, and on the same photos 1 of those 7 recaptures remains (the unsure one) while none of the 43
+  correct decisions changed.
 - One-command AWS deployment: about 17 USD a month for the demo, 0.046 USD per 1,000 photos, warm Lambda p50
   980 ms.
 - An honest COOL benchmark on 500 real photo pairs.
@@ -89,8 +91,8 @@ are not field data. A person on every action keeps the agent simple and trusted.
 
 ## What's next
 
-Fix the blur and glare flags behind the six decisions our agronomy advisor rejected (per-camera thresholds for op 2);
-label 150 trap photos (ready, 0 done); improve recall on small flies in full lure-trap views; run the ESP32-S3 camera in the orchard on 4G and solar and measure its battery; add
+Ask our agronomy advisor to review the quality gate's new glare limit on fresh photos (we re-scored his photos, he has
+not re-reviewed them); label 150 trap photos (ready, 0 done); improve recall on small flies in full lure-trap views; run the ESP32-S3 camera in the orchard on 4G and solar and measure its battery; add
 yellow sticky cards; and try OpenCV 5's in-library VLM for second opinions on doubtful photos.
 
 ## Built with
@@ -124,5 +126,6 @@ check on 147 synthetic photos damaged on purpose (the policy's action on 111; si
 traces stored with every photo. Our agronomy advisor, MSc Trương Quốc Ánh (IAS), judged 50 of the agent's decisions:
 43 correct, 6 incorrect, 1 unsure, a policy-correct rate of 87.8 % (95 % interval 75.8-94.3 %). Every proposal, human
 review and guardrail decision he saw was right; all six errors are needless recapture requests after false blur or
-glare flags on one camera. Not measured yet: real approval times. Evidence: `docs/REPORT.md` sections 6.7 and 8,
+glare flags on one camera. The blur cause was already fixed; a glare limit for lure tray floors leaves 1 of the 7
+rejected or unsure recaptures on the same photos, with none of the 43 correct decisions changed. Not measured yet: real approval times. Evidence: `docs/REPORT.md` sections 6.7 and 8,
 `docs/evidence/agent/trace_example.json`, `eval/RESULTS.md`, `eval/SYNTHETIC_AGENT_EVAL.md`.
