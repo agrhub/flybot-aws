@@ -1,6 +1,6 @@
 # Demo video script (≤ 5:00)
 
-The cut as built: 4:51, 1920x1080, 30 fps, English voice-over with burned-in English subtitles (a Vietnamese
+The cut as built: 4:56, 1920x1080, 30 fps, English voice-over with burned-in English subtitles (a Vietnamese
 subtitle file and a Vietnamese-subtitled render come from the same command), unlisted YouTube. The competition asks
 for: team, the app running, architecture, OpenCV 5 usage, AWS integration, main results. Every number on screen comes
 from a file named in [REPORT.md](REPORT.md); anything replayed, synthetic or simulated says so on screen.
@@ -38,7 +38,7 @@ and wiring, from the BOM and the 4G wiring sheet, followed by the team's own foo
 | 3:54-4:08 | Architecture | `docs/diagrams/architecture.png`, panned: input, OpenCV 5, perception, agent, AWS, human approval | "Two camera families, one vision Lambda, one agent, a person on every action; one SAM stack in Sydney." |
 | 4:08-4:26 | OpenCV 5 | The `readNet(..., ENGINES[engine])` line; "YOLO26n test mAP@50 0.953"; "2 x 2 tiles on synthetic sticky cards: recall 0.07 → 0.82"; "warm p50 980 ms on Lambda" | "YOLO26n runs on OpenCV 5's new DNN engine …" |
 | 4:26-4:38 | Results | "Failure injection 38/38, 0 false actuations (earlier build, fake devices)" · "≈ 17 USD a month" · "≈ 0.046 USD per 1,000 photos" · "COOL on Graviton4: 4.6 % slower per photo" | "Measured, including what did not go our way." |
-| 4:38-4:51 | Limits and end | "0 human labels and 0/50 expert verdicts yet · sticky cards measured on synthetic photos only · no autonomous spraying"; "flybot.agrhub.com → Guest access · github.com/agrhub/flybot-aws · AGRHUB · FlyBot team" | "Honest limits, and a person always decides. Try it with Guest access." |
+| 4:38-4:56 | Expert review, limits and end | "Expert review: 43 of 49 agent decisions policy-correct (87.8 %); the 6 wrong ones were needless recaptures" (`eval/results/expert_review.json`, REPORT section 6.7) · "0 human count labels yet · sticky cards measured on synthetic photos only · no autonomous spraying"; "flybot.agrhub.com → Guest access · github.com/agrhub/flybot-aws · AGRHUB · FlyBot team" | "Our agronomy advisor judged 43 of 49 agent decisions correct. Honest limits, and a person always decides. Try it with Guest access." |
 
 Not in this cut: team members on camera (no person appears in the film unless they agree; the end card names the
 team instead) and a live approval in the owner's account (the console shows the approvals; the guest session cannot
