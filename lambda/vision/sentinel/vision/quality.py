@@ -92,10 +92,13 @@ def measure(img: np.ndarray, card: dict | None = None, t: dict | None = None) ->
         sx = small.shape[1] / float(img.shape[1])
         region = np.zeros(gray.shape, np.uint8)
         cv2.fillConvexPoly(region, np.round(np.asarray(poly) * sx).astype(np.int32), 255)  # both are convex
+    lure = card is not None and card.get("trap_kind") == "lure"
     if region is not None and np.count_nonzero(region):
         glare_ratio = float(np.count_nonzero(spec & region)) / np.count_nonzero(region)
+        glare_region = "floor" if lure else "card"
     else:
         glare_ratio = float(np.count_nonzero(spec)) / n
+        glare_region = "frame"
     flat, flat_mask = _flat_share(gray, int(t["dirty"]["window"]), float(t["dirty"]["flat_ratio"]))
 
     scores = {
@@ -107,6 +110,7 @@ def measure(img: np.ndarray, card: dict | None = None, t: dict | None = None) ->
         "clip_high": round(clip_high, 4),
         "saturation_mean": round(sat_mean, 2),
         "glare_ratio": round(glare_ratio, 4),
+        "glare_region": glare_region,  # what glare_ratio is a share of: "card", "floor" (lure tray) or "frame"
         "flat_share": round(flat, 4),
         "card_found": None,
         "card_coverage": None,
@@ -119,7 +123,6 @@ def measure(img: np.ndarray, card: dict | None = None, t: dict | None = None) ->
     }
     if card is not None:
         scores["card_found"] = bool(card.get("found"))
-        lure = card.get("trap_kind") == "lure"
         if lure and card.get("found") and region is not None and np.count_nonzero(region):
             # Lure tray floor: smooth white plastic, so its Laplacian variance measures how much is ON the floor
             # (stains, flies, IR noise), not focus. Informational only, at the 320-wide copy (no upscaling).
@@ -181,7 +184,12 @@ def assess(scores: dict, t: dict | None = None, baseline: dict | None = None, ho
             issues.add("dirty")
     if scores["saturation_mean"] < t["ir"]["saturation_max"]:
         issues.add("ir")
-    if scores["glare_ratio"] > t["glare"]["ratio_max"]:
+    # A lure tray floor tolerates more glare than a sticky card (quality_thresholds.yaml glare.floor_ratio_max);
+    # scores without glare_region (older analyzers, fakes) and thresholds without the floor limit get the strict one
+    glare_max = t["glare"]["ratio_max"]
+    if scores.get("glare_region") == "floor":
+        glare_max = t["glare"].get("floor_ratio_max", glare_max)
+    if scores["glare_ratio"] > glare_max:
         issues.add("glare")
     return [i for i in ISSUES if i in issues]
 
@@ -223,7 +231,7 @@ def assess_quality(
     For a `lure` trap, `no_card` means the tray floor was not found and the card_* scores describe the floor;
     card_sharpness stays None (the absolute card blur floor is a sticky-card rule) and `floor_sharpness` is
     reported for information. Blur on a lure trap is judged on the whole frame (absolute floor + edge ratio
-    against the camera baseline).
+    against the camera baseline); glare on the tray floor against `glare.floor_ratio_max` (`scores.glare_region`).
     """
     t0 = time.perf_counter()
     t = thresholds or load_thresholds()

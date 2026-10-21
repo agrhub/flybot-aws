@@ -25,7 +25,12 @@ low_contrast:
 glare:
   v_min: 250               # specular pixel: V >= v_min and S <= s_max
   s_max: 40
-  ratio_max: 0.02          # share of the card (or frame without card) that is specular
+  ratio_max: 0.02          # share of the sticky card (or of the frame when no trap is found) that is specular
+  floor_ratio_max: 0.05    # share of a lure tray floor that is specular. Policy choice, not a calibration: glare
+                           # hides at most 1 fly in 20 at even density on the floor, below one fly at every lure
+                           # count in the 2026-10 export (max 10). At 0.02 the gate made the advisor reject a
+                           # recapture of a countable BE4111159 photo with 3.4 % glare (eval/RESULTS.md section 6);
+                           # the failure-injection reflection (6 % of the frame, 8.3 % of the floor) still flags
 dirty:
   window: 15               # local std window (px on the 320-wide copy)
   flat_ratio: 0.25         # a pixel is "flat" when its local std < flat_ratio x median local std
