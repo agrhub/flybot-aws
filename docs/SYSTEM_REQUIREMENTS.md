@@ -77,8 +77,8 @@ What the stack creates and runs:
 | Part | Detail |
 |---|---|
 | Board | Freenove ESP32-S3 CAM (FNK0085): ESP32-S3 (8 MB PSRAM), OV5640 camera, microSD, USB-C (CH340) |
-| Wi-Fi camera | the board and a trap housing: the hanging solar trap is US$3.00 (US$9.90 on Amazon); a microSD card is optional |
-| Field camera | as built in the hanging trap: plus a 4G module (A7680C) and a GPS module (ATGM336H), both with their antennas, an 18650 cell, a TP4056 charger and a 5 V boost board: about 449,000 VND plus the board and the housing; optional microSD, solar panel and GPS switch +191,442 VND; the reference build in an IP65 box: about 1,130,000 VND plus the board (prices read on 17 Oct 2026, camos-esp32-trap [docs/BOM.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/BOM.md)) |
+| Wi-Fi camera | the board and a trap housing: about US$23 in all with the US$3.00 hanging solar trap (US$9.90 on Amazon); a microSD card is optional |
+| Field camera | as built in the hanging trap: plus a 4G module (A7680C) and a GPS module (ATGM336H), both with their antennas, an 18650 cell, a TP4056 charger and a 5 V boost board: about US$40 in all with the board and the housing (448,954 VND of parts at 26,050 VND/USD, Vietcombank, 21 Oct 2026); optional microSD, solar panel and GPS switch +US$7.35; the reference build in an IP65 box: about US$63 (prices read on 17 Oct 2026, camos-esp32-trap [docs/BOM.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/BOM.md)) |
 | Wiring | camos-esp32-trap [docs/WIRING.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/WIRING.md) (reference design); the bench trap as built: `4G-trap-wiring.pdf` in the Devpost package |
 | Firmware | camos-esp32-trap v0.8.0; first install with the web flasher in Chrome or Edge, OTA from FlyBot afterwards; built with ESP-IDF v5.4.4 |
 | Network | Wi-Fi 2.4 GHz, or a nano SIM with data for 4G |

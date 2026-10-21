@@ -42,8 +42,9 @@ Growers and farm managers who run FlyBot traps, and the agronomists who advise t
 Vietnamese or English), its chatbot, and Telegram. The system serves two camera families: EZVIZ cloud cameras that
 farms already own, and an open, low-cost ESP32-S3 trap camera (solar, Wi-Fi or 4G, GPS) whose firmware and parts
 list are public. The field camera as built, in a hanging solar trap housing with 4G, GPS and an 18650 cell, costs
-about 449,000 VND of parts plus the US$19.99 board and the US$3.00 housing; a Wi-Fi camera is the board and the
-housing (the reference build of the wiring page, in an IP65 box: about 1,130,000 VND plus the board)
+about US$40 in all (448,954 VND of parts at 26,050 VND/USD, the Vietcombank rate on 21 Oct 2026, plus the US$19.99
+board and the US$3.00 housing); a Wi-Fi camera in the same housing is about US$23 (the reference build of the wiring
+page, in an IP65 box: about US$63)
 ([parts list](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/BOM.md#3-totals-prices-read-on-17-oct-2026), prices read on 17 Oct 2026).
 
 **Agronomy advisor.** MSc Trương Quốc Ánh, Principal Researcher and Deputy Head of the Biotechnology Department, Institute of Agricultural Science for Southern Vietnam (IAS, under VAAS), Ho Chi Minh City; research in plant breeding genetics, plant biotechnology and DNA barcoding, and applied projects on smart agriculture and IoT for pest control (https://iasvn.org/bo-mon-cong-nghe-sinh-hoc/). He is not a team member. On 21 Oct 2026 he reviewed 50 of the agent's decisions (section 6.7).
