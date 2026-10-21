@@ -87,8 +87,8 @@ are not field data. A person on every action keeps the agent simple and trusted.
 
 ## What's next
 
-Label 150 trap photos and have our agronomy advisor review 50 agent decisions (both ready, 0 done); improve recall on small
-flies in full lure-trap views; run the ESP32-S3 camera in the orchard on 4G and solar and measure its battery; add
+Fix the blur and glare flags behind the six decisions our agronomy advisor rejected (per-camera thresholds for op 2);
+label 150 trap photos (ready, 0 done); improve recall on small flies in full lure-trap views; run the ESP32-S3 camera in the orchard on 4G and solar and measure its battery; add
 yellow sticky cards; and try OpenCV 5's in-library VLM for second opinions on doubtful photos.
 
 ## Built with
@@ -119,5 +119,8 @@ the next photo. Guardrails enforce run states, budgets, quiet hours, battery lim
 kill switch; LLM failures fall back to the rule planner. Evaluation: 9/9 scenario steps and 38/38 failure-injection
 runs with 0 false actuations (earlier build, fake devices), a real trace on the current Lambda handler, an automatic
 check on 147 synthetic photos damaged on purpose (the policy's action on 111; simulated data, not an expert review),
-traces stored with every photo. Not measured yet: expert verdicts (0/50) and real approval times. Evidence: `docs/REPORT.md` section 8,
+traces stored with every photo. Our agronomy advisor, MSc Trương Quốc Ánh (IAS), judged 50 of the agent's decisions:
+43 correct, 6 incorrect, 1 unsure, a policy-correct rate of 87.8 % (95 % interval 75.8-94.3 %). Every proposal, human
+review and guardrail decision he saw was right; all six errors are needless recapture requests after false blur or
+glare flags on one camera. Not measured yet: real approval times. Evidence: `docs/REPORT.md` sections 6.7 and 8,
 `docs/evidence/agent/trace_example.json`, `eval/RESULTS.md`, `eval/SYNTHETIC_AGENT_EVAL.md`.

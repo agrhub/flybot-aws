@@ -45,7 +45,7 @@ list are public; the parts list prices a Wi-Fi camera at about 430,000 VND plus 
 camera with 4G, GPS, battery and solar at about 1,130,000 VND plus the board
 ([firmware README](https://github.com/agrhub/camos-esp32-trap#1-what-you-need), prices read on 17 Oct 2026).
 
-**Agronomy advisor.** MSc Trương Quốc Ánh, Principal Researcher and Deputy Head of the Biotechnology Department, Institute of Agricultural Science for Southern Vietnam (IAS, under VAAS), Ho Chi Minh City; research in plant breeding genetics, plant biotechnology and DNA barcoding, and applied projects on smart agriculture and IoT for pest control (https://iasvn.org/bo-mon-cong-nghe-sinh-hoc/). The advisor is the intended reviewer of the agent's decisions (section 6.7); no review has been done yet.
+**Agronomy advisor.** MSc Trương Quốc Ánh, Principal Researcher and Deputy Head of the Biotechnology Department, Institute of Agricultural Science for Southern Vietnam (IAS, under VAAS), Ho Chi Minh City; research in plant breeding genetics, plant biotechnology and DNA barcoding, and applied projects on smart agriculture and IoT for pest control (https://iasvn.org/bo-mon-cong-nghe-sinh-hoc/). He is not a team member. On 21 Oct 2026 he reviewed 50 of the agent's decisions (section 6.7).
 
 The demo traps are two EZVIZ lure-trap cameras in an orchard in southern Vietnam (`data/samples/README.md`). They are
 new and caught few flies in October, so the guest account also shows a clearly labelled simulated farm network
@@ -289,10 +289,41 @@ recapture decisions; agent run p50 1.75 s, OpenCV pipeline p50 1,392.6 ms (`eval
 
 ### 6.7 Human evidence
 
-Expert review of 50 stratified agent decisions by the project's agronomy advisor (section 2): sheet ready
-(`docs/evidence/eval/expert_review_sheet.html`, `eval/EXPERT_REVIEW.md`), **0 verdicts, not measured**
-(`eval/results/expert_review.json`). Human count labels: **0, not measured**. Proposals confirmed or rejected by
-growers on the live site, and the time from a confirmed capture to the new photo: **not measured** in a published file.
+**Expert review (earlier build).** The project's agronomy advisor (section 2) judged a stratified sample of 50 agent
+decisions: 15 live AWS traces, 12 decisions of the 30-day replay, 8 of the staged surge and 15 of the failure
+injection (`eval/EXPERT_REVIEW.md`). The question for each row: is this what a careful agronomist would also have done?
+He answered all 50 on 21 Oct 2026: **43 correct, 6 incorrect, 1 unsure**, a policy-correct rate of **43/49 = 87.8 %
+(Wilson 95 % interval 75.8-94.3 %)**, or 86.0 % if the unsure row counts as incorrect (`eval/results/expert_review.json`,
+`eval/RESULTS.md` section 6).
+
+| Source | correct / incorrect / unsure | rate (Wilson 95 %) |
+|---|---|---|
+| Failure injection | 15 / 0 / 0 | 1.0 (0.796-1.0) |
+| 30-day replay, two counters disagree → review | 12 / 0 / 0 | 1.0 (0.758-1.0) |
+| Staged surge (proposal, neighbour check, wait after a treatment) | 8 / 0 / 0 | 1.0 (0.676-1.0) |
+| Live AWS traces | 8 / 6 / 1 | 0.571 (0.326-0.786) |
+
+All six incorrect verdicts are the same mistake: a live recapture request after op 2 flagged a photo of camera
+BE4111159 as blurry (five) or glared (one, 3.4 % of the frame), on a photo he found sharp enough to count. His notes,
+translated by the team: "The photo is sharp. The fly count is 0." and, for the glare one, "There is light on the photo,
+but the glare is not so strong that it cannot be counted." The unsure row is another glare recapture ("some glare, but
+it can still be read"). Of the eight recapture decisions he saw, he agreed with one: no trap found and 30 % glare. This
+confirms what `eval/RESULTS.md` section 5 suspected from the numbers: on that camera the frames flagged blurry are
+*sharper* than its unflagged ones (median Laplacian 475.7 vs 337.9), so the blur flag is a false alarm there. The cost was a
+needless photo request (those recaptures were never sent), not a wrong treatment: he judged every proposal, review
+and guardrail decision correct.
+
+What he reviewed: the sheet was built on 14-17 Oct from the earlier Sentinel pipeline, so the decisions carry its
+action names (`capture`, `request_human_review`, `propose_treatment`), which the current Lambda sends to FlyBot as
+`capture_now`, `review_request` and a treatment proposal. He answered in Vietnamese on a phone page that presents the
+same rows; the English text in `docs/evidence/eval/expert_review.csv` is its source, `expert_note` keeps his words
+verbatim, and `expert_note_en` is the team's translation, made afterwards. One reviewer: no inter-rater agreement.
+
+Human count labels: **0, not measured** as a labelled set. In 18 notes he also wrote the fly count he saw: 0 on every
+one, where OpenCV had counted 1-2 on the 12 live photos and 5 on one replay photo, and FlyBot's production model 5-10
+on five replay photos; these remarks are not a substitute for the 150-photo labelling (`eval/GROUND_TRUTH.md`).
+Proposals confirmed or rejected by growers on the live site, and the time from a confirmed capture to the new photo:
+**not measured** in a published file.
 
 ### 6.8 Synthetic photos (simulated data, not field evidence)
 
@@ -380,6 +411,11 @@ outcome     quality.recapture, quality.awaiting_photo; photo_not_counted (glare)
 **On synthetic photos with a known defect** (simulated, section 6.8), the agent proposed the action the policy
 prescribes for 111 of the 147 damaged photos and missed most dirty lenses, a defect op 2 rarely flags.
 
+**Judged by an agronomist.** The project's agronomy advisor rated 43 of 49 decided agent decisions correct (87.8 %,
+95 % interval 75.8-94.3 %, 1 unsure; section 6.7). Every proposal, human review, neighbour check, wait after a
+treatment and guardrail block he saw was right; the six he rejected are needless recaptures after false blur and glare
+flags on one camera, which points the next fix at op 2's thresholds, not at the planner.
+
 **Orchestration and autonomy.** Read tools are free; device tools need an analysed photo and respect the run's state
 machine, quiet hours (20:00-05:00), the extra-capture budget (4 per camera per farm day; halved below 40 % battery,
 none below 20 %), and one recapture per event; proposals must cite evidence from earlier tool results of the same
@@ -405,8 +441,9 @@ language; cards expire after 24 hours; guests can read traces and proposals but 
 
 ## 9. Limitations
 
-- **No human ground truth yet:** 0 count labels and 0 expert verdicts. Every comparison with FlyBot's production count
-  is agreement between two models, not accuracy.
+- **Little human ground truth:** one reviewer's 50 verdicts on the agent's decisions (section 6.7), no second
+  reviewer, and 0 labelled count photos. Every comparison with FlyBot's production count is agreement between two
+  models, not accuracy.
 - **Field recall of YOLO26n is low on full lure-trap views:** on the bundled photos it counts 0 flies where FlyBot's
   production model counts up to 6; small specks on the trap lid are missed after the letterbox to 640
   (`models/MODEL_CARD.md`). The box rules remove false boxes; they add no recall.
@@ -417,8 +454,9 @@ language; cards expire after 24 hours; guests can read traces and proposals but 
   on real empty traps; field flies (pose, dust, decay, light) may differ. The tiled detector's cost on Lambda is not
   measured, and a dirty lens is almost never flagged (2/22).
 - **Glare flags may be too eager:** 10 of the 24 bundled photos get a glare flag and a recapture proposal (and 156
-  of 857 clean synthetic photos, on the same backgrounds); whether they are right is not measured, and each one costs
-  the grower a tap.
+  of 857 clean synthetic photos, on the same backgrounds). The advisor rejected 6 of the 8 live recaptures he saw
+  after blur and glare flags as needless (section 6.7); the 10 flags here were not reviewed. Each one costs the grower
+  a tap.
 - **Agent evidence is mostly from the earlier build** (scenario suite, failure injection, replays, live traces) and from
   fake devices; the current build's loop on AWS (confirm → camera → new photo) has no published measurement.
 - **ESP32-S3 field operation is not measured:** 4G uplink, battery life, solar charging and live view through a relay;

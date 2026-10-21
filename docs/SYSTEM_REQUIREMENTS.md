@@ -24,7 +24,7 @@ system: 21 October 2026. Measured values come from the files named; "not measure
 
 | Quality | Requirement | Status (source) |
 |---|---|---|
-| Accuracy | detector good enough on public trap pictures | test mAP@50 0.953, F1 0.9006 through the OpenCV path (`models/MODEL_CARD.md`); field accuracy against human counts **not measured** |
+| Accuracy | detector good enough on public trap pictures | test mAP@50 0.953, F1 0.9006 through the OpenCV path (`models/MODEL_CARD.md`); field accuracy against human counts **not measured**; agent decisions judged by the agronomy advisor: 43 of 49 correct, 87.8 % (95 % interval 75.8-94.3 %), 1 unsure (`eval/results/expert_review.json`) |
 | Safety | no camera change without a person | 38/38 failure-injection runs, 0 false actuations, earlier build with fake devices (`eval/RESULTS.md` section 4) |
 | Latency | one photo answered within seconds | Lambda warm p50 980 ms, cold 3,633 ms (`bench/results/lambda_latency.json`) |
 | Cost | cheap enough for a small farm | about 17 USD a month for the demo, about 0.046 USD per 1,000 photos (`infra/COST.md`) |

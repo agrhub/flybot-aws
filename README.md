@@ -251,7 +251,8 @@ Deep mode (`"mode":"deep","question":"Why did the count jump today?"`) answers i
 | Lambda latency (arm64, 2 GB, sample photo pair) | warm p50 980 ms | `bench/results/lambda_latency.json` |
 | SIMULATED: tiled detection on synthetic sticky cards (whole handler, 129 clean photos) | recall 0.07 → 0.82, MAE 36.7 → 5.0 flies; lure unchanged | `eval/SYNTHETIC_RESULTS.md` |
 | SIMULATED: agent on 147 synthetic photos damaged on purpose (automatic check, not an expert review) | the policy's action on 111 | `eval/SYNTHETIC_AGENT_EVAL.md` |
-| Human ground truth | 0 count labels, 0/50 expert verdicts: not measured | `eval/GROUND_TRUTH.md`, `eval/results/expert_review.json` |
+| Agent decisions judged by the agronomy advisor (50, earlier build) | 43 correct, 6 incorrect, 1 unsure: 87.8 % (95 % interval 75.8-94.3 %); the 6 are needless recaptures after false blur / glare flags | `eval/RESULTS.md` 6, `eval/results/expert_review.json` |
+| Human count labels | 0: not measured | `eval/GROUND_TRUTH.md` |
 | COOL (Graviton4 AMI) vs pip OpenCV 5 on the same pipeline, 500 photo pairs x 5 | COOL 4.6 % slower per photo; cheapest: x86 c7i, USD 0.0155 per 1,000 photos | `bench/REPORT_COOL.md` |
 | Marginal cost on Lambda | ~USD 0.046 per 1,000 photos | `infra/COST.md` |
 

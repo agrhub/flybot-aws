@@ -104,8 +104,9 @@ short version. State: 20 October 2026. Sources are named in each item; "not meas
   same dataset family as the training data, so field accuracy may be lower (`eval/SYNTHETIC_RESULTS.md`, "Limits").
 - The public training set (camos/fruit-fly-wmcqi, CC BY 4.0) shows flies on white discs, not yellow sticky cards or
   lure-trap lids; YOLO26n misses the small flies on a full lure-trap view (`models/MODEL_CARD.md`).
-- 0 human count labels and 0 expert verdicts (`eval/results/expert_review.json`, `eval/GROUND_TRUTH.md`): every
-  accuracy number against FlyBot's production count is agreement between two models.
+- 0 human count labels (`eval/GROUND_TRUTH.md`): every accuracy number against FlyBot's production count is agreement
+  between two models. One reviewer, the agronomy advisor, judged 50 agent decisions (43 correct, 6 incorrect, 1 unsure,
+  `eval/results/expert_review.json`); there is no second reviewer.
 - Results do not transfer to other farms, trap types or pests without new labels. The model and the system are a
   monitoring aid, not a basis for pesticide decisions on their own.
 
