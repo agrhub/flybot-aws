@@ -72,6 +72,8 @@ on our DNN-heavy workload.
   Runtime; the box rules raised F1 on the held-out test split from 0.8788 to 0.9006.
 - 38 of 38 failure-injection runs passed with zero false actuations (image defects, prompt injection, LLM and camera
   failures).
+- Our agronomy advisor judged 43 of the 49 agent decisions he could decide correct (87.8 %, 95 % interval
+  75.8-94.3 %, 1 unsure); the 6 he rejected are needless recaptures on one camera, which tells us what to fix next.
 - One-command AWS deployment: about 17 USD a month for the demo, 0.046 USD per 1,000 photos, warm Lambda p50
   980 ms.
 - An honest COOL benchmark on 500 real photo pairs.
