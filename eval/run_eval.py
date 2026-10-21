@@ -26,6 +26,8 @@ filled in. Sections:
    only re-summarizes the file, it never calls AWS).
 6. expert_review.json: policy-correct rate once an agronomist filled docs/evidence/eval/expert_review.csv
    (eval/score_expert_review.py; 0 verdicts -> "not measured").
+7. glare_rule_ab.json (eval/glare_rule_ab.py; read, not recomputed): the lure-floor glare limit, before vs after on the
+   same inputs.
 Then the Limitations list. `--render-only` re-renders eval/RESULTS.md from the JSON files without recomputing anything heavy.
 """
 
@@ -1104,8 +1106,77 @@ def render_expert(ex: dict | None) -> list[str]:
     return L
 
 
+def render_glare_ab(ab: dict | None) -> list[str]:
+    """Section 7: before / after the lure-floor glare limit (eval/glare_rule_ab.py), same inputs."""
+    if not ab:
+        return []
+    rb, ra = ab["rule"]["before"], ab["rule"]["after"]
+    L = ["## 7. After the expert review: glare limit on lure tray floors", "",
+         ("All six recaptures the advisor rejected, and the unsure one, followed a `blurry` or `glare` flag on BE4111159. Blur: the five `blurry` "
+          "flags came from the sticky-card sharpness floor applied to the lure tray crop (`card_sharpness` 10.9-13.2 < 15 in the live traces), a rule "
+          "removed for lure traps on 15 Oct after that live run (`lambda/vision/tests/test_vision_quality_lure.py`); the current gate already counts "
+          f"those photos. Glare: specular share of the tray floor above the card limit {rb['glare.floor_ratio_max']} (AWS-12: 3.4 %). Change: a lure "
+          f"tray floor gets its own limit, `glare.floor_ratio_max` {ra['glare.floor_ratio_max']}, a policy choice (`quality_thresholds.yaml`); sticky "
+          f"cards and frames keep {ra['glare.ratio_max']}. Before = floor judged at {rb['glare.floor_ratio_max']}, after = "
+          f"{ra['glare.floor_ratio_max']}; nothing else differs. Source: `{rel(RESULTS / 'glare_rule_ab.json')}` (`eval/glare_rule_ab.py`, "
+          f"{ab['generated_at']})."), ""]
+    ex = ab.get("expert_sheet")
+    if ex:
+        rows = [[name, g["rows"], g["sheet_recapture"], g["recapture_before"], g["recapture_after"], ", ".join(g["recapture_after_ids"]) or "-",
+                 ", ".join(g["changed"]) or "none"]
+                for name, g in (("rejected or unsure", ex["rejected_or_unsure"]), ("judged correct", ex["judged_correct"]))]
+        L += ["### 7a. The review sheet's photos, re-scored", "",
+              _table(["advisor's verdict", "rows", "recapture in the sheet", "recapture before", "recapture after", "still recapture after",
+                      "decision or issues changed"], rows), "",
+              (f"Harness: {ex['harness']}. {ex['not_a_review']}. A recapture = a `capture_now` proposal; in the sheet, a decision that names a "
+               "capture (an ISP change alone is not counted). Failure-injection rows are re-run here as EZVIZ photos, so their action may differ from "
+               "the sheet's; what is compared is before vs after."), ""]
+    sr = ab.get("sample_replay")
+    if sr:
+        L += ["### 7b. Bundled sample (`make replay-sample`, 24 real photos)", "",
+              _table(["rule", "photos", "op 2 issues", "capture_now", "glare share of the flagged photos"],
+                     [[n, sr[n]["photos"], json.dumps(sr[n]["issues"]), sr[n]["capture_now"], json.dumps(sr[n]["glare_ratio_of_glare_flags"])]
+                      for n in ("before", "after")]), "", f"Harness: {sr['harness']}.", ""]
+    fx = ab.get("failure_injection")
+    if fx:
+        b, a = fx["before"], fx["after"]
+        both = sorted(set(b["failed"]) & set(a["failed"]))
+        only_after = sorted(set(a["failed"]) - set(b["failed"]))
+        cb, ca = b["sweep"]["clean_false_positive"]["no_baseline"], a["sweep"]["clean_false_positive"]["no_baseline"]
+        L += ["### 7c. Failure injection and the op 2 sweep", "",
+              (f"Cases: before {b['passed']}/{b['total']} passed, false actuations {b['false_actuations_total']}; after {a['passed']}/{a['total']}, "
+               f"false actuations {a['false_actuations_total']}. Failed in both runs: {', '.join(both) or 'none'}; failed only after: "
+               f"{', '.join(only_after) or 'none'}. {fx['harness']}."), "",
+              (f"Sweep on {a['sweep']['n_photos']} clean photos ({json.dumps(a['sweep']['cameras'])}): clean photos flagged (no baseline) before "
+               f"{cb['any_issue']}/{cb['n']}, after {ca['any_issue']}/{ca['n']}."), ""]
+        rows = []
+        for name in ("glare", "blur"):
+            for lb, la in zip(b["sweep"]["rates"][name], a["sweep"]["rates"][name], strict=True):
+                rows.append([name, f"{lb['level']} {lb['unit']}", lb["no_baseline"], la["no_baseline"], lb["with_baseline"], la["with_baseline"]])
+        L += [_table(["perturbation", "strength", "flag rate before (no baseline)", "after (no baseline)", "before (with baseline)",
+                      "after (with baseline)"], rows), ""]
+    d = ab.get("export")
+    if d:
+        L += ["### 7d. FlyBot export, op 2 alone", "",
+              _table(["camera", "photos", "glare before", "glare after", "any issue before", "any issue after"],
+                     [[c, v["photos"], v["glare_before"], v["glare_after"], v["any_issue_before"], v["any_issue_after"]]
+                      for c, v in d.items() if isinstance(v, dict)]), "", f"Source photos: {d['source']}.", ""]
+    d = ab.get("synthetic")
+    if d:
+        c = d["clean"]
+        rows = [["clean (all)", c["photos"], c["with_quality_flag_before"], c["with_quality_flag_after"], json.dumps(c["flags_before"]),
+                 json.dumps(c["flags_after"])]]
+        rows += [[f"clean / {k}", v["photos"], v["before"], v["after"], "", ""] for k, v in c["by_kind"].items()]
+        rows += [[k, v["photos"], "", "", json.dumps(v["flags_before"]), json.dumps(v["flags_after"])] for k, v in d["defects"].items()]
+        L += ["### 7e. Synthetic photos, op 2 alone (simulated)", "",
+              _table(["photos", "n", "with a quality flag before", "after", "flags before", "flags after"], rows), "",
+              f"Source photos: {d['source']}; flags are the contract's (op 2 `glare` -> `overexposed`).", ""]
+    return L
+
+
 def render_results_md(meta: dict, det: dict | None, vis: dict | None, agent: dict | None, fail: dict | None,
-                      aws: dict | None = None, expert: dict | None = None, results_dir: Path = RESULTS) -> str:
+                      aws: dict | None = None, expert: dict | None = None, results_dir: Path = RESULTS,
+                      glare_ab: dict | None = None) -> str:
     L: list[str] = []
     L += ["# Evaluation results", "",
           ("Generated by `uv run python -m eval.run_eval` from the JSON files in `eval/results/`. **Do not edit by hand**: every number below is read from "
@@ -1242,6 +1313,7 @@ def render_results_md(meta: dict, det: dict | None, vis: dict | None, agent: dic
     if aws is not None:
         L += render_aws(aws, results_dir)
     L += render_expert(expert)
+    L += render_glare_ab(glare_ab)
     L += ["## Limitations (everything not measured, and what limits what was)", ""]
     nm: list[str] = []
     for d in (det, vis):
@@ -1366,7 +1438,8 @@ def main(argv: list[str] | None = None) -> int:
             "seconds": round(time.perf_counter() - t0, 1)}
     if not a.render_only:
         jdump(rdir / "eval_run.json", meta)
-    a.results_md.write_text(render_results_md(meta, det, vis, agent, fail, aws, expert, rdir), encoding="utf-8")
+    a.results_md.write_text(render_results_md(meta, det, vis, agent, fail, aws, expert, rdir, load_or("glare_rule_ab.json")),
+                            encoding="utf-8")
     print(f"wrote {rel(a.results_md)} and {rel(rdir)}/*.json in {meta['seconds']} s")
     return 0
 

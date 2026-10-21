@@ -287,6 +287,82 @@ Rows judged unsure (the reviewer's note in English, translated afterwards by the
 
 - AWS-09 (aws_live, `capture (quality.recapture)`): The photo has some glare, but it can still be read. The fly count is 0.
 
+## 7. After the expert review: glare limit on lure tray floors
+
+All six recaptures the advisor rejected, and the unsure one, followed a `blurry` or `glare` flag on BE4111159. Blur: the five `blurry` flags came from the sticky-card sharpness floor applied to the lure tray crop (`card_sharpness` 10.9-13.2 < 15 in the live traces), a rule removed for lure traps on 15 Oct after that live run (`lambda/vision/tests/test_vision_quality_lure.py`); the current gate already counts those photos. Glare: specular share of the tray floor above the card limit 0.02 (AWS-12: 3.4 %). Change: a lure tray floor gets its own limit, `glare.floor_ratio_max` 0.05, a policy choice (`quality_thresholds.yaml`); sticky cards and frames keep 0.02. Before = floor judged at 0.02, after = 0.05; nothing else differs. Source: `eval/results/glare_rule_ab.json` (`eval/glare_rule_ab.py`, 2026-10-21T11:43:52+00:00).
+
+### 7a. The review sheet's photos, re-scored
+
+| advisor's verdict | rows | recapture in the sheet | recapture before | recapture after | still recapture after | decision or issues changed |
+|---|---|---|---|---|---|---|
+| rejected or unsure | 7 | 7 | 2 | 1 | AWS-09 | AWS-12 |
+| judged correct | 43 | 6 | 11 | 11 | AWS-11, FIJ-01, FIJ-02, FIJ-03, FIJ-04, FIJ-05, FIJ-08, FIJ-12, FIJ-13, FIJ-14, FIJ-15 | none |
+
+Harness: sentinel.handler.analyze in-process, rule planner, EZVIZ lure trap, captured_at from the sheet, no prevPhoto, no history. The advisor judged the sheet's decisions only; nobody reviewed the re-scored decisions. A recapture = a `capture_now` proposal; in the sheet, a decision that names a capture (an ISP change alone is not counted). Failure-injection rows are re-run here as EZVIZ photos, so their action may differ from the sheet's; what is compared is before vs after.
+
+### 7b. Bundled sample (`make replay-sample`, 24 real photos)
+
+| rule | photos | op 2 issues | capture_now | glare share of the flagged photos |
+|---|---|---|---|---|
+| before | 24 | {"glare": 10} | 10 | [0.021, 0.0263, 0.0287, 0.0315, 0.0332, 0.0478, 0.0672, 0.1076, 0.2022, 0.3761] |
+| after | 24 | {"glare": 4} | 4 | [0.0672, 0.1076, 0.2022, 0.3761] |
+
+Harness: eval/replay_sample.py requests (prevPhoto, history) to sentinel.handler.analyze.
+
+### 7c. Failure injection and the op 2 sweep
+
+Cases: before 33/38 passed, false actuations 0; after 33/38, false actuations 0. Failed in both runs: duplicate_webhook_id, injected_text_metadata_rule_planner, rpc_timeout, shadow_not_applied, shadow_reported_errors; failed only after: none. eval/failure_injection.py run_all (pairs and sweep pool picked once under the before rule).
+
+Sweep on 42 clean photos ({"BE4089629": 21, "BE4111159": 21}): clean photos flagged (no baseline) before 0/42, after 0/42.
+
+| perturbation | strength | flag rate before (no baseline) | after (no baseline) | before (with baseline) | after (with baseline) |
+|---|---|---|---|---|---|
+| glare | 0.01 blob area / frame | 0.024 | 0.0 | 0.024 | 0.0 |
+| glare | 0.03 blob area / frame | 1.0 | 0.024 | 1.0 | 0.024 |
+| glare | 0.06 blob area / frame | 1.0 | 1.0 | 1.0 | 1.0 |
+| glare | 0.12 blob area / frame | 1.0 | 1.0 | 1.0 | 1.0 |
+| blur | 0.002 sigma / width | 0.0 | 0.0 | 0.429 | 0.429 |
+| blur | 0.004 sigma / width | 0.0 | 0.0 | 1.0 | 1.0 |
+| blur | 0.008 sigma / width | 0.0 | 0.0 | 1.0 | 1.0 |
+| blur | 0.016 sigma / width | 1.0 | 1.0 | 1.0 | 1.0 |
+| blur | 0.03 sigma / width | 1.0 | 1.0 | 1.0 | 1.0 |
+
+### 7d. FlyBot export, op 2 alone
+
+| camera | photos | glare before | glare after | any issue before | any issue after |
+|---|---|---|---|---|---|
+| BE4089629 | 808 | 52 | 6 | 52 | 6 |
+| BE4111159 | 485 | 39 | 35 | 41 | 37 |
+| all | 1293 | 91 | 41 | 93 | 43 |
+
+Source photos: data/manifest.csv (FlyBot export, git-ignored), op 2 alone, trap kind lure.
+
+### 7e. Synthetic photos, op 2 alone (simulated)
+
+| photos | n | with a quality flag before | after | flags before | flags after |
+|---|---|---|---|---|---|
+| clean (all) | 857 | 156 | 54 | {"overexposed": 156} | {"overexposed": 54} |
+| clean / lure | 518 | 156 | 54 |  |  |
+| clean / sticky | 339 | 0 | 0 |  |  |
+| blur/lure | 9 |  |  | {"overexposed": 2, "trap_missing": 4} | {"trap_missing": 4} |
+| blur/sticky | 6 |  |  | {"blurry": 6} | {"blurry": 6} |
+| camera_moved/lure | 8 |  |  | {"overexposed": 2} | {"overexposed": 1} |
+| camera_moved/sticky | 8 |  |  | {} | {} |
+| dark/lure | 15 |  |  | {"dark": 13, "trap_missing": 15, "overexposed": 3} | {"dark": 13, "trap_missing": 15, "overexposed": 3} |
+| dark/sticky | 4 |  |  | {} | {} |
+| dirty_lens/lure | 15 |  |  | {"trap_missing": 1, "overexposed": 2} | {"trap_missing": 1, "overexposed": 2} |
+| dirty_lens/sticky | 7 |  |  | {} | {} |
+| glare/lure | 12 |  |  | {"overexposed": 12} | {"overexposed": 12} |
+| glare/sticky | 5 |  |  | {"overexposed": 5} | {"overexposed": 5} |
+| no_trap/lure | 13 |  |  | {"trap_missing": 11} | {"trap_missing": 11} |
+| no_trap/sticky | 5 |  |  | {"trap_missing": 5} | {"trap_missing": 5} |
+| occluded_hand/lure | 19 |  |  | {"trap_missing": 6, "overexposed": 2} | {"trap_missing": 6, "overexposed": 1} |
+| occluded_hand/sticky | 6 |  |  | {} | {} |
+| occluded_leaf/lure | 11 |  |  | {"overexposed": 2, "trap_missing": 8} | {"overexposed": 2, "trap_missing": 8} |
+| occluded_leaf/sticky | 4 |  |  | {"trap_missing": 2} | {"trap_missing": 2} |
+
+Source photos: data/synth/{demo-30d,pool} manifests (git-ignored), op 2 alone (no op 8, no planner); flags are the contract's (op 2 `glare` -> `overexposed`).
+
 ## Limitations (everything not measured, and what limits what was)
 
 - Detection accuracy on real yellow-sticky-card photos: none exist yet (all real photos are lure traps).
