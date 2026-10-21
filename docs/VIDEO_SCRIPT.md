@@ -20,7 +20,7 @@ and wiring, from the BOM and the 4G wiring sheet, followed by the team's own foo
 | Time | Scene | What is on screen | Voice-over (short) |
 |---|---|---|---|
 | 0:00-0:10 | Title | FlyBot logo, flies, "FlyBot on AWS · OpenCV 5 · AWS Lambda · IoT Core · Kinesis Video Streams · AGRHUB" | "Farms count fruit flies on traps. FlyBot photographs the traps and counts the flies, with OpenCV 5 on AWS." |
-| 0:10-0:22 | The problem | The glare sample (`data/samples/images/BE4089629/6ac34afa4c3227d11cfbd154.jpg`) next to the strong-blur failure-injection frame | "A count alone can't tell a bad photo from a catch …" |
+| 0:10-0:22 | The problem | A sample photo the glare limit still flags (`data/samples/images/BE4111159/6ac5dfe69d7333beb125be13.jpg`, 10.8 % of the tray floor; eval/RESULTS.md section 7b) next to the strong-blur failure-injection frame | "A count alone can't tell a bad photo from a catch …" |
 | 0:22-0:32 | The idea | Trap camera → OpenCV 5 on Lambda → Sentinel agent → a person confirms, and the loop | "FlyBot Sentinel checks every photo, decides, proposes; nothing reaches a camera until a person confirms." |
 | 0:32-0:45 | Bill of materials | The parts, cut out of the team's photo of the real board, with the prices read on 17 Oct 2026 (camos-esp32-trap [docs/BOM.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/BOM.md)) | "Our open trap camera: ESP32-S3, 4G modem, GPS, an 18650 cell and a small solar panel." |
 | 0:45-1:10 | Wiring | The 4G build wired step by step (cell and charger, 5 V boost to the board, modem from the cell on GPIO41/42, GPS on 3V3 and GPIO14, battery divider on GPIO1), as in the 4G wiring sheet | One line per step |
