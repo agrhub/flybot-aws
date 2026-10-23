@@ -156,7 +156,7 @@ YOLOv7-tiny detector); *laptop* timings are from a shared 4-core laptop and are 
 
 | # | Op (file in `lambda/vision/sentinel/vision/`) | OpenCV 5 modules and calls | Measured (source) |
 |---|---|---|---|
-| 5 | Fly count (`detect_yolo26.py`, `box_rules.py`, `detector.py`) | **dnn, new engine**: `readNet(..., ENGINE_NEW)` on the YOLO26n ONNX (`[1, 300, 6]`, no NMS in the graph), letterbox 640, `NMSBoxes` (IoU 0.45), fruit-fly box rules (score, size, aspect, median size); the engine actually used is recorded. **Tiled on sticky traps** (`tiling.py`, `DETECTOR_TILES=sticky` in production): 2 x 2 windows with 12 % overlap, boxes cut by an inner window edge dropped, NMS and box rules in full-frame pixels | Roboflow test split, OpenCV path: precision 0.9025, recall 0.8987, F1 0.9006 (`models/MODEL_CARD.md`, `eval/results/yolo26_box_rules.json`). Same detections as ONNX Runtime on 20 test images and 20 trap photos (`eval/results/yolo26n_opencv_parity_colab.json`, `eval/results/yolo26_parity.json`). DNN p50 116.0 ms (laptop, `eval/results/replay_sample_yolo26.json`). Tiles on the synthetic sticky card (simulated), whole handler: recall 0.0687 → 0.8165, MAE 36.7 → 5.0 flies, lure unchanged; `detect()` p50 128.4 → 510.4 ms on a laptop, on Lambda **not measured** (`eval/SYNTHETIC_RESULTS.md`, `eval/results/synth_tiles.json`) |
+| 5 | Fly count (`detect_yolo26.py`, `box_rules.py`, `detector.py`) | **dnn, new engine**: `readNet(..., ENGINE_NEW)` on the YOLO26n ONNX (`[1, 300, 6]`, no NMS in the graph), letterbox 640, `NMSBoxes` (IoU 0.45), fruit-fly box rules (score, size, aspect, median size); the engine actually used is recorded. **Tiled on sticky traps** (`tiling.py`, `DETECTOR_TILES=sticky` in production): 2 x 2 windows with 12 % overlap, boxes cut by an inner window edge dropped, NMS and box rules in full-frame pixels. **Counted only on the trap surface** (`regions.py`, `DETECTOR_ROI=all` in production): op 1 runs first and boxes off the lure floor or the sticky card are dropped | Roboflow test split, OpenCV path: precision 0.9025, recall 0.8987, F1 0.9006 (`models/MODEL_CARD.md`, `eval/results/yolo26_box_rules.json`). Same detections as ONNX Runtime on 20 test images and 20 trap photos (`eval/results/yolo26n_opencv_parity_colab.json`, `eval/results/yolo26_parity.json`). DNN p50 116.0 ms (laptop, `eval/results/replay_sample_yolo26.json`). Tiles on the synthetic sticky card (simulated), whole handler: recall 0.0687 → 0.8165, MAE 36.7 → 5.0 flies, lure unchanged; `detect()` p50 128.4 → 510.4 ms on a laptop, on Lambda **not measured** (`eval/SYNTHETIC_RESULTS.md`, `eval/results/synth_tiles.json`). Trap-surface filter, whole handler on demo-30d (simulated): sticky precision 0.849 → 0.987, lure 0.9785 → 0.987, recall unchanged; 320 real empty EZVIZ lure photos 5 → 3 false flies (detector step, `eval/results/detector_ab.json`) |
 | 2 | Quality gate (`quality.py`, `quality_thresholds.yaml`) | `Laplacian` variance, histogram clipping, specular mask, `boxFilter` flat patches, IR detection, per-camera baseline | Agreement with FlyBot's own quality flags 0.903 on 3,000 photos, 0.914 on 537 (`docs/evidence/vision/quality_calibration.json`); 0 of 42 clean photos flagged (`eval/RESULTS.md` section 4); glare on a lure tray floor judged at 5 % of the floor since the advisor's review (sticky card 2 %): glare flags on the 1,293-photo export 91 → 41, on the 24 bundled photos 10 → 4 (`eval/results/glare_rule_ab.json`); 4.8 ms (c8g) |
 | 1 | Trap find (`card.py`, `card_check.py`) | `cvtColor` HSV, `inRange`, `morphologyEx`, `findContours`, `approxPolyDP`, `fitLine`, `convexHull`, `getPerspectiveTransform`, `warpPerspective` | Lure tray floor found 50/50, held-out quad 45/50 (`docs/evidence/vision/card_check_lure/results.json`, `holdout_results.json`); sticky card on synthetic composites: hit rate 0.975, corner error p50 1.83 px (`docs/evidence/vision/card_synth.json`); no real sticky-card photo exists (`docs/evidence/vision/card_check.md`); 28.4 ms (c8g) |
 | 3 | Registration with the previous photo (`register.py`) | **features**: `SIFT_create` + `FlannBasedMatcher` + `findHomography(USAC_MAGSAC)` per photo; `ALIKED_create` + `LightGlueMatcher_create` (new in OpenCV 5) on demand | 6 real pairs: inliers p50 348.5 (ALIKED + LightGlue) vs 105.5 (SIFT) at 5,749 vs 174 ms per pair, laptop (`docs/evidence/vision/diff_eval.json`); SIFT 69.2 ms (c8g) |
@@ -178,6 +178,10 @@ YOLOv7-tiny detector); *laptop* timings are from a shared 4-core laptop and are 
 - **Small objects.** Letterboxing a 2304x1296 frame to 640 leaves sticky-card flies at 16-20 px, where YOLO26n's
   recall is 0.009, against 0.8628 above 28 px (synthetic sets, `eval/SYNTHETIC_RESULTS.md`). Running the same network
   on 2 x 2 tiles of the frame fixed this without retraining, at four forwards per sticky photo.
+- **Boxes off the trap.** Logos, housings and walls produce confident false boxes. Counting only boxes on the
+  surface op 1 finds (`DETECTOR_ROI`) raised sticky precision from 0.849 to 0.987 on the simulated trap without
+  touching recall; an overlay mask added nothing on top, and no score floor other than 0.35 keeps the public test
+  split's precision and recall (`eval/results/detector_ab.json`).
 - **New features module.** ALIKED + LightGlue gives 3.3x the inliers of SIFT at 33x the time on CPU
   (`docs/evidence/vision/diff_eval.json`), so SIFT stays the per-photo default and ALIKED + LightGlue is the on-demand
   method.
@@ -365,6 +369,15 @@ through the Lambda's handler in-process with the rule planner (`eval/SYNTHETIC_R
 | lure, whole frame | 388 | 2,476 | 1.039 | 0.9785 / 0.8255 |
 | sticky, whole frame | 129 | 5,151 | 36.667 | 0.8329 / 0.0687 |
 | sticky, `DETECTOR_TILES=sticky` | 129 | 5,151 | 4.953 | 0.849 / 0.8165 |
+| lure, + `DETECTOR_ROI=all` (production) | 388 | 2,476 | 1.07 | 0.987 / 0.8255 |
+| sticky, `DETECTOR_TILES=sticky` + `DETECTOR_ROI=all` (production) | 129 | 5,151 | 6.915 | 0.9866 / 0.8165 |
+
+The trap-surface filter removes the boxes on the EZVIZ logo, the trap housing and the wall (about six per photo of
+the simulated sticky trap). The sticky MAE rises from 4.953 to 6.915 because those false boxes were hiding the
+undercount: 4,263 flies counted for 5,151 true (bias -6.9) instead of 4,954. The lure misses (recall 0.83) get no box
+at all, even at score 0.25; lure tiles would find them on synthetic photos but add 281 false flies on 320 real empty
+lure traps (stains, the bait-cap hole), so they stay off: this is a model limit, left to retraining after the contest
+(`eval/SYNTHETIC_RESULTS.md`, counting fixes; `eval/results/detector_ab.json`).
 
 The agent on the damaged photos, compared automatically with the action `policy.yaml` prescribes for each defect (not
 an expert review): the expected action was proposed for glare 17/17, a hand or a leaf in front 38/40, a moved camera
