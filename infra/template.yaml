@@ -35,6 +35,11 @@ Parameters:
     Default: 'off'
     AllowedValues: ['off', 'on', sticky, auto]
     Description: YOLO26 tiled detection for small flies (lambda/vision/sentinel/vision/tiling.py)
+  DetectorRoi:
+    Type: String
+    Default: 'off'
+    AllowedValues: ['off', lure, all]
+    Description: YOLO26 counts only boxes on the trap surface op 1 finds (lambda/vision/sentinel/vision/regions.py)
   Yolo26Url:
     Type: String
     Default: ''
@@ -436,6 +441,7 @@ Resources:
           PHOTOS_BUCKET: !If [AwsStorage, !Ref S3BucketName, !Sub 'flybot-photos-${AWS::AccountId}-${Stage}']
           DETECTOR: !Ref Detector
           DETECTOR_TILES: !Ref DetectorTiles
+          DETECTOR_ROI: !Ref DetectorRoi
           YOLO26_URL: !Ref Yolo26Url
           YOLO26_SHA256: !Ref Yolo26Sha256
           MODEL_DIR: /opt/models

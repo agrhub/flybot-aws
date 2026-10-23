@@ -102,8 +102,8 @@ def test_factory_gives_yolo26_the_env_rules(monkeypatch, tmp_path):
     seen = {}
 
     class Fake:
-        def __init__(self, path, engine, conf, iou, rules, tiles):
-            seen.update(conf=conf, iou=iou, rules=rules, tiles=tiles)
+        def __init__(self, path, engine, conf, iou, rules, tiles, regions):
+            seen.update(conf=conf, iou=iou, rules=rules, tiles=tiles, regions=regions)
 
     import sentinel.vision.detect_yolo26 as y
 

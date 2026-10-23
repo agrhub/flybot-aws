@@ -71,36 +71,44 @@ class Tiling:
         return asdict(self)
 
 
-def windows(width: int, height: int, grid: int, overlap: float) -> list[tuple[int, int, int, int]]:
-    """`grid` x `grid` windows (x0, y0, x1, y1) covering the frame; neighbours share `overlap` x frame / grid."""
-    tw = min(width, round(width / grid * (1 + overlap)))
-    th = min(height, round(height / grid * (1 + overlap)))
+def windows(width: int, height: int, grid: int, overlap: float,
+            rect: tuple[int, int, int, int] | None = None) -> list[tuple[int, int, int, int]]:
+    """`grid` x `grid` windows (x0, y0, x1, y1, frame pixels) covering the frame, or only `rect` (x0, y0, x1, y1)
+    when given (e.g. the bounding box of the trap floor); neighbours share `overlap` x area / grid."""
+    rx0, ry0, rx1, ry1 = rect or (0, 0, width, height)
+    rw, rh = rx1 - rx0, ry1 - ry0
+    tw = min(rw, round(rw / grid * (1 + overlap)))
+    th = min(rh, round(rh / grid * (1 + overlap)))
     out = []
     for gy in range(grid):
         for gx in range(grid):
-            x0 = min(width - tw, max(0, round(gx * width / grid - overlap * width / grid / 2)))
-            y0 = min(height - th, max(0, round(gy * height / grid - overlap * height / grid / 2)))
-            out.append((x0, y0, x0 + tw, y0 + th))
+            x0 = min(rw - tw, max(0, round(gx * rw / grid - overlap * rw / grid / 2)))
+            y0 = min(rh - th, max(0, round(gy * rh / grid - overlap * rh / grid / 2)))
+            out.append((rx0 + x0, ry0 + y0, rx0 + x0 + tw, ry0 + y0 + th))
     return out
 
 
-def cut_by_inner_edge(xywh: list[float], win: tuple[int, int, int, int], width: int, height: int, margin: float) -> bool:
-    """True when the box (window pixels) reaches an edge of `win` that is inside the frame, i.e. the fly may go on
-    beyond the window."""
+def cut_by_inner_edge(xywh: list[float], win: tuple[int, int, int, int], width: int, height: int, margin: float,
+                      rect: tuple[int, int, int, int] | None = None) -> bool:
+    """True when the box (window pixels) reaches an edge of `win` that is inside the tiled area (the frame, or
+    `rect`), i.e. the fly may go on into the neighbouring window."""
     x, y, w, h = xywh
     x0, y0, x1, y1 = win
-    return ((x0 > 0 and x <= margin) or (y0 > 0 and y <= margin)
-            or (x1 < width and x + w >= (x1 - x0) - margin) or (y1 < height and y + h >= (y1 - y0) - margin))
+    rx0, ry0, rx1, ry1 = rect or (0, 0, width, height)
+    return ((x0 > rx0 and x <= margin) or (y0 > ry0 and y <= margin)
+            or (x1 < rx1 and x + w >= (x1 - x0) - margin) or (y1 < ry1 and y + h >= (y1 - y0) - margin))
 
 
 def merge(window_dets: list[list[dict]], wins: list[tuple[int, int, int, int]], width: int, height: int, iou: float,
-          margins: list[float], full: list[dict] | None = None) -> tuple[list[dict], int]:
+          margins: list[float], full: list[dict] | None = None,
+          rect: tuple[int, int, int, int] | None = None) -> tuple[list[dict], int]:
     """Window boxes (window pixels) -> full-frame boxes: drop the ones cut by an inner window edge, shift, add the
-    whole-frame boxes when given, class-agnostic NMS. Returns (boxes, number dropped as cut)."""
+    whole-frame boxes when given, class-agnostic NMS. `rect` = the tiled area when it is not the frame.
+    Returns (boxes, number dropped as cut)."""
     dets, cut = list(full or []), 0
     for boxes, win, margin in zip(window_dets, wins, margins, strict=True):
         for d in boxes:
-            if cut_by_inner_edge(d["xywh"], win, width, height, margin):
+            if cut_by_inner_edge(d["xywh"], win, width, height, margin, rect):
                 cut += 1
                 continue
             x, y, w, h = d["xywh"]

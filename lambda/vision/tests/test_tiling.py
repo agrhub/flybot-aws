@@ -8,6 +8,7 @@ import pytest
 from sentinel.vision import tiling
 from sentinel.vision.box_rules import BoxRules
 from sentinel.vision.detect_yolo26 import Yolo26Detector
+from sentinel.vision.regions import Regions
 from sentinel.vision.tiling import Tiling
 
 
@@ -80,8 +81,10 @@ def test_config_from_env():
 class FakeYolo26(Yolo26Detector):
     """Yolo26Detector without a network: `_pass` answers from a script, one entry per forward."""
 
-    def __init__(self, tiles: Tiling, script: list[list[dict]], rules: BoxRules | None = None):
+    def __init__(self, tiles: Tiling, script: list[list[dict]], rules: BoxRules | None = None,
+                 regions: Regions | None = None):
         self.size, self.iou, self.rules, self.tiling, self.head = 640, 0.45, rules, tiles, "end2end"
+        self.regions = regions or Regions()
         self.script, self.calls = list(script), []
 
     def _pass(self, img):

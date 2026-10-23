@@ -41,6 +41,7 @@ from sentinel.vision import tiling
 from sentinel.vision.box_rules import BoxRules, apply_rules, nms
 from sentinel.vision.detect_smoke import ENGINES, engine_of
 from sentinel.vision.detect_yolov7 import preprocess
+from sentinel.vision.regions import Regions, apply_regions
 
 
 def decode_end2end(out: np.ndarray, conf: float, scale: tuple[float, float], offset: tuple[int, int]) -> list[dict]:
@@ -96,7 +97,7 @@ class Yolo26Detector:
 
     def __init__(self, onnx_path: str | Path, engine: str = "new", imgsz: int | None = None,
                  resize: str = "letterbox", conf: float = 0.25, iou: float = 0.45, rules: BoxRules | None = None,
-                 tiles: tiling.Tiling | None = None):
+                 tiles: tiling.Tiling | None = None, regions: Regions | None = None):
         self.cv_version = require_opencv5()
         self.onnx_path = Path(onnx_path)
         meta_path = self.onnx_path.with_suffix(".onnx.json")
@@ -104,6 +105,7 @@ class Yolo26Detector:
         self.size = int(imgsz or self.meta.get("imgsz") or 640)
         self.engine, self.resize, self.conf, self.iou, self.rules = engine, resize, conf, iou, rules
         self.tiling = tiles or tiling.Tiling()
+        self.regions = regions or Regions()
         t0 = time.perf_counter()
         self.net = cv2.dnn.readNet(str(self.onnx_path), "", "", ENGINES[engine])
         self.load_ms = round((time.perf_counter() - t0) * 1000, 1)
@@ -133,8 +135,9 @@ class Yolo26Detector:
         dets = decode(out, self.conf, self.iou, scale, offset)
         return dets, None if raw is None else len(raw) - len(dets), out, min(scale), forward_ms
 
-    def detect(self, img: np.ndarray, trap_kind: str | None = None) -> dict:
-        """Boxes for `img` in its pixels. `trap_kind` ("sticky" | "lure") matters only to DETECTOR_TILES=sticky."""
+    def detect(self, img: np.ndarray, trap_kind: str | None = None, roi=None) -> dict:
+        """Boxes for `img` in its pixels. `trap_kind` ("sticky" | "lure") picks the tiling and the score floor;
+        `roi` is the trap surface polygon op 1 found ([[x, y], ...] px, None = not found) for DETECTOR_ROI."""
         t = self.tiling
         H, W = img.shape[:2]
         full, removed, out, forward_ms, forwards = None, None, None, 0.0, 0
@@ -158,9 +161,12 @@ class Yolo26Detector:
             dets, cut = tiling.merge(per_win, wins, W, H, self.iou, margins, full if t.keep_full else None)
             tiles.update(grid=t.grid, overlap=t.overlap, windows=[list(w) for w in wins], cut_dropped=cut)
         tiles["forwards"] = forwards
-        kept, rejected = apply_rules(dets, W, H, self.rules)
-        post = {"nms_iou": self.iou, "nms_removed": removed,
-                "rules": None if self.rules is None else self.rules.as_dict(), "rejected": rejected, "tiles": tiles}
+        dets, dropped = apply_regions(dets, W, H, self.regions, roi, trap_kind)
+        rules = None if self.rules is None else self.rules.for_kind(trap_kind)
+        kept, rejected = apply_rules(dets, W, H, rules)
+        post = {"nms_iou": self.iou, "nms_removed": removed, "rules": None if rules is None else rules.as_dict(),
+                "rejected": {**rejected, **dropped}, "tiles": tiles,
+                "regions": {**self.regions.as_dict(), "roi_used": roi is not None and self.regions.wants_roi(trap_kind)}}
         return {"count": len(kept), "boxes": kept, "forward_ms": round(forward_ms, 1),
                 "output_shape": list(out.shape), "output_finite": bool(np.isfinite(out).all()), "head": self.head,
                 "postprocess": post}

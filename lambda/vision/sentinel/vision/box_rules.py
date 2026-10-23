@@ -15,6 +15,8 @@ divided by sqrt(W * H) of the photo):
     DETECTOR_MIN_MEDIAN_RATIO   0.25  24 of 73,834 train flies are below
     DETECTOR_MEDIAN_MIN_BOXES   3     the median rules need at least this many boxes left in the photo
     DETECTOR_MAX_ASPECT         4.0   long side / short side: 165 of 73,980 train flies are above; best F1 on valid
+    DETECTOR_MIN_SCORE_LURE, DETECTOR_MIN_SCORE_STICKY
+                                -     score floor for one trap kind instead of DETECTOR_MIN_SCORE (unset = the same)
     DETECTOR_BOX_RULES          on    "off" keeps NMS and drops every rule (score floor = DETECTOR_CONF)
 
 Boxes are `{xywh, score, class_id}` in source-image pixels, as the detectors return them.
@@ -23,7 +25,7 @@ Boxes are `{xywh, score, class_id}` in source-image pixels, as the detectors ret
 from __future__ import annotations
 
 import os
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 
 import cv2
 import numpy as np
@@ -40,6 +42,8 @@ class BoxRules:
     min_median_ratio: float = 0.25
     median_min_boxes: int = 3
     max_aspect: float = 4.0
+    min_score_lure: float | None = None
+    min_score_sticky: float | None = None
 
     @classmethod
     def from_env(cls, env: dict | None = None) -> BoxRules | None:
@@ -59,7 +63,13 @@ class BoxRules:
                    max_median_ratio=num("DETECTOR_MAX_MEDIAN_RATIO", d.max_median_ratio),
                    min_median_ratio=num("DETECTOR_MIN_MEDIAN_RATIO", d.min_median_ratio),
                    median_min_boxes=num("DETECTOR_MEDIAN_MIN_BOXES", d.median_min_boxes, int),
-                   max_aspect=num("DETECTOR_MAX_ASPECT", d.max_aspect))
+                   max_aspect=num("DETECTOR_MAX_ASPECT", d.max_aspect),
+                   min_score_lure=num("DETECTOR_MIN_SCORE_LURE", None), min_score_sticky=num("DETECTOR_MIN_SCORE_STICKY", None))
+
+    def for_kind(self, trap_kind: str | None) -> BoxRules:
+        """These rules with the score floor of `trap_kind` ("lure" | "sticky") when one is set."""
+        floor = {"lure": self.min_score_lure, "sticky": self.min_score_sticky}.get(trap_kind or "")
+        return self if floor is None else replace(self, min_score=floor)
 
     def as_dict(self) -> dict:
         return asdict(self)

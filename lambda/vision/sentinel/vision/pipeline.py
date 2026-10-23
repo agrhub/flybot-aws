@@ -60,7 +60,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from sentinel.vision.card import find_card
+from sentinel.vision.card import find_card, roi_polygon_px
 from sentinel.vision.crowd import estimate_crowd
 from sentinel.vision.diff import _canonical, change_heatmap, diff_detections, transform_boxes
 from sentinel.vision.motion import blur_faces, detect_motion
@@ -103,8 +103,10 @@ def analyze(
     hour: int | None = None,
     baseline: dict | None = None,
     name: str | None = None,
+    cards: tuple[dict | None, dict | None] | None = None,
 ) -> dict:
-    """Ops 1, 2, 3, 4, 6, 8 on one photo (see module docstring for the contract)."""
+    """Ops 1, 2, 3, 4, 6, 8 on one photo (see module docstring for the contract). `cards` = op 1's results for both
+    photos when the caller already has them (analyze_photo, for the detector's ROI)."""
     t_all = time.perf_counter()
     if trap_kind not in ("sticky", "lure"):
         raise ValueError(f"trap_kind must be 'sticky' or 'lure', not {trap_kind!r}")
@@ -141,6 +143,8 @@ def analyze(
 
     # op 1: trap surface (sticky card / lure floor) on both photos
     def op1():
+        if cards is not None:
+            return cards
         c = find_card(cur, trap_kind=trap_kind, out_dir=out, name=f"{name}_card")
         p = find_card(prev, trap_kind=trap_kind) if prev is not None else None
         return c, p
@@ -226,24 +230,39 @@ def analyze(
     return res
 
 
-def detect_boxes(img: np.ndarray, onnx_path: str | Path | None = None, trap_kind: str | None = None) -> dict | None:
+def detect_boxes(img: np.ndarray, onnx_path: str | Path | None = None, trap_kind: str | None = None,
+                 card: dict | None = None) -> dict | None:
     """Op 5 (YOLO26n or YOLOv7-tiny on the OpenCV 5 new DNN engine, see sentinel.vision.detector) ->
     {boxes xyxy, detections [{xywh, score, class_id}], count, engine_used, forward_ms, source, postprocess (NMS,
     box-rule rejections and tiles, YOLO26 only)};
     None when no detector ONNX is available (DetectorUnavailable is swallowed here: the other ops still run).
-    `trap_kind` reaches a detector that tiles (DETECTOR_TILES=sticky)."""
+    `trap_kind` and the photo's op 1 result `card` reach a detector that tiles or filters by region (YOLO26)."""
     from sentinel.vision.detector import DetectorUnavailable, build_detector, detector_kind, get_detector
 
     try:
         det = build_detector(detector_kind(), Path(onnx_path)) if onnx_path else get_detector()
     except DetectorUnavailable:
         return None
-    res = det.detect(img, trap_kind=trap_kind) if getattr(det, "tiling", None) is not None else det.detect(img)
+    if getattr(det, "tiling", None) is not None:
+        res = det.detect(img, trap_kind=trap_kind, roi=roi_polygon_px(card))
+    else:
+        res = det.detect(img)
     boxes = [[b["xywh"][0], b["xywh"][1], b["xywh"][0] + b["xywh"][2], b["xywh"][1] + b["xywh"][3]] for b in res["boxes"]]
     engine = getattr(det, "engine_used", "unknown")
     return {"boxes": boxes, "detections": res["boxes"], "count": res["count"], "engine_used": engine,
             "forward_ms": res.get("forward_ms"), "source": Path(str(getattr(det, "onnx_path", "fake"))).name,
             "model": getattr(det, "name", type(det).__name__), "postprocess": res.get("postprocess")}
+
+
+def _detector_wants_roi(trap_kind: str) -> bool:
+    """True when the configured detector filters boxes by the trap surface for this trap kind (DETECTOR_ROI)."""
+    from sentinel.vision.detector import DetectorUnavailable, get_detector
+
+    try:
+        regions = getattr(get_detector(), "regions", None)
+    except DetectorUnavailable:
+        return False
+    return regions is not None and regions.wants_roi(trap_kind)
 
 
 def analyze_photo(image, previous=None, trap_kind: str = "sticky", out_dir=None, boxes=None, prev_boxes=None,
@@ -268,16 +287,26 @@ def analyze_photo(image, previous=None, trap_kind: str = "sticky", out_dir=None,
         return load_image(ref)
 
     cur, prev = load(image), load(previous)
-    det, t5 = None, None
+    det, t5, cards, t1 = None, None, None, None
     if detect and boxes is None:
+        if _detector_wants_roi(trap_kind):  # op 1 first: the detector counts only on the trap surface
+            t0 = time.perf_counter()
+            try:
+                cards = (find_card(cur, trap_kind=trap_kind, out_dir=out_dir, name=f"{kw.get('name') or 'photo'}_card"),
+                         find_card(prev, trap_kind=trap_kind) if prev is not None else None)
+                t1 = round((time.perf_counter() - t0) * 1000.0, 2)
+            except Exception:  # noqa: BLE001 - analyze() runs op 1 again and records the error; count without ROI
+                cards = None
         t0 = time.perf_counter()
-        det = detect_boxes(cur, trap_kind=trap_kind)
+        det = detect_boxes(cur, trap_kind=trap_kind, card=cards[0] if cards else None)
         if det is not None:
             boxes = det["boxes"]
             if prev is not None and prev_boxes is None:
-                prev_boxes = detect_boxes(prev, trap_kind=trap_kind)["boxes"]
+                prev_boxes = detect_boxes(prev, trap_kind=trap_kind, card=cards[1] if cards else None)["boxes"]
         t5 = round((time.perf_counter() - t0) * 1000.0, 2)
-    res = analyze(cur, prev, trap_kind, boxes, prev_boxes, out_dir=out_dir, **kw)
+    res = analyze(cur, prev, trap_kind, boxes, prev_boxes, out_dir=out_dir, cards=cards, **kw)
+    if t1 is not None:
+        res["timings_ms"]["op1_card"] = t1
     if isinstance(image, (str, Path)):
         res["image"] = str(image)
     if isinstance(previous, (str, Path)):
