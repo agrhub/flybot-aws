@@ -29,6 +29,7 @@ REPORT = ROOT / "eval" / "SYNTHETIC_RESULTS.md"
 AGENT_RESULTS = ROOT / "eval" / "results" / "synth_agent_eval.json"
 AGENT_REPORT = ROOT / "eval" / "SYNTHETIC_AGENT_EVAL.md"
 TILES_RESULTS = ROOT / "eval" / "results" / "synth_tiles.json"
+AB_RESULTS = ROOT / "eval" / "results" / "detector_ab.json"
 DEFAULT_SETS = [ROOT / "data" / "synth" / "demo-30d", ROOT / "data" / "synth" / "pool"]
 SIZE_BINS = [(0, 12), (12, 16), (16, 20), (20, 28), (28, 10_000)]  # fly long side in the detector's 640 input
 COUNT_BINS = [(0, 0), (1, 5), (6, 15), (16, 40), (41, 10_000)]
@@ -264,6 +265,65 @@ def _sets_lines(metas: list[dict]) -> list[str]:
     return out
 
 
+def ab_lines(path: Path = AB_RESULTS) -> list[str]:
+    """The counting-fix A/B (eval/detector_ab.py -> eval/results/detector_ab.json), when it was run."""
+    if not path.is_file():
+        return []
+    t = json.loads(path.read_text(encoding="utf-8"))
+    c = t["cache"]
+    lines = ["", "## Counting fixes: trap ROI, overlay mask, lure tiles, score floor", "",
+             (f"`uv run --project lambda/vision python -m eval.detector_ab score` on {t['generated_at']}, source "
+              "`eval/results/detector_ab.json`: the detector step (whole frame or tiles, NMS, region filters, box "
+              f"rules; no quality ops, no agent) from one cached run per photo ({c['synth']['model']}). Synthetic: "
+              f"{c['synth']['photos']} clean photos (1 in {c['synth']['every']} of demo-30d and pool), IoU 0.3. "
+              f"Real: {c['real']['photos']} EZVIZ lure photos of the 2026-10 export (1 in {c['real']['every']}), all "
+              "empty traps, so every box is a false fly; they cannot show a real fly lost to a rule. Roboflow: the "
+              "76-image test split (IoU 0.5) run as a lure and as a sticky photo; the box rules alone give 0.9025 / "
+              "0.8987 there (`eval/results/yolo26_box_rules.json`). The synthetic flies are placed inside the floor "
+              "op 1 finds, so on synthetic photos an ROI cannot drop a fly; the Roboflow rows are the check on that."),
+             "", ("| variant | lure P | lure R | lure det/true | lure MAE | sticky P | sticky R | sticky det/true | "
+                  "sticky MAE | sticky photos over | real false flies | Roboflow as lure P / R | as sticky P / R |"),
+             "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for name, r in t["results"].items():
+        s, rl, rf = r.get("synth", {}), r.get("real", {}), r.get("roboflow", {})
+        lu, st = s.get("lure", {}), s.get("sticky", {})
+        lines.append(f"| {name} | {_f(lu.get('precision'))} | {_f(lu.get('recall'))} | {_f(lu.get('ratio'))} | "
+                     f"{_f(lu.get('mae'))} | {_f(st.get('precision'))} | {_f(st.get('recall'))} | {_f(st.get('ratio'))} | "
+                     f"{_f(st.get('mae'))} | {_f(st.get('over'))} | {_f(rl.get('false_flies'))} "
+                     f"({_f(rl.get('photos_with_a_box'))} photos) | "
+                     f"{_f(rf.get('lure', {}).get('precision'))} / {_f(rf.get('lure', {}).get('recall'))} | "
+                     f"{_f(rf.get('sticky', {}).get('precision'))} / {_f(rf.get('sticky', {}).get('recall'))} |")
+    lines += ["", ("Variants: `production` = DETECTOR_TILES=sticky, score floor 0.35 (deployed); `roi_lure` / `roi_all` "
+                   "= DETECTOR_ROI (boxes off the lure floor / off the floor or sticky card dropped); `mask` = "
+                   "DETECTOR_MASK=osd (EZVIZ logo and date/stamp corner); `tiles_lure_frame` = 2x2 windows on lure "
+                   "photos too; `tiles_lure_roi` = 2x2 windows over the floor's bounding box (`+full`: plus the "
+                   "whole-frame boxes; `_rimN`: boxes within N x sqrt(floor area) of the floor edge dropped); "
+                   "`_floorN` = lure score floor N.")]
+    if t.get("floor_sweep"):
+        lines += ["", f"Score floor per trap kind on top of `{t['floor_sweep_base']}`:", "",
+                  "| floor | synth P | synth R | det/true | MAE | real false flies | Roboflow (same kind) P / R |",
+                  "|---|---|---|---|---|---|---|"]
+        for name, r in t["floor_sweep"].items():
+            kind = name.split("=")[0]
+            s, rf = r["synth"].get(kind, {}), r["roboflow"].get(kind, {})
+            lines.append(f"| {name} | {_f(s.get('precision'))} | {_f(s.get('recall'))} | {_f(s.get('ratio'))} | "
+                         f"{_f(s.get('mae'))} | {_f(r['real'].get('false_flies'))} | {_f(rf.get('precision'))} / "
+                         f"{_f(rf.get('recall'))} |")
+    if t.get("handler"):
+        lines += ["", ("Whole handler (eval.synth.check, clean photos, prevPhoto sent), one run per setting, on the photos "
+                       "both runs answered (the laptop ran out of memory on a few during the runs):"), "",
+                  "| setting | set | trap | photos | true flies | detected | MAE | bias | precision @0.3 | recall @0.3 |",
+                  "|---|---|---|---|---|---|---|---|---|---|"]
+        for name, run in t["handler"].items():
+            for kind in ("lure", "sticky"):
+                v = run.get(kind) or {}
+                if v.get("photos"):
+                    lines.append(f"| {name.split(' | ')[0]} | {run['set']} | {kind} | {v['photos']} | {v['true_flies']} | {v['detected']} | "
+                                 f"{_f(v['mae'])} | {_f(v['bias'])} | {_f(v['precision_iou30'])} | "
+                                 f"{_f(v['recall_iou30'])} |")
+    return lines
+
+
 def tiles_lines(path: Path = TILES_RESULTS) -> list[str]:
     """The DETECTOR_TILES table from eval.synth.tiles (eval/results/synth_tiles.json), when it was run."""
     if not path.is_file():
@@ -306,7 +366,7 @@ def tiles_lines(path: Path = TILES_RESULTS) -> list[str]:
             for kind in ("lure", "sticky"):
                 v = run.get(kind) or {}
                 if v.get("photos"):
-                    lines.append(f"| {name} | {run['set']} | {kind} | {v['photos']} | {v['true_flies']} | {v['detected']} | "
+                    lines.append(f"| {name.split(' | ')[0]} | {run['set']} | {kind} | {v['photos']} | {v['true_flies']} | {v['detected']} | "
                                  f"{_f(v['mae'])} | {_f(v['bias'])} | {_f(v['precision_iou30'])} | "
                                  f"{_f(v['recall_iou30'])} | {_f(v['f1_iou30'])} | {_f(v['dnn_ms_p50'])} | "
                                  f"{_f(v['total_ms_p50'])} |")
@@ -370,7 +430,7 @@ def count_markdown(res: dict) -> str:
     tm = res["timings_ms"]
     lines += ["", (f"Time per photo (whole handler) p50 {tm['total_p50']} ms, p95 {tm['total_p95']} ms; DNN p50 "
               f"{tm['dnn_p50']} ms ({tm['note']}).")]
-    lines += [*tiles_lines(), "", "## Limits", "",
+    lines += [*tiles_lines(), *ab_lines(), "", "## Limits", "",
               "- The flies come from the same dataset family the detector was trained on (other images: test/valid splits),",
               "  photographed on white discs; field flies on these traps may look different (pose, dust, decay, lighting).",
               "- Sticky traps: the yellow card is synthetic as well (no real sticky-card photo exists), so the sticky rows",

@@ -1,0 +1,3244 @@
+{
+  "kind": "detector step A/B (no quality ops, no agent); synthetic rows are SIMULATED data",
+  "generated_at": "2026-10-23T05:11:06+00:00",
+  "cache": {
+    "synth": {
+      "model": "yolo26n on opencv-5.0.0-dnn-new",
+      "onnx": "fruitfly_yolo26n.onnx",
+      "every": 2,
+      "at": "2026-10-23T02:54:57+00:00",
+      "photos": 429
+    },
+    "real": {
+      "model": "yolo26n on opencv-5.0.0-dnn-new",
+      "onnx": "fruitfly_yolo26n.onnx",
+      "every": 4,
+      "at": "2026-10-23T03:08:18+00:00",
+      "photos": 320
+    },
+    "roboflow": {
+      "model": "yolo26n on opencv-5.0.0-dnn-new",
+      "onnx": "fruitfly_yolo26n.onnx",
+      "every": 1,
+      "at": "2026-10-23T02:24:02+00:00",
+      "photos": 152
+    }
+  },
+  "notes": "(the detector step only: no quality ops, no agent):\n  synth     clean photos of data/synth/demo-30d and data/synth/pool (SIMULATED, eval/synth): boxes vs the pasted\n            flies, greedy one-to-one at IoU 0.3, count vs the visible count. The generator places flies inside the\n            floor polygon op 1 finds on the background, so an ROI filter cannot lose a synthetic fly there: the real\n            sets below are the check on that\n  real      real lure-trap photos of the 2026-10 export (BE4089629, BE4111159; ../flybot-sentinel/data/export, every\n            4th photo): empty traps. No exported photo has more than 10 production (RF-DETR) flies, and the photos\n            where production counts some show an empty floor with specks and stains when looked at, so every box\n            here is counted as a false fly. These photos cannot show a real fly lost to a rule\n  roboflow  the camos/fruit-fly v3 test split (76 white-disc pictures, human boxes; the split behind the box-rule\n            defaults): precision / recall at IoU 0.5, run as a lure and as a sticky photo",
+  "variants": {
+    "production": {
+      "tiles": {
+        "sticky": "frame"
+      }
+    },
+    "mask": {
+      "tiles": {
+        "sticky": "frame"
+      },
+      "mask": "osd"
+    },
+    "roi_lure": {
+      "tiles": {
+        "sticky": "frame"
+      },
+      "roi": "lure"
+    },
+    "roi_all": {
+      "tiles": {
+        "sticky": "frame"
+      },
+      "roi": "all"
+    },
+    "tiles_lure_frame": {
+      "tiles": {
+        "sticky": "frame",
+        "lure": "frame"
+      }
+    },
+    "tiles_lure_frame+roi": {
+      "tiles": {
+        "sticky": "frame",
+        "lure": "frame"
+      },
+      "roi": "lure"
+    },
+    "tiles_lure_roi": {
+      "tiles": {
+        "sticky": "frame",
+        "lure": "roi"
+      },
+      "roi": "lure"
+    },
+    "tiles_lure_roi+full": {
+      "tiles": {
+        "sticky": "frame",
+        "lure": "roi+full"
+      },
+      "roi": "lure"
+    },
+    "tiles_lure_roi_rim0.02": {
+      "tiles": {
+        "sticky": "frame",
+        "lure": "roi"
+      },
+      "roi": "lure",
+      "rim": 0.02
+    },
+    "tiles_lure_roi_rim0.05": {
+      "tiles": {
+        "sticky": "frame",
+        "lure": "roi"
+      },
+      "roi": "lure",
+      "rim": 0.05
+    },
+    "tiles_lure_frame+roi_floor0.45": {
+      "tiles": {
+        "sticky": "frame",
+        "lure": "frame"
+      },
+      "roi": "lure",
+      "floor": {
+        "lure": 0.45
+      }
+    },
+    "tiles_lure_frame+roi_floor0.55": {
+      "tiles": {
+        "sticky": "frame",
+        "lure": "frame"
+      },
+      "roi": "lure",
+      "floor": {
+        "lure": 0.55
+      }
+    },
+    "roi_lure+mask": {
+      "tiles": {
+        "sticky": "frame"
+      },
+      "roi": "lure",
+      "mask": "osd"
+    },
+    "roi_all+mask": {
+      "tiles": {
+        "sticky": "frame"
+      },
+      "roi": "all",
+      "mask": "osd"
+    }
+  },
+  "results": {
+    "production": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2918,
+          "ratio": 0.8853,
+          "mae": 1.483,
+          "under": 158,
+          "over": 3,
+          "precision": 0.9822,
+          "recall": 0.8695,
+          "f1": 0.9224,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 7291,
+          "ratio": 0.9371,
+          "mae": 5.218,
+          "under": 95,
+          "over": 67,
+          "precision": 0.8635,
+          "recall": 0.8093,
+          "f1": 0.8355,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 598,
+          "ratio": 0.9088,
+          "mae": 1.031,
+          "under": 33,
+          "over": 3,
+          "precision": 0.9699,
+          "recall": 0.8815,
+          "f1": 0.9236,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2484,
+          "ratio": 0.962,
+          "mae": 4.985,
+          "under": 26,
+          "over": 36,
+          "precision": 0.8482,
+          "recall": 0.816,
+          "f1": 0.8318,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 5,
+        "photos_with_a_box": 5,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9025,
+          "recall": 0.8987,
+          "tp": 2111,
+          "fp": 228,
+          "fn": 238,
+          "meets_box_rule_result": true
+        },
+        "sticky": {
+          "precision": 0.8839,
+          "recall": 0.8944,
+          "tp": 2101,
+          "fp": 276,
+          "fn": 248,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "mask": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2916,
+          "ratio": 0.8847,
+          "mae": 1.49,
+          "under": 158,
+          "over": 3,
+          "precision": 0.9829,
+          "recall": 0.8695,
+          "f1": 0.9227,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6924,
+          "ratio": 0.89,
+          "mae": 6.082,
+          "under": 117,
+          "over": 43,
+          "precision": 0.9093,
+          "recall": 0.8093,
+          "f1": 0.8564,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 598,
+          "ratio": 0.9088,
+          "mae": 1.031,
+          "under": 33,
+          "over": 3,
+          "precision": 0.9699,
+          "recall": 0.8815,
+          "f1": 0.9236,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2365,
+          "ratio": 0.916,
+          "mae": 5.123,
+          "under": 34,
+          "over": 26,
+          "precision": 0.8909,
+          "recall": 0.816,
+          "f1": 0.8518,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 4,
+        "photos_with_a_box": 4,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9065,
+          "recall": 0.8876,
+          "tp": 2085,
+          "fp": 215,
+          "fn": 264,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8872,
+          "recall": 0.8842,
+          "tp": 2077,
+          "fp": 264,
+          "fn": 272,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "roi_lure": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2894,
+          "ratio": 0.878,
+          "mae": 1.56,
+          "under": 160,
+          "over": 1,
+          "precision": 0.9903,
+          "recall": 0.8695,
+          "f1": 0.926,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 7291,
+          "ratio": 0.9371,
+          "mae": 5.218,
+          "under": 95,
+          "over": 67,
+          "precision": 0.8635,
+          "recall": 0.8093,
+          "f1": 0.8355,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 589,
+          "ratio": 0.8951,
+          "mae": 1.109,
+          "under": 34,
+          "over": 1,
+          "precision": 0.9847,
+          "recall": 0.8815,
+          "f1": 0.9302,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2484,
+          "ratio": 0.962,
+          "mae": 4.985,
+          "under": 26,
+          "over": 36,
+          "precision": 0.8482,
+          "recall": 0.816,
+          "f1": 0.8318,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9024,
+          "recall": 0.894,
+          "tp": 2100,
+          "fp": 227,
+          "fn": 249,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8839,
+          "recall": 0.8944,
+          "tp": 2101,
+          "fp": 276,
+          "fn": 248,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "roi_all": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2894,
+          "ratio": 0.878,
+          "mae": 1.56,
+          "under": 160,
+          "over": 1,
+          "precision": 0.9903,
+          "recall": 0.8695,
+          "f1": 0.926,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6333,
+          "ratio": 0.814,
+          "mae": 8.535,
+          "under": 159,
+          "over": 2,
+          "precision": 0.9942,
+          "recall": 0.8093,
+          "f1": 0.8922,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 589,
+          "ratio": 0.8951,
+          "mae": 1.109,
+          "under": 34,
+          "over": 1,
+          "precision": 0.9847,
+          "recall": 0.8815,
+          "f1": 0.9302,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2136,
+          "ratio": 0.8273,
+          "mae": 6.923,
+          "under": 58,
+          "over": 2,
+          "precision": 0.9864,
+          "recall": 0.816,
+          "f1": 0.8932,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9024,
+          "recall": 0.894,
+          "tp": 2100,
+          "fp": 227,
+          "fn": 249,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8837,
+          "recall": 0.877,
+          "tp": 2060,
+          "fp": 271,
+          "fn": 289,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "tiles_lure_frame": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 3371,
+          "ratio": 1.0228,
+          "mae": 1.046,
+          "under": 51,
+          "over": 110,
+          "precision": 0.9107,
+          "recall": 0.9314,
+          "f1": 0.921,
+          "forwards": 4.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 7291,
+          "ratio": 0.9371,
+          "mae": 5.218,
+          "under": 95,
+          "over": 67,
+          "precision": 0.8635,
+          "recall": 0.8093,
+          "f1": 0.8355,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 389,
+          "ratio": 1.0373,
+          "mae": 0.585,
+          "under": 8,
+          "over": 23,
+          "precision": 0.9254,
+          "recall": 0.96,
+          "f1": 0.9424,
+          "forwards": 4.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 749,
+          "ratio": 1.1383,
+          "mae": 1.766,
+          "under": 7,
+          "over": 51,
+          "precision": 0.8064,
+          "recall": 0.9179,
+          "f1": 0.8586,
+          "forwards": 4.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 223,
+          "ratio": 1.0619,
+          "mae": 0.446,
+          "under": 8,
+          "over": 17,
+          "precision": 0.8834,
+          "recall": 0.9381,
+          "f1": 0.9099,
+          "forwards": 4.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2484,
+          "ratio": 0.962,
+          "mae": 4.985,
+          "under": 26,
+          "over": 36,
+          "precision": 0.8482,
+          "recall": 0.816,
+          "f1": 0.8318,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 360,
+        "photos_with_a_box": 267,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.8839,
+          "recall": 0.8944,
+          "tp": 2101,
+          "fp": 276,
+          "fn": 248,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8839,
+          "recall": 0.8944,
+          "tp": 2101,
+          "fp": 276,
+          "fn": 248,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "tiles_lure_frame+roi": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 3225,
+          "ratio": 0.9785,
+          "mae": 0.985,
+          "under": 68,
+          "over": 84,
+          "precision": 0.9519,
+          "recall": 0.9314,
+          "f1": 0.9416,
+          "forwards": 4.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 7291,
+          "ratio": 0.9371,
+          "mae": 5.218,
+          "under": 95,
+          "over": 67,
+          "precision": 0.8635,
+          "recall": 0.8093,
+          "f1": 0.8355,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 389,
+          "ratio": 1.0373,
+          "mae": 0.585,
+          "under": 8,
+          "over": 23,
+          "precision": 0.9254,
+          "recall": 0.96,
+          "f1": 0.9424,
+          "forwards": 4.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 659,
+          "ratio": 1.0015,
+          "mae": 1.047,
+          "under": 16,
+          "over": 33,
+          "precision": 0.9165,
+          "recall": 0.9179,
+          "f1": 0.9172,
+          "forwards": 4.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 223,
+          "ratio": 1.0619,
+          "mae": 0.446,
+          "under": 8,
+          "over": 17,
+          "precision": 0.8834,
+          "recall": 0.9381,
+          "f1": 0.9099,
+          "forwards": 4.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2484,
+          "ratio": 0.962,
+          "mae": 4.985,
+          "under": 26,
+          "over": 36,
+          "precision": 0.8482,
+          "recall": 0.816,
+          "f1": 0.8318,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 281,
+        "photos_with_a_box": 252,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.8841,
+          "recall": 0.8897,
+          "tp": 2090,
+          "fp": 274,
+          "fn": 259,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8839,
+          "recall": 0.8944,
+          "tp": 2101,
+          "fp": 276,
+          "fn": 248,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "tiles_lure_roi": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 3737,
+          "ratio": 1.1338,
+          "mae": 2.985,
+          "under": 51,
+          "over": 182,
+          "precision": 0.7958,
+          "recall": 0.9023,
+          "f1": 0.8457,
+          "forwards": 4.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 7291,
+          "ratio": 0.9371,
+          "mae": 5.218,
+          "under": 95,
+          "over": 67,
+          "precision": 0.8635,
+          "recall": 0.8093,
+          "f1": 0.8355,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 593,
+          "ratio": 1.5813,
+          "mae": 3.385,
+          "under": 1,
+          "over": 58,
+          "precision": 0.597,
+          "recall": 0.944,
+          "f1": 0.7314,
+          "forwards": 4.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 636,
+          "ratio": 0.9666,
+          "mae": 1.281,
+          "under": 24,
+          "over": 26,
+          "precision": 0.9041,
+          "recall": 0.8739,
+          "f1": 0.8887,
+          "forwards": 4.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 455,
+          "ratio": 2.1667,
+          "mae": 3.769,
+          "under": 0,
+          "over": 61,
+          "precision": 0.4132,
+          "recall": 0.8952,
+          "f1": 0.5654,
+          "forwards": 4.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2484,
+          "ratio": 0.962,
+          "mae": 4.985,
+          "under": 26,
+          "over": 36,
+          "precision": 0.8482,
+          "recall": 0.816,
+          "f1": 0.8318,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 842,
+        "photos_with_a_box": 266,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.8989,
+          "recall": 0.8821,
+          "tp": 2072,
+          "fp": 233,
+          "fn": 277,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8839,
+          "recall": 0.8944,
+          "tp": 2101,
+          "fp": 276,
+          "fn": 248,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "tiles_lure_roi+full": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 3988,
+          "ratio": 1.21,
+          "mae": 2.903,
+          "under": 21,
+          "over": 211,
+          "precision": 0.7976,
+          "recall": 0.9651,
+          "f1": 0.8734,
+          "forwards": 5.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 7291,
+          "ratio": 0.9371,
+          "mae": 5.218,
+          "under": 95,
+          "over": 67,
+          "precision": 0.8635,
+          "recall": 0.8093,
+          "f1": 0.8355,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 609,
+          "ratio": 1.624,
+          "mae": 3.631,
+          "under": 1,
+          "over": 58,
+          "precision": 0.6043,
+          "recall": 0.9813,
+          "f1": 0.748,
+          "forwards": 5.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 701,
+          "ratio": 1.0653,
+          "mae": 0.984,
+          "under": 10,
+          "over": 41,
+          "precision": 0.8987,
+          "recall": 0.9574,
+          "f1": 0.9272,
+          "forwards": 5.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 470,
+          "ratio": 2.2381,
+          "mae": 4.0,
+          "under": 0,
+          "over": 62,
+          "precision": 0.4277,
+          "recall": 0.9571,
+          "f1": 0.5912,
+          "forwards": 5.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2484,
+          "ratio": 0.962,
+          "mae": 4.985,
+          "under": 26,
+          "over": 36,
+          "precision": 0.8482,
+          "recall": 0.816,
+          "f1": 0.8318,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 842,
+        "photos_with_a_box": 266,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.8859,
+          "recall": 0.9089,
+          "tp": 2135,
+          "fp": 275,
+          "fn": 214,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8839,
+          "recall": 0.8944,
+          "tp": 2101,
+          "fp": 276,
+          "fn": 248,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "tiles_lure_roi_rim0.02": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 3735,
+          "ratio": 1.1332,
+          "mae": 2.977,
+          "under": 51,
+          "over": 182,
+          "precision": 0.7963,
+          "recall": 0.9023,
+          "f1": 0.846,
+          "forwards": 4.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 7291,
+          "ratio": 0.9371,
+          "mae": 5.218,
+          "under": 95,
+          "over": 67,
+          "precision": 0.8635,
+          "recall": 0.8093,
+          "f1": 0.8355,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 593,
+          "ratio": 1.5813,
+          "mae": 3.385,
+          "under": 1,
+          "over": 58,
+          "precision": 0.597,
+          "recall": 0.944,
+          "f1": 0.7314,
+          "forwards": 4.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 636,
+          "ratio": 0.9666,
+          "mae": 1.281,
+          "under": 24,
+          "over": 26,
+          "precision": 0.9041,
+          "recall": 0.8739,
+          "f1": 0.8887,
+          "forwards": 4.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 455,
+          "ratio": 2.1667,
+          "mae": 3.769,
+          "under": 0,
+          "over": 61,
+          "precision": 0.4132,
+          "recall": 0.8952,
+          "f1": 0.5654,
+          "forwards": 4.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2484,
+          "ratio": 0.962,
+          "mae": 4.985,
+          "under": 26,
+          "over": 36,
+          "precision": 0.8482,
+          "recall": 0.816,
+          "f1": 0.8318,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 785,
+        "photos_with_a_box": 260,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.8989,
+          "recall": 0.871,
+          "tp": 2046,
+          "fp": 230,
+          "fn": 303,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8839,
+          "recall": 0.8944,
+          "tp": 2101,
+          "fp": 276,
+          "fn": 248,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "tiles_lure_roi_rim0.05": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 3667,
+          "ratio": 1.1126,
+          "mae": 2.737,
+          "under": 52,
+          "over": 179,
+          "precision": 0.8107,
+          "recall": 0.902,
+          "f1": 0.8539,
+          "forwards": 4.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 7291,
+          "ratio": 0.9371,
+          "mae": 5.218,
+          "under": 95,
+          "over": 67,
+          "precision": 0.8635,
+          "recall": 0.8093,
+          "f1": 0.8355,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 569,
+          "ratio": 1.5173,
+          "mae": 3.015,
+          "under": 1,
+          "over": 58,
+          "precision": 0.6221,
+          "recall": 0.944,
+          "f1": 0.75,
+          "forwards": 4.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 636,
+          "ratio": 0.9666,
+          "mae": 1.281,
+          "under": 24,
+          "over": 26,
+          "precision": 0.9041,
+          "recall": 0.8739,
+          "f1": 0.8887,
+          "forwards": 4.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 433,
+          "ratio": 2.0619,
+          "mae": 3.462,
+          "under": 1,
+          "over": 61,
+          "precision": 0.4342,
+          "recall": 0.8952,
+          "f1": 0.5848,
+          "forwards": 4.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2484,
+          "ratio": 0.962,
+          "mae": 4.985,
+          "under": 26,
+          "over": 36,
+          "precision": 0.8482,
+          "recall": 0.816,
+          "f1": 0.8318,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 661,
+        "photos_with_a_box": 244,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.8985,
+          "recall": 0.8404,
+          "tp": 1974,
+          "fp": 223,
+          "fn": 375,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8839,
+          "recall": 0.8944,
+          "tp": 2101,
+          "fp": 276,
+          "fn": 248,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "tiles_lure_frame+roi_floor0.45": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 3068,
+          "ratio": 0.9308,
+          "mae": 1.274,
+          "under": 100,
+          "over": 49,
+          "precision": 0.9674,
+          "recall": 0.9005,
+          "f1": 0.9327,
+          "forwards": 4.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 7291,
+          "ratio": 0.9371,
+          "mae": 5.218,
+          "under": 95,
+          "over": 67,
+          "precision": 0.8635,
+          "recall": 0.8093,
+          "f1": 0.8355,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 362,
+          "ratio": 0.9653,
+          "mae": 0.446,
+          "under": 14,
+          "over": 7,
+          "precision": 0.9669,
+          "recall": 0.9333,
+          "f1": 0.9498,
+          "forwards": 4.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 635,
+          "ratio": 0.965,
+          "mae": 1.359,
+          "under": 21,
+          "over": 31,
+          "precision": 0.9165,
+          "recall": 0.8845,
+          "f1": 0.9002,
+          "forwards": 4.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 197,
+          "ratio": 0.9381,
+          "mae": 0.385,
+          "under": 19,
+          "over": 6,
+          "precision": 0.9645,
+          "recall": 0.9048,
+          "f1": 0.9337,
+          "forwards": 4.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2484,
+          "ratio": 0.962,
+          "mae": 4.985,
+          "under": 26,
+          "over": 36,
+          "precision": 0.8482,
+          "recall": 0.816,
+          "f1": 0.8318,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 186,
+        "photos_with_a_box": 179,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.913,
+          "recall": 0.8668,
+          "tp": 2036,
+          "fp": 194,
+          "fn": 313,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8839,
+          "recall": 0.8944,
+          "tp": 2101,
+          "fp": 276,
+          "fn": 248,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "tiles_lure_frame+roi_floor0.55": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2883,
+          "ratio": 0.8747,
+          "mae": 1.811,
+          "under": 126,
+          "over": 28,
+          "precision": 0.9764,
+          "recall": 0.8541,
+          "f1": 0.9112,
+          "forwards": 4.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 7291,
+          "ratio": 0.9371,
+          "mae": 5.218,
+          "under": 95,
+          "over": 67,
+          "precision": 0.8635,
+          "recall": 0.8093,
+          "f1": 0.8355,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 337,
+          "ratio": 0.8987,
+          "mae": 0.646,
+          "under": 25,
+          "over": 2,
+          "precision": 0.9911,
+          "recall": 0.8907,
+          "f1": 0.9382,
+          "forwards": 4.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 594,
+          "ratio": 0.9027,
+          "mae": 1.75,
+          "under": 25,
+          "over": 24,
+          "precision": 0.9192,
+          "recall": 0.8298,
+          "f1": 0.8722,
+          "forwards": 4.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 184,
+          "ratio": 0.8762,
+          "mae": 0.431,
+          "under": 23,
+          "over": 1,
+          "precision": 0.9946,
+          "recall": 0.8714,
+          "f1": 0.9289,
+          "forwards": 4.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2484,
+          "ratio": 0.962,
+          "mae": 4.985,
+          "under": 26,
+          "over": 36,
+          "precision": 0.8482,
+          "recall": 0.816,
+          "f1": 0.8318,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 94,
+        "photos_with_a_box": 94,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9346,
+          "recall": 0.8331,
+          "tp": 1957,
+          "fp": 137,
+          "fn": 392,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8839,
+          "recall": 0.8944,
+          "tp": 2101,
+          "fp": 276,
+          "fn": 248,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "roi_lure+mask": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2894,
+          "ratio": 0.878,
+          "mae": 1.56,
+          "under": 160,
+          "over": 1,
+          "precision": 0.9903,
+          "recall": 0.8695,
+          "f1": 0.926,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6924,
+          "ratio": 0.89,
+          "mae": 6.082,
+          "under": 117,
+          "over": 43,
+          "precision": 0.9093,
+          "recall": 0.8093,
+          "f1": 0.8564,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 589,
+          "ratio": 0.8951,
+          "mae": 1.109,
+          "under": 34,
+          "over": 1,
+          "precision": 0.9847,
+          "recall": 0.8815,
+          "f1": 0.9302,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2365,
+          "ratio": 0.916,
+          "mae": 5.123,
+          "under": 34,
+          "over": 26,
+          "precision": 0.8909,
+          "recall": 0.816,
+          "f1": 0.8518,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9061,
+          "recall": 0.8829,
+          "tp": 2074,
+          "fp": 215,
+          "fn": 275,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8872,
+          "recall": 0.8842,
+          "tp": 2077,
+          "fp": 264,
+          "fn": 272,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "roi_all+mask": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2894,
+          "ratio": 0.878,
+          "mae": 1.56,
+          "under": 160,
+          "over": 1,
+          "precision": 0.9903,
+          "recall": 0.8695,
+          "f1": 0.926,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6333,
+          "ratio": 0.814,
+          "mae": 8.535,
+          "under": 159,
+          "over": 2,
+          "precision": 0.9942,
+          "recall": 0.8093,
+          "f1": 0.8922,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 589,
+          "ratio": 0.8951,
+          "mae": 1.109,
+          "under": 34,
+          "over": 1,
+          "precision": 0.9847,
+          "recall": 0.8815,
+          "f1": 0.9302,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2136,
+          "ratio": 0.8273,
+          "mae": 6.923,
+          "under": 58,
+          "over": 2,
+          "precision": 0.9864,
+          "recall": 0.816,
+          "f1": 0.8932,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9061,
+          "recall": 0.8829,
+          "tp": 2074,
+          "fp": 215,
+          "fn": 275,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8872,
+          "recall": 0.8672,
+          "tp": 2037,
+          "fp": 259,
+          "fn": 312,
+          "meets_box_rule_result": false
+        }
+      }
+    }
+  },
+  "floor_sweep": {
+    "lure=0.25": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 3042,
+          "ratio": 0.9229,
+          "mae": 1.035,
+          "under": 130,
+          "over": 7,
+          "precision": 0.9819,
+          "recall": 0.9062,
+          "f1": 0.9426,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6333,
+          "ratio": 0.814,
+          "mae": 8.535,
+          "under": 159,
+          "over": 2,
+          "precision": 0.9942,
+          "recall": 0.8093,
+          "f1": 0.8922,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 314,
+          "ratio": 0.8373,
+          "mae": 0.938,
+          "under": 31,
+          "over": 0,
+          "precision": 0.9968,
+          "recall": 0.8347,
+          "f1": 0.9086,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 630,
+          "ratio": 0.9574,
+          "mae": 0.594,
+          "under": 20,
+          "over": 5,
+          "precision": 0.9619,
+          "recall": 0.921,
+          "f1": 0.941,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 167,
+          "ratio": 0.7952,
+          "mae": 0.662,
+          "under": 26,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7952,
+          "f1": 0.8859,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2136,
+          "ratio": 0.8273,
+          "mae": 6.923,
+          "under": 58,
+          "over": 2,
+          "precision": 0.9864,
+          "recall": 0.816,
+          "f1": 0.8932,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.8777,
+          "recall": 0.9136,
+          "tp": 2146,
+          "fp": 299,
+          "fn": 203,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8837,
+          "recall": 0.877,
+          "tp": 2060,
+          "fp": 271,
+          "fn": 289,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "lure=0.30": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2969,
+          "ratio": 0.9008,
+          "mae": 1.286,
+          "under": 146,
+          "over": 3,
+          "precision": 0.9852,
+          "recall": 0.8874,
+          "f1": 0.9338,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6333,
+          "ratio": 0.814,
+          "mae": 8.535,
+          "under": 159,
+          "over": 2,
+          "precision": 0.9942,
+          "recall": 0.8093,
+          "f1": 0.8922,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 302,
+          "ratio": 0.8053,
+          "mae": 1.123,
+          "under": 35,
+          "over": 0,
+          "precision": 0.9967,
+          "recall": 0.8027,
+          "f1": 0.8892,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 613,
+          "ratio": 0.9316,
+          "mae": 0.797,
+          "under": 26,
+          "over": 3,
+          "precision": 0.9706,
+          "recall": 0.9043,
+          "f1": 0.9363,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 164,
+          "ratio": 0.781,
+          "mae": 0.708,
+          "under": 27,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.781,
+          "f1": 0.877,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2136,
+          "ratio": 0.8273,
+          "mae": 6.923,
+          "under": 58,
+          "over": 2,
+          "precision": 0.9864,
+          "recall": 0.816,
+          "f1": 0.8932,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.8928,
+          "recall": 0.9072,
+          "tp": 2131,
+          "fp": 256,
+          "fn": 218,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8837,
+          "recall": 0.877,
+          "tp": 2060,
+          "fp": 271,
+          "fn": 289,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "lure=0.35": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2894,
+          "ratio": 0.878,
+          "mae": 1.56,
+          "under": 160,
+          "over": 1,
+          "precision": 0.9903,
+          "recall": 0.8695,
+          "f1": 0.926,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6333,
+          "ratio": 0.814,
+          "mae": 8.535,
+          "under": 159,
+          "over": 2,
+          "precision": 0.9942,
+          "recall": 0.8093,
+          "f1": 0.8922,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 589,
+          "ratio": 0.8951,
+          "mae": 1.109,
+          "under": 34,
+          "over": 1,
+          "precision": 0.9847,
+          "recall": 0.8815,
+          "f1": 0.9302,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2136,
+          "ratio": 0.8273,
+          "mae": 6.923,
+          "under": 58,
+          "over": 2,
+          "precision": 0.9864,
+          "recall": 0.816,
+          "f1": 0.8932,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9024,
+          "recall": 0.894,
+          "tp": 2100,
+          "fp": 227,
+          "fn": 249,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8837,
+          "recall": 0.877,
+          "tp": 2060,
+          "fp": 271,
+          "fn": 289,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "lure=0.40": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2801,
+          "ratio": 0.8498,
+          "mae": 1.911,
+          "under": 171,
+          "over": 0,
+          "precision": 0.9914,
+          "recall": 0.8425,
+          "f1": 0.9109,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6333,
+          "ratio": 0.814,
+          "mae": 8.535,
+          "under": 159,
+          "over": 2,
+          "precision": 0.9942,
+          "recall": 0.8093,
+          "f1": 0.8922,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 282,
+          "ratio": 0.752,
+          "mae": 1.431,
+          "under": 39,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.752,
+          "f1": 0.8584,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 571,
+          "ratio": 0.8678,
+          "mae": 1.359,
+          "under": 37,
+          "over": 0,
+          "precision": 0.9842,
+          "recall": 0.8541,
+          "f1": 0.9146,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 149,
+          "ratio": 0.7095,
+          "mae": 0.938,
+          "under": 33,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7095,
+          "f1": 0.8301,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2136,
+          "ratio": 0.8273,
+          "mae": 6.923,
+          "under": 58,
+          "over": 2,
+          "precision": 0.9864,
+          "recall": 0.816,
+          "f1": 0.8932,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 2,
+        "photos_with_a_box": 2,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9105,
+          "recall": 0.8791,
+          "tp": 2065,
+          "fp": 203,
+          "fn": 284,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8837,
+          "recall": 0.877,
+          "tp": 2060,
+          "fp": 271,
+          "fn": 289,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "lure=0.45": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2730,
+          "ratio": 0.8283,
+          "mae": 2.185,
+          "under": 177,
+          "over": 0,
+          "precision": 0.9923,
+          "recall": 0.8219,
+          "f1": 0.8991,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6333,
+          "ratio": 0.814,
+          "mae": 8.535,
+          "under": 159,
+          "over": 2,
+          "precision": 0.9942,
+          "recall": 0.8093,
+          "f1": 0.8922,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 273,
+          "ratio": 0.728,
+          "mae": 1.569,
+          "under": 41,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.728,
+          "f1": 0.8426,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 560,
+          "ratio": 0.8511,
+          "mae": 1.531,
+          "under": 39,
+          "over": 0,
+          "precision": 0.9857,
+          "recall": 0.8389,
+          "f1": 0.9064,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 137,
+          "ratio": 0.6524,
+          "mae": 1.123,
+          "under": 35,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.6524,
+          "f1": 0.7896,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2136,
+          "ratio": 0.8273,
+          "mae": 6.923,
+          "under": 58,
+          "over": 2,
+          "precision": 0.9864,
+          "recall": 0.816,
+          "f1": 0.8932,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 0,
+        "photos_with_a_box": 0,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9212,
+          "recall": 0.8659,
+          "tp": 2034,
+          "fp": 174,
+          "fn": 315,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8837,
+          "recall": 0.877,
+          "tp": 2060,
+          "fp": 271,
+          "fn": 289,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "lure=0.50": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2638,
+          "ratio": 0.8004,
+          "mae": 2.541,
+          "under": 183,
+          "over": 0,
+          "precision": 0.9958,
+          "recall": 0.797,
+          "f1": 0.8854,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6333,
+          "ratio": 0.814,
+          "mae": 8.535,
+          "under": 159,
+          "over": 2,
+          "precision": 0.9942,
+          "recall": 0.8093,
+          "f1": 0.8922,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 262,
+          "ratio": 0.6987,
+          "mae": 1.738,
+          "under": 43,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.6987,
+          "f1": 0.8226,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 536,
+          "ratio": 0.8146,
+          "mae": 1.906,
+          "under": 41,
+          "over": 0,
+          "precision": 0.9925,
+          "recall": 0.8085,
+          "f1": 0.8911,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 131,
+          "ratio": 0.6238,
+          "mae": 1.215,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.6238,
+          "f1": 0.7683,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2136,
+          "ratio": 0.8273,
+          "mae": 6.923,
+          "under": 58,
+          "over": 2,
+          "precision": 0.9864,
+          "recall": 0.816,
+          "f1": 0.8932,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 0,
+        "photos_with_a_box": 0,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9285,
+          "recall": 0.8463,
+          "tp": 1988,
+          "fp": 153,
+          "fn": 361,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8837,
+          "recall": 0.877,
+          "tp": 2060,
+          "fp": 271,
+          "fn": 289,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "lure=0.55": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2523,
+          "ratio": 0.7655,
+          "mae": 2.985,
+          "under": 187,
+          "over": 0,
+          "precision": 0.9968,
+          "recall": 0.763,
+          "f1": 0.8644,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6333,
+          "ratio": 0.814,
+          "mae": 8.535,
+          "under": 159,
+          "over": 2,
+          "precision": 0.9942,
+          "recall": 0.8093,
+          "f1": 0.8922,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 251,
+          "ratio": 0.6693,
+          "mae": 1.908,
+          "under": 43,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.6693,
+          "f1": 0.8019,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 513,
+          "ratio": 0.7796,
+          "mae": 2.266,
+          "under": 43,
+          "over": 0,
+          "precision": 0.9942,
+          "recall": 0.7751,
+          "f1": 0.8711,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 118,
+          "ratio": 0.5619,
+          "mae": 1.415,
+          "under": 38,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.5619,
+          "f1": 0.7195,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2136,
+          "ratio": 0.8273,
+          "mae": 6.923,
+          "under": 58,
+          "over": 2,
+          "precision": 0.9864,
+          "recall": 0.816,
+          "f1": 0.8932,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 0,
+        "photos_with_a_box": 0,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.938,
+          "recall": 0.825,
+          "tp": 1938,
+          "fp": 128,
+          "fn": 411,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8837,
+          "recall": 0.877,
+          "tp": 2060,
+          "fp": 271,
+          "fn": 289,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "sticky=0.25": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2894,
+          "ratio": 0.878,
+          "mae": 1.56,
+          "under": 160,
+          "over": 1,
+          "precision": 0.9903,
+          "recall": 0.8695,
+          "f1": 0.926,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6798,
+          "ratio": 0.8738,
+          "mae": 5.8,
+          "under": 153,
+          "over": 2,
+          "precision": 0.9896,
+          "recall": 0.8647,
+          "f1": 0.9229,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 589,
+          "ratio": 0.8951,
+          "mae": 1.109,
+          "under": 34,
+          "over": 1,
+          "precision": 0.9847,
+          "recall": 0.8815,
+          "f1": 0.9302,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2289,
+          "ratio": 0.8865,
+          "mae": 4.569,
+          "under": 52,
+          "over": 2,
+          "precision": 0.9803,
+          "recall": 0.8691,
+          "f1": 0.9214,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9024,
+          "recall": 0.894,
+          "tp": 2100,
+          "fp": 227,
+          "fn": 249,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8468,
+          "recall": 0.894,
+          "tp": 2100,
+          "fp": 380,
+          "fn": 249,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "sticky=0.30": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2894,
+          "ratio": 0.878,
+          "mae": 1.56,
+          "under": 160,
+          "over": 1,
+          "precision": 0.9903,
+          "recall": 0.8695,
+          "f1": 0.926,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6567,
+          "ratio": 0.8441,
+          "mae": 7.159,
+          "under": 157,
+          "over": 2,
+          "precision": 0.9935,
+          "recall": 0.8386,
+          "f1": 0.9095,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 589,
+          "ratio": 0.8951,
+          "mae": 1.109,
+          "under": 34,
+          "over": 1,
+          "precision": 0.9847,
+          "recall": 0.8815,
+          "f1": 0.9302,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2200,
+          "ratio": 0.8521,
+          "mae": 5.938,
+          "under": 56,
+          "over": 2,
+          "precision": 0.9864,
+          "recall": 0.8404,
+          "f1": 0.9076,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9024,
+          "recall": 0.894,
+          "tp": 2100,
+          "fp": 227,
+          "fn": 249,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8663,
+          "recall": 0.8855,
+          "tp": 2080,
+          "fp": 321,
+          "fn": 269,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "sticky=0.35": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2894,
+          "ratio": 0.878,
+          "mae": 1.56,
+          "under": 160,
+          "over": 1,
+          "precision": 0.9903,
+          "recall": 0.8695,
+          "f1": 0.926,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6333,
+          "ratio": 0.814,
+          "mae": 8.535,
+          "under": 159,
+          "over": 2,
+          "precision": 0.9942,
+          "recall": 0.8093,
+          "f1": 0.8922,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 589,
+          "ratio": 0.8951,
+          "mae": 1.109,
+          "under": 34,
+          "over": 1,
+          "precision": 0.9847,
+          "recall": 0.8815,
+          "f1": 0.9302,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2136,
+          "ratio": 0.8273,
+          "mae": 6.923,
+          "under": 58,
+          "over": 2,
+          "precision": 0.9864,
+          "recall": 0.816,
+          "f1": 0.8932,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9024,
+          "recall": 0.894,
+          "tp": 2100,
+          "fp": 227,
+          "fn": 249,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8837,
+          "recall": 0.877,
+          "tp": 2060,
+          "fp": 271,
+          "fn": 289,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "sticky=0.40": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2894,
+          "ratio": 0.878,
+          "mae": 1.56,
+          "under": 160,
+          "over": 1,
+          "precision": 0.9903,
+          "recall": 0.8695,
+          "f1": 0.926,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 6092,
+          "ratio": 0.783,
+          "mae": 9.941,
+          "under": 160,
+          "over": 1,
+          "precision": 0.9946,
+          "recall": 0.7788,
+          "f1": 0.8736,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 589,
+          "ratio": 0.8951,
+          "mae": 1.109,
+          "under": 34,
+          "over": 1,
+          "precision": 0.9847,
+          "recall": 0.8815,
+          "f1": 0.9302,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 2039,
+          "ratio": 0.7897,
+          "mae": 8.385,
+          "under": 59,
+          "over": 1,
+          "precision": 0.9863,
+          "recall": 0.7789,
+          "f1": 0.8704,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9024,
+          "recall": 0.894,
+          "tp": 2100,
+          "fp": 227,
+          "fn": 249,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.8985,
+          "recall": 0.8633,
+          "tp": 2028,
+          "fp": 229,
+          "fn": 321,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "sticky=0.45": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2894,
+          "ratio": 0.878,
+          "mae": 1.56,
+          "under": 160,
+          "over": 1,
+          "precision": 0.9903,
+          "recall": 0.8695,
+          "f1": 0.926,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 5846,
+          "ratio": 0.7514,
+          "mae": 11.376,
+          "under": 162,
+          "over": 0,
+          "precision": 0.995,
+          "recall": 0.7477,
+          "f1": 0.8538,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 589,
+          "ratio": 0.8951,
+          "mae": 1.109,
+          "under": 34,
+          "over": 1,
+          "precision": 0.9847,
+          "recall": 0.8815,
+          "f1": 0.9302,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 1963,
+          "ratio": 0.7603,
+          "mae": 9.523,
+          "under": 60,
+          "over": 0,
+          "precision": 0.9862,
+          "recall": 0.7498,
+          "f1": 0.8519,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9024,
+          "recall": 0.894,
+          "tp": 2100,
+          "fp": 227,
+          "fn": 249,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.9131,
+          "recall": 0.854,
+          "tp": 2006,
+          "fp": 191,
+          "fn": 343,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "sticky=0.50": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2894,
+          "ratio": 0.878,
+          "mae": 1.56,
+          "under": 160,
+          "over": 1,
+          "precision": 0.9903,
+          "recall": 0.8695,
+          "f1": 0.926,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 5540,
+          "ratio": 0.7121,
+          "mae": 13.176,
+          "under": 163,
+          "over": 0,
+          "precision": 0.9953,
+          "recall": 0.7087,
+          "f1": 0.8279,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 589,
+          "ratio": 0.8951,
+          "mae": 1.109,
+          "under": 34,
+          "over": 1,
+          "precision": 0.9847,
+          "recall": 0.8815,
+          "f1": 0.9302,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 1861,
+          "ratio": 0.7208,
+          "mae": 11.092,
+          "under": 61,
+          "over": 0,
+          "precision": 0.9866,
+          "recall": 0.7111,
+          "f1": 0.8265,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9024,
+          "recall": 0.894,
+          "tp": 2100,
+          "fp": 227,
+          "fn": 249,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.9224,
+          "recall": 0.8395,
+          "tp": 1972,
+          "fp": 166,
+          "fn": 377,
+          "meets_box_rule_result": false
+        }
+      }
+    },
+    "sticky=0.55": {
+      "synth": {
+        "lure": {
+          "photos": 259,
+          "true": 3296,
+          "det": 2894,
+          "ratio": 0.878,
+          "mae": 1.56,
+          "under": 160,
+          "over": 1,
+          "precision": 0.9903,
+          "recall": 0.8695,
+          "f1": 0.926,
+          "forwards": 1.0
+        },
+        "sticky": {
+          "photos": 170,
+          "true": 7780,
+          "det": 5217,
+          "ratio": 0.6706,
+          "mae": 15.076,
+          "under": 164,
+          "over": 0,
+          "precision": 0.9965,
+          "recall": 0.6683,
+          "f1": 0.8,
+          "forwards": 4.0
+        },
+        "demo-lure-a": {
+          "photos": 65,
+          "true": 375,
+          "det": 293,
+          "ratio": 0.7813,
+          "mae": 1.262,
+          "under": 37,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7813,
+          "f1": 0.8772,
+          "forwards": 1.0
+        },
+        "demo-lure-b": {
+          "photos": 64,
+          "true": 658,
+          "det": 589,
+          "ratio": 0.8951,
+          "mae": 1.109,
+          "under": 34,
+          "over": 1,
+          "precision": 0.9847,
+          "recall": 0.8815,
+          "f1": 0.9302,
+          "forwards": 1.0
+        },
+        "demo-lure-c": {
+          "photos": 65,
+          "true": 210,
+          "det": 162,
+          "ratio": 0.7714,
+          "mae": 0.738,
+          "under": 28,
+          "over": 0,
+          "precision": 1.0,
+          "recall": 0.7714,
+          "f1": 0.871,
+          "forwards": 1.0
+        },
+        "demo-sticky-d": {
+          "photos": 65,
+          "true": 2582,
+          "det": 1748,
+          "ratio": 0.677,
+          "mae": 12.831,
+          "under": 62,
+          "over": 0,
+          "precision": 0.9897,
+          "recall": 0.67,
+          "f1": 0.7991,
+          "forwards": 4.0
+        }
+      },
+      "real": {
+        "photos": 320,
+        "false_flies": 3,
+        "photos_with_a_box": 3,
+        "production_count_sum": 134
+      },
+      "roboflow": {
+        "lure": {
+          "precision": 0.9024,
+          "recall": 0.894,
+          "tp": 2100,
+          "fp": 227,
+          "fn": 249,
+          "meets_box_rule_result": false
+        },
+        "sticky": {
+          "precision": 0.935,
+          "recall": 0.8203,
+          "tp": 1927,
+          "fp": 134,
+          "fn": 422,
+          "meets_box_rule_result": false
+        }
+      }
+    }
+  },
+  "floor_sweep_base": "roi_all",
+  "ms_p50": {
+    "synth/full": 268.3,
+    "synth/frame_tiles": 1148.3,
+    "synth/roi_tiles": 1936.6,
+    "real/full": 250.7,
+    "real/frame_tiles": 1027.1,
+    "real/roi_tiles": 1025.3,
+    "roboflow/full": 665.5,
+    "roboflow/frame_tiles": 3001.7,
+    "roboflow/roi_tiles": 3159.3
+  },
+  "handler": {
+    "production | demo-30d": {
+      "set": "demo-30d",
+      "photos": 600,
+      "prev_photo": true,
+      "at": "2026-10-23T11:15:12+07:00",
+      "errors": 0,
+      "common_photos_only": true,
+      "lure": {
+        "photos": 388,
+        "true_flies": 2476,
+        "detected": 2089,
+        "mae": 1.039,
+        "bias": -0.997,
+        "precision_iou30": 0.9785,
+        "recall_iou30": 0.8255,
+        "f1_iou30": 0.8955,
+        "dnn_ms_p50": 691.5,
+        "total_ms_p50": 3552.5
+      },
+      "sticky": {
+        "photos": 129,
+        "true_flies": 5151,
+        "detected": 4954,
+        "mae": 4.953,
+        "bias": -1.527,
+        "precision_iou30": 0.849,
+        "recall_iou30": 0.8165,
+        "f1_iou30": 0.8325,
+        "dnn_ms_p50": 2574.7,
+        "total_ms_p50": 8559.4
+      }
+    },
+    "+ DETECTOR_ROI=all | demo-30d": {
+      "set": "demo-30d",
+      "photos": 600,
+      "prev_photo": true,
+      "at": "2026-10-23T11:15:02+07:00",
+      "errors": 0,
+      "common_photos_only": true,
+      "lure": {
+        "photos": 388,
+        "true_flies": 2476,
+        "detected": 2071,
+        "mae": 1.07,
+        "bias": -1.044,
+        "precision_iou30": 0.987,
+        "recall_iou30": 0.8255,
+        "f1_iou30": 0.8991,
+        "dnn_ms_p50": 687.6,
+        "total_ms_p50": 3667.8
+      },
+      "sticky": {
+        "photos": 129,
+        "true_flies": 5151,
+        "detected": 4263,
+        "mae": 6.915,
+        "bias": -6.884,
+        "precision_iou30": 0.9866,
+        "recall_iou30": 0.8165,
+        "f1_iou30": 0.8936,
+        "dnn_ms_p50": 2606.3,
+        "total_ms_p50": 8516.1
+      }
+    },
+    "production | pool": {
+      "set": "pool",
+      "photos": 385,
+      "prev_photo": true,
+      "at": "2026-10-23T12:33:57+07:00",
+      "errors": 5,
+      "common_photos_only": true,
+      "lure": {
+        "photos": 125,
+        "true_flies": 4085,
+        "detected": 3753,
+        "mae": 2.688,
+        "bias": -2.656,
+        "precision_iou30": 0.9771,
+        "recall_iou30": 0.8977,
+        "f1_iou30": 0.9357,
+        "dnn_ms_p50": 625.2,
+        "total_ms_p50": 3370.9
+      },
+      "sticky": {
+        "photos": 196,
+        "true_flies": 10006,
+        "detected": 9267,
+        "mae": 5.403,
+        "bias": -3.77,
+        "precision_iou30": 0.8764,
+        "recall_iou30": 0.8117,
+        "f1_iou30": 0.8428,
+        "dnn_ms_p50": 1304.9,
+        "total_ms_p50": 3894.3
+      }
+    },
+    "+ DETECTOR_ROI=all | pool": {
+      "set": "pool",
+      "photos": 385,
+      "prev_photo": true,
+      "at": "2026-10-23T12:24:29+07:00",
+      "errors": 14,
+      "common_photos_only": true,
+      "lure": {
+        "photos": 125,
+        "true_flies": 4085,
+        "detected": 3721,
+        "mae": 2.944,
+        "bias": -2.912,
+        "precision_iou30": 0.9855,
+        "recall_iou30": 0.8977,
+        "f1_iou30": 0.9395,
+        "dnn_ms_p50": 430.2,
+        "total_ms_p50": 2748.4
+      },
+      "sticky": {
+        "photos": 196,
+        "true_flies": 10006,
+        "detected": 8136,
+        "mae": 9.541,
+        "bias": -9.541,
+        "precision_iou30": 0.9983,
+        "recall_iou30": 0.8117,
+        "f1_iou30": 0.8954,
+        "dnn_ms_p50": 2455.3,
+        "total_ms_p50": 7615.0
+      }
+    }
+  }
+}

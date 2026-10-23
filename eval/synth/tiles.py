@@ -141,18 +141,24 @@ def run(sets: list[Path], limit: int | None = None, log=print) -> dict:
     return out
 
 
-def handler_runs(runs: dict[str, Path]) -> dict:
-    """Whole-handler runs of eval.synth.check on one set with different DETECTOR_TILES (name -> folder holding its
-    check.jsonl and check.meta.json): count and box metrics of the clean photos per trap kind, handler and DNN time."""
+def handler_runs(runs: dict[str, Path], common: bool = False) -> dict:
+    """Whole-handler runs of eval.synth.check on one set with different detector settings (name -> folder holding its
+    check.jsonl and check.meta.json): count and box metrics of the clean photos per trap kind, handler and DNN time.
+    `common`: only the photos every run answered (a run that lost photos to errors is compared on the same ones)."""
     from eval.synth.report import pct, summarize
 
-    out = {}
+    loaded = {}
     for name, d in runs.items():
-        meta = json.loads((d / "check.meta.json").read_text(encoding="utf-8"))
         with open(d / "check.jsonl", encoding="utf-8") as fh:
-            recs = [json.loads(line) for line in fh if line.strip()]
+            loaded[name] = (json.loads((d / "check.meta.json").read_text(encoding="utf-8")),
+                            [json.loads(line) for line in fh if line.strip()])
+    keep = set.intersection(*({r["photoId"] for r in recs} for _, recs in loaded.values())) if common else None
+    out = {}
+    for name, (meta, recs) in loaded.items():
+        recs = [r for r in recs if keep is None or r["photoId"] in keep]
         clean = [{**r, "true": r["visible"]} for r in recs if not r.get("defect")]
-        out[name] = {"set": meta["set"], "photos": meta["ok"], "prev_photo": meta["prev_photo"], "at": meta["at"]}
+        out[name] = {"set": meta["set"], "photos": len(recs), "prev_photo": meta["prev_photo"], "at": meta["at"],
+                     "errors": len(meta["errors"]), "common_photos_only": common}
         for kind in ("lure", "sticky"):
             rows = [r for r in clean if r["trapKind"] == kind]
             s = summarize(rows)

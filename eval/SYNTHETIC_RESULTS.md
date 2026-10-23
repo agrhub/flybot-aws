@@ -116,6 +116,61 @@ Whole handler (trap ROI, box rules, quality ops, agent; prevPhoto sent, so a til
 | sticky | demo-30d | lure | 388 | 2476 | 2089 | 1.039 | -0.997 | 0.9785 | 0.8255 | 0.8955 | 319.7 | 1746.4 |
 | sticky | demo-30d | sticky | 129 | 5151 | 4954 | 4.953 | -1.527 | 0.849 | 0.8165 | 0.8325 | 456.4 | 1619.0 |
 
+## Counting fixes: trap ROI, overlay mask, lure tiles, score floor
+
+`uv run --project lambda/vision python -m eval.detector_ab score` on 2026-10-23T05:11:06+00:00, source `eval/results/detector_ab.json`: the detector step (whole frame or tiles, NMS, region filters, box rules; no quality ops, no agent) from one cached run per photo (yolo26n on opencv-5.0.0-dnn-new). Synthetic: 429 clean photos (1 in 2 of demo-30d and pool), IoU 0.3. Real: 320 EZVIZ lure photos of the 2026-10 export (1 in 4), all empty traps, so every box is a false fly; they cannot show a real fly lost to a rule. Roboflow: the 76-image test split (IoU 0.5) run as a lure and as a sticky photo; the box rules alone give 0.9025 / 0.8987 there (`eval/results/yolo26_box_rules.json`). The synthetic flies are placed inside the floor op 1 finds, so on synthetic photos an ROI cannot drop a fly; the Roboflow rows are the check on that.
+
+| variant | lure P | lure R | lure det/true | lure MAE | sticky P | sticky R | sticky det/true | sticky MAE | sticky photos over | real false flies | Roboflow as lure P / R | as sticky P / R |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| production | 0.9822 | 0.8695 | 0.8853 | 1.483 | 0.8635 | 0.8093 | 0.9371 | 5.218 | 67 | 5 (5 photos) | 0.9025 / 0.8987 | 0.8839 / 0.8944 |
+| mask | 0.9829 | 0.8695 | 0.8847 | 1.49 | 0.9093 | 0.8093 | 0.89 | 6.082 | 43 | 4 (4 photos) | 0.9065 / 0.8876 | 0.8872 / 0.8842 |
+| roi_lure | 0.9903 | 0.8695 | 0.878 | 1.56 | 0.8635 | 0.8093 | 0.9371 | 5.218 | 67 | 3 (3 photos) | 0.9024 / 0.894 | 0.8839 / 0.8944 |
+| roi_all | 0.9903 | 0.8695 | 0.878 | 1.56 | 0.9942 | 0.8093 | 0.814 | 8.535 | 2 | 3 (3 photos) | 0.9024 / 0.894 | 0.8837 / 0.877 |
+| tiles_lure_frame | 0.9107 | 0.9314 | 1.0228 | 1.046 | 0.8635 | 0.8093 | 0.9371 | 5.218 | 67 | 360 (267 photos) | 0.8839 / 0.8944 | 0.8839 / 0.8944 |
+| tiles_lure_frame+roi | 0.9519 | 0.9314 | 0.9785 | 0.985 | 0.8635 | 0.8093 | 0.9371 | 5.218 | 67 | 281 (252 photos) | 0.8841 / 0.8897 | 0.8839 / 0.8944 |
+| tiles_lure_roi | 0.7958 | 0.9023 | 1.1338 | 2.985 | 0.8635 | 0.8093 | 0.9371 | 5.218 | 67 | 842 (266 photos) | 0.8989 / 0.8821 | 0.8839 / 0.8944 |
+| tiles_lure_roi+full | 0.7976 | 0.9651 | 1.21 | 2.903 | 0.8635 | 0.8093 | 0.9371 | 5.218 | 67 | 842 (266 photos) | 0.8859 / 0.9089 | 0.8839 / 0.8944 |
+| tiles_lure_roi_rim0.02 | 0.7963 | 0.9023 | 1.1332 | 2.977 | 0.8635 | 0.8093 | 0.9371 | 5.218 | 67 | 785 (260 photos) | 0.8989 / 0.871 | 0.8839 / 0.8944 |
+| tiles_lure_roi_rim0.05 | 0.8107 | 0.902 | 1.1126 | 2.737 | 0.8635 | 0.8093 | 0.9371 | 5.218 | 67 | 661 (244 photos) | 0.8985 / 0.8404 | 0.8839 / 0.8944 |
+| tiles_lure_frame+roi_floor0.45 | 0.9674 | 0.9005 | 0.9308 | 1.274 | 0.8635 | 0.8093 | 0.9371 | 5.218 | 67 | 186 (179 photos) | 0.913 / 0.8668 | 0.8839 / 0.8944 |
+| tiles_lure_frame+roi_floor0.55 | 0.9764 | 0.8541 | 0.8747 | 1.811 | 0.8635 | 0.8093 | 0.9371 | 5.218 | 67 | 94 (94 photos) | 0.9346 / 0.8331 | 0.8839 / 0.8944 |
+| roi_lure+mask | 0.9903 | 0.8695 | 0.878 | 1.56 | 0.9093 | 0.8093 | 0.89 | 6.082 | 43 | 3 (3 photos) | 0.9061 / 0.8829 | 0.8872 / 0.8842 |
+| roi_all+mask | 0.9903 | 0.8695 | 0.878 | 1.56 | 0.9942 | 0.8093 | 0.814 | 8.535 | 2 | 3 (3 photos) | 0.9061 / 0.8829 | 0.8872 / 0.8672 |
+
+Variants: `production` = DETECTOR_TILES=sticky, score floor 0.35 (deployed); `roi_lure` / `roi_all` = DETECTOR_ROI (boxes off the lure floor / off the floor or sticky card dropped); `mask` = DETECTOR_MASK=osd (EZVIZ logo and date/stamp corner); `tiles_lure_frame` = 2x2 windows on lure photos too; `tiles_lure_roi` = 2x2 windows over the floor's bounding box (`+full`: plus the whole-frame boxes; `_rimN`: boxes within N x sqrt(floor area) of the floor edge dropped); `_floorN` = lure score floor N.
+
+Score floor per trap kind on top of `roi_all`:
+
+| floor | synth P | synth R | det/true | MAE | real false flies | Roboflow (same kind) P / R |
+|---|---|---|---|---|---|---|
+| lure=0.25 | 0.9819 | 0.9062 | 0.9229 | 1.035 | 3 | 0.8777 / 0.9136 |
+| lure=0.30 | 0.9852 | 0.8874 | 0.9008 | 1.286 | 3 | 0.8928 / 0.9072 |
+| lure=0.35 | 0.9903 | 0.8695 | 0.878 | 1.56 | 3 | 0.9024 / 0.894 |
+| lure=0.40 | 0.9914 | 0.8425 | 0.8498 | 1.911 | 2 | 0.9105 / 0.8791 |
+| lure=0.45 | 0.9923 | 0.8219 | 0.8283 | 2.185 | 0 | 0.9212 / 0.8659 |
+| lure=0.50 | 0.9958 | 0.797 | 0.8004 | 2.541 | 0 | 0.9285 / 0.8463 |
+| lure=0.55 | 0.9968 | 0.763 | 0.7655 | 2.985 | 0 | 0.938 / 0.825 |
+| sticky=0.25 | 0.9896 | 0.8647 | 0.8738 | 5.8 | 3 | 0.8468 / 0.894 |
+| sticky=0.30 | 0.9935 | 0.8386 | 0.8441 | 7.159 | 3 | 0.8663 / 0.8855 |
+| sticky=0.35 | 0.9942 | 0.8093 | 0.814 | 8.535 | 3 | 0.8837 / 0.877 |
+| sticky=0.40 | 0.9946 | 0.7788 | 0.783 | 9.941 | 3 | 0.8985 / 0.8633 |
+| sticky=0.45 | 0.995 | 0.7477 | 0.7514 | 11.376 | 3 | 0.9131 / 0.854 |
+| sticky=0.50 | 0.9953 | 0.7087 | 0.7121 | 13.176 | 3 | 0.9224 / 0.8395 |
+| sticky=0.55 | 0.9965 | 0.6683 | 0.6706 | 15.076 | 3 | 0.935 / 0.8203 |
+
+Whole handler (eval.synth.check, clean photos, prevPhoto sent), one run per setting, on the photos both runs answered (the laptop ran out of memory on a few during the runs):
+
+| setting | set | trap | photos | true flies | detected | MAE | bias | precision @0.3 | recall @0.3 |
+|---|---|---|---|---|---|---|---|---|---|
+| production | demo-30d | lure | 388 | 2476 | 2089 | 1.039 | -0.997 | 0.9785 | 0.8255 |
+| production | demo-30d | sticky | 129 | 5151 | 4954 | 4.953 | -1.527 | 0.849 | 0.8165 |
+| + DETECTOR_ROI=all | demo-30d | lure | 388 | 2476 | 2071 | 1.07 | -1.044 | 0.987 | 0.8255 |
+| + DETECTOR_ROI=all | demo-30d | sticky | 129 | 5151 | 4263 | 6.915 | -6.884 | 0.9866 | 0.8165 |
+| production | pool | lure | 125 | 4085 | 3753 | 2.688 | -2.656 | 0.9771 | 0.8977 |
+| production | pool | sticky | 196 | 10006 | 9267 | 5.403 | -3.77 | 0.8764 | 0.8117 |
+| + DETECTOR_ROI=all | pool | lure | 125 | 4085 | 3721 | 2.944 | -2.912 | 0.9855 | 0.8977 |
+| + DETECTOR_ROI=all | pool | sticky | 196 | 10006 | 8136 | 9.541 | -9.541 | 0.9983 | 0.8117 |
+
 ## Limits
 
 - The flies come from the same dataset family the detector was trained on (other images: test/valid splits),
