@@ -1,15 +1,60 @@
 # FlyBot on AWS
 
-FlyBot counts fruit flies on orchard traps from camera photos and helps growers act on it. Cameras (EZVIZ cloud
-cameras and an open ESP32-S3 trap camera) send photos; an **OpenCV 5** pipeline on **AWS Lambda** detects and counts the
-flies (YOLO26n on the OpenCV 5 DNN engine), checks the photo's quality and compares it with the previous one; a small
-**agent** turns what it sees into proposals (take another photo, fix the camera's image settings, change the schedule,
-ask a person to review, alert the grower) that FlyBot shows as confirm cards, and it answers grower questions in
-FlyBot's chatbot. This repository is the OpenCV AI Competition 2026 entry: the vision Lambda, the agent, the AWS
-infrastructure with a one-command deploy, the benchmark and the evaluation.
+**Trap cameras that look before they count.** FlyBot photographs fruit-fly traps in orchards, counts the flies with
+**OpenCV 5** on **AWS Lambda**, checks every photo, and lets a small agent propose what to do next; a person confirms
+every action. This repository is AGRHUB's entry to the OpenCV AI Competition 2026, powered by AWS: the vision
+Lambda, the agent, the AWS infrastructure with a one-command deploy, the benchmark and the evaluation; the web app and
+the camera firmware are its two submodules.
 
-Live demo: **https://flybot.agrhub.com** (press **Guest access** on the sign-in page: a read-only demo account for two
-hours; see "Try it"). Video (4:59, unlisted): https://youtu.be/mfCE2EEFPqg
+[![FlyBot on AWS: watch the demo video (4:59)](docs/img/video-thumbnail.png)](https://youtu.be/mfCE2EEFPqg)
+
+| Watch | Try | Read |
+|---|---|---|
+| [Demo video, 4:59](https://youtu.be/mfCE2EEFPqg) (unlisted, English subtitles) | https://flybot.agrhub.com, press **Guest access**: read-only, two hours, no sign-up ([what to look at](#try-it)) | [Technical report (PDF)](docs/REPORT.pdf) · [12 slides (PDF)](docs/SLIDES.pdf) · [all documents](#submission-documents-opencv-ai-competition-2026) |
+
+**Contents:** [Why fruit flies](#why-fruit-flies) · [How it works](#how-it-works-in-one-picture) ·
+[The trap camera](#the-trap-camera-open-hardware-about-us39) · [Submission documents](#submission-documents-opencv-ai-competition-2026) ·
+[Architecture](#architecture) · [Try it](#try-it) · [Deploy your own](#deploy-your-own-one-command) ·
+[Run locally](#run-locally-no-aws-account-needed) · [Results](#results) · [Costs](#costs) · [Limits](#limits) ·
+[Repository](#repository)
+
+## Why fruit flies
+
+Fruit flies are "by far the most important group of horticultural pests worldwide" (De Meyer et al., ZooKeys 2015):
+in Africa alone they cost about US$2 billion a year (icipe), and a mango orchard can lose 10-40 % of its harvest
+(ICAR-IIHR). Growers watch them with traps, but someone has to walk to every trap and count the flies by eye, so the
+numbers come late and the spraying comes too late or too often. FlyBot puts a camera on each trap.
+
+## How it works, in one picture
+
+![One photo's path: the trap camera, 4G, FlyBot on EC2 with S3 and MongoDB, the OpenCV 5 Lambda, the Sentinel agent, the reports, and a person who confirms](docs/img/how-it-works.jpg)
+
+1. **A fly enters the trap**, and the camera in the lid takes a photo on its schedule (EZVIZ cloud cameras are asked
+   for theirs).
+2. The photo goes **over 4G or Wi-Fi** (HTTPS, with the camera's own token) to **FlyBot on EC2**, which keeps it in
+   **Amazon S3** and its record in **MongoDB**.
+3. **AWS Lambda runs OpenCV 5**: YOLO26n counts the flies on the new DNN engine, and the image checks grade the photo
+   (blur, glare, a moved camera, hands or people).
+4. The **Sentinel agent** reads those numbers and proposes what to do: nothing, another photo, better camera settings,
+   a review by a person, or an alert to the grower. Every step is kept as a trace.
+5. The count goes into the **dashboard, the field map and the reports**; alerts go to the app, email and Telegram.
+6. **A person confirms** any action, in the app or on Telegram. Only then does FlyBot send the camera a command through
+   **AWS IoT Core**, and the camera's next photo starts the loop again.
+
+## The trap camera: open hardware, about US$39
+
+| The parts | The wiring | The real build |
+|---|---|---|
+| ![The trap camera's parts and prices: about US$39](docs/img/trap-parts.jpg) | ![The trap camera's wiring as built](docs/img/trap-wiring.jpg) | ![The boards in the trap lid, the finished trap and its solar lid](docs/img/trap-build.jpg) |
+
+An ESP32-S3 N16R8 board with an OV5640 wide-angle camera, a 4G modem (A7680C), GPS (ATGM336H), a TP4056 charger, a
+5 V boost board and a flat LiPo cell, in a hanging solar trap: about US$39 of parts (prices read on 17, 24 and 25 Oct
+2026). The open firmware, the parts list and the wiring are in
+[agrhub/camos-esp32-trap](https://github.com/agrhub/camos-esp32-trap) (`firmware-esp32/` here). The camera registers
+itself with AWS IoT Core, streams live view through Kinesis Video Streams WebRTC, sleeps between photos on battery, and
+takes FlyBot's commands (a live request, a GPS fix, new settings) at its next wake.
+
+![The trap camera live in FlyBot, looking down into the trap (serial masked)](docs/img/esp32-live.jpg)
 
 ## Submission documents (OpenCV AI Competition 2026)
 
@@ -88,6 +133,8 @@ flowchart LR
 | CloudFormation (SAM), IAM, SSM | one stack `flybot-<stage>` (`infra/template.yaml`), least-privilege roles, remote commands without SSH |
 
 ## Try it
+
+![The Guest access dashboard: the demo traps, and a simulated farm network labelled Simulated](docs/slides/img/guest-dashboard.jpg)
 
 Open https://flybot.agrhub.com/auth/login and press **Guest access** (under the sign-in button). No account or
 email is needed: it opens a shared, read-only demo account for two hours. It shows:

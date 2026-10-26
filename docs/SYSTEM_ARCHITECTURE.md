@@ -27,6 +27,10 @@ The Lambda is stateless. FlyBot's MongoDB owns cameras, photos, counts, confirm 
 
 ### 2.1 A photo, from capture to decision
 
+![One photo's path: the trap camera, 4G, FlyBot on EC2 with S3 and MongoDB, the OpenCV 5 Lambda, the Sentinel agent, the reports, and a person who confirms](img/how-it-works.jpg)
+
+*The same path in the demo video (https://youtu.be/mfCE2EEFPqg).*
+
 1. **Capture.** FlyBot asks an EZVIZ camera for a photo on schedule, or a CamOS camera uploads one over HTTPS with its
    device token. FlyBot stores the photo in S3 (or an S3-compatible store) and a photo record in MongoDB.
 2. **Analysis.** FlyBot calls `Lambda.Invoke` once, synchronously: the photo and the previous photo of the same
