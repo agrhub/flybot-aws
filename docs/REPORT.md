@@ -8,7 +8,7 @@
 - Code: this repository, [agrhub/flybot-aws](https://github.com/agrhub/flybot-aws) (vision Lambda, agent,
   infrastructure, benchmark, evaluation), with two public submodules: the FlyBot app
   ([agrhub/flybot](https://github.com/agrhub/flybot), branch `feat/aws`) and the ESP32-S3 trap camera firmware
-  ([agrhub/camos-esp32-trap](https://github.com/agrhub/camos-esp32-trap), v0.8.0). All three are AGPL-3.0.
+  ([agrhub/camos-esp32-trap](https://github.com/agrhub/camos-esp32-trap), v0.9.1). All three are AGPL-3.0.
 - Diagrams: [architecture](diagrams/architecture.svg), [agent workflow](diagrams/agent_workflow.svg),
   [trace example](diagrams/trace_example.svg). Companion texts: [SYSTEM_ARCHITECTURE.md](SYSTEM_ARCHITECTURE.md), [SYSTEM_REQUIREMENTS.md](SYSTEM_REQUIREMENTS.md), [slides](SLIDES.pdf), [DEVPOST.md](DEVPOST.md),
   [VIDEO_SCRIPT.md](VIDEO_SCRIPT.md), [RESPONSIBLE_USE.md](RESPONSIBLE_USE.md).
@@ -41,11 +41,11 @@ next loop.
 Growers and farm managers who run FlyBot traps, and the agronomists who advise them. They use FlyBot's web app (in
 Vietnamese or English), its chatbot, and Telegram. The system serves two camera families: EZVIZ cloud cameras that
 farms already own, and an open, low-cost ESP32-S3 trap camera (solar, Wi-Fi or 4G, GPS) whose firmware and parts
-list are public. The field camera as built, in a hanging solar trap housing with 4G, GPS and an 18650 cell, costs
-about US$40 in all (448,954 VND of parts at 26,050 VND/USD, the Vietcombank rate on 21 Oct 2026, plus the US$19.99
-board and the US$3.00 housing); a Wi-Fi camera in the same housing is about US$23 (the reference build of the wiring
-page, in an IP65 box: about US$63)
-([parts list](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/BOM.md#3-totals-prices-read-on-17-oct-2026), prices read on 17 Oct 2026).
+list are public. The field camera as built, in a hanging solar trap housing with an ESP32-S3 N16R8 board, an OV5640 wide-angle camera,
+4G, GPS, a flat LiPo cell and a 5 V boost board, costs about US$39 in all (944,760 VND of parts at 26,050 VND/USD, the
+Vietcombank rate on 21 Oct 2026, plus the US$3.00 housing); a Wi-Fi camera in the same housing is about US$19 (the
+reference field build of the wiring page, in an IP65 box: about US$60)
+([parts list](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/BOM.md), prices read on 17, 24 and 25 Oct 2026).
 
 **Agronomy advisor.** MSc Trương Quốc Ánh, Principal Researcher and Deputy Head of the Biotechnology Department, Institute of Agricultural Science for Southern Vietnam (IAS, under VAAS), Ho Chi Minh City; research in plant breeding genetics, plant biotechnology and DNA barcoding, and applied projects on smart agriculture and IoT for pest control (https://iasvn.org/bo-mon-cong-nghe-sinh-hoc/). He is not a team member. On 21 Oct 2026 he reviewed 50 of the agent's decisions (section 6.7).
 
@@ -96,7 +96,7 @@ cameras, photos, cards and traces (`docs/DECISIONS.md`).
 | Camera | Path into FlyBot | What FlyBot can change | Live view |
 |---|---|---|---|
 | EZVIZ (2 in the orchard, lure traps) | FlyBot's schedule, EZVIZ Open Platform | extra capture, capture interval | EZVIZ's own player |
-| ESP32-S3 trap camera, firmware v0.8.0 | HTTPS photo upload (device token) + MQTT over mutual TLS to IoT Core | shadow: capture interval, image settings, live request; RPC: `snapshot.now`, `live.start`, `gps.fix`, `ota.apply`, `log.start` (`docs/CONTRACTS.md` section 3) | KVS WebRTC: the camera is the master, the browser the viewer |
+| ESP32-S3 trap camera, firmware v0.9.1 | HTTPS photo upload (device token) + MQTT over mutual TLS to IoT Core | shadow: capture interval, image settings, live request; RPC: `snapshot.now`, `live.start`, `gps.fix`, `ota.apply`, `log.start` (`docs/CONTRACTS.md` section 3) | KVS WebRTC: the camera is the master, the browser the viewer |
 
 Zero-touch registration: the camera generates its own key, FlyBot signs its CSR through IoT Core, creates the thing
 and its KVS channel, and the owner claims it by QR code or serial and verify code (`docs/CONTRACTS.md` section 2a).

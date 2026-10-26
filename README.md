@@ -9,7 +9,7 @@ FlyBot's chatbot. This repository is the OpenCV AI Competition 2026 entry: the v
 infrastructure with a one-command deploy, the benchmark and the evaluation.
 
 Live demo: **https://flybot.agrhub.com** (press **Guest access** on the sign-in page: a read-only demo account for two
-hours; see "Try it")
+hours; see "Try it"). Video (4:59, unlisted): https://youtu.be/mfCE2EEFPqg
 
 ## Submission documents (OpenCV AI Competition 2026)
 

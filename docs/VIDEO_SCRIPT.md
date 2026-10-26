@@ -65,4 +65,4 @@ decide). Either can be added as a recorded scene if the team wants it, within th
       total ≤ 5:00 (`render-film.mjs` refuses a longer film).
 - [ ] Diagrams: `docs/diagrams/*.png`; rebuild with `uv run --no-project python docs/diagrams/src/build_diagrams.py`
       and `uv run --no-project --with markdown==3.7 python docs/diagrams/src/render.py --png`.
-- [ ] Upload as unlisted on YouTube; put the link in `README.md` and on Devpost.
+- [x] Upload as unlisted on YouTube; put the link in `README.md` and on Devpost: https://youtu.be/mfCE2EEFPqg (26 Oct 2026).

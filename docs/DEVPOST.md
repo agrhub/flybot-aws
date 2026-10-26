@@ -1,6 +1,6 @@
 # Devpost submission text
 
-Paste-ready sections for opencv26.devpost.com. The main text (Inspiration to Built with) stays under 900 words. Every
+Paste-ready sections for opencv26.devpost.com. The main text (Inspiration to Built with) is about 1,000 words. Every
 number comes from a file named in [REPORT.md](REPORT.md); "not measured" means nobody measured it.
 
 **Project name:** FlyBot on AWS
@@ -13,16 +13,17 @@ number comes from a file named in [REPORT.md](REPORT.md); "not measured" means n
 hours (the two real traps, a labelled simulated farm network, the Sentinel console and the chatbot).
 
 **Links:** live app https://flybot.agrhub.com · code https://github.com/agrhub/flybot-aws (submodules
-https://github.com/agrhub/flybot and https://github.com/agrhub/camos-esp32-trap) · video: *(unlisted YouTube link,
-added after the upload)*
+https://github.com/agrhub/flybot and https://github.com/agrhub/camos-esp32-trap) · video: https://youtu.be/mfCE2EEFPqg (4:59, unlisted)
 
 **Images for the gallery:** `docs/diagrams/architecture.png`, `docs/diagrams/agent_workflow.png`,
-`docs/diagrams/trace_example.png`, plus screenshots of FlyBot (guest dashboard, camera page, Sentinel trace, confirm
-card, chatbot answer).
+`docs/diagrams/trace_example.png`, screenshots of FlyBot (guest dashboard, Sentinel approvals and traces, the ESP32-S3
+camera live), and four stills of the video: how one photo goes through FlyBot, the trap camera's parts (about US$39),
+its wiring as built and the real build.
 
 ## Inspiration
 
-We make FlyBot, which photographs fruit-fly traps in orchards and counts the flies with AI. Our data showed what a
+Fruit flies are "by far the most important group of horticultural pests worldwide" (De Meyer et al., ZooKeys 2015); in
+Africa alone they cost about US$2 billion a year (icipe). We make FlyBot, which photographs fruit-fly traps in orchards and counts the flies with AI. Our data showed what a
 count misses: one camera filmed a building and every "fly" it reported was false; glare and blur were counted like any
 photo; the camera never reacted. Growers need a system that notices a bad photo, asks for a better one, and bothers
 them only when it matters.
@@ -39,8 +40,9 @@ person presses Confirm, and the new photo starts the loop again. Growers can als
 ("why did the count jump?"): it calls the same Lambda in deep mode, where a Claude Haiku 5.5 planner answers from
 OpenCV's numbers, never from the pixels. ESP32-S3 cameras join on their own (zero-touch registration through AWS IoT
 Core), are claimed by QR code, stream live view over Kinesis Video Streams WebRTC, and are managed as a fleet
-(firmware channels, OTA rollouts with a battery guard, remote log, crash reports). Judges get Guest access and a
-labelled simulated farm counted by the real Lambda.
+(firmware channels, OTA rollouts with a battery guard, remote log, crash reports). A battery camera that sleeps between photos still takes orders: FlyBot keeps a live request, a GPS fix or a setting for
+its next wake and shows when that is; Wi-Fi or 4G is chosen remotely. Judges get Guest access, a labelled simulated
+farm counted by the real Lambda, and reports of their own.
 
 ## How we built it
 
@@ -54,8 +56,8 @@ labelled simulated farm counted by the real Lambda.
 - **AWS (one SAM stack, Sydney):** Lambda arm64 container built by CodeBuild into ECR, EC2 t4g.micro running FlyBot
   (Node, Vue, MongoDB, Caddy TLS), IoT Core (thing type, per-thing policy, shadow, RPC, presence), Kinesis Video
   Streams WebRTC, S3, Secrets Manager, CloudWatch alarms. One command deploys it: `./deploy.sh`.
-- **Device:** ESP-IDF firmware for a Freenove ESP32-S3 camera with Wi-Fi or 4G, GPS, solar and deep sleep, a setup
-  portal, a web console, OTA updates and a remote log over IoT Core.
+- **Device:** ESP-IDF firmware for an ESP32-S3 board with an OV5640 wide-angle lens, 4G, GPS and a solar-charged
+  LiPo cell in a hanging trap (about US$39 of parts, camos-esp32-trap docs/BOM.md); deep sleep, a setup portal, a web console, OTA updates and a remote log over IoT Core.
 
 ## Challenges we ran into
 
@@ -92,7 +94,7 @@ are not field data. A person on every action keeps the agent simple and trusted.
 ## What's next
 
 Ask our agronomy advisor to review the quality gate's new glare limit on fresh photos (we re-scored his photos, he has
-not re-reviewed them); label 150 trap photos (ready, 0 done); improve recall on small flies in full lure-trap views; run the ESP32-S3 camera in the orchard on 4G and solar and measure its battery; add
+not re-reviewed them); label 150 trap photos (ready, 0 done); improve recall on small flies in full lure-trap views; measure the ESP32-S3 trap's battery life in the orchard and fix its weaker Wi-Fi on battery; add
 yellow sticky cards; and try OpenCV 5's in-library VLM for second opinions on doubtful photos.
 
 ## Built with

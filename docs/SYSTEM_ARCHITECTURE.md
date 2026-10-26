@@ -14,7 +14,7 @@ APPROVAL, IOT CORE, FIRMWARE, OPENCV 5 NEW.*
 | Component | Runs on | Code | Job |
 |---|---|---|---|
 | EZVIZ trap cameras | the farm, EZVIZ cloud | (EZVIZ) | photos of lure traps on FlyBot's schedule, through the EZVIZ Open Platform |
-| CamOS trap camera | ESP32-S3 board in the trap (Wi-Fi or 4G, GPS, solar) | [camos-esp32-trap](https://github.com/agrhub/camos-esp32-trap) v0.8.0 | photos over HTTPS, MQTT to IoT Core (shadow, RPC, presence, log), live view as KVS WebRTC master, OTA updates |
+| CamOS trap camera | ESP32-S3 board in the trap (Wi-Fi or 4G, GPS, solar) | [camos-esp32-trap](https://github.com/agrhub/camos-esp32-trap) v0.9.1 | photos over HTTPS, MQTT to IoT Core (shadow, RPC, presence, log), live view as KVS WebRTC master, OTA updates |
 | FlyBot app | EC2 t4g.micro (Node 22 API, Vue 3 client, MongoDB 7, Caddy TLS) | [flybot](https://github.com/agrhub/flybot) `feat/aws` | users, farms, cameras, photos, schedules, alerts, chatbot, confirm cards, the Sentinel console, the camera fleet, guest access |
 | Vision Lambda | Lambda arm64 container, 2,048 MB, 120 s | `lambda/vision/sentinel/vision/` | the OpenCV 5 ops on each photo and its previous photo: count, quality, trap, registration, change, crowding, density, occlusion, faces |
 | Agent | the same Lambda invocation | `lambda/vision/sentinel/agent/` | rule planner (every photo) or Claude Haiku 5.5 planner (grower questions), 14 typed tools, guardrails, trace, proposals |
