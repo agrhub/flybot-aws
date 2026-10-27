@@ -13,7 +13,7 @@ number comes from a file named in [REPORT.md](REPORT.md); "not measured" means n
 hours (the two real traps, a labelled simulated farm network, the Sentinel console and the chatbot).
 
 **Links:** live app https://flybot.agrhub.com · code https://github.com/agrhub/flybot-aws (submodules
-https://github.com/agrhub/flybot and https://github.com/agrhub/camos-esp32-trap) · video: https://youtu.be/mfCE2EEFPqg (4:59, unlisted)
+https://github.com/agrhub/flybot and https://github.com/agrhub/camos-esp32-trap) · video: https://youtu.be/mfCE2EEFPqg (4:59, unlisted; Vietnamese subtitles: https://youtu.be/SUMZZmdJdzk)
 
 **Images for the gallery:** `docs/diagrams/architecture.png`, `docs/diagrams/agent_workflow.png`,
 `docs/diagrams/trace_example.png`, screenshots of FlyBot (guest dashboard, Sentinel approvals and traces, the ESP32-S3
@@ -57,7 +57,7 @@ farm counted by the real Lambda, and reports of their own.
   (Node, Vue, MongoDB, Caddy TLS), IoT Core (thing type, per-thing policy, shadow, RPC, presence), Kinesis Video
   Streams WebRTC, S3, Secrets Manager, CloudWatch alarms. One command deploys it: `./deploy.sh`.
 - **Device:** ESP-IDF firmware for an ESP32-S3 board with an OV5640 wide-angle lens, 4G, GPS and a solar-charged
-  LiPo cell in a hanging trap (about US$39 of parts, camos-esp32-trap docs/BOM.md); deep sleep, a setup portal, a web console, OTA updates and a remote log over IoT Core.
+  LiPo cell in a hanging trap (about US$39 with the housing, camos-esp32-trap docs/BOM.md); deep sleep, a setup portal, a web console, OTA updates and a remote log over IoT Core.
 
 ## Challenges we ran into
 

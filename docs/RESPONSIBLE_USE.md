@@ -1,7 +1,7 @@
 # Responsible use
 
 The rules FlyBot on AWS runs by, and their limits. Section 10 of the technical report ([REPORT.md](REPORT.md)) is the
-short version. State: 20 October 2026. Sources are named in each item; "not measured" means nobody measured it.
+short version. State: 27 October 2026. Sources are named in each item; "not measured" means nobody measured it.
 
 ## People in photos
 
@@ -43,11 +43,12 @@ short version. State: 20 October 2026. Sources are named in each item; "not meas
 ## Guests and simulated data
 
 - **Guest access** opens one shared, read-only account for two hours; the server refuses every write request from it
-  except chatbot messages and sign-out (no settings, captures, sharing, deleting or approvals), each guest session has
+  except sign-out, chatbot messages, live view of the demo cameras opened to visitors and up to five reports of the
+  guest's own (no settings, captures, sharing, deleting or approvals), each guest session has
   its own chatbot conversation, and turning the switch off ends every guest session at once
   ([guestAccess.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/services/guestAccess.js), [auth.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/middlewares/auth.js)).
 - The **simulated farm network** shown to guests is labelled on every item: "SIM ·" trap names, "(simulated)" farm
-  names, a banner on every page, a line in exported PDFs, and the number of flies drawn on each synthetic photo.
+  names, a banner on the pages that show them, a line in exported PDFs, and the number of flies drawn on each synthetic photo.
   Simulated data never enters emailed reports, alerts or webhooks, and one command removes all of it
   ([DEPLOY.md](https://github.com/agrhub/flybot/blob/feat/aws/DEPLOY.md)). Its photos are synthetic (`eval/synth`), stamped SIMULATED and contain no person.
 - Synthetic results are never reported as field results: `eval/RESULTS.md` holds real photos only, and the synthetic
@@ -91,7 +92,7 @@ short version. State: 20 October 2026. Sources are named in each item; "not meas
 |---|---|
 | Annotated evidence pictures | not written by the Lambda (only on request, e.g. the benchmark); the stack bucket's `evidence/` prefix expires after 90 days (`infra/template.yaml`) |
 | Camera console logs / crash reports | 24 hours / 30 days ([cameraLogService.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/services/cameraLogService.js), [CameraCrash.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/models/CameraCrash.js)) |
-| Guest sessions | 2 hours, never extended (see "Guests and simulated data") |
+| Guest sessions | 2 hours, never extended; a guest's own reports are removed when the session ends (see "Guests and simulated data") |
 | Lambda build context in the artifacts bucket (`lambda/`) | 14 days (same file) |
 | Lambda logs / CodeBuild logs (CloudWatch) | 30 days / 14 days (same file) |
 | Photos of unclaimed cameras | 24 hours (`docs/CONTRACTS.md` section 2a) |

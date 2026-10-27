@@ -10,7 +10,7 @@ the camera firmware are its two submodules.
 
 | Watch | Try | Read |
 |---|---|---|
-| [Demo video, 4:59](https://youtu.be/mfCE2EEFPqg) (unlisted, English subtitles) | https://flybot.agrhub.com, press **Guest access**: read-only, two hours, no sign-up ([what to look at](#try-it)) | [Technical report (PDF)](docs/REPORT.pdf) · [12 slides (PDF)](docs/SLIDES.pdf) · [all documents](#submission-documents-opencv-ai-competition-2026) |
+| [Demo video, 4:59](https://youtu.be/mfCE2EEFPqg) (unlisted, English subtitles; [Vietnamese subtitles](https://youtu.be/SUMZZmdJdzk)) | https://flybot.agrhub.com, press **Guest access**: read-only, two hours, no sign-up ([what to look at](#try-it)) | [Technical report (PDF)](docs/REPORT.pdf) · [12 slides (PDF)](docs/SLIDES.pdf) · [all documents](#submission-documents-opencv-ai-competition-2026) |
 
 **Contents:** [Why fruit flies](#why-fruit-flies) · [How it works](#how-it-works-in-one-picture) ·
 [The trap camera](#the-trap-camera-open-hardware-about-us39) · [Submission documents](#submission-documents-opencv-ai-competition-2026) ·
@@ -32,7 +32,7 @@ numbers come late and the spraying comes too late or too often. FlyBot puts a ca
 1. **A fly enters the trap**, and the camera in the lid takes a photo on its schedule (EZVIZ cloud cameras are asked
    for theirs).
 2. The photo goes **over 4G or Wi-Fi** (HTTPS, with the camera's own token) to **FlyBot on EC2**, which keeps it in
-   **Amazon S3** and its record in **MongoDB**.
+   **Amazon S3** (or an S3-compatible store) and its record in **MongoDB**.
 3. **AWS Lambda runs OpenCV 5**: YOLO26n counts the flies on the new DNN engine, and the image checks grade the photo
    (blur, glare, a moved camera, hands or people).
 4. The **Sentinel agent** reads those numbers and proposes what to do: nothing, another photo, better camera settings,
@@ -47,12 +47,14 @@ numbers come late and the spraying comes too late or too often. FlyBot puts a ca
 |---|---|---|
 | ![The trap camera's parts and prices: about US$39](docs/img/trap-parts.jpg) | ![The trap camera's wiring as built](docs/img/trap-wiring.jpg) | ![The boards in the trap lid, the finished trap and its solar lid](docs/img/trap-build.jpg) |
 
-An ESP32-S3 N16R8 board with an OV5640 wide-angle camera, a 4G modem (A7680C), GPS (ATGM336H), a TP4056 charger, a
-5 V boost board and a flat LiPo cell, in a hanging solar trap: about US$39 of parts (prices read on 17, 24 and 25 Oct
-2026). The open firmware, the parts list and the wiring are in
-[agrhub/camos-esp32-trap](https://github.com/agrhub/camos-esp32-trap) (`firmware-esp32/` here). The camera registers
+An ESP32-S3 N16R8 board with an OV5640 wide-angle camera (adjustable lens), a 4G modem (A7680C), GPS (ATGM336H), a
+TP4056 charger with DW01 protection, a 5 V boost board and a flat LiPo cell (103450, 2,000 mAh), on a perfboard in
+the lid of a hanging solar lure trap: the camera looks down into the clear trap body (no sticky card), and the lid's
+own solar panel charges the cell. About US$39 with the housing (prices read on 17, 24 and 25 Oct 2026). The open
+firmware, the parts list and the wiring are in [agrhub/camos-esp32-trap](https://github.com/agrhub/camos-esp32-trap) (`firmware-esp32/` here). The camera registers
 itself with AWS IoT Core, streams live view through Kinesis Video Streams WebRTC, sleeps between photos on battery, and
-takes FlyBot's commands (a live request, a GPS fix, new settings) at its next wake.
+takes FlyBot's commands (a live request, a GPS fix, new settings) at its next wake: on Wi-Fi it checks in every 2-10
+minutes by day, on 4G only at its photo slots.
 
 ![The trap camera live in FlyBot, looking down into the trap (serial masked)](docs/img/esp32-live.jpg)
 
@@ -123,12 +125,12 @@ flowchart LR
 | AWS service | What it does here |
 |---|---|
 | **Lambda** (arm64 container, 2 GB) | the OpenCV 5 vision pipeline + agent, one synchronous call per photo (`docs/CONTRACTS.md` section 1) |
-| **S3** | photos (FlyBot's, and the simulated demo farm's), FlyBot releases and the Lambda build context; the Lambda stores no picture (FlyBot draws the boxes and blurs the face regions it returns) |
+| **S3** | photos (FlyBot's, and the simulated demo farm's) unless you name S3-compatible storage, the FlyBot release pointer and videos (the releases too with `FLYBOT_RELEASE_STORE=s3`) and the Lambda build context; the Lambda stores no picture (FlyBot draws the boxes and blurs the face regions it returns) |
 | **EC2** t4g.micro + Elastic IP | FlyBot (Node 22, prebuilt release from S3, systemd), Caddy (automatic TLS), MongoDB 7 unless you bring your own |
 | **IoT Core** | the CamOS camera hub: device shadow (schedule, image settings, pause), RPC (capture, live, firmware update `ota.apply`, `log.start`), presence, the remote log topic `camos/<serial>/log`; one certificate per camera |
 | **Kinesis Video Streams** | WebRTC live view of CamOS cameras, 15-minute viewer credentials per browser session |
 | **CodeBuild** | builds the Lambda image (ARM) and pushes it to **ECR**; nothing is built on the server |
-| **Secrets Manager** | every application secret (JWT, EZVIZ, SMTP, Telegram, MongoDB URI, storage keys, Google key) |
+| **Secrets Manager** | every application secret (JWT, EZVIZ, SMTP, Telegram, MongoDB URI, storage keys, Anthropic key, Google key) |
 | **CloudWatch** + SNS | Lambda and build logs, alarms (Lambda errors and duration, EC2 status) by email |
 | CloudFormation (SAM), IAM, SSM | one stack `flybot-<stage>` (`infra/template.yaml`), least-privilege roles, remote commands without SSH |
 
@@ -151,13 +153,14 @@ email is needed: it opens a shared, read-only demo account for two hours. It sho
 photos, so the guest account also shows a simulated farm network: 114 sticky and lure traps on 47 farms, in every
 province of Vietnam and in a dozen fruit regions abroad (each with its main fruit fly), with plots, a field log and
 a month of history. Every one is tagged **Simulated**: trap names start with "SIM ·", farms end with "(simulated)",
-and a banner says so on every page. Its photos are synthetic trap pictures (a real empty trap photo with pasted fruit
+and a banner says so on the pages that show them (a viewer can close it). Its photos are synthetic trap pictures (a real empty trap photo with pasted fruit
 flies, stamped SIMULATED), and each one went through the same OpenCV 5 Lambda as a real photo: the counts, boxes,
 quality flags, traces and proposals are the pipeline's own. "Drawn: N" beside a count is the number of flies pasted
 on the picture, to compare the detector on sticky and lure traps. The metrics in [eval/RESULTS.md](eval/RESULTS.md)
 come from real photos only.
 
-The guest account changes nothing: settings, captures, sharing, deleting and approvals are refused. Guest access and
+The guest account changes nothing that others see: settings, captures, sharing, deleting and approvals are refused;
+a guest's own reports (up to five) are removed when the visit ends. Guest access and
 the demo are the server's **Demo access** settings (Admin > System), on for the judging period. To try your own
 ESP32-S3 camera, register an account and claim it at `/claim` (up to 3 cameras per account). If something does not
 work, the contact form on the site reaches the operator.
@@ -191,7 +194,7 @@ few things left for a person. The steps, all idempotent:
 5. **stack**: buckets, ECR, CodeBuild, IoT thing type and device policy, roles, the EC2 instance and its Elastic IP; the
    DNS record to add is printed right away in a box;
 6. **flybot**: `npm ci` (when the lock file changed) and `npm run build` in your FlyBot checkout; a clean release tarball
-   (about 17 MB, the home-page videos kept apart) published as a **GitHub pre-release** `flybot-<commit>` named
+   (about 18 MB, the home-page videos kept apart) published as a **GitHub pre-release** `flybot-<commit>` named
    "FlyBot <commit> (deploy build)" in `agrhub/flybot-aws`, with a `.sha256` asset (or to the private artifacts bucket
    with `FLYBOT_RELEASE_STORE=s3`, or when no `GITHUB_TOKEN` is set); the videos once to the artifacts bucket; then the
    release pointer the server follows (`flybot/current.json` in S3: a new release never restarts the instance).
@@ -234,6 +237,7 @@ stack stuck in ROLLBACK_COMPLETE). Log: `infra/.build/deploy-<stage>.log`. Remov
 | `S3_ENDPOINT` | empty | S3-compatible storage (MinIO, R2, ...), `https://` or `http://`, reachable from the internet: the Lambda then gets presigned URLs (an annotated picture, written only on request, goes to a stack bucket) |
 | `S3_ACCESS_KEY`, `S3_SECRET_KEY` (secrets) | empty = the server's role | keys for `S3_ENDPOINT` |
 | `DETECTOR` | `yolo26` | `yolo26` or `yolov7` (baseline) |
+| `DETECTOR_TILES`, `DETECTOR_ROI` | `off`, `off` | `sticky`: 2 x 2 tiles on sticky-trap photos; `all`: count only on the trap surface. The live demo runs `sticky` and `all` (`docs/DECISIONS.md`, "Detector") |
 | `PLANNER_MODE` | `rule` | `rule` (deterministic) or `llm` (Anthropic per photo) for detect mode; deep mode uses the LLM when a key exists |
 | `ANTHROPIC_SECRET_NAME`, `ANTHROPIC_API_KEY` (secret), `ANTHROPIC_MODEL` | `sentinel-dev-anthropic`, empty, `claude-haiku-5-5` | the LLM for deep-mode answers |
 | `JWT_SECRET` (secret) | generated once | login tokens |
@@ -242,7 +246,7 @@ stack stuck in ROLLBACK_COMPLETE). Log: `infra/.build/deploy-<stage>.log`. Remov
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` (secret), `MAIL_FROM`, `CONTACT_EMAIL` | empty = emails go to the server log | email verification, password reset, alerts |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` (secret), `VAPID_SUBJECT` | generated once | web push |
 | `APP_MODE` | `hybrid` | `b2c` personal workspaces, `b2b` organizations, `hybrid` both |
-| `PAYMENTS_ENABLED`, `PAYMENTS_GRACE_DAYS`, `PAYMENTS_ALLOW_LIVE` | `false`, 7, `false` | online payment (never with `APP_MODE=b2b`); live Stripe keys on production only. Setup: `flybot/docs/payments.md` (FlyBot submodule) |
+| `PAYMENTS_ENABLED`, `PAYMENTS_GRACE_DAYS`, `PAYMENTS_ALLOW_LIVE` | `false`, 7, `false` | online payment (never with `APP_MODE=b2b`); live Stripe keys on production only. The FlyBot `feat/aws` build of this entry has no payments: leave these empty |
 | `PAYOS_CLIENT_ID`, `PAYOS_API_KEY`, `PAYOS_CHECKSUM_KEY` (secrets), `PAYOS_API_URL`, `PAYOS_LINK_TTL_MINUTES` | empty, PayOS defaults | PayOS payment channel; webhook `https://<DOMAIN_NAME>/api/payments/webhooks/payos` |
 | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (secrets), `STRIPE_API_URL`, `STRIPE_WEBHOOK_TOLERANCE` | empty, Stripe defaults, 300 s | Stripe; webhook `https://<DOMAIN_NAME>/api/payments/webhooks/stripe` |
 | `GCP_SERVICE_ACCOUNT_FILE`, `VERTEX_PROJECT_ID`, `VERTEX_LOCATION`, `VERTEX_MODEL` | empty = chatbot off | Google service-account JSON (kept outside git) for the chatbot on Vertex AI |

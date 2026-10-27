@@ -15,7 +15,7 @@ Assumption: 2 EZVIZ cameras every 30 min in daylight + 2 ESP32 traps hourly, abo
 | EC2 t4g.micro (FlyBot + Caddy + MongoDB, no Docker) | 730 h | 0.0106 /h | 7.74 | `infra/prices.json` |
 | EBS gp3 30 GB (system, MongoDB data, two FlyBot releases) | 30 GB-month | 0.096 /GB-month | 2.88 | https://aws.amazon.com/ebs/pricing/ |
 | Public IPv4 (the Elastic IP) | attached, 730 h | 0.005 /h | 3.65 | https://aws.amazon.com/vpc/pricing/ |
-| Lambda arm64 2048 MB | 1,500 invocations x 1.09 s x 2 GB = 3,270 GB-s, plus ~100 cold starts x 4 s | 0.0000133334 /GB-s + 0.20 /1M requests | 0.06 | warm p50 1,087 ms, cold billed 3,965 ms: `bench/results/lambda_latency.json` |
+| Lambda arm64 2048 MB | 1,500 invocations x 0.98 s x 2 GB = 2,940 GB-s, plus ~100 cold starts x 3.8 s | 0.0000133334 /GB-s + 0.20 /1M requests | 0.05 | warm p50 980 ms, cold billed 3,767 ms: `bench/results/lambda_latency.json` |
 | CodeBuild ARM small (Lambda image) | 2 builds/month x 10 min | 0.0045 /min | 0.09 | `infra/prices.json` |
 | S3 photos + evidence + releases | 0.75 GB photos/evidence (90-day lifecycle on evidence/), ~60 MB FlyBot releases | 0.025 /GB-month + requests | 0.05 | https://aws.amazon.com/s3/pricing/ |
 | ECR private | 1-5 images, ~0.4 GB each compressed | 0.10 /GB-month | 0.04-0.20 | https://aws.amazon.com/ecr/pricing/ |

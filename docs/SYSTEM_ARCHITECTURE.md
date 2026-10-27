@@ -1,6 +1,6 @@
 # FlyBot on AWS: system architecture
 
-How the parts of FlyBot on AWS fit together, what runs where, and which way the data goes. State of the system: 21
+How the parts of FlyBot on AWS fit together, what runs where, and which way the data goes. State of the system: 27
 October 2026. The numbers and the reasons behind each choice are in the [technical report](REPORT.md); the interfaces
 are specified in [CONTRACTS.md](CONTRACTS.md) and the decisions in [DECISIONS.md](DECISIONS.md).
 
@@ -15,7 +15,7 @@ APPROVAL, IOT CORE, FIRMWARE, OPENCV 5 NEW.*
 |---|---|---|---|
 | EZVIZ trap cameras | the farm, EZVIZ cloud | (EZVIZ) | photos of lure traps on FlyBot's schedule, through the EZVIZ Open Platform |
 | CamOS trap camera | ESP32-S3 board in the trap (Wi-Fi or 4G, GPS, solar) | [camos-esp32-trap](https://github.com/agrhub/camos-esp32-trap) v0.9.1 | photos over HTTPS, MQTT to IoT Core (shadow, RPC, presence, log), live view as KVS WebRTC master, OTA updates |
-| FlyBot app | EC2 t4g.micro (Node 22 API, Vue 3 client, MongoDB 7, Caddy TLS) | [flybot](https://github.com/agrhub/flybot) `feat/aws` | users, farms, cameras, photos, schedules, alerts, chatbot, confirm cards, the Sentinel console, the camera fleet, guest access |
+| FlyBot app | EC2 t4g.micro (Node 22 API, Vue 3 client, Caddy TLS; MongoDB 7 or an external MongoDB) | [flybot](https://github.com/agrhub/flybot) `feat/aws` | users, farms, cameras, photos, schedules, alerts, chatbot, confirm cards, the Sentinel console, the camera fleet, guest access |
 | Vision Lambda | Lambda arm64 container, 2,048 MB, 120 s | `lambda/vision/sentinel/vision/` | the OpenCV 5 ops on each photo and its previous photo: count, quality, trap, registration, change, crowding, density, occlusion, faces |
 | Agent | the same Lambda invocation | `lambda/vision/sentinel/agent/` | rule planner (every photo) or Claude Haiku 5.5 planner (grower questions), 14 typed tools, guardrails, trace, proposals |
 | Infrastructure | one SAM stack `flybot-<stage>` in ap-southeast-2 | `infra/template.yaml`, `deploy.sh` | Lambda, ECR, CodeBuild, EC2, IoT Core, Kinesis Video Streams, S3, Secrets Manager, CloudWatch, SNS, IAM, SSM |
@@ -74,8 +74,10 @@ confirm cards like any other.
 - **Control.** Shadow (desired and reported settings), RPC (`snapshot.now`, `live.start`, `gps.fix`, `ota.apply`,
   `log.start`), presence, events.
 - **Live view.** Kinesis Video Streams WebRTC: the camera is the master (KVS credentials through an IoT role alias),
-  each browser a viewer with 15-minute credentials for one channel; JPEG frames over the data channel (no hardware
-  H.264 on the ESP32-S3).
+  each browser a viewer with 15-minute credentials for one channel; software H.264 at 320x240, or the camera's own JPEG
+  frames over the data channel (no hardware H.264 on the ESP32-S3). A camera on battery joins at its next wake: a
+  Wi-Fi check-in every 2-10 minutes by day, or its next photo slot on 4G; FlyBot shows it as Sleeping with its wake
+  time and the live page waits for it.
 - **Fleet.** Serial registry, firmware releases from GitHub checked against `SHA256SUMS` on alpha, beta and stable
   channels, rollouts with per-camera progress, a battery guard, pause, a remote console log on `camos/<serial>/log`
   (24 hours kept) and crash reports.
@@ -87,8 +89,11 @@ confirm cards like any other.
 | Stack | `./deploy.sh` (one command, idempotent): preflight, discovery, models, secrets, the SAM stack, the FlyBot release, the Lambda image, the host bootstrap, health, smoke test and a cold/warm latency measurement |
 | Lambda image | built on ARM by CodeBuild, tagged with a hash of its code and models, stored in ECR; nothing is built on the server |
 | FlyBot release | built on the operator's computer, published as a GitHub pre-release `flybot-<commit>` with its sha256; the server follows a pointer in S3 and switches atomically (the previous release kept for `--rollback`) |
-| Host | Amazon Linux 2023 arm64; `infra/host/bootstrap.sh` run through SSM installs Node 22, Caddy and MongoDB 7 and starts FlyBot under systemd |
+| Host | Amazon Linux 2023 arm64; `infra/host/bootstrap.sh` run through SSM installs Node 22, Caddy and (without `MONGO_URI`) MongoDB 7 and starts FlyBot under systemd |
 | Firmware | GitHub releases of camos-esp32-trap (web flasher for the first install, OTA afterwards) |
+
+The live demo uses FlyBot's existing external MongoDB (`MONGO_URI`) and its S3-compatible photo store outside AWS
+(`S3_ENDPOINT`): the Lambda reads its photos through presigned URLs (report section 5).
 
 ## 4. Security and privacy
 
@@ -99,7 +104,8 @@ confirm cards like any other.
   see server credentials.
 - **People in photos.** No photo is ever sent to an LLM; a photo with a suspected person is not counted; face regions
   are returned so FlyBot blurs them; the Lambda stores no picture.
-- **Guests.** One shared read-only account for two hours; every write is refused except chatbot messages and sign-out;
+- **Guests.** One shared read-only account for two hours; every write is refused except sign-out, chatbot messages,
+  live view of the demo cameras opened to visitors and up to five reports of its own (removed when the session ends);
   guests read traces and proposals but cannot decide.
 - **People decide.** Nothing reaches a camera without a person's Confirm; there is no actuator for treatments.
 

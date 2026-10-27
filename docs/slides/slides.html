@@ -55,7 +55,7 @@ th { color: #475569; font-weight: 600; }
   <div class="meta">
     <b>Team:</b> AGRHUB, makers of FlyBot · <b>Agronomy advisor:</b> MSc Trương Quốc Ánh (IAS, VAAS)<br>
     <b>Live app:</b> flybot.agrhub.com (press Guest access) · <b>Code:</b> github.com/agrhub/flybot-aws<br>
-    State of the system: 21 October 2026
+    State of the system: 27 October 2026
   </div>
 </section>
 
@@ -178,7 +178,7 @@ th { color: #475569; font-weight: 600; }
       </ul>
     </div>
   </div>
-  <p class="src">docs/REPORT.md section 3.1; camos-esp32-trap README and docs/BOM.md (prices read on 17 Oct 2026)</p>
+  <p class="src">docs/REPORT.md section 3.1; camos-esp32-trap README and docs/BOM.md (prices read on 17, 24 and 25 Oct 2026)</p>
 </section>
 
 <section class="slide">
@@ -190,10 +190,10 @@ th { color: #475569; font-weight: 600; }
       <table>
         <tr><td><b>Lambda</b> arm64 container</td><td>OpenCV 5 pipeline + agent, one call per photo</td></tr>
         <tr><td><b>ECR + CodeBuild</b></td><td>the Lambda image, built on ARM</td></tr>
-        <tr><td><b>EC2</b> t4g.micro</td><td>FlyBot (Node 22, Vue 3), MongoDB 7, Caddy TLS</td></tr>
+        <tr><td><b>EC2</b> t4g.micro</td><td>FlyBot (Node 22, Vue 3), Caddy TLS; MongoDB 7 or an external one</td></tr>
         <tr><td><b>IoT Core</b></td><td>camera things, shadow, RPC, presence, log topic</td></tr>
         <tr><td><b>Kinesis Video Streams</b></td><td>WebRTC live view, 15-minute viewer credentials</td></tr>
-        <tr><td><b>S3, Secrets Manager</b></td><td>photos, releases; every secret</td></tr>
+        <tr><td><b>S3, Secrets Manager</b></td><td>photos (or an S3-compatible store), release pointer; every secret</td></tr>
         <tr><td><b>CloudWatch + SNS</b></td><td>logs and alarms by email</td></tr>
       </table>
     </div>

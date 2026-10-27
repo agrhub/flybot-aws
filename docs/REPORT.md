@@ -1,7 +1,7 @@
 # FlyBot on AWS: technical report
 
 **Fruit-fly trap monitoring that looks before it counts: OpenCV 5 and a guarded agent on AWS.** OpenCV AI Competition
-2026, powered by AWS. Team: AGRHUB, makers of FlyBot. State of the system: 20 October 2026.
+2026, powered by AWS. Team: AGRHUB, makers of FlyBot. State of the system: 27 October 2026.
 
 - Live app: https://flybot.agrhub.com (FlyBot on EC2, vision on Lambda, cameras on IoT Core and Kinesis Video Streams).
   Judges: press **Guest access** on the sign-in page for a read-only demo account (two hours, section 3.2).
@@ -42,7 +42,7 @@ Growers and farm managers who run FlyBot traps, and the agronomists who advise t
 Vietnamese or English), its chatbot, and Telegram. The system serves two camera families: EZVIZ cloud cameras that
 farms already own, and an open, low-cost ESP32-S3 trap camera (solar, Wi-Fi or 4G, GPS) whose firmware and parts
 list are public. The field camera as built, in a hanging solar trap housing with an ESP32-S3 N16R8 board, an OV5640 wide-angle camera,
-4G, GPS, a flat LiPo cell and a 5 V boost board, costs about US$39 in all (944,760 VND of parts at 26,050 VND/USD, the
+4G, GPS, a flat LiPo cell, a TP4056 charger and a 5 V boost board, costs about US$39 in all (944,760 VND of parts at 26,050 VND/USD, the
 Vietcombank rate on 21 Oct 2026, plus the US$3.00 housing); a Wi-Fi camera in the same housing is about US$19 (the
 reference field build of the wiring page, in an IP65 box: about US$60)
 ([parts list](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/BOM.md), prices read on 17, 24 and 25 Oct 2026).
@@ -62,7 +62,7 @@ new and caught few flies in October, so the guest account also shows a clearly l
 MCP (none in this entry), HUMAN APPROVAL, IOT CORE, FIRMWARE, OPENCV 5 NEW.*
 
 1. **Input.** FlyBot captures the EZVIZ cameras on schedule through the EZVIZ Open Platform and stores each photo in
-   S3. The ESP32-S3 trap camera uploads its photos over HTTPS to FlyBot's device API and talks MQTT to AWS IoT Core
+   S3 (or an S3-compatible store, section 5). The ESP32-S3 trap camera uploads its photos over HTTPS to FlyBot's device API and talks MQTT to AWS IoT Core
    (`docs/CONTRACTS.md` sections 2-3). A grower can also ask FlyBot's chatbot about a photo, and a judge can open the
    read-only guest account (section 3.2). Without hardware, the 24 bundled photos in `data/samples/` go through the
    same handler (`make replay-sample`).
@@ -102,6 +102,10 @@ Zero-touch registration: the camera generates its own key, FlyBot signs its CSR 
 and its KVS channel, and the owner claims it by QR code or serial and verify code (`docs/CONTRACTS.md` section 2a).
 Each certificate can use only its own topics; the camera gets KVS master credentials through an IoT role alias, and
 each browser gets 15-minute viewer credentials for one channel (`docs/DECISIONS.md`, "Cameras and live view").
+On battery the camera sleeps between photos and picks up a live request, a photo, an update or a GPS fix when it
+wakes: a check-in every 2-10 minutes by day on Wi-Fi, its next photo slot on 4G
+([sched.c](https://github.com/agrhub/camos-esp32-trap/blob/main/firmware/main/sched.c)). FlyBot shows such a camera
+as Sleeping with its next wake, and its live page waits up to 15 minutes for it.
 Measured on the bench board over Wi-Fi with a viewer on the same network: JPEG 640x480 at 14.8-15.3 fps in a dark room
 (17 Oct) and 8.6-11.1 fps in a lit room (18 Oct); the 4G uplink and a remote viewer through a TURN relay are **not
 measured** ([LIVE_VIEW.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/dev/LIVE_VIEW.md)). Firmware 0.6.3 turned the OV5640's night mode off by default
@@ -119,6 +123,9 @@ a pause that stops a camera's photos, uploads and live view. An update is the RP
 Jobs): the camera fetches the image from a one-hour signed link and reports `ota_progress` and `ota_result`. A battery
 guard holds the update below 40 % (or 3,700 mV when the camera reports no percentage) unless the camera is on mains or
 charging ([firmwareService.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/services/firmwareService.js), [CHANGELOG.md](https://github.com/agrhub/flybot/blob/feat/aws/CHANGELOG.md) 1.6.0).
+With firmware 0.9.2 (in release candidates; v0.9.1 is the release), a camera whose cell is critical and not charging
+makes FlyBot warn the people who see it (`battery_critical`: app, email, Telegram, push). An administrator can let a
+camera that lost its NVS register again in place; it keeps its owner, farm and photos (`docs/CONTRACTS.md` 2a).
 
 **Remote console log and crash reports** (firmware 0.8.0). A camera's owner or an administrator turns on its console
 log for up to an hour; the camera sends batches on `camos/<serial>/log` (allowed by the device policy and forwarded by
@@ -133,8 +140,10 @@ move, later updates work, and crash reports come without the coredump (checked o
 
 A **Guest access** button on the sign-in page opens one shared, read-only demo account for two hours (the session is
 never extended; turning the switch off in Admin > System > Demo access ends it at once; 20 sessions per hour per IP).
-The server refuses every write request from it except chatbot messages and sign-out, so settings, captures, sharing,
-deleting and approvals are refused; each guest session keeps its own chatbot conversation; guests read the Sentinel
+The server refuses every write request from it except sign-out, chatbot messages, the dashboard's AI diagnosis (it
+saves nothing), live view of the demo cameras the administrator opened to visitors, and up to five reports of the
+guest's own, removed when the session ends; settings, captures, sharing, deleting and approvals are refused; each
+guest session keeps its own chatbot conversation; guests read the Sentinel
 console (traces and proposals) but cannot decide on a proposal
 ([guestAccess.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/services/guestAccess.js), [guestAccess.test.js](https://github.com/agrhub/flybot/blob/feat/aws/server/tests/guestAccess.test.js)).
 
@@ -144,7 +153,7 @@ month of history ([DEPLOY.md](https://github.com/agrhub/flybot/blob/feat/aws/DEP
 synthetic trap pictures of `eval/synth` (a real empty-trap photo, or a synthetic sticky card, with pasted flies and a
 visible SIMULATED stamp); the seed run sends 2,852 of them through the real vision Lambda (same file) and a daily job
 adds more, so the counts, boxes, flags, traces and proposals are the pipeline's own. Every item is marked: "SIM ·" trap
-names, "(simulated)" farm names, a banner on every page, a line in exported PDFs, and the number of flies drawn
+names, "(simulated)" farm names, a banner on the pages that show them, a line in exported PDFs, and the number of flies drawn
 ("Drawn: N") beside the AI's count; simulated data never enters emailed reports, alerts or webhooks. **It is not field
 evidence:** `eval/RESULTS.md` holds real photos only; the synthetic measurements are in section 6.8.
 
@@ -194,16 +203,19 @@ The VLM inside OpenCV 5 is **not used**.
 
 Everything runs in ap-southeast-2 as one SAM stack `flybot-<stage>` (`infra/template.yaml`), created and updated by
 `./deploy.sh` with one settings file (`deploy.env.example`); `./destroy.sh` removes it. Steps and checks:
-README "Deploy your own", `infra/DEPLOY_CHECKLIST.md`.
+README "Deploy your own", `infra/DEPLOY_CHECKLIST.md`. The live demo uses two of its options: FlyBot's existing
+external MongoDB (`MONGO_URI`) and its existing S3-compatible photo store outside AWS (`S3_ENDPOINT`; the Lambda
+reads presigned URLs), so its photos and records are not in the stack's bucket or on the instance; a default deploy
+keeps both in AWS.
 
 | AWS service | Role here (`infra/template.yaml`) |
 |---|---|
 | **Lambda** (container, arm64, 2,048 MB, 120 s) | `flybot-vision-<stage>`: the OpenCV 5 pipeline and the agent, one synchronous call per photo |
 | **ECR** + **CodeBuild** | the Lambda image, built on ARM by CodeBuild and tagged with a hash of its inputs; nothing is built on the server |
-| **EC2** t4g.micro + Elastic IP | FlyBot (Node 22 API + Vue 3 client) as a prebuilt release, MongoDB 7, Caddy with automatic TLS for flybot.agrhub.com |
+| **EC2** t4g.micro + Elastic IP | FlyBot (Node 22 API + Vue 3 client) as a prebuilt release, MongoDB 7 unless `MONGO_URI` is set, Caddy with automatic TLS for flybot.agrhub.com |
 | **IoT Core** | thing type `camos-camera`, one device policy with per-thing topics, device shadow, RPC (also `ota.apply` for firmware updates and `log.start`), presence, the remote log topic `camos/<serial>/log`; optional topic rules to FlyBot; role alias for KVS credentials |
 | **Kinesis Video Streams** | one WebRTC signaling channel per CamOS camera (created by FlyBot), viewer role limited to one channel for 15 minutes |
-| **S3** | photos (FlyBot's, and the simulated farm's under `simulated/`), FlyBot releases, the Lambda build context; the Lambda stores no picture (an annotated JPEG only on request, e.g. the benchmark) |
+| **S3** | photos by default (FlyBot's, and the simulated farm's under `simulated/`), the FlyBot release pointer, the Lambda build context; the Lambda stores no picture (an annotated JPEG only on request, e.g. the benchmark) |
 | **Secrets Manager** | every application secret (JWT, EZVIZ, SMTP, Telegram, MongoDB URI, Anthropic key, Google key) |
 | **CloudWatch** + **SNS** | logs, alarms on Lambda errors, Lambda duration and EC2 status, by email |
 | IAM, SSM, CloudFormation | least-privilege roles, remote commands without SSH, the stack |

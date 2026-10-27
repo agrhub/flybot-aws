@@ -33,7 +33,7 @@ Then, by hand:
 4. **External MongoDB** (`MONGO_URI`): allow the Elastic IP in the database's IP access list (MongoDB Atlas: Network
    Access).
 5. **Payments** (`PAYMENTS_ENABLED=true`): enter the two webhook URLs from the summary in the PayOS payment channel and
-   the Stripe event destination, as `flybot/docs/payments.md` (FlyBot submodule) describes.
+   the Stripe event destination. The FlyBot `feat/aws` build of this entry has no payments: leave them off.
 
 The GitHub token (`GITHUB_TOKEN`): a fine-grained token at github.com > Settings > Developer settings > Fine-grained
 tokens, repository `agrhub/flybot-aws` only, permission Contents: read and write. It stays in your `deploy.env`.
