@@ -80,6 +80,6 @@ What the stack creates and runs:
 | Wi-Fi camera | the board and a trap housing: about US$19 in all with the US$3.00 hanging solar trap (419,640 VND of parts; the trap is US$9.90 on Amazon); a microSD card is optional |
 | Field camera | as built in the hanging trap: plus a 4G module (A7680C) and a GPS module (ATGM336H), both with their antennas, a flat LiPo cell (103450, 2,000 mAh), a TP4056 charger and a 5 V boost board: about US$39 in all with the housing (944,760 VND of parts at 26,050 VND/USD, Vietcombank, 21 Oct 2026, plus the US$3.00 housing); optional microSD, solar panel and active GPS antenna +US$9.67; the reference build in an IP65 box: about US$60 (prices read on 17, 24 and 25 Oct 2026, camos-esp32-trap [docs/BOM.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/BOM.md)) |
 | Wiring | camos-esp32-trap [docs/WIRING.md](https://github.com/agrhub/camos-esp32-trap/blob/main/docs/WIRING.md) (reference design); the bench trap as built: `4G-trap-wiring.pdf` in the Devpost package |
-| Firmware | camos-esp32-trap v0.9.1 (0.9.2 in release candidates); first install with the web flasher in Chrome or Edge, OTA from FlyBot afterwards; built with ESP-IDF v5.4.4 |
+| Firmware | camos-esp32-trap v0.9.2; first install with the web flasher in Chrome or Edge, OTA from FlyBot afterwards; built with ESP-IDF v5.4.4 |
 | Network | Wi-Fi 2.4 GHz, or a nano SIM with data for 4G |
 | Power | USB 5 V, or the LiPo cell with solar charging; battery life and solar charging **not measured** |

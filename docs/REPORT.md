@@ -8,7 +8,7 @@
 - Code: this repository, [agrhub/flybot-aws](https://github.com/agrhub/flybot-aws) (vision Lambda, agent,
   infrastructure, benchmark, evaluation), with two public submodules: the FlyBot app
   ([agrhub/flybot](https://github.com/agrhub/flybot), branch `feat/aws`) and the ESP32-S3 trap camera firmware
-  ([agrhub/camos-esp32-trap](https://github.com/agrhub/camos-esp32-trap), v0.9.1). All three are AGPL-3.0.
+  ([agrhub/camos-esp32-trap](https://github.com/agrhub/camos-esp32-trap), v0.9.2). All three are AGPL-3.0.
 - Diagrams: [architecture](diagrams/architecture.svg), [agent workflow](diagrams/agent_workflow.svg),
   [trace example](diagrams/trace_example.svg). Companion texts: [SYSTEM_ARCHITECTURE.md](SYSTEM_ARCHITECTURE.md), [SYSTEM_REQUIREMENTS.md](SYSTEM_REQUIREMENTS.md), [slides](SLIDES.pdf), [DEVPOST.md](DEVPOST.md),
   [VIDEO_SCRIPT.md](VIDEO_SCRIPT.md), [RESPONSIBLE_USE.md](RESPONSIBLE_USE.md).
@@ -96,7 +96,7 @@ cameras, photos, cards and traces (`docs/DECISIONS.md`).
 | Camera | Path into FlyBot | What FlyBot can change | Live view |
 |---|---|---|---|
 | EZVIZ (2 in the orchard, lure traps) | FlyBot's schedule, EZVIZ Open Platform | extra capture, capture interval | EZVIZ's own player |
-| ESP32-S3 trap camera, firmware v0.9.1 | HTTPS photo upload (device token) + MQTT over mutual TLS to IoT Core | shadow: capture interval, image settings, live request; RPC: `snapshot.now`, `live.start`, `gps.fix`, `ota.apply`, `log.start` (`docs/CONTRACTS.md` section 3) | KVS WebRTC: the camera is the master, the browser the viewer |
+| ESP32-S3 trap camera, firmware v0.9.2 | HTTPS photo upload (device token) + MQTT over mutual TLS to IoT Core | shadow: capture interval, image settings, live request; RPC: `snapshot.now`, `live.start`, `gps.fix`, `ota.apply`, `log.start` (`docs/CONTRACTS.md` section 3) | KVS WebRTC: the camera is the master, the browser the viewer |
 
 Zero-touch registration: the camera generates its own key, FlyBot signs its CSR through IoT Core, creates the thing
 and its KVS channel, and the owner claims it by QR code or serial and verify code (`docs/CONTRACTS.md` section 2a).
@@ -123,7 +123,7 @@ a pause that stops a camera's photos, uploads and live view. An update is the RP
 Jobs): the camera fetches the image from a one-hour signed link and reports `ota_progress` and `ota_result`. A battery
 guard holds the update below 40 % (or 3,700 mV when the camera reports no percentage) unless the camera is on mains or
 charging ([firmwareService.js](https://github.com/agrhub/flybot/blob/feat/aws/server/src/services/firmwareService.js), [CHANGELOG.md](https://github.com/agrhub/flybot/blob/feat/aws/CHANGELOG.md) 1.6.0).
-With firmware 0.9.2 (in release candidates; v0.9.1 is the release), a camera whose cell is critical and not charging
+With firmware 0.9.2, a camera whose cell is critical and not charging
 makes FlyBot warn the people who see it (`battery_critical`: app, email, Telegram, push). An administrator can let a
 camera that lost its NVS register again in place; it keeps its owner, farm and photos (`docs/CONTRACTS.md` 2a).
 
