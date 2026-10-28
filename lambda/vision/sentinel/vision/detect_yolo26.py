@@ -17,6 +17,11 @@ how many boxes each step removed under `postprocess`.
 overlapping windows so small flies are seen larger, merges the windows' boxes in full-frame pixels and then applies
 the box rules; `postprocess.tiles` says whether tiles ran, why, and how many forwards the photo cost.
 
+A model trained with more classes than the fruit fly (the `classes` list of its `.onnx.json`, e.g. `["fruit_fly",
+"other_insect"]` for bycatch) still counts fruit flies only: `count` and `boxes` hold the `fruit_fly` class, and the
+other classes' boxes come back under `others`, each with its class name in `cls`. A sidecar without `classes` is a
+single-class fruit-fly model.
+
 Preprocessing is the YOLOv7 one (letterbox to S x S, pad 114, RGB, /255), so both detectors share
 `detect_yolov7.preprocess`. The public interface matches `YoloV7Detector`: `detect(img) -> {count, boxes
 [{xywh, score, class_id}], forward_ms, output_shape, output_finite}`, `engine_used`, `size`, `meta`.
@@ -88,6 +93,24 @@ def decode(out: np.ndarray, conf: float, iou: float, scale: tuple[float, float],
     if out.ndim == 3 and out.shape[1] < out.shape[2]:
         return decode_one_to_many(out, conf, iou, scale, offset)
     raise ValueError(f"unexpected YOLO26 output shape {list(out.shape)}: expected [1, 300, 6] or [1, 4+nc, A]")
+
+
+TARGET_CLASS = "fruit_fly"
+
+
+def split_by_class(boxes: list[dict], classes: list[str] | None) -> tuple[list[dict], list[dict]]:
+    """(fruit-fly boxes, other boxes with their class name in `cls`). Without a class list every box is a fruit fly."""
+    if not classes:
+        return list(boxes), []
+    flies, others = [], []
+    for b in boxes:
+        cid = int(b.get("class_id", 0))
+        name = classes[cid] if 0 <= cid < len(classes) else f"class_{cid}"
+        if name == TARGET_CLASS:
+            flies.append(b)
+        else:
+            others.append({**b, "cls": name})
+    return flies, others
 
 
 class Yolo26Detector:
@@ -164,10 +187,11 @@ class Yolo26Detector:
         dets, dropped = apply_regions(dets, W, H, self.regions, roi, trap_kind)
         rules = None if self.rules is None else self.rules.for_kind(trap_kind)
         kept, rejected = apply_rules(dets, W, H, rules)
+        flies, others = split_by_class(kept, self.meta.get("classes"))
         post = {"nms_iou": self.iou, "nms_removed": removed, "rules": None if rules is None else rules.as_dict(),
                 "rejected": {**rejected, **dropped}, "tiles": tiles,
                 "regions": {**self.regions.as_dict(), "roi_used": roi is not None and self.regions.wants_roi(trap_kind)}}
-        return {"count": len(kept), "boxes": kept, "forward_ms": round(forward_ms, 1),
+        return {"count": len(flies), "boxes": flies, "others": others, "forward_ms": round(forward_ms, 1),
                 "output_shape": list(out.shape), "output_finite": bool(np.isfinite(out).all()), "head": self.head,
                 "postprocess": post}
 

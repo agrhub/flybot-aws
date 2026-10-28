@@ -27,8 +27,8 @@ class FakeDetector:
     engine_used = "new"
     onnx_path = "fake.onnx"
 
-    def __init__(self, n: int = 3):
-        self.n, self.calls = n, 0
+    def __init__(self, n: int = 3, others: list[dict] | None = None):
+        self.n, self.calls, self.others = n, 0, others or []
         self.meta = {"version": "test-1"}
 
     def detect(self, img):
@@ -36,7 +36,8 @@ class FakeDetector:
         hgt, wid = img.shape[:2]
         boxes = [{"xywh": [10 + 30 * i, 10 + 20 * i, 24, 30], "score": round(0.9 - 0.1 * i, 2), "class_id": 0}
                  for i in range(self.n) if 10 + 30 * i + 24 < wid / 2 and 10 + 20 * i + 30 < hgt / 2]
-        return {"count": len(boxes), "boxes": boxes, "forward_ms": 1.5, "output_shape": [1, 300, 6], "output_finite": True}
+        return {"count": len(boxes), "boxes": boxes, "others": self.others, "forward_ms": 1.5, "output_shape": [1, 300, 6],
+                "output_finite": True}
 
 
 class FakeS3:
@@ -105,6 +106,15 @@ def test_detect_mode_returns_the_contract(fake_det, no_bucket):
     assert local.is_file() and local.name == "2026-10-16T08-00-00Z.annotated.jpg" and local.parent.name == "BE4089629"
     json.dumps(out)  # JSON-serializable
     assert fake_det.calls == 1
+
+
+def test_other_insects_are_reported_by_class_but_not_counted(fake_det, no_bucket):
+    fake_det.others = [{"xywh": [200, 150, 24, 30], "score": 0.8, "class_id": 1, "cls": "other_insect"},
+                       {"xywh": [260, 150, 24, 30], "score": 0.6, "class_id": 1, "cls": "other_insect"}]
+    out = h.analyze(request())
+    assert out["counts"] == {"total": 3, "byClass": {"fruit_fly": 3, "other_insect": 2}}
+    assert [b["cls"] for b in out["boxes"]] == ["fruit_fly"] * 3 + ["other_insect"] * 2
+    assert sum(map(sum, out["density"]["cells"])) == 3  # fruit flies only
 
 
 def test_prev_photo_gives_a_diff(fake_det, no_bucket):

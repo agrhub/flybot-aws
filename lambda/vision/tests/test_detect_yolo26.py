@@ -31,6 +31,18 @@ def test_one_to_many_head_is_decoded_with_nms():
     assert decode_one_to_many(out, 0.25, 0.45, (1.0, 1.0), (0, 0)) == dets
 
 
+def test_only_the_fruit_fly_class_is_counted():
+    from sentinel.vision.detect_yolo26 import split_by_class
+
+    boxes = [{"xywh": [0, 0, 10, 10], "score": 0.9, "class_id": 0}, {"xywh": [20, 0, 10, 10], "score": 0.8, "class_id": 1},
+             {"xywh": [40, 0, 10, 10], "score": 0.7, "class_id": 5}]
+    flies, others = split_by_class(boxes, ["fruit_fly", "other_insect"])
+    assert flies == boxes[:1]
+    assert [o["cls"] for o in others] == ["other_insect", "class_5"]
+    assert split_by_class(boxes, None) == (boxes, [])  # single-class model without a class list
+    assert split_by_class(boxes, ["fruit_fly"])[0] == boxes[:1]
+
+
 def test_unexpected_shape_is_an_error():
     with pytest.raises(ValueError):
         decode(np.zeros((1, 7, 7), np.float32), 0.25, 0.45, (1.0, 1.0), (0, 0))

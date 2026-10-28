@@ -85,6 +85,7 @@ class FakeYolo26(Yolo26Detector):
                  regions: Regions | None = None):
         self.size, self.iou, self.rules, self.tiling, self.head = 640, 0.45, rules, tiles, "end2end"
         self.regions = regions or Regions()
+        self.meta = {}  # no sidecar: a single-class fruit-fly model
         self.script, self.calls = list(script), []
 
     def _pass(self, img):

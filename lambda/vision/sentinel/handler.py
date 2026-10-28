@@ -199,13 +199,14 @@ def load_images(req: dict) -> dict:
 
 
 def contract_boxes(detections: list[dict] | None, boxes_xyxy: list, width: int, height: int) -> list[dict]:
-    """Detector boxes -> normalised {x, y, w, h, score, cls} (top-left corner, fractions of the photo)."""
+    """Detector boxes -> normalised {x, y, w, h, score, cls} (top-left corner, fractions of the photo); `cls` is the
+    detection's own class name when it has one (other_insect boxes), else fruit_fly."""
     out = []
     if detections:
         for d in detections[:MAX_BOXES]:
             x, y, w, h = d["xywh"]
             out.append({"x": round(x / width, 4), "y": round(y / height, 4), "w": round(w / width, 4), "h": round(h / height, 4),
-                        "score": round(float(d.get("score", 0.0)), 4), "cls": "fruit_fly"})
+                        "score": round(float(d.get("score", 0.0)), 4), "cls": d.get("cls") or "fruit_fly"})
         return out
     for b in (boxes_xyxy or [])[:MAX_BOXES]:
         x0, y0, x1, y1 = b[:4]
@@ -445,6 +446,12 @@ def analyze(request, *, llm=None, analyzer=None, clock=None, store: bool = True)
         width, height = obs.width or loaded["photo"]["width"], obs.height or loaded["photo"]["height"]
         detections = (res.get("detect") or {}).get("detections") if res else None
         boxes = contract_boxes(detections, obs.boxes, width, height)
+        # Bycatch a multi-class model tells apart (other_insect): reported by class, never in the fruit-fly count,
+        # the density grid or the evidence crops
+        other_boxes = contract_boxes((res.get("detect") or {}).get("others") if res else None, [], width, height)
+        by_class = {"fruit_fly": int(obs.counts.opencv or 0)}
+        for b in other_boxes:
+            by_class[b["cls"]] = by_class.get(b["cls"], 0) + 1
         if obs.counts.opencv is None and not res.get("detect"):
             raise ModelUnavailable("detector produced no result")
         proposals = proposals_from_trace(trace, rt.policy, req["locale"])
@@ -462,8 +469,8 @@ def analyze(request, *, llm=None, analyzer=None, clock=None, store: bool = True)
             answer = answer or summary_text(obs, trace, proposals, req["locale"])
         out = {
             "v": CONTRACT_VERSION, "traceId": trace_id, "model": model,
-            "counts": {"total": int(obs.counts.opencv or 0), "byClass": {"fruit_fly": int(obs.counts.opencv or 0)}},
-            "boxes": boxes, "quality": quality_block(obs), "diff": diff_block(obs),
+            "counts": {"total": int(obs.counts.opencv or 0), "byClass": by_class},
+            "boxes": boxes + other_boxes[:max(MAX_BOXES - len(boxes), 0)], "quality": quality_block(obs), "diff": diff_block(obs),
             "density": density_grid(boxes), "proposals": proposals,
             "trace": trace_block(trace, obs, timings, trace.planner.name),
             "evidence": evidence, "timings": timings, "opencv": cv, "mode": req["mode"],
