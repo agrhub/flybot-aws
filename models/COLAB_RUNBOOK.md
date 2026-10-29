@@ -10,8 +10,8 @@ Colab T4 and switches the Lambda to them.
 1. colab.research.google.com > File > Upload notebook > `models/colab_train_yolo26.ipynb`.
 2. Runtime > Change runtime type > **T4 GPU**.
 3. Settings cell: paste your Roboflow API key in `ROBOFLOW_API_KEY` (universe.roboflow.com > Settings > API
-   key) so the notebook downloads camos/fruit-fly-wmcqi v3 itself; without a key it asks you to upload
-   `fruit-fly.v3i.yolov8.zip` (local copy `../camos-ai-camera/models/fruit-fly.v3i.yolov8.zip`).
+   key) so the notebook downloads the version set in `ROBOFLOW` (v4: `fruit_fly` + `other_insect`) itself; without a key it asks you to upload
+   that version's yolov8 zip (v3: local copy `../camos-ai-camera/models/fruit-fly.v3i.yolov8.zip`).
    `EPOCHS = 60` is the ~1 h budget (not measured for YOLO26: the first epochs print the time per epoch; lower
    `EPOCHS` if the ETA passes 1 h). Set `SMOKE_TEST = True` first for a 3-minute end-to-end check of the notebook.
 4. Runtime > Run all. The last cell downloads (keep the error text verbatim if a cell fails):
