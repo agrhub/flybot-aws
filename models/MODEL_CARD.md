@@ -7,6 +7,25 @@ source file; "not measured" means not measured.
 
 ## YOLO26n (primary)
 
+### Deployed since 2026-10-29: v4, `fruit_fly` + `other_insect`
+
+Trained with the same notebook on camos/fruit-fly-wmcqi **v4** (CC BY 4.0): the v3 images after a review of the tiny
+boxes (29 Oct: 391 ants relabelled `other_insect`, 569 debris or wing boxes removed; same export settings and
+splits as v3, plus 42 empty BE4111159 photos). The Lambda counts `fruit_fly` only; `other_insect` boxes come back
+under `others` (`sentinel/vision/detect_yolo26.py`).
+
+| Item | Value | Source |
+|---|---|---|
+| ONNX | `fruitfly_yolo26n.onnx`, 9,865,025 bytes, sha256 `b900161002d3b04e866acf616e17602f1519d98f496414abc34d0d23ac4addd6`, 2 classes, same graph shape as below | `eval/results/yolo26n_v4_onnx_sidecar.json` |
+| Training | Colab T4, Ultralytics 8.4.177, 60 epochs, 0.384 h | `eval/results/yolo26n_v4_train_results.csv` |
+| mAP@50 / mAP@50-95, test split (80 images) | `fruit_fly` **0.964** / 0.713; `other_insect` 0.604 / 0.311 (29 ants on 8 images) | `eval/results/yolo26n_v4_test_metrics.json` |
+| v3 vs v4 through the Lambda's detector and box rules, v4 test split | `fruit_fly` F1 0.897 -> **0.921** (false boxes 264 -> 151), count MAE per photo 2.04 -> 1.80, ants counted as fruit flies 18 of 29 -> **0**, flies on the 4 empty BE4111159 photos 2 -> 0; valid split F1 0.952 -> 0.956 | `eval/results/yolo26_v3_vs_v4.json` |
+| OpenCV 5 vs ONNX Runtime | Colab: 20 test images, both graphs ok; laptop: 20 sample photos, 0 mismatches | `eval/results/yolo26n_v4_opencv_check_colab.json`, `eval/results/yolo26_v4_parity.json` |
+| 24 sample photos through the Lambda handler | 24 ok, 0 flies, MAE 1.54 vs production (as v3) | `eval/results/replay_sample_yolo26_v4.json` |
+
+Both models are scored on v4's cleaned labels, which favours v4 slightly: the removed debris boxes and the ants
+now count against v3 (at most 57 of v3's 113 extra false boxes). The table below is the v3 model (2026-10-16).
+
 | Item | Value | Source |
 |---|---|---|
 | Architecture | YOLO26n, 2,389,735 parameters, 5.4 GFLOPs, 1 class `fruit_fly` | training log (`eval/results/yolo26n_train_results.csv`) |

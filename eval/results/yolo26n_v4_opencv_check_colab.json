@@ -1,0 +1,662 @@
+{
+  "end2end": {
+    "onnx": "/content/fruitfly_yolo26n.onnx",
+    "opencv": "5.0.0",
+    "onnxruntime": "1.31.1",
+    "photos": [
+      {
+        "image": "flybot_BE4111159_20261008T030005_jpg.rf.cc040fe2a9f4f3b6988aeffebb8d96f9.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 0.0,
+        "finite": true,
+        "opencv_forward_ms": 215.7
+      },
+      {
+        "image": "flybot_BE4111159_20261008T083006_jpg.rf.29e544cce7c2d6768c7e0da078fc58ec.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 0.0,
+        "finite": true,
+        "opencv_forward_ms": 168.1
+      },
+      {
+        "image": "flybot_BE4111159_20261008T114348_jpg.rf.552f0a4578a029a051aef7ba985d774c.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 0.0,
+        "finite": true,
+        "opencv_forward_ms": 164.9
+      },
+      {
+        "image": "flybot_BE4111159_20261009T090006_jpg.rf.c50e64da7049e129459fb88bb1ca3f05.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 0.0,
+        "finite": true,
+        "opencv_forward_ms": 164.6
+      },
+      {
+        "image": "image_01121_jpg.rf.6aea462bf2ca160e7ad814be85d32ed0.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 6.103515625e-05,
+        "finite": true,
+        "opencv_forward_ms": 176.2
+      },
+      {
+        "image": "image_01122_jpg.rf.5c351f1ad42c65e9e89c73dd5b8d297d.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 6.103515625e-05,
+        "finite": true,
+        "opencv_forward_ms": 171.0
+      },
+      {
+        "image": "image_01123_jpg.rf.067afa5b11f555b3bcb1c64789a5cdc1.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 3.0517578125e-05,
+        "finite": true,
+        "opencv_forward_ms": 166.3
+      },
+      {
+        "image": "image_01165_jpg.rf.bf8d4b15c386fcd3f569dc1db09ec5b1.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 6.103515625e-05,
+        "finite": true,
+        "opencv_forward_ms": 166.7
+      },
+      {
+        "image": "image_01180_jpg.rf.b71647652ef71b4cec72b60233318158.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 0.000179290771484375,
+        "finite": true,
+        "opencv_forward_ms": 184.7
+      },
+      {
+        "image": "image_01227_jpg.rf.34e450caa81b2a4da3827b7b91d7ace5.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 6.103515625e-05,
+        "finite": true,
+        "opencv_forward_ms": 173.5
+      },
+      {
+        "image": "image_01389_jpg.rf.f37c6453a58edd20e4ef6606a6acfcea.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 9.1552734375e-05,
+        "finite": true,
+        "opencv_forward_ms": 166.1
+      },
+      {
+        "image": "image_01424_jpg.rf.7668e7d6d860b9938b73bb1ec2b494f7.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 3.0517578125e-05,
+        "finite": true,
+        "opencv_forward_ms": 163.9
+      },
+      {
+        "image": "image_01437_jpg.rf.4d157020608450fb66952629b65b947a.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 3.0517578125e-05,
+        "finite": true,
+        "opencv_forward_ms": 191.3
+      },
+      {
+        "image": "image_01475_jpg.rf.5c2c63167ae1aa23c10c02b7f0d09510.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 3.0517578125e-05,
+        "finite": true,
+        "opencv_forward_ms": 167.3
+      },
+      {
+        "image": "image_01484_jpg.rf.9ccabb8cfb45a0e66c5ee71b72217dfc.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 4.57763671875e-05,
+        "finite": true,
+        "opencv_forward_ms": 165.2
+      },
+      {
+        "image": "image_01485_jpg.rf.6855f3f89cb7333fca15b6d2ab1c6457.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 3.0517578125e-05,
+        "finite": true,
+        "opencv_forward_ms": 165.7
+      },
+      {
+        "image": "image_01487_jpg.rf.7a1b4961af24503251e4d66f178d0c29.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 3.319978713989258e-05,
+        "finite": true,
+        "opencv_forward_ms": 181.6
+      },
+      {
+        "image": "image_01496_jpg.rf.dc22814caf5cb0f1b4af4b28b10344aa.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 6.103515625e-05,
+        "finite": true,
+        "opencv_forward_ms": 168.2
+      },
+      {
+        "image": "image_01500_jpg.rf.250603e965df4523e81324bfb5f5cb3b.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 3.0517578125e-05,
+        "finite": true,
+        "opencv_forward_ms": 166.5
+      },
+      {
+        "image": "image_01511_jpg.rf.9d215d515eb0fda310a37b57e44e85ab.jpg",
+        "shape_cv": [
+          1,
+          300,
+          6
+        ],
+        "shape_ort": [
+          1,
+          300,
+          6
+        ],
+        "max_abs_diff": 6.103515625e-05,
+        "finite": true,
+        "opencv_forward_ms": 164.6
+      }
+    ],
+    "status": "ok",
+    "worst_max_abs_diff": 0.000179290771484375,
+    "photos_checked": 20
+  },
+  "one_to_many": {
+    "onnx": "/content/fruitfly_yolo26n-o2m.onnx",
+    "opencv": "5.0.0",
+    "onnxruntime": "1.31.1",
+    "photos": [
+      {
+        "image": "flybot_BE4111159_20261008T030005_jpg.rf.cc040fe2a9f4f3b6988aeffebb8d96f9.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.00653076171875,
+        "finite": true,
+        "opencv_forward_ms": 203.8
+      },
+      {
+        "image": "flybot_BE4111159_20261008T083006_jpg.rf.29e544cce7c2d6768c7e0da078fc58ec.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.003997802734375,
+        "finite": true,
+        "opencv_forward_ms": 170.0
+      },
+      {
+        "image": "flybot_BE4111159_20261008T114348_jpg.rf.552f0a4578a029a051aef7ba985d774c.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.00445556640625,
+        "finite": true,
+        "opencv_forward_ms": 183.8
+      },
+      {
+        "image": "flybot_BE4111159_20261009T090006_jpg.rf.c50e64da7049e129459fb88bb1ca3f05.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.00408935546875,
+        "finite": true,
+        "opencv_forward_ms": 177.4
+      },
+      {
+        "image": "image_01121_jpg.rf.6aea462bf2ca160e7ad814be85d32ed0.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.0030517578125,
+        "finite": true,
+        "opencv_forward_ms": 185.5
+      },
+      {
+        "image": "image_01122_jpg.rf.5c351f1ad42c65e9e89c73dd5b8d297d.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.002349853515625,
+        "finite": true,
+        "opencv_forward_ms": 174.8
+      },
+      {
+        "image": "image_01123_jpg.rf.067afa5b11f555b3bcb1c64789a5cdc1.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.006103515625,
+        "finite": true,
+        "opencv_forward_ms": 173.6
+      },
+      {
+        "image": "image_01165_jpg.rf.bf8d4b15c386fcd3f569dc1db09ec5b1.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.00226593017578125,
+        "finite": true,
+        "opencv_forward_ms": 168.2
+      },
+      {
+        "image": "image_01180_jpg.rf.b71647652ef71b4cec72b60233318158.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.00199127197265625,
+        "finite": true,
+        "opencv_forward_ms": 177.7
+      },
+      {
+        "image": "image_01227_jpg.rf.34e450caa81b2a4da3827b7b91d7ace5.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.003536224365234375,
+        "finite": true,
+        "opencv_forward_ms": 165.6
+      },
+      {
+        "image": "image_01389_jpg.rf.f37c6453a58edd20e4ef6606a6acfcea.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.003936767578125,
+        "finite": true,
+        "opencv_forward_ms": 167.6
+      },
+      {
+        "image": "image_01424_jpg.rf.7668e7d6d860b9938b73bb1ec2b494f7.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.005828857421875,
+        "finite": true,
+        "opencv_forward_ms": 171.2
+      },
+      {
+        "image": "image_01437_jpg.rf.4d157020608450fb66952629b65b947a.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.005859375,
+        "finite": true,
+        "opencv_forward_ms": 185.7
+      },
+      {
+        "image": "image_01475_jpg.rf.5c2c63167ae1aa23c10c02b7f0d09510.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.00787353515625,
+        "finite": true,
+        "opencv_forward_ms": 161.3
+      },
+      {
+        "image": "image_01484_jpg.rf.9ccabb8cfb45a0e66c5ee71b72217dfc.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.008209228515625,
+        "finite": true,
+        "opencv_forward_ms": 160.2
+      },
+      {
+        "image": "image_01485_jpg.rf.6855f3f89cb7333fca15b6d2ab1c6457.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.0120086669921875,
+        "finite": true,
+        "opencv_forward_ms": 165.7
+      },
+      {
+        "image": "image_01487_jpg.rf.7a1b4961af24503251e4d66f178d0c29.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.0050048828125,
+        "finite": true,
+        "opencv_forward_ms": 175.7
+      },
+      {
+        "image": "image_01496_jpg.rf.dc22814caf5cb0f1b4af4b28b10344aa.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.005584716796875,
+        "finite": true,
+        "opencv_forward_ms": 209.0
+      },
+      {
+        "image": "image_01500_jpg.rf.250603e965df4523e81324bfb5f5cb3b.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.023712158203125,
+        "finite": true,
+        "opencv_forward_ms": 160.7
+      },
+      {
+        "image": "image_01511_jpg.rf.9d215d515eb0fda310a37b57e44e85ab.jpg",
+        "shape_cv": [
+          1,
+          6,
+          8400
+        ],
+        "shape_ort": [
+          1,
+          6,
+          8400
+        ],
+        "max_abs_diff": 0.012664794921875,
+        "finite": true,
+        "opencv_forward_ms": 175.3
+      }
+    ],
+    "status": "ok",
+    "worst_max_abs_diff": 0.023712158203125,
+    "photos_checked": 20
+  }
+}

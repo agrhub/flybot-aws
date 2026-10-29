@@ -1,0 +1,137 @@
+{
+ "method": "models/yolo26 (v3, 2026-10-16) and the v4 model (2026-10-29) through sentinel.vision.detect_yolo26.Yolo26Detector, conf 0.25, production box rules (BoxRules.from_env({})), trap_kind lure, on the Roboflow fruit-fly-wmcqi v4 export. fruit_fly matched at IoU 0.5 (greedy by score); an other_insect label counts as a fly when a fruit_fly box overlaps it at IoU 0.3. The v4 test split is the v3 test split (76 images, labels after the 29 Oct review: 29 ants -> other_insect, 28 debris boxes removed) plus 4 empty BE4111159 photos; neither model trained on it.",
+ "test": {
+  "current_v3": {
+   "images": 80,
+   "fruit_fly": {
+    "tp": 2077,
+    "fp": 264,
+    "fn": 215,
+    "precision": 0.8872,
+    "recall": 0.9062,
+    "f1": 0.8966
+   },
+   "count": {
+    "mae": 2.04,
+    "bias": 0.61,
+    "total_gt": 2292,
+    "total_pred": 2341
+   },
+   "ants": {
+    "labelled": 29,
+    "counted_as_fruit_fly": 18,
+    "found_as_other_insect": 0
+   },
+   "empty_trap_photos": {
+    "images": 4,
+    "fruit_flies_counted": [
+     0,
+     1,
+     1,
+     0
+    ]
+   }
+  },
+  "v4": {
+   "images": 80,
+   "fruit_fly": {
+    "tp": 2087,
+    "fp": 151,
+    "fn": 205,
+    "precision": 0.9325,
+    "recall": 0.9106,
+    "f1": 0.9214
+   },
+   "count": {
+    "mae": 1.8,
+    "bias": -0.68,
+    "total_gt": 2292,
+    "total_pred": 2238
+   },
+   "ants": {
+    "labelled": 29,
+    "counted_as_fruit_fly": 0,
+    "found_as_other_insect": 17
+   },
+   "empty_trap_photos": {
+    "images": 4,
+    "fruit_flies_counted": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  }
+ },
+ "valid": {
+  "current_v3": {
+   "images": 100,
+   "fruit_fly": {
+    "tp": 2703,
+    "fp": 136,
+    "fn": 135,
+    "precision": 0.9521,
+    "recall": 0.9524,
+    "f1": 0.9523
+   },
+   "count": {
+    "mae": 1.03,
+    "bias": 0.01,
+    "total_gt": 2838,
+    "total_pred": 2839
+   },
+   "ants": {
+    "labelled": 0,
+    "counted_as_fruit_fly": 0,
+    "found_as_other_insect": 0
+   },
+   "empty_trap_photos": {
+    "images": 7,
+    "fruit_flies_counted": [
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  "v4": {
+   "images": 100,
+   "fruit_fly": {
+    "tp": 2723,
+    "fp": 134,
+    "fn": 115,
+    "precision": 0.9531,
+    "recall": 0.9595,
+    "f1": 0.9563
+   },
+   "count": {
+    "mae": 0.99,
+    "bias": 0.19,
+    "total_gt": 2838,
+    "total_pred": 2857
+   },
+   "ants": {
+    "labelled": 0,
+    "counted_as_fruit_fly": 0,
+    "found_as_other_insect": 0
+   },
+   "empty_trap_photos": {
+    "images": 7,
+    "fruit_flies_counted": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  }
+ }
+}

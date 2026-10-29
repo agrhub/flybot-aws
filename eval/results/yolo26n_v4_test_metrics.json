@@ -1,0 +1,23 @@
+{
+  "model": "yolo26n.pt",
+  "split": "test",
+  "imgsz": 640,
+  "mAP50": 0.7837,
+  "mAP50_95": 0.5122,
+  "precision": 0.6473,
+  "recall": 0.8529,
+  "smoke_run": false,
+  "epochs": 60,
+  "ultralytics": "8.4.177",
+  "dataset": "camos/fruit-fly-wmcqi v4 (CC BY 4.0)",
+  "per_class": {
+    "fruit_fly": {
+      "mAP50": 0.9637,
+      "mAP50_95": 0.7131
+    },
+    "other_insect": {
+      "mAP50": 0.6037,
+      "mAP50_95": 0.3112
+    }
+  }
+}
