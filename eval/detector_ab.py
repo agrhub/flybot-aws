@@ -17,7 +17,7 @@ Photo sets (the detector step only: no quality ops, no agent):
             flies, greedy one-to-one at IoU 0.3, count vs the visible count. The generator places flies inside the
             floor polygon op 1 finds on the background, so an ROI filter cannot lose a synthetic fly there: the real
             sets below are the check on that
-  real      real lure-trap photos of the 2026-10 export (BE4089629, BE4111159; ../flybot-sentinel/data/export, every
+  real      real lure-trap photos of the 2026-10 export (BE4089629, BE4111159; data/export, every
             4th photo): empty traps. No exported photo has more than 10 production (RF-DETR) flies, and the photos
             where production counts some show an empty floor with specks and stains when looked at, so every box
             here is counted as a false fly. These photos cannot show a real fly lost to a rule
@@ -43,7 +43,7 @@ sys.path.insert(0, str(ROOT / "lambda" / "vision"))
 CACHE = ROOT / "data" / "cache" / "detector_ab"
 RESULTS = ROOT / "eval" / "results" / "detector_ab.json"
 SYNTH_SETS = [ROOT / "data" / "synth" / "demo-30d", ROOT / "data" / "synth" / "pool"]
-EXPORT = ROOT.parent / "flybot-sentinel" / "data"
+EXPORT = ROOT / "data"
 ROBOFLOW = ROOT.parent / "camos-ai-camera" / "models" / "fruit-fly-v3" / "test"
 GRID, OVERLAP, EDGE_PX = 2, 0.12, 2.0
 
