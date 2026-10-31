@@ -26,6 +26,14 @@ under `others` (`sentinel/vision/detect_yolo26.py`).
 Both models are scored on v4's cleaned labels, which favours v4 slightly: the removed debris boxes and the ants
 now count against v3 (at most 57 of v3's 113 extra false boxes). The table below is the v3 model (2026-10-16).
 
+Where the weights are: v4 at `models/yolo26/` in the public model bucket (`YOLO26_URL` of the Lambda), v3 kept for a
+rollback at `models/yolo26-v3/` (`.onnx`, `.onnx.json` and `-o2m.onnx`, uploaded 2026-10-31). The bucket has no
+versioning, so a new upload to `models/yolo26/` replaces the file there. The deploy bakes the local
+`models/yolo26/fruitfly_yolo26n.onnx` (+ `.onnx.json`) into the Lambda image and uploads it to `models/yolo26/`. To roll
+back, put the v3 files there (download them from `models/yolo26-v3/`, sha256
+`fb4da5c0512088b32f447fc8fa14bd0fd4ed164768ed57d5690617ca2be7f176`) and run `./deploy.sh`. The weights are kept out of
+git: each retrain adds about 10 MB per file, and git would keep every version forever.
+
 | Item | Value | Source |
 |---|---|---|
 | Architecture | YOLO26n, 2,389,735 parameters, 5.4 GFLOPs, 1 class `fruit_fly` | training log (`eval/results/yolo26n_train_results.csv`) |

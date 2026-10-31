@@ -18,6 +18,7 @@ models/datasets/
 models/features/
 models/yolov7-tiny/
 models/yolo26/
+models/yolo26-v*/
 data/raw/
 data/export/
 data/eval/
