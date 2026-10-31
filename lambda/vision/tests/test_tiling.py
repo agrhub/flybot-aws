@@ -10,6 +10,7 @@ from sentinel.vision.box_rules import BoxRules
 from sentinel.vision.detect_yolo26 import Yolo26Detector
 from sentinel.vision.regions import Regions
 from sentinel.vision.tiling import Tiling
+from sentinel.vision.tta import Tta
 
 
 def box(x, y, w, h, score=0.9):
@@ -84,11 +85,11 @@ class FakeYolo26(Yolo26Detector):
     def __init__(self, tiles: Tiling, script: list[list[dict]], rules: BoxRules | None = None,
                  regions: Regions | None = None):
         self.size, self.iou, self.rules, self.tiling, self.head = 640, 0.45, rules, tiles, "end2end"
-        self.regions = regions or Regions()
+        self.regions, self.tta = regions or Regions(), Tta()
         self.meta = {}  # no sidecar: a single-class fruit-fly model
         self.script, self.calls = list(script), []
 
-    def _pass(self, img):
+    def _pass(self, img, views=()):
         self.calls.append(img.shape[:2])
         return self.script.pop(0), 0, np.zeros((1, 300, 6), np.float32), 640 / max(img.shape[:2]), 10.0
 

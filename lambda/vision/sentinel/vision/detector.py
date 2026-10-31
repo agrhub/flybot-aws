@@ -17,6 +17,8 @@
                              YOLO26 tiled detection for small flies (sentinel.vision.tiling)
     DETECTOR_MASK, DETECTOR_ROI, DETECTOR_ROI_RIM
                              YOLO26: drop boxes on camera overlays or off the trap surface (sentinel.vision.regions)
+    DETECTOR_TTA, DETECTOR_TTA_LURE, DETECTOR_TTA_STICKY
+                             YOLO26: mirrored copies of the photo run too, per trap kind (sentinel.vision.tta)
 
 `get_detector()` builds the detector once per process; `model_info()` is the contract's `model` object.
 `DetectorUnavailable` is raised when no ONNX can be found (-> the handler's `model_unavailable` error).
@@ -116,9 +118,10 @@ def build_detector(kind: str, onnx_path: Path, engine: str = "new"):
         from sentinel.vision.detect_yolo26 import Yolo26Detector
         from sentinel.vision.regions import Regions
         from sentinel.vision.tiling import Tiling
+        from sentinel.vision.tta import Tta
 
         return Yolo26Detector(onnx_path, engine=engine, conf=conf, iou=iou, rules=BoxRules.from_env(),
-                              tiles=Tiling.from_env(), regions=Regions.from_env())
+                              tiles=Tiling.from_env(), regions=Regions.from_env(), views=Tta.from_env())
     from sentinel.vision.detect_yolov7 import YoloV7Detector
 
     det = YoloV7Detector(onnx_path, engine=engine, conf=conf, iou=iou)

@@ -42,7 +42,7 @@ import cv2
 import numpy as np
 
 from sentinel import require_opencv5
-from sentinel.vision import tiling
+from sentinel.vision import tiling, tta
 from sentinel.vision.box_rules import BoxRules, apply_rules, nms
 from sentinel.vision.detect_smoke import ENGINES, engine_of
 from sentinel.vision.detect_yolov7 import preprocess
@@ -120,7 +120,7 @@ class Yolo26Detector:
 
     def __init__(self, onnx_path: str | Path, engine: str = "new", imgsz: int | None = None,
                  resize: str = "letterbox", conf: float = 0.25, iou: float = 0.45, rules: BoxRules | None = None,
-                 tiles: tiling.Tiling | None = None, regions: Regions | None = None):
+                 tiles: tiling.Tiling | None = None, regions: Regions | None = None, views: tta.Tta | None = None):
         self.cv_version = require_opencv5()
         self.onnx_path = Path(onnx_path)
         meta_path = self.onnx_path.with_suffix(".onnx.json")
@@ -129,6 +129,8 @@ class Yolo26Detector:
         self.engine, self.resize, self.conf, self.iou, self.rules = engine, resize, conf, iou, rules
         self.tiling = tiles or tiling.Tiling()
         self.regions = regions or Regions()
+        self.tta = views or tta.Tta()
+        self.last_ms = 0.0
         t0 = time.perf_counter()
         self.net = cv2.dnn.readNet(str(self.onnx_path), "", "", ENGINES[engine])
         self.load_ms = round((time.perf_counter() - t0) * 1000, 1)
@@ -151,23 +153,37 @@ class Yolo26Detector:
         self.head = "end2end" if (out.ndim >= 2 and out.shape[-1] == 6 and out.shape[-2] != 6) else "one_to_many"
         return out, scale, offset, forward_ms
 
-    def _pass(self, img: np.ndarray) -> tuple[list[dict], int | None, np.ndarray, float, float]:
-        """One forward: (boxes in `img` pixels after NMS, boxes NMS removed, output, input px per source px, ms)."""
+    def _pass(self, img: np.ndarray, views: tuple[str, ...] = ()) -> tuple[list[dict], int | None, np.ndarray, float, float]:
+        """One forward, plus one per test-time view (sentinel.vision.tta): (boxes in `img` pixels after NMS, boxes NMS
+        removed, output, input px per source px, ms)."""
         out, scale, offset, forward_ms = self.forward(img)
         raw = decode_end2end(out, self.conf, scale, offset) if self.head == "end2end" else None
         dets = decode(out, self.conf, self.iou, scale, offset)
-        return dets, None if raw is None else len(raw) - len(dets), out, min(scale), forward_ms
+        if views:
+            H, W = img.shape[:2]
+            for name in views:
+                dets += tta.unmap(self.view_pass(img, name)[0], name, W, H)
+                forward_ms += self.last_ms
+            dets = nms(dets, self.iou)
+        removed = None if raw is None or views else len(raw) - len(dets)  # NMS count of the photo's own view only
+        return dets, removed, out, min(scale), forward_ms
+
+    def view_pass(self, img: np.ndarray, name: str) -> tuple[list[dict], float]:
+        """Boxes after NMS in view `name` of `img`, in the view's pixels, and the forward's ms (also `last_ms`)."""
+        out, scale, offset, self.last_ms = self.forward(tta.view(img, name))
+        return decode(out, self.conf, self.iou, scale, offset), self.last_ms
 
     def detect(self, img: np.ndarray, trap_kind: str | None = None, roi=None) -> dict:
         """Boxes for `img` in its pixels. `trap_kind` ("sticky" | "lure") picks the tiling and the score floor;
         `roi` is the trap surface polygon op 1 found ([[x, y], ...] px, None = not found) for DETECTOR_ROI."""
         t = self.tiling
         H, W = img.shape[:2]
+        views = self.tta.views_for(trap_kind)
         full, removed, out, forward_ms, forwards = None, None, None, 0.0, 0
         scale = self.size / max(W, H)
         if t.mode in ("off", "auto") or t.grid < 2 or (t.mode == "sticky" and trap_kind != "sticky"):
-            full, removed, out, scale, forward_ms = self._pass(img)
-            forwards = 1
+            full, removed, out, scale, forward_ms = self._pass(img, views)
+            forwards = 1 + len(views)
         use, why = tiling.decide(t, trap_kind, full, scale, max(W, H), self.size)
         tiles = {"mode": t.mode, "used": use, "reason": why}
         dets = full
@@ -175,11 +191,11 @@ class Yolo26Detector:
             wins = tiling.windows(W, H, t.grid, t.overlap)
             per_win, margins = [], []
             for x0, y0, x1, y1 in wins:
-                d, r, out, s, ms = self._pass(img[y0:y1, x0:x1])
+                d, r, out, s, ms = self._pass(img[y0:y1, x0:x1], views)
                 per_win.append(d)
                 margins.append(t.edge_px / s)
                 forward_ms += ms
-                forwards += 1
+                forwards += 1 + len(views)
                 removed = None if r is None else (removed or 0) + r
             dets, cut = tiling.merge(per_win, wins, W, H, self.iou, margins, full if t.keep_full else None)
             tiles.update(grid=t.grid, overlap=t.overlap, windows=[list(w) for w in wins], cut_dropped=cut)
@@ -189,7 +205,7 @@ class Yolo26Detector:
         kept, rejected = apply_rules(dets, W, H, rules)
         flies, others = split_by_class(kept, self.meta.get("classes"))
         post = {"nms_iou": self.iou, "nms_removed": removed, "rules": None if rules is None else rules.as_dict(),
-                "rejected": {**rejected, **dropped}, "tiles": tiles,
+                "rejected": {**rejected, **dropped}, "tiles": tiles, "tta": {"views": list(views)},
                 "regions": {**self.regions.as_dict(), "roi_used": roi is not None and self.regions.wants_roi(trap_kind)}}
         return {"count": len(flies), "boxes": flies, "others": others, "forward_ms": round(forward_ms, 1),
                 "output_shape": list(out.shape), "output_finite": bool(np.isfinite(out).all()), "head": self.head,

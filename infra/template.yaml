@@ -40,6 +40,21 @@ Parameters:
     Default: 'off'
     AllowedValues: ['off', lure, all]
     Description: YOLO26 counts only boxes on the trap surface op 1 finds (lambda/vision/sentinel/vision/regions.py)
+  DetectorTtaLure:
+    Type: String
+    Default: 'off'
+    AllowedPattern: '^(off|(hflip|vflip|rot90)(,(hflip|vflip|rot90))*)$'
+    Description: YOLO26 mirrored views of lure-trap photos, one forward each (lambda/vision/sentinel/vision/tta.py)
+  DetectorTtaSticky:
+    Type: String
+    Default: 'off'
+    AllowedPattern: '^(off|(hflip|vflip|rot90)(,(hflip|vflip|rot90))*)$'
+    Description: YOLO26 mirrored views of sticky-trap photos, one forward per tile window each (tta.py)
+  DetectorMinScoreLure:
+    Type: String
+    Default: ''
+    AllowedPattern: '^(|0?\.[0-9]+)$'
+    Description: YOLO26 score floor for lure-trap photos; empty = DETECTOR_MIN_SCORE (0.35) (box_rules.py)
   Yolo26Url:
     Type: String
     Default: ''
@@ -442,6 +457,9 @@ Resources:
           DETECTOR: !Ref Detector
           DETECTOR_TILES: !Ref DetectorTiles
           DETECTOR_ROI: !Ref DetectorRoi
+          DETECTOR_TTA_LURE: !Ref DetectorTtaLure
+          DETECTOR_TTA_STICKY: !Ref DetectorTtaSticky
+          DETECTOR_MIN_SCORE_LURE: !Ref DetectorMinScoreLure
           YOLO26_URL: !Ref Yolo26Url
           YOLO26_SHA256: !Ref Yolo26Sha256
           MODEL_DIR: /opt/models

@@ -102,8 +102,8 @@ def test_factory_gives_yolo26_the_env_rules(monkeypatch, tmp_path):
     seen = {}
 
     class Fake:
-        def __init__(self, path, engine, conf, iou, rules, tiles, regions):
-            seen.update(conf=conf, iou=iou, rules=rules, tiles=tiles, regions=regions)
+        def __init__(self, path, engine, conf, iou, rules, tiles, regions, views):
+            seen.update(conf=conf, iou=iou, rules=rules, tiles=tiles, regions=regions, views=views)
 
     import sentinel.vision.detect_yolo26 as y
 
@@ -111,9 +111,13 @@ def test_factory_gives_yolo26_the_env_rules(monkeypatch, tmp_path):
     monkeypatch.setenv("DETECTOR_MAX_SIDE", "0.2")
     monkeypatch.delenv("DETECTOR_BOX_RULES", raising=False)
     monkeypatch.delenv("DETECTOR_TILES", raising=False)
+    for name in ("DETECTOR_TTA", "DETECTOR_TTA_LURE", "DETECTOR_TTA_STICKY"):
+        monkeypatch.delenv(name, raising=False)
     detector.build_detector("yolo26", tmp_path / "m.onnx")
     assert seen["iou"] == 0.45 and seen["rules"].max_side == 0.2 and seen["rules"].min_score == 0.35
     assert seen["tiles"].mode == "off"  # tiles stay off unless DETECTOR_TILES says otherwise
+    assert seen["views"].views_for("lure") == ()  # so do the test-time views
     monkeypatch.setenv("DETECTOR_TILES", "sticky")
+    monkeypatch.setenv("DETECTOR_TTA_LURE", "hflip")
     detector.build_detector("yolo26", tmp_path / "m.onnx")
-    assert seen["tiles"].mode == "sticky"
+    assert seen["tiles"].mode == "sticky" and seen["views"].views_for("lure") == ("hflip",)
