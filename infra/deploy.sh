@@ -6,6 +6,8 @@
 #   ./deploy.sh --only <step>        one step (preflight and discovery always run first)
 #   ./deploy.sh --show-ip            the Elastic IP and the DNS record of the existing stack
 #   ./deploy.sh --rollback           put the host back on the previous FlyBot release
+#   ./deploy.sh --app                a new FlyBot release only, on an existing stack: build, publish, bootstrap, /health
+#                                    (skips the infrastructure checks, the stack, the image and the Lambda)
 #   ./deploy.sh --allow-dirty        build FlyBot from a checkout with uncommitted changes (the release is marked dirty)
 #   ./deploy.sh --npm-ci             force `npm ci` in the FlyBot checkout before the build
 #   ./deploy.sh --prune-releases     delete FlyBot deploy builds on GitHub beyond the newest FLYBOT_KEEP_RELEASES (5)
@@ -23,7 +25,7 @@ cd "$ROOT"
 find_tools
 
 STEPS=(models secrets stack flybot image lambda bootstrap health smoke coldstart summary)
-ENV_FILE=deploy.env DRY=0 ONLY="" YES=0 SHOW_IP=0 ROLLBACK=0 ALLOW_DIRTY=0 NPM_CI=0 PRUNE=0
+ENV_FILE=deploy.env DRY=0 ONLY="" YES=0 SHOW_IP=0 ROLLBACK=0 APP=0 ALLOW_DIRTY=0 NPM_CI=0 PRUNE=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) DRY=1 ;;
@@ -32,17 +34,19 @@ while [ $# -gt 0 ]; do
     --yes|-y) YES=1 ;;
     --show-ip) SHOW_IP=1 ;;
     --rollback) ROLLBACK=1 ;;
+    --app) APP=1 ;;
     --allow-dirty) ALLOW_DIRTY=1 ;;
     --npm-ci) NPM_CI=1 ;;
     --prune-releases) PRUNE=1 ;;
     --env-file) ENV_FILE="${2:?}"; shift ;;
     --env-file=*) ENV_FILE="${1#--env-file=}" ;;
-    -h|--help) sed -n '2,17p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,18p' "$0"; exit 0 ;;
     *) die "unknown option $1 (see --help)" ;;
   esac
   shift
 done
 if [ -n "$ONLY" ] && [[ " ${STEPS[*]} " != *" $ONLY "* ]]; then die "--only $ONLY: not a step (${STEPS[*]})"; fi
+if [ "$APP" = 1 ] && { [ -n "$ONLY" ] || [ "$ROLLBACK" = 1 ] || [ "$SHOW_IP" = 1 ]; }; then die "--app goes alone (not with --only, --rollback or --show-ip)"; fi
 
 # ---------------------------------------------------------------- settings (deploy.env < environment)
 CFG_LINES=""
@@ -119,7 +123,7 @@ exec > >(tee -a "$LOG") 2>&1
 TMP="$(mktemp -d)"; chmod 700 "$TMP"
 trap 'rm -rf "$TMP"' EXIT
 printf '\n######## %s  ./deploy.sh %s  (stage %s, %s)\n' "$(date -u +%FT%TZ)" \
-  "$([ "$DRY" = 1 ] && echo '--dry-run ')$([ -n "$ONLY" ] && echo "--only $ONLY")$([ "$ROLLBACK" = 1 ] && echo '--rollback')" "$STAGE" "$ENV_FILE"
+  "$([ "$DRY" = 1 ] && echo '--dry-run ')$([ -n "$ONLY" ] && echo "--only $ONLY")$([ "$ROLLBACK" = 1 ] && echo '--rollback')$([ "$APP" = 1 ] && echo '--app')" "$STAGE" "$ENV_FILE"
 
 SUMMARY=()
 row() { SUMMARY+=("$(printf '%-22s %s' "$1" "$2")"); }
@@ -241,6 +245,8 @@ preflight() {
       ok "FlyBot releases in the artifacts bucket (FLYBOT_RELEASE_STORE=s3)"
     fi
   fi
+  # --app: the stack exists already; the checks below are for creating or changing it
+  [ "$APP" = 1 ] && return 0
 
   local azs; azs="$(awsx ec2 describe-availability-zones --query 'AvailabilityZones[].ZoneName' --output text 2>&1)" \
     || die "EC2 refused in $REGION (SCP?): $(printf '%s' "$azs" | head -1)"
@@ -889,6 +895,24 @@ rollback() {
   ok "host: $(host_status)"
 }
 
+# ================================================================ app release
+app_release() {  # --app: a new FlyBot release on the existing stack, without discovery, stack, image or Lambda
+  INSTANCE_ID="$(out InstanceId)"; ARTIFACTS="flybot-artifacts-$ACCOUNT-$STAGE"
+  [ -n "$INSTANCE_ID" ] || die "stack $STACK has no instance: run the whole ./deploy.sh once first"
+  INSTANCE_NEW=0; SECRETS_CHANGED=0; RELEASE_CHANGED=0
+  step_flybot
+  step_bootstrap
+  [ "$DRY" = 1 ] && return 0
+  local code="" i
+  for i in 1 2 3 4 5 6; do
+    code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "https://$DOMAIN_NAME/health" || true)"
+    [ "$code" = 200 ] && break
+    sleep 10
+  done
+  if [ "$code" = 200 ]; then ok "https://$DOMAIN_NAME/health 200"
+  else warn "https://$DOMAIN_NAME/health -> ${code:-no answer}: ./deploy.sh --only health"; fi
+}
+
 # ================================================================ main
 preflight
 if [ "$SHOW_IP" = 1 ]; then
@@ -897,6 +921,11 @@ if [ "$SHOW_IP" = 1 ]; then
   log "now: 1.1.1.1=${a:-none} 8.8.8.8=${b:-none}"; exit 0
 fi
 if [ "$ROLLBACK" = 1 ]; then rollback; exit 0; fi
+if [ "$APP" = 1 ]; then
+  app_release
+  [ "$DRY" = 1 ] && printf '\ndry run: nothing was changed. Run ./deploy.sh --app without --dry-run to apply.\n'
+  exit 0
+fi
 discover
 INSTANCE_ID="$CUR_INSTANCE"; EIP="$CUR_EIP"; INSTANCE_NEW=0; SECRETS_CHANGED=0; RELEASE_CHANGED=0; CHATBOT=""
 for s in "${STEPS[@]}"; do

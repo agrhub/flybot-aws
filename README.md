@@ -209,7 +209,9 @@ few things left for a person. The steps, all idempotent:
    call with a sample photo checked against the contract, cold and warm latency into `bench/results/lambda_latency.json`.
 
 Useful options: `--dry-run` (real checks, read-only, prints the plan), `--only <step>`, `--show-ip`, `--rollback` (back to
-the previous FlyBot release), `--allow-dirty` (test release from uncommitted changes), `--npm-ci`, `--prune-releases`, `--yes` (allow deleting a
+the previous FlyBot release), `--app` (a new FlyBot release on an existing stack: build, publish, bootstrap and `/health`,
+without the infrastructure checks, the stack, the image or the Lambda; run the whole `./deploy.sh` when `deploy.env` or the
+vision Lambda changed), `--allow-dirty` (test release from uncommitted changes), `--npm-ci`, `--prune-releases`, `--yes` (allow deleting a
 stack stuck in ROLLBACK_COMPLETE). Log: `infra/.build/deploy-<stage>.log`. Remove everything: `./destroy.sh --yes`
 (`--keep-photos`, `--keep-secrets`; a bucket of your own is never touched). Step-by-step with expected output:
 `infra/DEPLOY_CHECKLIST.md`.
