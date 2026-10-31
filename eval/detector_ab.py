@@ -1,7 +1,7 @@
 """Counting fixes for the YOLO26n detector step, A/B on synthetic and real photos from one cached run.
 
     uv run --project lambda/vision python -m eval.detector_ab cache [--only synth|real|roboflow] [--every N]
-    uv run --project lambda/vision python -m eval.detector_ab score [--sweep roi_all]   # -> eval/results/detector_ab.json
+    uv run --project lambda/vision python -m eval.detector_ab score [--sweep production tta_lure_hflip]   # -> eval/results/detector_ab.json
     uv run --project lambda/vision python -m eval.detector_ab handler NAME=DIR ...      # whole-handler runs, same file
 
 `cache` runs, once per photo, everything the variants need, with the Lambda's own code: op 1 (sentinel.vision.card:
@@ -18,7 +18,8 @@ Photo sets (the detector step only: no quality ops, no agent):
             floor polygon op 1 finds on the background, so an ROI filter cannot lose a synthetic fly there: the real
             sets below are the check on that
   real      real lure-trap photos of the 2026-10 export (BE4089629, BE4111159; data/export, every
-            4th photo): empty traps. No exported photo has more than 10 production (RF-DETR) flies, and the photos
+            4th photo): empty traps. v4 trained on 36-42 empty BE4111159 photos of 8-14 Oct as hard negatives, the
+            days of this set's BE4111159 photos, so for v4 and later only the BE4089629 count is a clean check. No exported photo has more than 10 production (RF-DETR) flies, and the photos
             where production counts some show an empty floor with specks and stains when looked at, so every box
             here is counted as a false fly. These photos cannot show a real fly lost to a rule
   roboflow  the camos/fruit-fly v3 test split (76 white-disc pictures, human boxes; the split behind the box-rule
@@ -46,6 +47,8 @@ SYNTH_SETS = [ROOT / "data" / "synth" / "demo-30d", ROOT / "data" / "synth" / "p
 EXPORT = ROOT / "data"
 ROBOFLOW = ROOT.parent / "camos-ai-camera" / "models" / "fruit-fly-v3" / "test"
 GRID, OVERLAP, EDGE_PX = 2, 0.12, 2.0
+CACHE_CONF = 0.10
+TILE_VIEWS = ("hflip",)  # test-time views cached for the frame windows (each costs 4 forwards a photo)
 
 
 def xyxy(d: dict) -> list[float]:
@@ -57,8 +60,9 @@ def xyxy(d: dict) -> list[float]:
 
 
 def passes(det, img, kind: str) -> dict:
-    """Op 1 surface, whole-frame pass, frame windows, floor windows (lure with a floor)."""
-    from sentinel.vision import regions, tiling
+    """Op 1 surface, whole-frame pass (+ each test-time view), frame windows (+ their hflip view), floor windows
+    (lure with a floor). View boxes are mapped back to the pixels of the image the view was made from."""
+    from sentinel.vision import regions, tiling, tta
     from sentinel.vision.card import find_card, roi_polygon_px
 
     H, W = img.shape[:2]
@@ -68,18 +72,22 @@ def passes(det, img, kind: str) -> dict:
     t0 = time.perf_counter()
     rec["full"] = det._pass(img)[0]
     rec["ms"]["full"] = (time.perf_counter() - t0) * 1000
+    rec["views"] = {name: tta.unmap(det.view_pass(img, name)[0], name, W, H) for name in tta.VIEWS}
 
-    def tile(rect):
+    def tile(rect, views=()):
         wins = tiling.windows(W, H, GRID, OVERLAP, rect)
-        per, margins = [], []
+        per, margins, per_view = [], [], {name: [] for name in views}
         for x0, y0, x1, y1 in wins:
-            d, _, _, s, _ = det._pass(img[y0:y1, x0:x1])
+            win = img[y0:y1, x0:x1]
+            d, _, _, s, _ = det._pass(win)
             per.append(d)
             margins.append(EDGE_PX / s)
-        return {"wins": wins, "per": per, "margins": margins, "rect": rect}
+            for name in views:
+                per_view[name].append(tta.unmap(det.view_pass(win, name)[0], name, x1 - x0, y1 - y0))
+        return {"wins": wins, "per": per, "margins": margins, "rect": rect, "views": per_view}
 
     t0 = time.perf_counter()
-    rec["frame_tiles"] = tile(None)
+    rec["frame_tiles"] = tile(None, TILE_VIEWS)
     rec["ms"]["frame_tiles"] = (time.perf_counter() - t0) * 1000
     rect = regions.roi_rect(poly, W, H) if kind == "lure" else None
     if rect is not None:
@@ -126,7 +134,9 @@ def cache(only: list[str], every: int) -> None:
     from sentinel.vision.detect_yolo26 import Yolo26Detector
     from sentinel.vision.detector import resolve_onnx
 
-    det = Yolo26Detector(resolve_onnx("yolo26"))  # decoder conf 0.25, NMS 0.45, as the Lambda
+    # NMS 0.45 as the Lambda; decoder floor CACHE_CONF (Lambda 0.25) so the floor sweep can go below it. NMS keeps the
+    # higher score of a pair, so boxes at or above 0.25 are the same as with the Lambda's decoder floor.
+    det = Yolo26Detector(resolve_onnx("yolo26"), conf=CACHE_CONF)
     CACHE.mkdir(parents=True, exist_ok=True)
     sources = {"synth": synth_items, "real": real_items, "roboflow": roboflow_items}
     for name in only:
@@ -136,11 +146,12 @@ def cache(only: list[str], every: int) -> None:
             img = cv2.imread(str(it["path"]), cv2.IMREAD_COLOR)
             if img is None:
                 continue
-            out.append({**{k: v for k, v in it.items() if k != "path"}, "file": str(it["path"]), **passes(det, img, it["kind"])})
+            out.append({**{k: v for k, v in it.items() if k != "path"}, "file": str(it["path"]),
+                        "classes": det.meta.get("classes"), **passes(det, img, it["kind"])})
             if i % 50 == 0 or i == len(items):
                 print(f"{name} {i}/{len(items)} ({time.perf_counter() - t_run:.0f} s)", flush=True)
         meta = {"model": f"{det.name} on opencv-{det.cv_version}-dnn-{det.engine_used}", "onnx": det.onnx_path.name,
-                "every": every, "at": datetime.now(UTC).isoformat(timespec="seconds"), "photos": len(out)}
+                "sha256": det.meta.get("sha256"), "classes": det.meta.get("classes"), "conf": CACHE_CONF, "every": every, "at": datetime.now(UTC).isoformat(timespec="seconds"), "photos": len(out)}
         with open(CACHE / f"{name}.pkl", "wb") as fh:
             pickle.dump({"meta": meta, "records": out}, fh)
 
@@ -148,11 +159,19 @@ def cache(only: list[str], every: int) -> None:
 # ---------------------------------------------------------------- variants
 
 
+def with_views(dets: list[dict], view_dets: dict, views: list[str], iou: float) -> list[dict]:
+    """A pass's boxes joined by its test-time views' boxes, class-agnostic NMS (as Yolo26Detector._pass)."""
+    from sentinel.vision.box_rules import nms
+
+    return nms(dets + [d for name in views for d in view_dets[name]], iou) if views else dets
+
+
 def boxes_for(rec: dict, v: dict, iou: float = 0.45) -> tuple[list[dict], dict]:
-    """One variant's counted boxes for a cached photo. v = {tiles: {kind: off|frame|roi|roi+full}, mask, roi, rim,
-    floor: {kind: min_score}}."""
+    """One variant's counted boxes for a cached photo. v = {tiles: {kind: off|frame|roi|roi+full}, tta: {kind: [view]},
+    mask, roi, rim, floor: {kind: min_score}}."""
     from sentinel.vision import regions, tiling
     from sentinel.vision.box_rules import BoxRules, apply_rules
+    from sentinel.vision.detect_yolo26 import split_by_class
 
     kind, W, H = rec["kind"], rec["W"], rec["H"]
     mode = v.get("tiles", {}).get(kind, "off")
@@ -161,17 +180,20 @@ def boxes_for(rec: dict, v: dict, iou: float = 0.45) -> tuple[list[dict], dict]:
         t = rec["frame_tiles"]
     elif mode.startswith("roi"):
         t = rec.get("roi_tiles") or (rec["frame_tiles"] if v.get("no_floor") == "frame" else None)
+    views = list(v.get("tta", {}).get(kind, []))
     if t is None:
-        dets, info = rec["full"], {"forwards": 1}
+        dets, info = with_views(rec["full"], rec.get("views", {}), views, iou), {"forwards": 1 + len(views)}
     else:
-        full = rec["full"] if mode == "roi+full" else None
-        dets, _ = tiling.merge(t["per"], t["wins"], W, H, iou, t["margins"], full, t["rect"])
-        info = {"forwards": 4 + (full is not None)}
+        full = with_views(rec["full"], rec.get("views", {}), views, iou) if mode == "roi+full" else None
+        per = [with_views(d, {k: t["views"][k][i] for k in views}, views, iou) for i, d in enumerate(t["per"])]
+        dets, _ = tiling.merge(per, t["wins"], W, H, iou, t["margins"], full, t["rect"])
+        info = {"forwards": (4 + (full is not None)) * (1 + len(views))}
     reg = regions.Regions(masks=regions.parse_masks(v.get("mask")), roi=v.get("roi", "off"), rim=v.get("rim", 0.0))
     dets, removed = regions.apply_regions(dets, W, H, reg, rec["roi"], kind)
     rules = replace(BoxRules(), min_score=v.get("floor", {}).get(kind, 0.35))
     kept, _ = apply_rules(dets, W, H, rules)
-    return kept, {**info, **removed}
+    kept, others = split_by_class(kept, rec.get("classes"))  # v4: the fruit_fly class only, as the Lambda counts
+    return kept, {**info, **removed, "others": len(others)}
 
 
 def score_synth(recs: list[dict], v: dict) -> dict:
@@ -200,8 +222,12 @@ def score_synth(recs: list[dict], v: dict) -> dict:
 
 def score_real(recs: list[dict], v: dict) -> dict:
     n = [len(boxes_for(r, v)[0]) for r in recs]
+    by_cam = {}
+    for r, k in zip(recs, n, strict=True):
+        c = by_cam.setdefault(r["trap"], {"photos": 0, "false_flies": 0})
+        c["photos"], c["false_flies"] = c["photos"] + 1, c["false_flies"] + k
     return {"photos": len(recs), "false_flies": sum(n), "photos_with_a_box": sum(k > 0 for k in n),
-            "production_count_sum": sum(r["ref"] for r in recs)}
+            "production_count_sum": sum(r["ref"] for r in recs), "by_camera": by_cam}
 
 
 def score_roboflow(recs: list[dict], v: dict) -> dict:
@@ -221,14 +247,16 @@ def score_roboflow(recs: list[dict], v: dict) -> dict:
     return out
 
 
-BASE = {"tiles": {"sticky": "frame"}}  # production since 2026-10-19: DETECTOR_TILES=sticky, floor 0.35, no mask / ROI
+# production since 2026-10-23 (v4 weights since 2026-10-29): DETECTOR_TILES=sticky, DETECTOR_ROI=all, floor 0.35
+BASE = {"tiles": {"sticky": "frame"}, "roi": "all"}
+VIEW_SETS = (["hflip"], ["hflip", "vflip"], ["hflip", "vflip", "rot90"])
 
 
 def variants() -> dict[str, dict]:
     v = {"production": BASE,
+         "no_roi": {"tiles": {"sticky": "frame"}},  # production 2026-10-19 .. 10-23
          "mask": {**BASE, "mask": "osd"},
-         "roi_lure": {**BASE, "roi": "lure"},
-         "roi_all": {**BASE, "roi": "all"},
+         "roi_lure": {"tiles": {"sticky": "frame"}, "roi": "lure"},
          "tiles_lure_frame": {"tiles": {"sticky": "frame", "lure": "frame"}},
          "tiles_lure_frame+roi": {"tiles": {"sticky": "frame", "lure": "frame"}, "roi": "lure"},
          "tiles_lure_roi": {"tiles": {"sticky": "frame", "lure": "roi"}, "roi": "lure"},
@@ -237,15 +265,20 @@ def variants() -> dict[str, dict]:
         v[f"tiles_lure_roi_rim{rim}"] = {"tiles": {"sticky": "frame", "lure": "roi"}, "roi": "lure", "rim": rim}
     for s in (0.45, 0.55):
         v[f"tiles_lure_frame+roi_floor{s}"] = {**v["tiles_lure_frame+roi"], "floor": {"lure": s}}
-    v["roi_lure+mask"] = {**v["roi_lure"], "mask": "osd"}
-    v["roi_all+mask"] = {**v["roi_all"], "mask": "osd"}
+    for views in VIEW_SETS:  # test-time views (sentinel.vision.tta) on the whole frame of lure photos
+        v["tta_lure_" + "+".join(views)] = {**BASE, "tta": {"lure": views}}
+    v["tta_sticky_hflip"] = {**BASE, "tta": {"sticky": ["hflip"]}}  # on each of the 4 windows: 8 forwards
+    v["tta_all_hflip"] = {**BASE, "tta": {"lure": ["hflip"], "sticky": ["hflip"]}}
+    v["tta_lure_hflip+vflip_sticky_hflip"] = {**BASE, "tta": {"lure": ["hflip", "vflip"], "sticky": ["hflip"]}}
+    # recommended 2026-10-31: DETECTOR_TTA_LURE=hflip,vflip DETECTOR_TTA_STICKY=hflip DETECTOR_MIN_SCORE_LURE=0.30
+    v["recommended"] = {**v["tta_lure_hflip+vflip_sticky_hflip"], "floor": {"lure": 0.30}}
     return v
 
 
 def floor_sweep(base: dict) -> dict[str, dict]:
     out = {}
     for kind in ("lure", "sticky"):
-        for s in (0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55):
+        for s in (0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55):
             out[f"{kind}={s:.2f}"] = {**base, "floor": {kind: s}}
     return out
 
@@ -258,7 +291,7 @@ def load(name: str) -> dict | None:
         return pickle.load(fh)
 
 
-def score(sweep_base: str | None) -> dict:
+def score(sweep_bases: list[str]) -> dict:
     data = {k: load(k) for k in ("synth", "real", "roboflow")}
     vs = variants()
     out = {"kind": "detector step A/B (no quality ops, no agent); synthetic rows are SIMULATED data",
@@ -274,10 +307,9 @@ def score(sweep_base: str | None) -> dict:
     for name, v in vs.items():
         out["results"][name] = run(v)
         print(name, flush=True)
-    if sweep_base:
-        out["floor_sweep_base"] = sweep_base
-        for name, v in floor_sweep(vs[sweep_base]).items():
-            out["floor_sweep"][name] = run(v)
+    for base in sweep_bases:  # {base variant: {"<kind>=<floor>": results}}
+        out["floor_sweep"][base] = {name: run(v) for name, v in floor_sweep(vs[base]).items()}
+        print("sweep", base, flush=True)
     times = {}
     for k, d in data.items():
         if d:
@@ -296,7 +328,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("runs", nargs="*", metavar="NAME=DIR", help="handler: eval.synth.check output folders")
     ap.add_argument("--only", nargs="+", default=["synth", "real", "roboflow"])
     ap.add_argument("--every", type=int, default=1, help="cache every N-th photo of each set")
-    ap.add_argument("--sweep", default=None, help="score: sweep the score floor per trap kind on top of this variant")
+    ap.add_argument("--sweep", nargs="*", default=[], help="score: sweep the score floor per trap kind on top of these variants")
     a = ap.parse_args(argv)
     if a.step == "cache":
         cache(a.only, a.every)

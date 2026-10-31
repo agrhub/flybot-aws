@@ -1,0 +1,1164 @@
+{
+  "kind": "missed synthetic flies of the YOLO26 detector step; SIMULATED data",
+  "generated_at": "2026-10-31T04:56:22+00:00",
+  "cache": {
+    "model": "yolo26n on opencv-5.0.0-dnn-new",
+    "onnx": "fruitfly_yolo26n.onnx",
+    "sha256": "b900161002d3b04e866acf616e17602f1519d98f496414abc34d0d23ac4addd6",
+    "classes": [
+      "fruit_fly",
+      "other_insect"
+    ],
+    "conf": 0.1,
+    "every": 2,
+    "at": "2026-10-31T04:55:44+00:00",
+    "photos": 429
+  },
+  "variant": "production",
+  "settings": {
+    "tiles": {
+      "sticky": "frame"
+    },
+    "roi": "all",
+    "floor": {}
+  },
+  "notes": "Reads the synthetic cache of eval.detector_ab (`cache --only synth`; built with the decoder floor CACHE_CONF, so\nboxes under the Lambda's 0.25 are there) and the generator's manifests (data/synth/demo-30d, data/synth/pool). For each\npasted fly (ground truth) under one detector_ab variant: counted or missed (greedy one-to-one at IoU 0.3, as\ndetector_ab), and for a missed fly why, from the boxes the cache holds at its place (IoU >= 0.3):\n\n    below_floor     a fruit_fly box is there but scores under the variant's floor (>= CACHE_CONF)\n    other_insect    the best box there is the other_insect class\n    dropped         a fruit_fly box above the floor is there but the trap ROI or a box rule removed it\n    taken           a counted box is there but the matching gave it to a neighbouring fly\n    unseen          no box at all (the model does not see it at this size / scale)\n\nand its attributes: long side at the detector input, its box's aspect ratio, angle, the nearest other fly (IoU and\ncentre distance in fly lengths), distance to the edge of the trap floor op 1 found (fly lengths, > 0 inside), distance\nto the floor's centre (share of the floor's radius), local contrast (mean grey of the ring around the box minus the\nbox, 0-255), and which fly-bank crop was pasted. Miss rates per bin of each attribute follow. Pixel statistics are\ncomputed from the files; no photo is looked at.\n\n`carry` estimates the rule \"keep a fly seen in the previous photo\" on sticky cards (the synthetic lure photos are\nindependent: their flies do not stay): with the nearest earlier cached photo of the same card, a\ncurrent box under the floor (>= --carry-min) is counted when the previous photo counted a box at IoU >= 0.5 there.\nRecall gained, and false flies added on the synthetic photos, per trap kind. All rows are SIMULATED data.",
+  "by_kind": {
+    "lure": {
+      "flies": 3296,
+      "missed": 598,
+      "recall": 0.8186,
+      "why": {
+        "below_floor": 336,
+        "unseen": 206,
+        "other_insect": 34,
+        "dropped": 17,
+        "taken": 5
+      },
+      "best_score_of_below_floor": {
+        "n": 336,
+        "p10": 0.1168,
+        "p50": 0.2287,
+        "p90": 0.3249,
+        "at_or_above_0.25": 135,
+        "at_or_above_0.20": 199,
+        "at_or_above_0.15": 265
+      },
+      "median": {
+        "input_px": {
+          "hit": 48.0,
+          "missed": 47.5
+        },
+        "aspect": {
+          "hit": 1.29,
+          "missed": 1.34
+        },
+        "angle": {
+          "hit": 89.4,
+          "missed": 86.85
+        },
+        "nn_iou": {
+          "hit": 0.0,
+          "missed": 0.0
+        },
+        "nn_dist": {
+          "hit": 1.04,
+          "missed": 0.96
+        },
+        "edge": {
+          "hit": 2.0,
+          "missed": 2.16
+        },
+        "centre": {
+          "hit": 0.55,
+          "missed": 0.5
+        },
+        "contrast": {
+          "hit": 14.4,
+          "missed": 18.6
+        },
+        "flies": {
+          "hit": 29.0,
+          "missed": 35.0
+        }
+      },
+      "by": {
+        "input_px": [
+          {
+            "bin": [
+              32,
+              40
+            ],
+            "flies": 9,
+            "missed": 4,
+            "miss_rate": 0.444
+          },
+          {
+            "bin": [
+              40,
+              null
+            ],
+            "flies": 3287,
+            "missed": 594,
+            "miss_rate": 0.181
+          }
+        ],
+        "aspect": [
+          {
+            "bin": [
+              0,
+              1.25
+            ],
+            "flies": 1403,
+            "missed": 223,
+            "miss_rate": 0.159
+          },
+          {
+            "bin": [
+              1.25,
+              1.5
+            ],
+            "flies": 883,
+            "missed": 163,
+            "miss_rate": 0.185
+          },
+          {
+            "bin": [
+              1.5,
+              2.0
+            ],
+            "flies": 774,
+            "missed": 139,
+            "miss_rate": 0.18
+          },
+          {
+            "bin": [
+              2.0,
+              null
+            ],
+            "flies": 236,
+            "missed": 73,
+            "miss_rate": 0.309
+          }
+        ],
+        "angle": [
+          {
+            "bin": [
+              0,
+              30
+            ],
+            "flies": 590,
+            "missed": 102,
+            "miss_rate": 0.173
+          },
+          {
+            "bin": [
+              30,
+              60
+            ],
+            "flies": 546,
+            "missed": 87,
+            "miss_rate": 0.159
+          },
+          {
+            "bin": [
+              60,
+              90
+            ],
+            "flies": 534,
+            "missed": 118,
+            "miss_rate": 0.221
+          },
+          {
+            "bin": [
+              90,
+              120
+            ],
+            "flies": 531,
+            "missed": 98,
+            "miss_rate": 0.185
+          },
+          {
+            "bin": [
+              120,
+              150
+            ],
+            "flies": 572,
+            "missed": 103,
+            "miss_rate": 0.18
+          },
+          {
+            "bin": [
+              150,
+              180.1
+            ],
+            "flies": 523,
+            "missed": 90,
+            "miss_rate": 0.172
+          }
+        ],
+        "nn_iou": [
+          {
+            "bin": [
+              0,
+              1e-09
+            ],
+            "flies": 1756,
+            "missed": 294,
+            "miss_rate": 0.167
+          },
+          {
+            "bin": [
+              1e-09,
+              0.02
+            ],
+            "flies": 356,
+            "missed": 49,
+            "miss_rate": 0.138
+          },
+          {
+            "bin": [
+              0.02,
+              0.05
+            ],
+            "flies": 341,
+            "missed": 52,
+            "miss_rate": 0.152
+          },
+          {
+            "bin": [
+              0.05,
+              0.1
+            ],
+            "flies": 374,
+            "missed": 68,
+            "miss_rate": 0.182
+          },
+          {
+            "bin": [
+              0.1,
+              1.01
+            ],
+            "flies": 469,
+            "missed": 135,
+            "miss_rate": 0.288
+          }
+        ],
+        "nn_dist": [
+          {
+            "bin": [
+              0,
+              1.0
+            ],
+            "flies": 1534,
+            "missed": 310,
+            "miss_rate": 0.202
+          },
+          {
+            "bin": [
+              1.0,
+              1.5
+            ],
+            "flies": 1142,
+            "missed": 155,
+            "miss_rate": 0.136
+          },
+          {
+            "bin": [
+              1.5,
+              2.0
+            ],
+            "flies": 344,
+            "missed": 69,
+            "miss_rate": 0.201
+          },
+          {
+            "bin": [
+              2.0,
+              3.0
+            ],
+            "flies": 183,
+            "missed": 42,
+            "miss_rate": 0.23
+          },
+          {
+            "bin": [
+              3.0,
+              null
+            ],
+            "flies": 74,
+            "missed": 15,
+            "miss_rate": 0.203
+          }
+        ],
+        "edge": [
+          {
+            "bin": [
+              0,
+              0.5
+            ],
+            "flies": 7,
+            "missed": 0,
+            "miss_rate": 0.0
+          },
+          {
+            "bin": [
+              0.5,
+              1.0
+            ],
+            "flies": 311,
+            "missed": 41,
+            "miss_rate": 0.132
+          },
+          {
+            "bin": [
+              1.0,
+              2.0
+            ],
+            "flies": 1279,
+            "missed": 215,
+            "miss_rate": 0.168
+          },
+          {
+            "bin": [
+              2.0,
+              null
+            ],
+            "flies": 1699,
+            "missed": 342,
+            "miss_rate": 0.201
+          }
+        ],
+        "centre": [
+          {
+            "bin": [
+              0,
+              0.2
+            ],
+            "flies": 214,
+            "missed": 75,
+            "miss_rate": 0.35
+          },
+          {
+            "bin": [
+              0.2,
+              0.4
+            ],
+            "flies": 638,
+            "missed": 117,
+            "miss_rate": 0.183
+          },
+          {
+            "bin": [
+              0.4,
+              0.6
+            ],
+            "flies": 1050,
+            "missed": 186,
+            "miss_rate": 0.177
+          },
+          {
+            "bin": [
+              0.6,
+              0.8
+            ],
+            "flies": 827,
+            "missed": 141,
+            "miss_rate": 0.17
+          },
+          {
+            "bin": [
+              0.8,
+              null
+            ],
+            "flies": 567,
+            "missed": 79,
+            "miss_rate": 0.139
+          }
+        ],
+        "contrast": [
+          {
+            "bin": [
+              null,
+              10
+            ],
+            "flies": 966,
+            "missed": 153,
+            "miss_rate": 0.158
+          },
+          {
+            "bin": [
+              10,
+              20
+            ],
+            "flies": 1357,
+            "missed": 181,
+            "miss_rate": 0.133
+          },
+          {
+            "bin": [
+              20,
+              30
+            ],
+            "flies": 756,
+            "missed": 160,
+            "miss_rate": 0.212
+          },
+          {
+            "bin": [
+              30,
+              40
+            ],
+            "flies": 166,
+            "missed": 64,
+            "miss_rate": 0.386
+          },
+          {
+            "bin": [
+              40,
+              60
+            ],
+            "flies": 42,
+            "missed": 33,
+            "miss_rate": 0.786
+          },
+          {
+            "bin": [
+              60,
+              null
+            ],
+            "flies": 9,
+            "missed": 7,
+            "miss_rate": 0.778
+          }
+        ],
+        "flies": [
+          {
+            "bin": [
+              0,
+              5
+            ],
+            "flies": 147,
+            "missed": 35,
+            "miss_rate": 0.238
+          },
+          {
+            "bin": [
+              5,
+              10
+            ],
+            "flies": 286,
+            "missed": 54,
+            "miss_rate": 0.189
+          },
+          {
+            "bin": [
+              10,
+              20
+            ],
+            "flies": 604,
+            "missed": 100,
+            "miss_rate": 0.166
+          },
+          {
+            "bin": [
+              20,
+              40
+            ],
+            "flies": 970,
+            "missed": 124,
+            "miss_rate": 0.128
+          },
+          {
+            "bin": [
+              40,
+              null
+            ],
+            "flies": 1289,
+            "missed": 285,
+            "miss_rate": 0.221
+          }
+        ]
+      },
+      "crops": {
+        "crops_seen_5_times": 281,
+        "misses_from_worst_10pct_crops": 245,
+        "worst": [
+          {
+            "crop": "valid/image_01249_jpg.rf.2acd65806713f1c7879491f56d992281.jpg#37",
+            "missed": 12,
+            "of": 21
+          },
+          {
+            "crop": "test/image_09445_jpg.rf.2c11eea9059ace79571f083b9cdf9ebf.jpg#5",
+            "missed": 12,
+            "of": 18
+          },
+          {
+            "crop": "test/image_01500_jpg.rf.8a0af5647fc2329b61310d6dcf31c147.jpg#21",
+            "missed": 12,
+            "of": 13
+          },
+          {
+            "crop": "valid/image_02516_jpg.rf.8b941c934955fc8d8079bf6de72539bd.jpg#10",
+            "missed": 11,
+            "of": 17
+          },
+          {
+            "crop": "valid/image_09334_jpg.rf.3ebe4d7d7b9e7afb194126260d56cfb1.jpg#2",
+            "missed": 11,
+            "of": 15
+          },
+          {
+            "crop": "test/image_09371_jpg.rf.51a427dca0a923f8505dd82280d43b6f.jpg#2",
+            "missed": 10,
+            "of": 16
+          },
+          {
+            "crop": "test/image_01484_jpg.rf.02c50bdb2c534d3a144532bb4d7134b5.jpg#23",
+            "missed": 10,
+            "of": 16
+          },
+          {
+            "crop": "test/image_01123_jpg.rf.067afa5b11f555b3bcb1c64789a5cdc1.jpg#48",
+            "missed": 10,
+            "of": 12
+          },
+          {
+            "crop": "test/image_01496_jpg.rf.80a78084c51f163b77c290942eaa5d65.jpg#28",
+            "missed": 10,
+            "of": 10
+          },
+          {
+            "crop": "valid/image_02277_jpg.rf.24918966d2c1271b23427cdf5d8e0267.jpg#17",
+            "missed": 9,
+            "of": 15
+          }
+        ],
+        "crops_never_counted": 1
+      }
+    },
+    "sticky": {
+      "flies": 7780,
+      "missed": 1559,
+      "recall": 0.7996,
+      "why": {
+        "below_floor": 978,
+        "unseen": 576,
+        "taken": 5
+      },
+      "best_score_of_below_floor": {
+        "n": 978,
+        "p10": 0.1311,
+        "p50": 0.2372,
+        "p90": 0.329,
+        "at_or_above_0.25": 448,
+        "at_or_above_0.20": 629,
+        "at_or_above_0.15": 823
+      },
+      "median": {
+        "input_px": {
+          "hit": 37.8,
+          "missed": 34.4
+        },
+        "aspect": {
+          "hit": 1.28,
+          "missed": 1.42
+        },
+        "angle": {
+          "hit": 96.0,
+          "missed": 89.4
+        },
+        "nn_iou": {
+          "hit": 0.0,
+          "missed": 0.0
+        },
+        "nn_dist": {
+          "hit": 1.36,
+          "missed": 1.83
+        },
+        "edge": {
+          "hit": 3.44,
+          "missed": 4.07
+        },
+        "centre": {
+          "hit": 0.67,
+          "missed": 0.62
+        },
+        "contrast": {
+          "hit": 20.7,
+          "missed": 19.8
+        },
+        "flies": {
+          "hit": 104,
+          "missed": 56
+        }
+      },
+      "by": {
+        "input_px": [
+          {
+            "bin": [
+              28,
+              32
+            ],
+            "flies": 1065,
+            "missed": 416,
+            "miss_rate": 0.391
+          },
+          {
+            "bin": [
+              32,
+              40
+            ],
+            "flies": 4261,
+            "missed": 935,
+            "miss_rate": 0.219
+          },
+          {
+            "bin": [
+              40,
+              null
+            ],
+            "flies": 2454,
+            "missed": 208,
+            "miss_rate": 0.085
+          }
+        ],
+        "aspect": [
+          {
+            "bin": [
+              0,
+              1.25
+            ],
+            "flies": 3320,
+            "missed": 486,
+            "miss_rate": 0.146
+          },
+          {
+            "bin": [
+              1.25,
+              1.5
+            ],
+            "flies": 2175,
+            "missed": 421,
+            "miss_rate": 0.194
+          },
+          {
+            "bin": [
+              1.5,
+              2.0
+            ],
+            "flies": 1729,
+            "missed": 442,
+            "miss_rate": 0.256
+          },
+          {
+            "bin": [
+              2.0,
+              null
+            ],
+            "flies": 556,
+            "missed": 210,
+            "miss_rate": 0.378
+          }
+        ],
+        "angle": [
+          {
+            "bin": [
+              0,
+              30
+            ],
+            "flies": 1273,
+            "missed": 239,
+            "miss_rate": 0.188
+          },
+          {
+            "bin": [
+              30,
+              60
+            ],
+            "flies": 1190,
+            "missed": 290,
+            "miss_rate": 0.244
+          },
+          {
+            "bin": [
+              60,
+              90
+            ],
+            "flies": 1190,
+            "missed": 253,
+            "miss_rate": 0.213
+          },
+          {
+            "bin": [
+              90,
+              120
+            ],
+            "flies": 1495,
+            "missed": 316,
+            "miss_rate": 0.211
+          },
+          {
+            "bin": [
+              120,
+              150
+            ],
+            "flies": 1249,
+            "missed": 237,
+            "miss_rate": 0.19
+          },
+          {
+            "bin": [
+              150,
+              180.1
+            ],
+            "flies": 1383,
+            "missed": 224,
+            "miss_rate": 0.162
+          }
+        ],
+        "nn_iou": [
+          {
+            "bin": [
+              0,
+              1e-09
+            ],
+            "flies": 7161,
+            "missed": 1501,
+            "miss_rate": 0.21
+          },
+          {
+            "bin": [
+              1e-09,
+              0.02
+            ],
+            "flies": 319,
+            "missed": 30,
+            "miss_rate": 0.094
+          },
+          {
+            "bin": [
+              0.02,
+              0.05
+            ],
+            "flies": 189,
+            "missed": 14,
+            "miss_rate": 0.074
+          },
+          {
+            "bin": [
+              0.05,
+              0.1
+            ],
+            "flies": 101,
+            "missed": 9,
+            "miss_rate": 0.089
+          },
+          {
+            "bin": [
+              0.1,
+              1.01
+            ],
+            "flies": 10,
+            "missed": 5,
+            "miss_rate": 0.5
+          }
+        ],
+        "nn_dist": [
+          {
+            "bin": [
+              0,
+              1.0
+            ],
+            "flies": 786,
+            "missed": 58,
+            "miss_rate": 0.074
+          },
+          {
+            "bin": [
+              1.0,
+              1.5
+            ],
+            "flies": 3642,
+            "missed": 466,
+            "miss_rate": 0.128
+          },
+          {
+            "bin": [
+              1.5,
+              2.0
+            ],
+            "flies": 1699,
+            "missed": 412,
+            "miss_rate": 0.242
+          },
+          {
+            "bin": [
+              2.0,
+              3.0
+            ],
+            "flies": 1033,
+            "missed": 313,
+            "miss_rate": 0.303
+          },
+          {
+            "bin": [
+              3.0,
+              null
+            ],
+            "flies": 614,
+            "missed": 306,
+            "miss_rate": 0.498
+          }
+        ],
+        "edge": [
+          {
+            "bin": [
+              0.5,
+              1.0
+            ],
+            "flies": 463,
+            "missed": 19,
+            "miss_rate": 0.041
+          },
+          {
+            "bin": [
+              1.0,
+              2.0
+            ],
+            "flies": 1450,
+            "missed": 248,
+            "miss_rate": 0.171
+          },
+          {
+            "bin": [
+              2.0,
+              null
+            ],
+            "flies": 5867,
+            "missed": 1292,
+            "miss_rate": 0.22
+          }
+        ],
+        "centre": [
+          {
+            "bin": [
+              0,
+              0.2
+            ],
+            "flies": 399,
+            "missed": 54,
+            "miss_rate": 0.135
+          },
+          {
+            "bin": [
+              0.2,
+              0.4
+            ],
+            "flies": 1017,
+            "missed": 239,
+            "miss_rate": 0.235
+          },
+          {
+            "bin": [
+              0.4,
+              0.6
+            ],
+            "flies": 1876,
+            "missed": 431,
+            "miss_rate": 0.23
+          },
+          {
+            "bin": [
+              0.6,
+              0.8
+            ],
+            "flies": 1805,
+            "missed": 387,
+            "miss_rate": 0.214
+          },
+          {
+            "bin": [
+              0.8,
+              null
+            ],
+            "flies": 2683,
+            "missed": 448,
+            "miss_rate": 0.167
+          }
+        ],
+        "contrast": [
+          {
+            "bin": [
+              null,
+              10
+            ],
+            "flies": 266,
+            "missed": 70,
+            "miss_rate": 0.263
+          },
+          {
+            "bin": [
+              10,
+              20
+            ],
+            "flies": 3345,
+            "missed": 733,
+            "miss_rate": 0.219
+          },
+          {
+            "bin": [
+              20,
+              30
+            ],
+            "flies": 3284,
+            "missed": 615,
+            "miss_rate": 0.187
+          },
+          {
+            "bin": [
+              30,
+              40
+            ],
+            "flies": 737,
+            "missed": 128,
+            "miss_rate": 0.174
+          },
+          {
+            "bin": [
+              40,
+              60
+            ],
+            "flies": 148,
+            "missed": 13,
+            "miss_rate": 0.088
+          }
+        ],
+        "flies": [
+          {
+            "bin": [
+              0,
+              5
+            ],
+            "flies": 35,
+            "missed": 19,
+            "miss_rate": 0.543
+          },
+          {
+            "bin": [
+              5,
+              10
+            ],
+            "flies": 152,
+            "missed": 78,
+            "miss_rate": 0.513
+          },
+          {
+            "bin": [
+              10,
+              20
+            ],
+            "flies": 408,
+            "missed": 179,
+            "miss_rate": 0.439
+          },
+          {
+            "bin": [
+              20,
+              40
+            ],
+            "flies": 782,
+            "missed": 276,
+            "miss_rate": 0.353
+          },
+          {
+            "bin": [
+              40,
+              null
+            ],
+            "flies": 6403,
+            "missed": 1007,
+            "miss_rate": 0.157
+          }
+        ]
+      },
+      "crops": {
+        "crops_seen_5_times": 263,
+        "misses_from_worst_10pct_crops": 681,
+        "worst": [
+          {
+            "crop": "test/image_09445_jpg.rf.2c11eea9059ace79571f083b9cdf9ebf.jpg#5",
+            "missed": 44,
+            "of": 66
+          },
+          {
+            "crop": "test/image_01123_jpg.rf.067afa5b11f555b3bcb1c64789a5cdc1.jpg#32",
+            "missed": 42,
+            "of": 43
+          },
+          {
+            "crop": "valid/image_09330_jpg.rf.aaee10042695e5340c3e50ebdcf8bbf2.jpg#1",
+            "missed": 35,
+            "of": 44
+          },
+          {
+            "crop": "valid/image_09370_jpg.rf.1e7c59bd0dc7b25fa1af2e9fe278a0e6.jpg#2",
+            "missed": 33,
+            "of": 33
+          },
+          {
+            "crop": "valid/image_03407_jpg.rf.9bbb8af804a8dd65b4da0bc306031440.jpg#5",
+            "missed": 32,
+            "of": 58
+          },
+          {
+            "crop": "valid/image_02282_jpg.rf.002bd578258db00188b56f3da562bd95.jpg#21",
+            "missed": 29,
+            "of": 66
+          },
+          {
+            "crop": "valid/image_02303_jpg.rf.408dd1eed51d492f99dc2d00d0ecded6.jpg#6",
+            "missed": 29,
+            "of": 40
+          },
+          {
+            "crop": "valid/image_09428_jpg.rf.08ca49b628618666a410082fcca3d435.jpg#3",
+            "missed": 28,
+            "of": 34
+          },
+          {
+            "crop": "valid/image_09424_jpg.rf.d188a3e0e3335adb8f298756862f0697.jpg#6",
+            "missed": 26,
+            "of": 73
+          },
+          {
+            "crop": "test/image_09371_jpg.rf.51a427dca0a923f8505dd82280d43b6f.jpg#6",
+            "missed": 26,
+            "of": 65
+          }
+        ],
+        "crops_never_counted": 7
+      }
+    }
+  },
+  "by_trap": {
+    "demo-lure-a": {
+      "flies": 375,
+      "recall": 0.856,
+      "why": {
+        "below_floor": 31,
+        "unseen": 17,
+        "dropped": 6
+      }
+    },
+    "demo-lure-b": {
+      "flies": 658,
+      "recall": 0.7614,
+      "why": {
+        "below_floor": 81,
+        "unseen": 63,
+        "other_insect": 11,
+        "dropped": 2
+      }
+    },
+    "demo-lure-c": {
+      "flies": 210,
+      "recall": 0.8333,
+      "why": {
+        "below_floor": 19,
+        "unseen": 12,
+        "dropped": 4
+      }
+    },
+    "demo-sticky-d": {
+      "flies": 2582,
+      "recall": 0.7769,
+      "why": {
+        "below_floor": 380,
+        "unseen": 191,
+        "taken": 5
+      }
+    },
+    "pool-lure-a": {
+      "flies": 764,
+      "recall": 0.9123,
+      "why": {
+        "below_floor": 44,
+        "unseen": 18,
+        "dropped": 5
+      }
+    },
+    "pool-lure-b": {
+      "flies": 1289,
+      "recall": 0.7789,
+      "why": {
+        "below_floor": 161,
+        "unseen": 96,
+        "other_insect": 23,
+        "taken": 5
+      }
+    },
+    "pool-sticky-c01": {
+      "flies": 199,
+      "recall": 0.4472,
+      "why": {
+        "unseen": 79,
+        "below_floor": 31
+      }
+    },
+    "pool-sticky-c02": {
+      "flies": 434,
+      "recall": 0.5853,
+      "why": {
+        "below_floor": 99,
+        "unseen": 81
+      }
+    },
+    "pool-sticky-c03": {
+      "flies": 619,
+      "recall": 0.7544,
+      "why": {
+        "below_floor": 88,
+        "unseen": 64
+      }
+    },
+    "pool-sticky-c04": {
+      "flies": 1178,
+      "recall": 0.8192,
+      "why": {
+        "below_floor": 132,
+        "unseen": 81
+      }
+    },
+    "pool-sticky-c05": {
+      "flies": 1133,
+      "recall": 0.8879,
+      "why": {
+        "below_floor": 101,
+        "unseen": 26
+      }
+    },
+    "pool-sticky-c06": {
+      "flies": 1635,
+      "recall": 0.8771,
+      "why": {
+        "below_floor": 147,
+        "unseen": 54
+      }
+    }
+  },
+  "carry": {
+    "min_score": 0.15,
+    "sticky": {
+      "photos_with_previous": 159,
+      "true": 7747,
+      "recall": 0.8007,
+      "precision": 0.9912,
+      "recall_carry": 0.8112,
+      "precision_carry": 0.9909,
+      "flies_added": 81,
+      "false_added": 3
+    }
+  }
+}

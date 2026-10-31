@@ -52,6 +52,44 @@ The raw-tensor check in the notebook reported "mismatch" (max abs diff 421): the
 tied low-score rows differently between engines. Detections above the threshold are identical, so the check now
 compares detections, not raw rows. The sample photos are mostly empty lure traps; field accuracy is not measured.
 
+### Missed flies and mirrored views (2026-10-31)
+
+On the simulated demo traps the drawn count is often above the detected one. Measured on the detector step with v4
+and the production settings (`DETECTOR_TILES=sticky`, `DETECTOR_ROI=all`, floor 0.35), 429 clean synthetic photos
+(every 2nd of demo-30d and pool; SIMULATED), 320 real empty lure-trap photos and the 76 Roboflow test pictures run as
+lure and as sticky photos (v3 labels), with `eval/detector_ab.py` and `eval/detector_misses.py`:
+
+| Item | Value | Source |
+|---|---|---|
+| Synthetic recall, production | lure **0.819** (P 0.999), sticky **0.800** (P 0.991); demo-lure-a 0.856, -b 0.761, -c 0.833, demo-sticky-d 0.777 | `eval/results/detector_ab.json` (`production`) |
+| v3 on the same kind of photos | lure 0.870, sticky 0.809. v4 lost recall on the BE4111159 background (demo-lure-b 0.882 -> 0.761), the camera whose empty photos v4 learnt as hard negatives; demo-lure-a gained (0.781 -> 0.856) | `detector_ab.json` at d780bb6 (`roi_all`, v3 cache of 23 Oct) |
+| Why a lure fly is missed (598 of 3,296) | 336 have a `fruit_fly` box under the floor (p50 score 0.23; 199 at >= 0.20), 206 have no box even at 0.10, 34 are boxed as `other_insect`, 22 dropped by a rule or taken by a neighbour | `eval/results/detector_misses.json` |
+| What the missed lure flies share | not size (all >= 32 px at the input, median 48 px hit and missed); high contrast (miss rate 13-16 % under 20 grey levels, 39 % at 30-40, 79 % above 40), the lure centre (35 % within 0.2 of the floor radius, 14-18 % elsewhere), flies overlapping a neighbour (29 % at IoU >= 0.1), elongated boxes (31 % above 2:1). Angle and the distance to the bowl edge make little difference | same, `by` bins |
+| What the missed sticky flies share (1,559 of 7,780) | small at the window input (39 % missed at 28-32 px, 9 % at 40 px and more), isolated flies (50 % at 3+ fly lengths from the nearest, 7 % when touching), sparse cards (44-54 % under 20 flies, 16 % at 40+), elongated boxes (38 % above 2:1); 978 have a box under the floor | same |
+| Lower lure floor alone | 0.30: recall 0.843; 0.25: 0.860; 0.20: 0.879; real false flies 0, 0, 1 | `detector_ab.json` (`floor_sweep.production`) |
+| 2x2 tiles on lure photos (v4) | recall 0.60-0.80, i.e. lower, and up to 60 false flies on the real photos | `detector_ab.json` (`tiles_lure_*`) |
+| Keeping a sticky fly the previous photo counted (a box >= 0.15 where the previous photo counted one, IoU >= 0.5) | sticky recall +0.010 (81 flies, 3 false) on top of production; +0.007 (55 flies, 10 false) on top of the views; not built | `detector_misses.json`, `detector_misses_recommended.json` (`carry`) |
+| **Mirrored views** (`sentinel/vision/tta.py`): lure `hflip,vflip` (3 forwards) | lure recall 0.819 -> **0.876**, P 0.999; real false flies 0 -> 0 | `detector_ab.json` (`tta_lure_hflip+vflip`) |
+| + `rot90` | lure recall 0.889, P 0.960, **72 false flies** on the real photos: rejected | `tta_lure_hflip+vflip+rot90` |
+| Sticky `hflip` (8 forwards) | sticky recall 0.800 -> **0.852**, P 0.991 -> 0.986 | `tta_sticky_hflip` |
+| **Recommended**: lure `hflip,vflip` + lure floor 0.30, sticky `hflip` (floor 0.35) | lure recall **0.892**, P 0.999, MAE 2.29 -> 1.36 flies; demo-lure-a 0.947, -b 0.840, -c 0.910. Sticky 0.852, P 0.986, MAE 8.84 -> 6.24; demo-sticky-d 0.832. Real empty traps: **0 false flies** (BE4089629 0 of 199 photos, BE4111159 0 of 121). Roboflow test pictures: lure P 0.934 -> 0.886, R 0.886 -> 0.912 (false boxes 148 -> 277); sticky P 0.923 -> 0.912, R 0.858 -> 0.880 | `detector_ab.json` (`recommended`) |
+| Left after the recommended settings | 357 lure misses (176 with no box, 123 under 0.30, 31 `other_insect`), 1,153 sticky misses (612 under the floor, 538 with no box) | `eval/results/detector_misses_recommended.json` |
+
+Limits of these numbers: the synthetic flies are cut from the dataset's test and valid splits and pasted with OpenCV,
+so they are not field flies. The real check set holds only empty lure traps (no real fly, no real sticky card), and
+its BE4111159 photos (7-14 Oct) are from the days whose empty photos v4 was trained on, so for v4 only BE4089629 is
+a clean check. The Roboflow labels are v3's (ants and debris boxes included). Each view adds one forward per pass;
+the latency is not measured on the Lambda.
+
+The settings are deploy variables, off by default: `DETECTOR_TTA_LURE=hflip,vflip`, `DETECTOR_TTA_STICKY=hflip`,
+`DETECTOR_MIN_SCORE_LURE=0.30` in deploy.env (`DetectorTtaLure`, `DetectorTtaSticky`, `DetectorMinScoreLure`).
+
+Most remaining misses get no box at all: a model limit. The next step is a v5 trained on v4 plus labelled synthetic
+photos: `eval/synth/trainset.py` writes `data/synth/trainset-yolo.zip` (flies from the train split, the real check
+set's backgrounds left out) and `models/colab_train_yolo26.ipynb` adds it to the training split when `SYNTH_ZIP` names
+it. v5's effect is not measured: it needs the Colab run, then `eval/detector_ab.py cache` and `score` with the new
+weights, compared with this table.
+
 ### Post-processing (Lambda)
 
 `sentinel/vision/detect_yolo26.py` + `sentinel/vision/box_rules.py`, the same for both heads:
