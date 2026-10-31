@@ -1,0 +1,24 @@
+{
+  "name": "trainset",
+  "description": "SIMULATED DATA for fine-tuning the fruit-fly detector: lure photos by fly count and 7-day sticky cards, flies cut from the dataset's train split. Not field data; never shown in the demo.",
+  "seed": 20261031,
+  "startDate": "2026-01-01",
+  "utcOffset": "+07:00",
+  "schedule": ["06:30", "09:00", "11:30", "14:00", "16:30"],
+  "blend": "multiply",
+  "flyScale": 0.11,
+  "maxOverlapIoU": 0.05,
+  "maxOverlapIoUSteps": [0.05, 0.15, 0.25],
+  "flyBank": {"splits": ["train"], "maxCrops": 3000, "seed": 11},
+  "backgrounds": "data/samples/samples_manifest.csv",
+  "lure": {
+    "max": 60, "bucket": 5, "perBucket": 30,
+    "traps": [
+      {"id": "train-lure-a", "backgroundCamera": "BE4089629", "smallMaxCount": 40},
+      {"id": "train-lure-b", "backgroundCamera": "BE4111159"}
+    ]
+  },
+  "sticky": {"backgroundCamera": "BE4111159", "cardDays": 7, "flyScale": 0.04, "cardCoverage": 0.84, "cap": 300,
+             "noise": 0.2, "dailyCatch": [2, 5, 9, 14, 20, 27]},
+  "defects": {"lure": 0, "sticky": 0}
+}

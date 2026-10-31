@@ -306,3 +306,36 @@ def test_pool_names_no_trap_and_no_time(tmp_path):
     for p in m["photos"]:
         assert p["capturedAt"] is None and p["photoId"].startswith("synth-pool-") and p["synthetic"] is True
         assert C.read_label((tmp_path / "pool" / p["file"]).read_bytes())["xmp_synthetic"]
+
+
+def test_trainset_skips_excluded_backgrounds_and_writes_yolo_labels(tmp_path):
+    import csv
+    import zipfile
+
+    from eval.synth.pool import build
+    from eval.synth.trainset import export_yolo
+
+    ds = _fake_dataset(tmp_path / "ds")
+    with open(ROOT / "data" / "samples" / "samples_manifest.csv", encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
+    lure_bgs = [r["snapshot_id"] for r in rows if r["device_serial"] == "BE4089629"]
+    keep = lure_bgs[0]
+    cfg = {"name": "trainset", "seed": 9, "startDate": "2026-01-01", "schedule": ["09:00"], "flyScale": 0.11,
+           "flyBank": {"maxCrops": 20}, "excludeBackgrounds": lure_bgs[1:],
+           "lure": {"max": 10, "bucket": 5, "perBucket": 2,
+                    "traps": [{"id": "train-lure-a", "backgroundCamera": "BE4089629", "smallMaxCount": 40}]},
+           "sticky": {"backgroundCamera": "BE4089629", "cardDays": 1, "dailyCatch": []}, "defects": {}}
+    m = build(cfg, tmp_path / "ts", ds, log=lambda *_: None)
+    assert {Path(p["background"]["file"]).stem for p in m["photos"]} == {keep}
+    info = export_yolo(m, tmp_path / "ts", tmp_path / "ts-yolo.zip")
+    assert info["photos"] == len(m["photos"]) and info["boxes"] == sum(p["visibleCount"] for p in m["photos"])
+    with zipfile.ZipFile(tmp_path / "ts-yolo.zip") as z:
+        p = max(m["photos"], key=lambda q: q["visibleCount"])
+        stem = "trainset_" + p["photoId"].removeprefix("synth-")
+        lines = z.read(f"labels/{stem}.txt").decode().split()
+        assert f"images/{stem}.jpg" in z.namelist() and "README.txt" in z.namelist()
+    vals = [float(v) for v in lines]
+    assert vals[0::5] == [0.0] * p["visibleCount"] and all(0.0 <= v <= 1.0 for v in vals)
+    x, y, w, h = p["boxes"][0]["px"]
+    assert vals[1:5] == pytest.approx([(x + w / 2) / p["width"], (y + h / 2) / p["height"], w / p["width"],
+                                       h / p["height"]], abs=1e-5)

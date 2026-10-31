@@ -220,6 +220,9 @@ class Context:
         self.bank_info["crops"] = len(self.bank)
         log(f"fly bank: {len(self.bank)} crops from {Path(dataset).name} {self.bank_info['splits']}")
         self.pools = backgrounds_by_camera((ROOT / cfg.get("backgrounds", "data/samples/samples_manifest.csv")).resolve())
+        skip = set(cfg.get("excludeBackgrounds") or [])  # photo ids (file stems) a run must not use
+        if skip:
+            self.pools = {cam: [b for b in bgs if Path(b["file"]).stem not in skip] for cam, bgs in self.pools.items()}
         self.bgs = Backgrounds()
         # no commit hash in the JPEG: a day regenerated after a later commit keeps its bytes (the manifest has the hash)
         self.software = f"FlyBot synthetic generator eval/synth ({SCHEMA})"

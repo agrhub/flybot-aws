@@ -19,6 +19,7 @@ Without make, from the repository root (`UV="uv run --project lambda/vision pyth
 ```
 $UV eval.synth.generate [--config eval/synth/demo_30d.json] [--from D] [--to D] [--day D] [--traps a,b] [--out DIR]
 $UV eval.synth.pool [--config eval/synth/pool.json]
+$UV eval.synth.trainset   # labelled photos for fine-tuning (train-split flies) -> data/synth/trainset-yolo.zip
 $UV eval.synth.check [--manifest data/synth/demo-30d/manifest.json] [--tiles] [--url http://localhost:9001/invoke]
 $UV eval.synth.report [--sets data/synth/demo-30d data/synth/pool]
 ```
